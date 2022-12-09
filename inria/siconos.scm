@@ -358,7 +358,6 @@ Mechanics, and Computer Graphics.")
 (define-public siconos-4.5.x
   (package
    (inherit siconos-4.4-rc3)
-   (name "siconos-4.5.x")
    (version "4.5.x")
    (source
     (origin
