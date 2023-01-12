@@ -207,7 +207,14 @@ kernels are executed as efficiently as possible.")
     (arguments
      (substitute-keyword-arguments (package-arguments starpu)
        ((#:configure-flags flags '())
-        `(cons "--enable-simgrid" (cons "--enable-mpi" (cons "--disable-shared" ,flags))))))
+        `(cons "--enable-simgrid" (cons "--enable-mpi" (cons "--disable-shared" ,flags))))
+       ((#:phases phases '%standard-phases)
+        `(modify-phases ,phases
+           (add-before 'check 'skip-faulty-test
+             (lambda _
+               ;; This test fails in 1.3.10; fixed in StarPU commit
+               ;; 99d29fb1777b0833e97ce422f34cb88224d34f09.
+               (setenv "XFAIL_TESTS" "scheduler/schedulers.sh")))))))
     (inputs (modify-inputs (package-inputs starpu)
               (prepend simgrid fxt+static)))
     (propagated-inputs
