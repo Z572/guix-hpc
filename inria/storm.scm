@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017-2022 Inria
+;;; Copyright © 2017-2023 Inria
 
 (define-module (inria storm)
   #:use-module (guix)
@@ -133,10 +133,10 @@ kernels are executed as efficiently as possible.")
 (define (starpu-configure-flags package)
   ;; Return the standard configure flags for PACKAGE, a StarPU 1.3+ package.
   `(list "--enable-quick-check"
-         ,@(if (assoc "fxt" (package-inputs package)) ;optional fxt dependency
+         ,@(if (lookup-package-input package "fxt") ;optional fxt dependency
                '("--with-fxt")
                '())
-         ,@(if (assoc "simgrid" (package-inputs package)) ;optional simgrid
+         ,@(if (lookup-package-input package "simgrid") ;optional simgrid
                '("--enable-simgrid"
                  "--enable-maxcpus=1000"
                  "--enable-maxcudadev=1000"
@@ -148,13 +148,9 @@ kernels are executed as efficiently as possible.")
                ;; the future, it would be nice to give the opportunity to
                ;; change it at will when parametrized packages will be there.
                '("--enable-maxcpus=128"))
-         ,@(match (assoc "mpi" (package-propagated-inputs package))
-             (("mpi" mpi)
-              (if (string=? (package-name mpi) "nmad")
-                  '("--enable-nmad")
-                  '()))
-             (#f
-              '()))))
+         ,@(if (lookup-package-propagated-input package "nmad")
+               '("--enable-nmad")
+               '())))
 
 (define-public starpu-1.3
   (package
@@ -181,7 +177,7 @@ kernels are executed as efficiently as possible.")
                               (("/bin/sh")  (which "sh")))
                             #t)))))))
    (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.2)
-                         (delete "mpi" "hwloc")
+                         (delete "openmpi-mpi1-compat" "hwloc")
                          (prepend openmpi
                                   `(,hwloc "lib") ;hwloc 2.x
                                   )))))
@@ -214,7 +210,9 @@ kernels are executed as efficiently as possible.")
         `(cons "--enable-simgrid" (cons "--enable-mpi" (cons "--disable-shared" ,flags))))))
     (inputs (modify-inputs (package-inputs starpu)
               (prepend simgrid fxt+static)))
-    (propagated-inputs `(,@(delete `("mpi" ,openmpi) (package-propagated-inputs starpu))))
+    (propagated-inputs
+     (modify-inputs (package-propagated-inputs starpu)
+       (delete "openmpi")))
     ;; some tests require python.
     (native-inputs
      (modify-inputs (package-native-inputs starpu)
