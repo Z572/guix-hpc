@@ -1,10 +1,11 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2019 Inria
+;;; Copyright © 2019, 2023 Inria
 
 (define-module (inria mpi)
   #:use-module (guix)
+  #:use-module (guix gexp)
   #:use-module (guix utils)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
@@ -154,7 +155,7 @@ software vendors, application developers and computer science researchers.")
     (arguments
      (substitute-keyword-arguments (package-arguments openmpi)
        ((#:configure-flags flags ''())
-        `(cons "--enable-mpi1-compatibility" ,flags))))
+        #~(cons "--enable-mpi1-compatibility" #$flags))))
 
     ;; Depend on hwloc 1.x because that's what users of this package expect.
     (inputs (modify-inputs (package-inputs openmpi)
