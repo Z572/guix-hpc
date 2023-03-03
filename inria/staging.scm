@@ -11,14 +11,9 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages check)
-  #:use-module (gnu packages gl)
-  #:use-module (gnu packages image-processing)
-  #:use-module (gnu packages maths)
-  #:use-module (gnu packages protobuf)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
-  #:use-module (gnu packages qt)
-  #:use-module (gnu packages xorg))
+  #:use-module (gnu packages maths))
 
 ;;; Commentary:
 ;;;
@@ -28,64 +23,6 @@
 ;;; Code:
 
 (define S specification->package)
-
-(define-public paraview
-  ;; TODO: This should be part of Guix proper, but first, we should try
-  ;; unbundling VTK.
-  (package
-    (name "paraview")
-    (version "5.8.0")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/Kitware/paraview.git")
-                    (commit (string-append "v" version))
-                    (recursive? #t)))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1mka6wwg9mbkqi3phs29mvxq6qbc44sspbm4awwamqhilh4grhrj"))))
-    (build-system cmake-build-system)
-    (arguments
-     '(#:configure-flags '("-DPARAVIEW_ENABLE_PYTHON=ON"
-                           ;; "-DPARAVIEW_USE_EXTERNAL=ON"
-                           "-DPARAVIEW_USE_EXTERNAL_VTK=OFF" ;XXX
-                           ;; "-DPARAVIEW_ENABLE_WEB=OFF"
-                           ;; "-DPARAVIEW_ENABLE_EMBEDDED_DOCUMENTATION=OFF"
-                           ;; "-DOpenGL_GL_PREFERENCE=GLVND"
-                           )))
-    ;; FIXME: "include/paraview-5.7/vtkConfigure.h" defines
-    ;; 'VTK_CXX_COMPILER' as the absolute file name of 'c++'.  Remove that so
-    ;; we don't keep a reference to GCC.
-    (native-inputs
-     (list (S "qttools@5")))
-    (inputs
-     (list (S "qtbase@5")
-           (S "qtsvg@5")
-           (S "qtx11extras@5")
-           (S "qtxmlpatterns@5")
-           libx11
-           libxt
-           mesa
-           glu
-           python
-           python-numpy
-           ;; ("utf8cpp" ,utf8cpp)
-           vtk
-           hdf5
-           protobuf))
-    (synopsis "Data analysis and visualization application")
-    (description
-     "ParaView is a data analysis and visualization application.  It allows
-users to quickly build visualizations to analyze their data using qualitative
-and quantitative techniques.  The data exploration can be done interactively
-in 3D or programmatically using ParaView's batch processing capabilities.
-
-ParaView was developed to analyze extremely large datasets using distributed
-memory computing resources.  It can be run on supercomputers to analyze
-datasets of petascale size as well as on laptops for smaller data.")
-    (home-page "https://www.paraview.org/")
-    (license license:bsd-3)))
 
 (define-public metis-r64
   ;; This variant of Metis uses 64-bit reals (32-bit reals are the default).
