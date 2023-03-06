@@ -198,7 +198,7 @@ Mechanics, and Computer Graphics.")
      `(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
                            "-DWITH_BULLET=ON"
                            "-DBULLET_USE_DOUBLE_PRECISION=ON"
-                           "-DWITH_OCE=ON"
+                           "-DWITH_OCE=OFF"
                            "-DWITH_FCLIB=ON"
                            "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
                            "-DWITH_SYSTEM_SUITESPARSE=ON")
@@ -232,7 +232,6 @@ Mechanics, and Computer Graphics.")
        ("gmp" ,gmp)
        ("lapack" ,lapack)
        ("openblas" ,openblas)
-       ("opencascade-occt" ,opencascade-occt)
        ("python-h5py"  ,python-h5py)
        ("python-lxml"  ,python-lxml)
        ("python-numpy" ,python-numpy)
@@ -299,7 +298,7 @@ Mechanics, and Computer Graphics.")
        `(cons "-DWITH_OCC=ON"
               (cons "-DWITH_MECHANISMS=ON"
                     (delete "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
-                            (delete "-DWITH_OCE=ON" ,flags)))))))))
+                            (delete "-DWITH_OCE=OFF" ,flags)))))))))
 
 (define-public siconos-4.4-rc2
   (package
@@ -417,51 +416,6 @@ Mechanics, and Computer Graphics.")
 
 
 ;;;;;;; needed packages
-(define-public pythonocc
-  (package
-    (name "pythonocc")
-    (version "0.17.3")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append "https://github.com/tpaviot/pythonocc-core/archive/" version ".tar.gz"))
-       (sha256
-        (base32
-         "0fk617nlfh3c79wladgdl7jvbjs1dfqwncjalc456qlkb8ix8xci"))
-       (patches
-        (search-patches
-         "inria/patches/pythonocc-install.patch"))))
-    (native-inputs
-     `(("cmake" ,cmake)
-       ("make" ,gnu-make)
-       ("swig" ,swig)
-       ("gcc" ,gcc)))
-    (inputs
-     `(("python" ,python)
-       ("freetype" ,freetype)
-       ("mesa" ,mesa)
-       ("glu" ,glu)
-       ("opencascade-occt" ,opencascade-occt)))
-    (build-system cmake-build-system)
-    (arguments
-     '(#:build-type "Release"           ;Build without '-g' to save space.
-                    #:configure-flags
-                    '()
-                    #:tests? #f))
-    (home-page "http://www.pythonocc.org/")
-    (synopsis "3D CAD for python")
-    (description
-     "pythonOCC is a 3D CAD/PLM development library for the Python
-programming language. It provides 3D hybrid modeling, data
-exchange (support for the STEP/IGES file format), GUI management
-support (wxPython, PyQt, python-xlib), parametric modeling, and
-advanced meshing features. pythonOCC is built upon the OpenCASCADE 3D
-modeling kernel and the salomegeom and salomesmesh packages. Some high
-level packages (for parametric modeling, topology, data exchange,
-webservices, etc.) extend the builtin features of those libraries to
-enable highly dynamic and modular programming of any CAD application.")
-    (license license:lgpl3)))
-
 (define-public lmgc90
   (package
    (name "lmgc90")
