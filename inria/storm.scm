@@ -182,10 +182,40 @@ kernels are executed as efficiently as possible.")
                                   `(,hwloc "lib") ;hwloc 2.x
                                   )))))
 
+(define-public starpu-1.4
+  (package
+    (inherit starpu-1.3)
+    (name "starpu")
+    (version "1.4.0")
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url %starpu-git)
+                   (commit (string-append "starpu-" version))))
+             (file-name (git-file-name name version))
+             (sha256
+              (base32 "125ijsrjlgiz1sl5sycfmdsg3xw29psy10k0qd9jj39pavjpx895"))
+             (patches (search-patches %patch-path))))
+   (arguments
+    (substitute-keyword-arguments (package-arguments starpu-1.3)
+      ((#:configure-flags _ '())
+       (starpu-configure-flags this-package))
+      ((#:phases phases '())
+       (append phases '((add-after 'patch-source-shebangs 'fix-hardcoded-paths
+                          (lambda _
+                            (substitute* "min-dgels/base/make.inc"
+                              (("/bin/sh")  (which "sh")))
+                            #t)))))))
+   (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.3)
+                         (delete "openmpi-mpi1-compat" "hwloc")
+                         (prepend openmpi
+                                  `(,hwloc "lib") ;hwloc 2.x
+                                  )))))
+
 ; next release of StarPU will have an optional dependency on tadaam/mpi_sync_clocks: don't forget to add it !
 
 (define-public starpu
-  starpu-1.3)
+  starpu-1.4)
 
 (define-public starpu+fxt
   ;; When FxT support is enabled, performance is degraded, hence the separate
