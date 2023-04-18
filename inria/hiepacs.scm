@@ -322,6 +322,30 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
                (base32
                 "1f8mcg4hcj45cyknb8v5jxba9qzkhimdl6rihf053la30jk72cvd"))))))
 
+(define-public starpu-example-stencil
+  (package
+    (inherit mini-chameleon)
+    (name "starpu-example-stencil")
+    (version "0.1.0")
+    (home-page "https://gitlab.inria.fr/solverstack/mini-examples/starpu_example_stencil/")
+    (synopsis "StarPU example of a distributed regular 2D stencil")
+    (description
+     "Example showing how to use starpu to implement a distributed regular 2D stencil with communication-avoiding techniques")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "583dbc00582dbd65b43edc35b9406b07e40789d3")
+                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
+                    (recursive? #t)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		;;guix hash -x -r .
+                "0gfw2s2yn69bjf11s9v6bpdgpwi9c0wi3kb5dw0h9mfjpd0l22p2"
+		))))))
+
 (define-public starpu-example-cppgemm
   (package
    (name "starpu-example-cppgemm")
