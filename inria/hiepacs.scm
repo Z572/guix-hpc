@@ -173,7 +173,7 @@ area (CPUs-GPUs, distributed nodes).")
                                               (setenv "HOME" (getcwd))
                                               #t)))))
     (inputs (list openblas))
-    (propagated-inputs (list starpu openmpi))
+    (propagated-inputs (list starpu-1.3 openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
 
 (define-public chameleon+simgrid+nosmpi
@@ -239,7 +239,7 @@ area (CPUs-GPUs, distributed nodes).")
                                    `(cons "-DCHAMELEON_SCHED=OPENMP" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
-      (delete "starpu" "openmpi")))))
+      (delete "starpu-1.3" "openmpi")))))
 
 (define-public chameleon+quark
   (package
@@ -252,7 +252,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend quark)
-      (delete "starpu" "openmpi")))))
+      (delete "starpu-1.3" "openmpi")))))
 
 (define-public chameleon+parsec
   (package
@@ -265,7 +265,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend parsec)
-      (delete "starpu" "openmpi")))))
+      (delete "starpu-1.3" "openmpi")))))
 
 (define-public mini-chameleon
   (package
