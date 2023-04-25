@@ -89,37 +89,6 @@ hard-coding the expected output of a test, you run the test to get the output,
 and the test framework automatically populates the expected output.")
    (license license:expat)))
 
-(define-public hiredis
-  (package
-    (name "hiredis")
-    (version "1.0.2")
-    (home-page "https://github.com/redis/hiredis")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "0a55zk3qrw9yl27i87h3brg2hskmmzbfda77dhq9a4if7y70xnfb"))))
-    (build-system cmake-build-system)
-    (arguments
-     '(#:build-type "Release"))
-    (native-inputs (list redis))
-    (synopsis "Minimalistic C client for Redis >= 1.2")
-    (description
-     "Hiredis is a minimalistic C client library for the Redis database.
-It is minimalistic because it just adds minimal support for the protocol, but
-at the same time it uses a high level printf-alike API in order to make it much
-higher level than otherwise suggested by its minimal code base and the lack of
-explicit bindings for every Redis command.
-Apart from supporting sending commands and receiving replies, it comes with a
-reply parser that is decoupled from the I/O layer. It is a stream parser
-designed for easy reusability, which can for instance be used in higher level
-language bindings for efficient reply parsing.")
-    (license license:bsd-3)))
-
 (define-public redox
   (package
     (name "redox")
