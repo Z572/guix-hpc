@@ -130,6 +130,29 @@ kernels are executed as efficiently as possible.")
      (modify-inputs (package-native-inputs starpu-1.1)
        (prepend bc gnuplot)))))
 
+(define (starpu-configure-flags_rome package)
+  ;; Return the standard configure flags for PACKAGE, a StarPU 1.3+ package.
+  `(list "--enable-quick-check"
+         ,@(if (lookup-package-input package "fxt") ;optional fxt dependency
+               '("--with-fxt")
+               '())
+         ,@(if (lookup-package-input package "simgrid") ;optional simgrid
+               '("--enable-simgrid"
+                 "--enable-maxcpus=1000"
+                 "--enable-maxcudadev=1000"
+                 "--enable-maxnodes=32")
+               ;; For actual runs (simgrid OFF), we fix the maximum number of
+               ;; CPU workers to 128 instead of letting starpu decide that
+               ;; wrt to the actual topology it is built on, in order to
+               ;; ensure a portable and reproducible cross-compilation. In
+               ;; the future, it would be nice to give the opportunity to
+               ;; change it at will when parametrized packages will be there.
+               '("--enable-maxcpus=128"
+		 "--enable-maxnumanodes=8"))
+         ,@(if (lookup-package-propagated-input package "nmad")
+               '("--enable-nmad")
+               '())))
+
 (define (starpu-configure-flags package)
   ;; Return the standard configure flags for PACKAGE, a StarPU 1.3+ package.
   `(list "--enable-quick-check"
@@ -177,6 +200,36 @@ kernels are executed as efficiently as possible.")
                               (("/bin/sh")  (which "sh")))
                             #t)))))))
    (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.2)
+                         (delete "openmpi-mpi1-compat" "hwloc")
+                         (prepend openmpi
+                                  `(,hwloc "lib") ;hwloc 2.x
+                                  )))))
+
+(define-public starpu-1.4_rome
+  (package
+    (inherit starpu-1.3)
+    (name "starpu-big_numa")
+    (version "1.4.0")
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url %starpu-git)
+                   (commit (string-append "starpu-" version))))
+             (file-name (git-file-name name version))
+             (sha256
+              (base32 "1b3sh3apnkql32pcld72qlbz6kc3vgndarzragszji8xlc2by10k"))
+             (patches (search-patches %patch-path))))
+   (arguments
+    (substitute-keyword-arguments (package-arguments starpu-1.3)
+      ((#:configure-flags _ '())
+       (starpu-configure-flags_rome this-package))
+      ((#:phases phases '())
+       (append phases '((add-after 'patch-source-shebangs 'fix-hardcoded-paths
+                          (lambda _
+                            (substitute* "min-dgels/base/make.inc"
+                              (("/bin/sh")  (which "sh")))
+                            #t)))))))
+   (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.3)
                          (delete "openmpi-mpi1-compat" "hwloc")
                          (prepend openmpi
                                   `(,hwloc "lib") ;hwloc 2.x
