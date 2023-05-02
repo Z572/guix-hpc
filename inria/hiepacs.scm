@@ -698,22 +698,6 @@ is implemented in MPI.")
                    (inputs `(("librsb" ,librsb)
                              ,@(package-inputs maphys++)))))
 
-(define-public maphys++-eigen
-  ;; Variant of Maphys++ that uses Eigen instead of blaspp/lapackpp.
-  ;; FIXME: Currently fails to build (blaspp is required at configure time).
-  (package/inherit maphys++
-    (name "maphys++-eigen")
-    (arguments
-     (substitute-keyword-arguments (package-arguments maphys++)
-       ((#:configure-flags flags)
-        ''("-DMAPHYSPP_USE_EIGEN=ON"
-           "-DMAPHYSPP_USE_FABULOUS=ON"
-           "-DMAPHYSPP_USE_PADDLE=ON"))))
-    (inputs
-     `(("eigen" ,eigen)
-       ,@(fold alist-delete (package-inputs maphys++)
-               '("blaspp" "lapackpp"))))))
-
 (define-public blaspp
   (package
     (name "blaspp")
