@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2021 Inria
+;;; Copyright © 2017, 2019, 2021, 2023 Inria
 
 (define-module (airbus solvers)
   #:use-module (guix)
@@ -59,13 +59,13 @@
      (home-page "https://gitlab.inria.fr/solverstack/test_fembem")
      (source
       (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url home-page)
-             (commit commit)))
-       (sha256
-        (base32
-         "0ahwzappkfbazni5sf3313diipjb927z3kjmxsykczdpzvk8bny6"))))
+        (method git-fetch)
+        (uri (git-reference
+              (url home-page)
+              (commit commit)))
+        (sha256
+         (base32
+          "0ahwzappkfbazni5sf3313diipjb927z3kjmxsykczdpzvk8bny6"))))
      (build-system cmake-build-system)
      (arguments
       ;; The package checkout is not a Git directory anymore even if its
@@ -74,15 +74,19 @@
       '(#:configure-flags '("-DTEST_FEMBEM_GIT_VERSION=OFF")
         #:phases
         (modify-phases %standard-phases
-                       (add-before 'check 'prepare-test-environment
-                                   (lambda _
-                                     ;; StarPU requires the $HOME folder to be
-                                     ;; writable during the test phase. Given
-                                     ;; that the original home directory is not
-                                     ;; writable during package construction, we
-                                     ;; set HOME to the current build directory
-                                     ;; to satisfy StarPU.
-                                     (setenv "HOME" (getcwd)) #t)))))
+          (add-after 'unpack 'clear-Werror
+            (lambda _
+              (substitute* "CMakeLists.txt"
+                (("-Werror") ""))))
+          (add-before 'check 'prepare-test-environment
+            (lambda _
+              ;; StarPU requires the $HOME folder to be
+              ;; writable during the test phase. Given
+              ;; that the original home directory is not
+              ;; writable during package construction, we
+              ;; set HOME to the current build directory
+              ;; to satisfy StarPU.
+              (setenv "HOME" (getcwd)) #t)))))
      (native-inputs
       (list pkg-config))
      (inputs
