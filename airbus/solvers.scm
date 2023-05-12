@@ -63,6 +63,7 @@
         (uri (git-reference
               (url home-page)
               (commit commit)))
+        (file-name (git-file-name name version))
         (sha256
          (base32
           "0ahwzappkfbazni5sf3313diipjb927z3kjmxsykczdpzvk8bny6"))))
