@@ -62,7 +62,9 @@
   #:use-module (gnu packages sqlite)
   ; swig
   #:use-module (gnu packages guile)
-  #:use-module (gnu packages pcre))
+  #:use-module (gnu packages pcre)
+  ; opencascade-oce
+  #:use-module (gnu packages tcl))
 
 
 (define-public fclib-3.0
@@ -192,7 +194,8 @@ Mechanics, and Computer Graphics.")
              "https://github.com/siconos/siconos/archive/"
              version ".tar.gz"))
        (sha256 (base32
-                "0lksvbw4m3z938hsi3bs9zdbiq6ijgzdfqan0p7qhdsawhmzzzv2"))))
+                "0lksvbw4m3z938hsi3bs9zdbiq6ijgzdfqan0p7qhdsawhmzzzv2"))
+       (patches (search-patches "inria/patches/siconos-cmake-ixx.patch"))))
     (build-system cmake-build-system)
     (arguments
      `(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
@@ -312,7 +315,8 @@ Mechanics, and Computer Graphics.")
              "https://github.com/siconos/siconos/archive/"
              version ".tar.gz"))
        (sha256 (base32
-                "18z8bcl2b4l2iaw9f3hgafxsid8kyn5vdm07fl53whl3jac4xaca"))))))
+                "18z8bcl2b4l2iaw9f3hgafxsid8kyn5vdm07fl53whl3jac4xaca"))
+       (patches (search-patches "inria/patches/siconos-cmake-ixx.patch"))))))
 
 (define-public siconos-4.4-rc3
   (package
@@ -831,6 +835,7 @@ you tailor the wrapping process to suit your application.")
     ;; See http://www.swig.org/Release/LICENSE for details.
     (license license:gpl3+)))
 
+; from guix 1.0.2
 (define-public opencascade-oce
   (package
     (name "opencascade-oce")
@@ -842,7 +847,7 @@ you tailor the wrapping process to suit your application.")
               (url "https://github.com/tpaviot/oce")
               (commit (string-append "OCE-" version))))
         (file-name (git-file-name name version))
-        (patches (search-patches "opencascade-oce-glibc-2.26.patch"))
+        (patches (search-patches "inria/patches/opencascade-oce-glibc-2.26.patch"))
         (sha256
           (base32 "0rg5wzkvfmzfl6v2amyryb8dnjad0nn9kyr607wy2gch6rciah69"))))
     (build-system cmake-build-system)
