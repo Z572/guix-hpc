@@ -30,7 +30,6 @@
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages swig)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages swig)
   #:use-module (gnu packages fontutils)
@@ -890,3 +889,48 @@ Open CASCADE library.")
                                   ; src/NCollection/NCollection_StdAllocator.hxx
                    license:expat; file src/OpenGl/OpenGl_glext.h
                    license:bsd-3)))); test framework gtest
+
+(define-public pythonocc
+  (package
+    (name "pythonocc")
+    (version "0.17.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/tpaviot/pythonocc-core/archive/" version ".tar.gz"))
+       (sha256
+        (base32
+         "0fk617nlfh3c79wladgdl7jvbjs1dfqwncjalc456qlkb8ix8xci"))
+       (patches
+        (search-patches
+         "inria/patches/pythonocc-install.patch"))))
+    (native-inputs
+     `(("cmake" ,cmake)
+       ("make" ,gnu-make)
+       ("swig" ,swig)
+       ("gcc" ,gcc)))
+    (inputs
+     `(("python" ,python)
+       ("freetype" ,freetype)
+       ("mesa" ,mesa)
+       ("glu" ,glu)
+       ("opencascade-oce" ,opencascade-oce)))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:build-type "Release"           ;Build without '-g' to save space.
+                    #:configure-flags
+                    '()
+                    #:tests? #f))
+    (home-page "http://www.pythonocc.org/")
+    (synopsis "3D CAD for python")
+    (description
+     "pythonOCC is a 3D CAD/PLM development library for the Python
+programming language. It provides 3D hybrid modeling, data
+exchange (support for the STEP/IGES file format), GUI management
+support (wxPython, PyQt, python-xlib), parametric modeling, and
+advanced meshing features. pythonOCC is built upon the OpenCASCADE 3D
+modeling kernel and the salomegeom and salomesmesh packages. Some high
+level packages (for parametric modeling, topology, data exchange,
+webservices, etc.) extend the builtin features of those libraries to
+enable highly dynamic and modular programming of any CAD application.")
+    (license license:lgpl3)))
