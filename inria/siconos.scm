@@ -220,7 +220,7 @@ Mechanics, and Computer Graphics.")
     (outputs '("out" "debug"))
     (native-inputs
      `(("swig" ,swig)
-       ("gcc" ,gcc)
+       ("gcc" ,gcc-7)
        ("gfortran" ,gfortran)
        ("gnu-make" ,gnu-make)
        ("cmake" ,cmake)
@@ -289,15 +289,24 @@ Mechanics, and Computer Graphics.")
            version ".tar.gz"))
      (sha256 (base32
               "1gy15d8yzch0mmgy56mj9h22gbyh2k4m9y59q8p8dxy7aixqhfbv"))
-     (patches '())))
+     (patches (search-patches "inria/patches/siconos-4.2-cmake-ixx.patch"))))
    (native-inputs
-    `(("swig", swig-3.0.12)
-      ,@(alist-delete "swig" (package-native-inputs siconos))))
+    `(("gfortran", gfortran-7)
+      ,@(alist-delete "gfortran"
+                      `(("swig", swig-3.0.12)
+                        ,@(alist-delete "swig" (package-native-inputs siconos))))))
    (propagated-inputs
     `(("boost" ,boost-1.68.0)
       ,@(alist-delete "boost" (package-propagated-inputs siconos))))
    (arguments
     (substitute-keyword-arguments (package-arguments siconos)
+      ((#:phases phases)
+       `(modify-phases ,phases
+          (delete 'delete-ixx)
+          (add-after 'unpack 'delete-ixx-4.2
+           ;; some troubles with this file and cmake 3.21.4
+           ;; probably related to https://gitlab.kitware.com/cmake/cmake/-/merge_requests/5926
+           (lambda _ (delete-file "mechanics/src/mechanisms/CADMBTB/mymath_FunctionSetRoot.ixx") #t))))
       ((#:configure-flags flags)
        `(cons "-DWITH_OCC=ON"
               (cons "-DWITH_MECHANISMS=ON"
