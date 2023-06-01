@@ -288,7 +288,8 @@ Mechanics, and Computer Graphics.")
            "https://github.com/siconos/siconos/archive/"
            version ".tar.gz"))
      (sha256 (base32
-              "1gy15d8yzch0mmgy56mj9h22gbyh2k4m9y59q8p8dxy7aixqhfbv"))))
+              "1gy15d8yzch0mmgy56mj9h22gbyh2k4m9y59q8p8dxy7aixqhfbv"))
+     (patches '())))
    (native-inputs
     `(("swig", swig-3.0.12)
       ,@(alist-delete "swig" (package-native-inputs siconos))))
