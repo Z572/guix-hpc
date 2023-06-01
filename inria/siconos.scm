@@ -197,11 +197,13 @@ Mechanics, and Computer Graphics.")
        (patches (search-patches "inria/patches/siconos-cmake-ixx.patch"))))
     (build-system cmake-build-system)
     (arguments
-     `(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
+     `(#:configure-flags `("-DCMAKE_VERBOSE_MAKEFILE=ON"
                            "-DWITH_BULLET=ON"
                            "-DBULLET_USE_DOUBLE_PRECISION=ON"
                            "-DWITH_OCE=ON"
                            "-DWITH_FCLIB=ON"
+                           "-Dsiconos_python_install=prefix"
+                           ,(string-append "-DCMAKE_INSTALL_PREFIX=" (assoc-ref %outputs "out"))
                            "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
                            "-DWITH_SYSTEM_SUITESPARSE=ON")
        #:phases
