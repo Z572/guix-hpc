@@ -237,7 +237,8 @@ kernels are executed as efficiently as possible.")
     (arguments
      (substitute-keyword-arguments (package-arguments starpu)
        ((#:configure-flags flags '())
-        `(cons "--enable-simgrid" (cons "--enable-mpi" (cons "--disable-shared" ,flags))))))
+        `(append '("--enable-simgrid" "--enable-mpi" "--disable-shared")
+                 ,flags))))
     (inputs (modify-inputs (package-inputs starpu)
               (prepend simgrid fxt+static)))
     (propagated-inputs
