@@ -52,19 +52,20 @@
   #:use-module (gnu packages xiph)
   #:use-module (gnu packages game-development)
   #:use-module (gnu packages image-processing)
-  ;boost:
+  ;; boost:
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages shells)
-  ;vtk
+  ;; vtk
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages geo)
   #:use-module (gnu packages sqlite)
-  ; swig
+  ;; swig
   #:use-module (gnu packages guile)
   #:use-module (gnu packages pcre)
-  ; opencascade-oce
-  #:use-module (gnu packages tcl))
-
+  ;; opencascade-oce
+  #:use-module (gnu packages tcl)
+  ;; python-h5py
+  #:use-module (gnu packages pkg-config))
 
 (define-public fclib-3.0
   (package
@@ -310,10 +311,12 @@ Mechanics, and Computer Graphics.")
               "1gy15d8yzch0mmgy56mj9h22gbyh2k4m9y59q8p8dxy7aixqhfbv"))
      (patches (search-patches "inria/patches/siconos-4.2-cmake-ixx.patch"))))
    (native-inputs
-    `(("gfortran", gfortran-7)
-      ,@(alist-delete "gfortran"
-                      `(("swig", swig-3.0.12)
-                        ,@(alist-delete "swig" (package-native-inputs siconos))))))
+    `(("python-h5py" ,python-h5py-2)
+      ,@(alist-delete "python-h5py"
+      `(("gfortran", gfortran-7)
+        ,@(alist-delete "gfortran"
+                        `(("swig", swig-3.0.12)
+                          ,@(alist-delete "swig" (package-native-inputs siconos))))))))
    (propagated-inputs
     `(("boost" ,boost-1.68.0)
       ,@(alist-delete "boost" (package-propagated-inputs siconos))))
@@ -963,3 +966,51 @@ level packages (for parametric modeling, topology, data exchange,
 webservices, etc.) extend the builtin features of those libraries to
 enable highly dynamic and modular programming of any CAD application.")
     (license license:lgpl3)))
+
+;; needed for siconos@4.2
+(define-public python-h5py-2
+  (package
+    (name "python-h5py")
+    (version "2.10.0")
+    (source
+     (origin
+      (method url-fetch)
+      (uri (pypi-uri "h5py" version))
+      (sha256
+       (base32
+        "0baipzv8n93m0dq0riyi8rfhzrjrfrfh8zqhszzp1j2xjac2fhc4"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f ; no test target
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-hdf5-paths
+          (lambda* (#:key inputs #:allow-other-keys)
+            (let ((prefix (assoc-ref inputs "hdf5")))
+              (substitute* "setup_build.py"
+                (("\\['/opt/local/lib', '/usr/local/lib'\\]")
+                 (string-append "['" prefix "/lib" "']"))
+                (("'/opt/local/include', '/usr/local/include'")
+                 (string-append "'" prefix "/include" "'")))
+              (substitute* "setup_configure.py"
+                (("\\['/usr/local/lib', '/opt/local/lib'\\]")
+                 (string-append "['" prefix "/lib" "']")))
+              #t))))))
+    (propagated-inputs
+     `(("python-six" ,python-six)
+       ("python-numpy" ,python-numpy)))
+    (inputs
+     `(("hdf5" ,hdf5-1.10)))
+    (native-inputs
+     `(("python-cython" ,python-cython)
+       ("python-pkgconfig" ,python-pkgconfig)
+       ("pkg-config" ,pkg-config)))
+    (home-page "https://www.h5py.org/")
+    (synopsis "Read and write HDF5 files from Python")
+    (description
+     "The h5py package provides both a high- and low-level interface to the
+HDF5 library from Python.  The low-level interface is intended to be a
+complete wrapping of the HDF5 API, while the high-level component supports
+access to HDF5 files, datasets and groups using established Python and NumPy
+concepts.")
+    (license license:bsd-3)))
