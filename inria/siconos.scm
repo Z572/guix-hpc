@@ -197,12 +197,13 @@ Mechanics, and Computer Graphics.")
        (patches (search-patches "inria/patches/siconos-cmake-ixx.patch"))))
     (build-system cmake-build-system)
     (arguments
-     `(#:configure-flags `("-DCMAKE_VERBOSE_MAKEFILE=ON"
+     `(#:imported-modules ((guix build python-build-system)
+                           ,@%cmake-build-system-modules)
+       #:configure-flags `("-DCMAKE_VERBOSE_MAKEFILE=ON"
                            "-DWITH_BULLET=ON"
                            "-DBULLET_USE_DOUBLE_PRECISION=ON"
                            "-DWITH_OCE=ON"
                            "-DWITH_FCLIB=ON"
-                           "-Dsiconos_python_install=prefix"
                            ,(string-append "-DCMAKE_INSTALL_PREFIX=" (assoc-ref %outputs "out"))
                            "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
                            "-DWITH_SYSTEM_SUITESPARSE=ON")
@@ -217,7 +218,23 @@ Mechanics, and Computer Graphics.")
              (substitute* (string-append (assoc-ref outputs "out")
                                          "/bin/siconos_mechanisms")
                (("/usr/bin/env python") (which "python3")))
-             #t)))
+             #t))
+         ;;  setup.py fails with recents python/numpy
+         (add-after 'patch-mechanisms 'install-python-files
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let* ((python-version (@ (guix build python-build-system)
+                                       python-version))
+                    (out (assoc-ref outputs "out"))
+                    (version (python-version (assoc-ref inputs "python")))
+                    (pydir (string-append out "/lib/python"
+                                          version "/site-packages/")))
+               (chdir "./wrap")
+               (for-each (lambda (file)
+                           (let ((dirinst (string-append pydir "/" (dirname file))))
+                             (mkdir-p dirinst)
+                             (install-file file dirinst)))
+                         (find-files "siconos" "\\.py$"))
+               #t))))
        #:tests? #f))                              ;XXX: no "test" target
     (outputs '("out" "debug"))
     (native-inputs
@@ -313,7 +330,7 @@ Mechanics, and Computer Graphics.")
        `(cons "-DWITH_OCC=ON"
               (cons "-DWITH_MECHANISMS=ON"
                     (delete "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
-                            (delete "-DWITH_OCE=OFF" ,flags)))))))))
+                            (delete "-DWITH_OCE=ON" ,flags)))))))))
 
 (define-public siconos-4.4-rc2
   (package
