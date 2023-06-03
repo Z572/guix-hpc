@@ -311,15 +311,15 @@ Mechanics, and Computer Graphics.")
               "1gy15d8yzch0mmgy56mj9h22gbyh2k4m9y59q8p8dxy7aixqhfbv"))
      (patches (search-patches "inria/patches/siconos-4.2-cmake-ixx.patch"))))
    (native-inputs
-    `(("python-h5py" ,python-h5py-2)
-      ,@(alist-delete "python-h5py"
-      `(("gfortran", gfortran-7)
+    `(("gfortran", gfortran-7)
         ,@(alist-delete "gfortran"
                         `(("swig", swig-3.0.12)
-                          ,@(alist-delete "swig" (package-native-inputs siconos))))))))
+                          ,@(alist-delete "swig" (package-native-inputs siconos))))))
    (propagated-inputs
-    `(("boost" ,boost-1.68.0)
-      ,@(alist-delete "boost" (package-propagated-inputs siconos))))
+    `(("python-h5py" ,python-h5py-2)
+      ,@(alist-delete "python-h5py"
+                      `(("boost" ,boost-1.68.0)
+                        ,@(alist-delete "boost" (package-propagated-inputs siconos))))))
    (arguments
     (substitute-keyword-arguments (package-arguments siconos)
       ((#:phases phases)
