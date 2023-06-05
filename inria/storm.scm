@@ -156,7 +156,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.2)
     (name "starpu")
-    (version "1.3.10")
+    (version "1.3.11")
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -164,7 +164,7 @@ kernels are executed as efficiently as possible.")
                    (commit (string-append "starpu-" version))))
              (file-name (git-file-name name version))
              (sha256
-              (base32 "1id5r3krcab48vcwxbk4z5ywddv5a0s5vmncnh4v1sq6qbnkjlq7"))
+              (base32 "10fv6klmk4r6pvxmccmrkjscb3h0b5qzc7a3wlkim5g9gw8xcycr"))
              (patches (search-patches %patch-path))))
    (arguments
     (substitute-keyword-arguments (package-arguments starpu-1.2)
