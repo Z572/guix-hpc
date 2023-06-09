@@ -626,7 +626,7 @@ is implemented in MPI.")
                              lapackpp
                              pastix
                              mumps-openmpi
-                             arpack-ng-3.8
+                             arpack-ng-3.9
                              paddle
                              pt-scotch-6 ;; not clear why it must be here
                              fabulous
@@ -1372,10 +1372,10 @@ to/from all other processes.")
 (define-public python2-mpi4py
   (package-with-python2 python-mpi4py))
 
-(define-public arpack-ng-3.8
+(define-public arpack-ng-3.9
   (package
-   (name "arpack-ng-3.8")
-   (version "3.8.0")
+   (name "arpack-ng-3.9")
+   (version "3.9.0")
    (home-page "https://github.com/opencollab/arpack-ng")
    (source (origin
             (method git-fetch)
@@ -1383,7 +1383,7 @@ to/from all other processes.")
             (file-name (git-file-name name version))
             (sha256
              (base32
-              "0l7as5z6xvbxly8alam9s4kws70952qq35a6vkljzayi4b9gbklx"))))
+              "09smxilyn8v9xs3kpx3nlj2s7ql3v8z40mpc09kccbb6smyd35iv"))))
    (build-system cmake-build-system)
    (arguments
     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
