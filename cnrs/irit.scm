@@ -72,7 +72,7 @@
              ;; ("suitesparse" ,suitesparse) ;; for colamd; it would ideally be suitesparse:colamdonly
              ("wget" ,wget)
              ))
-   (propagated-inputs (list starpu))
+   (propagated-inputs (list starpu-1.3))
    (synopsis "Sparse QR direct solver (experimental package for distributed memroy version)")
    (description
     "qr_mumps is a software package for the solution of sparse, linear systems
