@@ -563,27 +563,6 @@ Block General Conjugate Residual with Inner Orthogonalization and with inexact b
 and deflated restarting")
      (license license:cecill-c)))
 
-
-(define-public fabulous-1.0.1
-  (package
-    (inherit fabulous)
-    (name "fabulous-1.0.1")
-    (version "1.0.1")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url (package-home-page fabulous))
-                    (commit "96b3922b981ccc1de4c13bc5341f380f1a72e900")
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (string-append name "-checkout"))
-              (sha256
-               (base32
-                "1nmhr50vhgj8jj4xsd1iswydl4yz1xm4kmyhkbdqvam2nfdjp1y2"))))
-     (description
-      "Library implementing Block-GMres with Inexact Breakdown and Deflated Restarting,
-Breakdown Free Block Conjudate Gradiant, Block General Conjugate Residual.")))
-
 (define maphys++-with-scotch7
   (package
     (name "maphys++-with-scotch7")
