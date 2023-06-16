@@ -20,7 +20,7 @@
 (define-public bitpit
   (package
     (name "bitpit")
-    (version "1.7.1")
+    (version "1.8.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -29,7 +29,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0vc5irb9p4792wnldbl0pz6j852fvscqq17szzhzd6xrkvn8k2ii"))))
+                "16iz6bb1wkly970vlin82bs6295j4qy2vwq098zqa0sh5ggiwxv4"))))
     (inputs
      (list libxml2 openblas))
     (propagated-inputs
