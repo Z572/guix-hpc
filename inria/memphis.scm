@@ -38,12 +38,12 @@
      (list pkg-config gfortran openssh))
     (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags `("-DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON"
-                           "-DBUILD_SHARED_LIBS=ON"
-                           "-DENABLE_MPI=ON"
-                           ,(string-append "-DPETSC_DIR="
-                                           (assoc-ref %build-inputs "petsc-openmpi")))
-       #:tests? #f))
+     (list #:configure-flags
+           #~`("-DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON"
+               "-DBUILD_SHARED_LIBS=ON" "-DENABLE_MPI=ON"
+               ,(string-append "-DPETSC_DIR="
+                               #$(this-package-input "petsc-openmpi")))
+           #:tests? #f))
     (home-page "http://optimad.github.io/bitpit/")
     (synopsis
      "C++ parallel library for structured and unstructured mesh handling.")
