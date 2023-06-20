@@ -118,15 +118,15 @@ computing) platforms.")
   (package
    (name "r-arrow-cpp")
    ;; The version of 'r-arrow-cpp' must match the version of the 'apache-arrow'
-   ;; dependency which is currently '10.0.0'!
-   (version "10.0.0")
+   ;; dependency.
+   (version "12.0.0")
    (source
     (origin
      (method url-fetch)
      (uri (cran-uri "arrow" version))
      (sha256
       (base32
-       "04qsj68zsqcwkv1ryp4l0is474siyi1b64dy41fr74ryj7mbamg8"))))
+       "1hv18ksaghifj4jjdy1cf2ic0rrgfi7jbjpzxb7v6r3bbshs9vwi"))))
    (properties `((upstream-name . "arrow")))
    (build-system r-build-system)
    (inputs

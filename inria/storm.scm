@@ -156,7 +156,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.2)
     (name "starpu")
-    (version "1.3.10")
+    (version "1.3.11")
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -164,7 +164,7 @@ kernels are executed as efficiently as possible.")
                    (commit (string-append "starpu-" version))))
              (file-name (git-file-name name version))
              (sha256
-              (base32 "1id5r3krcab48vcwxbk4z5ywddv5a0s5vmncnh4v1sq6qbnkjlq7"))
+              (base32 "10fv6klmk4r6pvxmccmrkjscb3h0b5qzc7a3wlkim5g9gw8xcycr"))
              (patches (search-patches %patch-path))))
    (arguments
     (substitute-keyword-arguments (package-arguments starpu-1.2)
@@ -182,10 +182,40 @@ kernels are executed as efficiently as possible.")
                                   `(,hwloc "lib") ;hwloc 2.x
                                   )))))
 
+(define-public starpu-1.4
+  (package
+    (inherit starpu-1.3)
+    (name "starpu")
+    (version "1.4.1")
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url %starpu-git)
+                   (commit (string-append "starpu-" version))))
+             (file-name (git-file-name name version))
+             (sha256
+              (base32 "1v7js4qshbr2yff8df2bq6sqqr34vvwjakx8fly8c4jjrj8mf0gg"))
+             (patches (search-patches %patch-path))))
+   (arguments
+    (substitute-keyword-arguments (package-arguments starpu-1.3)
+      ((#:configure-flags _ '())
+       (starpu-configure-flags this-package))
+      ((#:phases phases '())
+       (append phases '((add-after 'patch-source-shebangs 'fix-hardcoded-paths
+                          (lambda _
+                            (substitute* "min-dgels/base/make.inc"
+                              (("/bin/sh")  (which "sh")))
+                            #t)))))))
+   (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.3)
+                         (delete "openmpi-mpi1-compat" "hwloc")
+                         (prepend openmpi
+                                  `(,hwloc "lib") ;hwloc 2.x
+                                  )))))
+
 ; next release of StarPU will have an optional dependency on tadaam/mpi_sync_clocks: don't forget to add it !
 
 (define-public starpu
-  starpu-1.3)
+  starpu-1.4)
 
 (define-public starpu+fxt
   ;; When FxT support is enabled, performance is degraded, hence the separate
@@ -207,14 +237,8 @@ kernels are executed as efficiently as possible.")
     (arguments
      (substitute-keyword-arguments (package-arguments starpu)
        ((#:configure-flags flags '())
-        `(cons "--enable-simgrid" (cons "--enable-mpi" (cons "--disable-shared" ,flags))))
-       ((#:phases phases '%standard-phases)
-        `(modify-phases ,phases
-           (add-before 'check 'skip-faulty-test
-             (lambda _
-               ;; This test fails in 1.3.10; fixed in StarPU commit
-               ;; 99d29fb1777b0833e97ce422f34cb88224d34f09.
-               (setenv "XFAIL_TESTS" "scheduler/schedulers.sh")))))))
+        `(append '("--enable-simgrid" "--enable-mpi" "--disable-shared")
+                 ,flags))))
     (inputs (modify-inputs (package-inputs starpu)
               (prepend simgrid fxt+static)))
     (propagated-inputs

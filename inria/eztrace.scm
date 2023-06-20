@@ -1,11 +1,12 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2020 Inria
+;;; Copyright © 2017, 2019, 2020, 2023 Inria
 
 (define-module (inria eztrace)
   #:use-module (guix)
   #:use-module (guix git-download)
+  #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix packages) ; for guix style
   #:use-module ((guix licenses) #:prefix license:)
@@ -15,22 +16,23 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages profiling)
   #:use-module (gnu packages man)
   #:use-module (gnu packages mpi))
 
 (define-public eztrace
   (package
     (name "eztrace")
-    (version "1.1-10")
+    (version "2.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://gitlab.com/eztrace/eztrace")
-                    (commit (string-append "eztrace-" version))))
+                    (commit version)))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0m0gw183nka2z7mkski1zzphdyqggxgi0blrgml6dww3z3bqhlic"))
+                "0vqyrifpwc1hgph2i5gn02b3ckjj59h93xkrgp548s11kqsfgd4j"))
               ;; (modules '((guix build utils)))
 
               ;; Remove bundled libraries.
@@ -39,51 +41,44 @@
               ;; release (0.1.8), so we have to use it.
               ;; (snippet '(delete-file-recursively "extlib/litl"))
               ))
-    (build-system gnu-build-system)
+    (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags (list "LDFLAGS=-liberty" ;for bfd
-                               ;; (string-append "--with-litl="
-                               ;;                (assoc-ref %build-inputs
-                               ;;                           "litl"))
-                               (string-append "--with-mpi="
-                                              (assoc-ref %build-inputs
-                                                         "openmpi")))
+     (list #:out-of-source? #f                    ;test scripts expect it
+           #:configure-flags #~'("-DEZTRACE_ENABLE_OMPT=OFF" ;TODO: add ompt
+                                 "-DEZTRACE_ENABLE_MPI=ON"
+                                 "-DEZTRACE_ENABLE_OPENMP=ON")
 
-       #:phases (modify-phases %standard-phases
-                  (add-after 'unpack 'make-source-writable
-                    (lambda _
-                      ;; Make sure 'autoreconf' can write 'configure' files.
-                      (for-each make-file-writable
-                                (find-files "." "^configure$"))
-                      #t))
-                  (add-before 'configure 'ensure-ld-wrapper-is-first
-                    (lambda* (#:key inputs #:allow-other-keys)
-                      ;; Make sure the ld wrapper comes before the 'ld'
-                      ;; command of BINUTILS-2.33.
-                      (let ((ld-wrapper (assoc-ref inputs "ld-wrapper")))
-                        (setenv "PATH"
-                                (string-append ld-wrapper "/bin:"
-                                               (getenv "PATH")))
-                        #t)))
-                  (add-before 'bootstrap 'patch-build-tool-shebangs
-                    (lambda _
-                      ;; These scripts are executed from 'autoreconf'.
-                      (for-each patch-shebang
-                                (find-files "." "\\.sh$"))
-                      #t)))
+           ;; XXX: The test suite requires ompt support, which is currently missing.
+           #:tests? #f
 
-       ;; FIXME: There are test failures in bundled libraries.
-       #:tests? #f))
-    (native-inputs
-     (list autoconf automake libtool))
-    (inputs (list litl
+           #:phases #~(modify-phases %standard-phases
+                        (add-after 'unpack 'patch-more-shebangs
+                          (lambda _
+                            (patch-shebang "test/run")))
+                        (delete 'check)
+                        (add-after 'install 'post-install
+                          (lambda _
+                            ;; 'make test' expects 'eztrace' to be in $PATH,
+                            ;; so install run 'make install' first.
+                            (setenv "PATH"
+                                    (string-append #$output "/bin:"
+                                                   (getenv "PATH")))))
+                        (add-after 'post-install 'check
+                          (assoc-ref %standard-phases 'check)))))
+    (inputs (list otf2
                   gfortran
-                  libiberty ;for bfd
-                  zlib ;for bfd
+                  opari2                          ;for OpenMP support
 
-                  ;; Pptrace needs 'bfd_get_section', which is no longer
-                  ;; available in Binutils 2.34.
-                  binutils-2.33
+                  ;; XXX: The dependencies below are needed for pptrace, but
+                  ;; that code now fails to build due to '-gdwarf-5' being
+                  ;; unrecognized by GCC 11.
+
+                  ;; libiberty ;for bfd
+                  ;; zlib ;for bfd
+
+                  ;; ;; Pptrace needs 'bfd_get_section', which is no longer
+                  ;; ;; available in Binutils 2.34.
+                  ;; binutils-2.33
 
                   openmpi))
     (synopsis "Collect program execution traces")

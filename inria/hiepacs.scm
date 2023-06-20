@@ -173,7 +173,7 @@ area (CPUs-GPUs, distributed nodes).")
                                               (setenv "HOME" (getcwd))
                                               #t)))))
     (inputs (list openblas))
-    (propagated-inputs (list starpu openmpi))
+    (propagated-inputs (list starpu-1.3 openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
 
 (define-public chameleon+simgrid+nosmpi
@@ -239,7 +239,7 @@ area (CPUs-GPUs, distributed nodes).")
                                    `(cons "-DCHAMELEON_SCHED=OPENMP" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
-      (delete "starpu" "openmpi")))))
+      (delete "starpu-1.3" "openmpi")))))
 
 (define-public chameleon+quark
   (package
@@ -252,7 +252,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend quark)
-      (delete "starpu" "openmpi")))))
+      (delete "starpu-1.3" "openmpi")))))
 
 (define-public chameleon+parsec
   (package
@@ -265,7 +265,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend parsec)
-      (delete "starpu" "openmpi")))))
+      (delete "starpu-1.3" "openmpi")))))
 
 (define-public mini-chameleon
   (package
@@ -321,6 +321,30 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
               (sha256
                (base32
                 "1f8mcg4hcj45cyknb8v5jxba9qzkhimdl6rihf053la30jk72cvd"))))))
+
+(define-public starpu-example-stencil
+  (package
+    (inherit mini-chameleon)
+    (name "starpu-example-stencil")
+    (version "0.1.0")
+    (home-page "https://gitlab.inria.fr/solverstack/mini-examples/starpu_example_stencil/")
+    (synopsis "StarPU example of a distributed regular 2D stencil")
+    (description
+     "Example showing how to use starpu to implement a distributed regular 2D stencil with communication-avoiding techniques")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "583dbc00582dbd65b43edc35b9406b07e40789d3")
+                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
+                    (recursive? #t)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		;;guix hash -x -r .
+                "0gfw2s2yn69bjf11s9v6bpdgpwi9c0wi3kb5dw0h9mfjpd0l22p2"
+		))))))
 
 (define-public starpu-example-cppgemm
   (package
@@ -539,31 +563,10 @@ Block General Conjugate Residual with Inner Orthogonalization and with inexact b
 and deflated restarting")
      (license license:cecill-c)))
 
-
-(define-public fabulous-1.0.1
-  (package
-    (inherit fabulous)
-    (name "fabulous-1.0.1")
-    (version "1.0.1")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url (package-home-page fabulous))
-                    (commit "96b3922b981ccc1de4c13bc5341f380f1a72e900")
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (string-append name "-checkout"))
-              (sha256
-               (base32
-                "1nmhr50vhgj8jj4xsd1iswydl4yz1xm4kmyhkbdqvam2nfdjp1y2"))))
-     (description
-      "Library implementing Block-GMres with Inexact Breakdown and Deflated Restarting,
-Breakdown Free Block Conjudate Gradiant, Block General Conjugate Residual.")))
-
 (define maphys++-with-scotch7
   (package
     (name "maphys++-with-scotch7")
-    (version "1.1.7")
+    (version "1.1.8")
     (home-page "https://gitlab.inria.fr/solverstack/maphys/maphyspp.git")
     (synopsis "Sparse matrix hybrid solver")
     (description
@@ -579,13 +582,13 @@ is implemented in MPI.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "68f80bcbbf0e67a764e5cc78ac409f8f5da689b4")
+                    (commit "03558fbfa85b41582bfe30e37d5b3220c37f9863")
                     ;; We need the submodule in 'cmake_modules/morse_cmake'.
                     (recursive? #t)))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1fc59b7nhqyf7gaciq0vc8cp1pqybjh2b7z7fdnphbgcyrw6srqm"))))
+                "1gbb26v92bis487kg4pl47jzhrqls16x834yn9n4bd99yd7clb8b"))))
     (arguments
      '(#:configure-flags '("-DMAPHYSPP_USE_EIGEN=OFF"
                            "-DMAPHYSPP_USE_FABULOUS=ON"
@@ -602,7 +605,7 @@ is implemented in MPI.")
                              lapackpp
                              pastix
                              mumps-openmpi
-                             arpack-ng-3.8
+                             arpack-ng-3.9
                              paddle
                              pt-scotch-6 ;; not clear why it must be here
                              fabulous
@@ -673,22 +676,6 @@ is implemented in MPI.")
                                                           (cons "-DMAPHYSPP_USE_RSB_SPBLAS=ON" ,flags)))))
                    (inputs `(("librsb" ,librsb)
                              ,@(package-inputs maphys++)))))
-
-(define-public maphys++-eigen
-  ;; Variant of Maphys++ that uses Eigen instead of blaspp/lapackpp.
-  ;; FIXME: Currently fails to build (blaspp is required at configure time).
-  (package/inherit maphys++
-    (name "maphys++-eigen")
-    (arguments
-     (substitute-keyword-arguments (package-arguments maphys++)
-       ((#:configure-flags flags)
-        ''("-DMAPHYSPP_USE_EIGEN=ON"
-           "-DMAPHYSPP_USE_FABULOUS=ON"
-           "-DMAPHYSPP_USE_PADDLE=ON"))))
-    (inputs
-     `(("eigen" ,eigen)
-       ,@(fold alist-delete (package-inputs maphys++)
-               '("blaspp" "lapackpp"))))))
 
 (define-public blaspp
   (package
@@ -1364,10 +1351,10 @@ to/from all other processes.")
 (define-public python2-mpi4py
   (package-with-python2 python-mpi4py))
 
-(define-public arpack-ng-3.8
+(define-public arpack-ng-3.9
   (package
-   (name "arpack-ng-3.8")
-   (version "3.8.0")
+   (name "arpack-ng-3.9")
+   (version "3.9.0")
    (home-page "https://github.com/opencollab/arpack-ng")
    (source (origin
             (method git-fetch)
@@ -1375,7 +1362,7 @@ to/from all other processes.")
             (file-name (git-file-name name version))
             (sha256
              (base32
-              "0l7as5z6xvbxly8alam9s4kws70952qq35a6vkljzayi4b9gbklx"))))
+              "09smxilyn8v9xs3kpx3nlj2s7ql3v8z40mpc09kccbb6smyd35iv"))))
    (build-system cmake-build-system)
    (arguments
     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
