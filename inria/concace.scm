@@ -26,7 +26,7 @@
   #:use-module (gnu packages tex)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
-  #:use-module (hacky gitlab)
+;;  #:use-module (hacky gitlab)
   #:use-module (inria hiepacs)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
@@ -69,7 +69,7 @@
            emacs-org-ref
            gawk
            git
-           gitlab-runner
+           ;; gitlab-runner
            grep
            gzip
            imagemagick
