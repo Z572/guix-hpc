@@ -89,7 +89,7 @@
       (inputs (list openmpi
                     openblas
                     openssh
-                    starpu
+                    starpu-1.3
                     chameleon
                     hmat-oss))
       (synopsis
