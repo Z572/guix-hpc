@@ -36,10 +36,30 @@
   #:use-module (srfi srfi-1)
   )
 
+(define-public emacs-ob-compose-latexpicture
+  (package
+   (name "emacs-ob-compose-latexpicture")
+    (version "0.1")
+    (home-page "https://gitlab.inria.fr/compose/include/compose-ob-latexpicture")
+    (synopsis "Tentative portable (latex and html) usage of vector pictures for org-mode.")
+    (description
+     "Tentative portable (latex and html) usage of vector pictures for org-mode.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
+    (build-system emacs-build-system)))
+
 (define-public emacs-org-compose-publish
   (package
    (name "emacs-org-compose-publish")
-    (version "0.1.")
+    (version "0.1")
     (home-page "https://gitlab.inria.fr/compose/include/compose-publish")
     (synopsis "compose-publish emacs org-mode extension")
     (description
