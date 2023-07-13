@@ -54,7 +54,8 @@
               (sha256
                (base32
                 "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
-    (build-system emacs-build-system)))
+    (build-system emacs-build-system)
+    (propagated-inputs (list emacs-org)))
 
 (define-public emacs-org-compose-publish
   (package
