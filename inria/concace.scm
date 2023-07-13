@@ -13,16 +13,21 @@
 ;;  #:use-module (guix ubild-system texlive)
   #:use-module (gnu packages)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages gawk)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
+  #:use-module (gnu packages maths)
+  #:use-module (gnu packages mpi)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages ssh)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
@@ -55,7 +60,7 @@
                (base32
                 "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
     (build-system emacs-build-system)
-    (propagated-inputs (list emacs-org)))
+    (propagated-inputs (list emacs-org))))
 
 (define-public emacs-org-compose-publish
   (package
@@ -105,4 +110,33 @@
            wget
            biber))))
 
-
+(define-public laplacian-example
+  (package
+    (name "laplacian-example")
+    (version "1.0.0")
+    (home-page "https://gitlab.inria.fr/agullo/laplacian-example")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "8417d5da6eec9a93c7fb884be7ae5d519926c236")
+                    ;; We need the submodule in 'cmake_modules/morse'.
+                    (recursive? #t)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "1cs1fifpqqva37n1qqq05h6vmliy25xhjg8dr9zlv60zpibac5r1"))))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:configure-flags '("-DLAPLACIAN_USE_MPI=OFF"
+                           "-DLAPLACIAN_BUILD_EXAMPLES=ON"
+                           )
+       #:tests? #f))
+    (inputs (list  openmpi
+                  openssh
+                  openblas))
+    (native-inputs (list gfortran pkg-config))
+    (synopsis "Example of solving a Laplacian problem in Fortran")
+    (description
+     "LAPLACIAN is an example of a Laplacian problem. The code is written in Fortran 90.")
+    (license license:cecill-c)))
