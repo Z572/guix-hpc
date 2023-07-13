@@ -25,6 +25,7 @@
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
+  #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages ssh)
@@ -119,13 +120,13 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "8417d5da6eec9a93c7fb884be7ae5d519926c236")
+                    (commit "83b34c4d95b7987369e2e74e6f69066d45310e3b")
                     ;; We need the submodule in 'cmake_modules/morse'.
                     (recursive? #t)))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1cs1fifpqqva37n1qqq05h6vmliy25xhjg8dr9zlv60zpibac5r1"))))
+                "1xppa4bf2rlbf3c3s2hwiw5sqnlkn6c4dgngd0v6fd8p81w5q1s3"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DLAPLACIAN_USE_MPI=OFF"
