@@ -123,7 +123,7 @@ of the available resources.")
 (define-public chameleon
   (package
     (name "chameleon")
-    (version "1.1.0")
+    (version "1.2.0")
     (home-page "https://gitlab.inria.fr/solverstack/chameleon")
     (synopsis "Dense linear algebra solver")
     (description
@@ -139,13 +139,13 @@ area (CPUs-GPUs, distributed nodes).")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "4db899ca30d29927018d83964b9b6d517269abe1")
+                    (commit "v1.2.0")
                     ;; We need the submodule in 'CMakeModules/morse_cmake'.
                     (recursive? #t)))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0mpnacmkn1287c003a6n3c4r0n395l6fnjilzi7z53lb34s8kaap"))))
+                "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
@@ -173,7 +173,7 @@ area (CPUs-GPUs, distributed nodes).")
                                               (setenv "HOME" (getcwd))
                                               #t)))))
     (inputs (list openblas))
-    (propagated-inputs (list starpu-1.3 openmpi))
+    (propagated-inputs (list starpu openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
 
 (define-public chameleon+simgrid+nosmpi
@@ -239,7 +239,7 @@ area (CPUs-GPUs, distributed nodes).")
                                    `(cons "-DCHAMELEON_SCHED=OPENMP" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
-      (delete "starpu-1.3" "openmpi")))))
+      (delete "starpu" "openmpi")))))
 
 (define-public chameleon+quark
   (package
@@ -252,7 +252,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend quark)
-      (delete "starpu-1.3" "openmpi")))))
+      (delete "starpu" "openmpi")))))
 
 (define-public chameleon+parsec
   (package
@@ -265,7 +265,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend parsec)
-      (delete "starpu-1.3" "openmpi")))))
+      (delete "starpu" "openmpi")))))
 
 (define-public mini-chameleon
   (package
