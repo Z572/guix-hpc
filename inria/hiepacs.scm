@@ -1283,52 +1283,53 @@ this limitation.")
 
 (define-public scalable-python
   (package
-   (inherit python-2.7)
-   (name "scalable-python")
-   (version "2.7.13")
-   (home-page "https://github.com/CSCfi/scalable-python.git")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")
-                  ))
-            (patches (search-patches
-                      "inria/patches/scalable-python.patch"
-                      "python-2.7-search-paths.patch"
-                      "python-2-deterministic-build-info.patch"
-                      "python-2.7-site-prefixes.patch"
-                      ))
-            (sha256
-             (base32
-              "0ivxsf17x7vjxr5h4g20rb5i3k705vgd502ma024z95fnyzd0bqi"))))
-   (arguments
-    (substitute-keyword-arguments (package-arguments python-2.7)
-                                  ((#:phases phases)
-                                   `(modify-phases ,phases
-                                                   (add-before 'configure 'permissions_gramfiles
-                                                               (lambda _
-                                                                 (chmod "Python/graminit.c" #o764)
-                                                                 (chmod "Include/graminit.h" #o764) #t))
-                                                   (add-before 'build 'fix_makefile
-                                                               (lambda _
-                                                                 (chmod "Python/graminit.c" #o764)
-                                                                 (chmod "Include/graminit.h" #o764) #t))
-                                                   (replace 'move-tk-inter (lambda _ #t)) ;; Not sure what this is anyway
-                                                   ))
-                                  ((#:configure-flags flags '())
-                                   `(cons "--enable-mpi" (cons "--without-ensurepip" (delete "--with-ensurepip=install",flags))))
-                                  ((#:make-flags makeflags '())
-                                   `(cons "mpi" (cons "install" (cons "install-mpi",makeflags))))
-                                  ((#:tests? runtests '())
-                                   #f)
-                                  ))
-   (description
-    "Modified python 2.7.13. Scalable Python performs the I/O operations used
+    (inherit python-2.7)
+    (name "scalable-python")
+    (version "2.7.13")
+    (home-page "https://github.com/CSCfi/scalable-python.git")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")))
+              (patches (search-patches "inria/patches/scalable-python.patch"
+                                       "python-2.7-search-paths.patch"
+                                       "python-2-deterministic-build-info.patch"
+                                       "python-2.7-site-prefixes.patch"))
+              (sha256
+               (base32
+                "0ivxsf17x7vjxr5h4g20rb5i3k705vgd502ma024z95fnyzd0bqi"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments python-2.7)
+       ((#:phases phases)
+        #~(modify-phases #$phases
+            (add-before 'configure 'permissions_gramfiles
+              (lambda _
+                (chmod "Python/graminit.c" #o764)
+                (chmod "Include/graminit.h" #o764) #t))
+            (add-before 'build 'fix_makefile
+              (lambda _
+                (chmod "Python/graminit.c" #o764)
+                (chmod "Include/graminit.h" #o764) #t))
+            (replace 'move-tk-inter
+              (lambda _
+                #t))))                          ;not sure what this is anyway
+       ((#:configure-flags flags #~())
+        #~(cons "--enable-mpi"
+                (cons "--without-ensurepip"
+                      (delete "--with-ensurepip=install"
+                              #$flags))))
+       ((#:make-flags makeflags #~())
+        #~(cons "mpi"
+                (cons "install"
+                      (cons "install-mpi" #$makeflags))))
+       ((#:tests? runtests '())
+        #f)))
+    (description
+     "Modified python 2.7.13. Scalable Python performs the I/O operations used
 e.g. by import statements in a single process and uses MPI to transmit data
 to/from all other processes.")
-   (propagated-inputs (list openmpi))
-   ))
+    (propagated-inputs (list openmpi))))
 
 ;; Fix python2-sympy
 (define-public fixed-python2-sympy
