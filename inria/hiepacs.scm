@@ -1306,30 +1306,25 @@ this limitation.")
             (add-before 'configure 'permissions_gramfiles
               (lambda _
                 (chmod "Python/graminit.c" #o764)
-                (chmod "Include/graminit.h" #o764) #t))
+                (chmod "Include/graminit.h" #o764)))
             (add-before 'build 'fix_makefile
               (lambda _
                 (chmod "Python/graminit.c" #o764)
-                (chmod "Include/graminit.h" #o764) #t))
-            (replace 'move-tk-inter
-              (lambda _
-                #t))))                          ;not sure what this is anyway
+                (chmod "Include/graminit.h" #o764)))
+            (delete 'move-tk-inter)))           ;not sure what this is anyway
        ((#:configure-flags flags #~())
-        #~(cons "--enable-mpi"
-                (cons "--without-ensurepip"
-                      (delete "--with-ensurepip=install"
-                              #$flags))))
+        #~(append (list "--enable-mpi" "--without-ensurepip")
+                  (delete "--with-ensurepip=install" #$flags)))
        ((#:make-flags makeflags #~())
-        #~(cons "mpi"
-                (cons "install"
-                      (cons "install-mpi" #$makeflags))))
-       ((#:tests? runtests '())
-        #f)))
+        #~(append (list "mpi" "install" "install-mpi")
+                  #$makeflags))
+       ((#:tests? _ #t)
+        #f)))                                     ;disable tests
+    (propagated-inputs (list openmpi))
     (description
      "Modified python 2.7.13. Scalable Python performs the I/O operations used
 e.g. by import statements in a single process and uses MPI to transmit data
-to/from all other processes.")
-    (propagated-inputs (list openmpi))))
+to/from all other processes.")))
 
 ;; Fix python2-sympy
 (define-public fixed-python2-sympy
