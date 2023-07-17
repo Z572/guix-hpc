@@ -20,6 +20,7 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages python)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages check)
   #:use-module (inria tadaam)
   #:use-module (inria eztrace)
   #:use-module (inria mpi)
@@ -249,48 +250,29 @@ kernels are executed as efficiently as possible.")
      (modify-inputs (package-native-inputs starpu)
        (prepend python-wrapper)))))
 
-(define-public parcoach-1.2
+(define-public parcoach
   (package
     (name "parcoach")
-    (version "1.2")
+    (version "2.3.0")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url "https://github.com/parcoach/parcoach")
-             (commit (string-append "v" version))))
+             (commit version)))
        (file-name (git-file-name name version))
+       (patches
+        (list (local-file "patches/parcoach-unbundle-googletest.patch")))
        (sha256
         (base32
-         "14l90xddz8qx6jp7dkvys1k8mdg2dp5jwg62y94y8i7yx0qi4pxi"))))
+         "169gpaaxr5i1wqidll70dkp7b9avycc96a2ysx5hnlqhhzsdwsf5"))))
     (build-system cmake-build-system)
     (native-inputs
-     (list clang-9 clang-toolchain-9 python-3))
+     (list clang-toolchain-15 python python-lit))
     (inputs
-     (list llvm-9 openmpi))
+     (list llvm-15 openmpi googletest))
     (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (add-before 'install 'substitute-script
-           (lambda* (#:key source inputs outputs #:allow-other-keys)
-             (let ((out  (assoc-ref outputs "out"))
-                   (llvm (assoc-ref inputs "llvm")))
-               (copy-file (string-append source "/src/aSSA/parcoach.in")
-                          "parcoach.in")
-               (substitute* "parcoach.in"
-                 (("@LLVM_TOOLS_BINARY_DIR@")
-                  (string-append llvm "/bin")))
-               (substitute* "parcoach.in"
-                 (("@PARCOACH_LIB@")
-                  (string-append out "/lib/aSSA.so"))))))
-         (add-after 'install 'install-script
-           (lambda* (#:key outputs #:allow-other-keys)
-             (let* ((out      (assoc-ref outputs "out"))
-                    (out-bin  (string-append out "/bin"))
-                    (parcoach (string-append out-bin "/parcoach")))
-               (mkdir out-bin)
-               (copy-file "parcoach.in" parcoach)))))))
+     `(#:tests? #f))
     (synopsis "Analysis tool for errors detection in parallel
 applications")
     (description "PARCOACH is an Open-source software dedicated to the
@@ -298,5 +280,3 @@ collective errors detection in parallel applications.")
     (home-page "https://parcoach.github.io/")
     (license lgpl2.1)))
 
-(define-public parcoach
-  parcoach-1.2)
