@@ -253,7 +253,7 @@ kernels are executed as efficiently as possible.")
 (define-public parcoach
   (package
     (name "parcoach")
-    (version "2.3.0")
+    (version "2.3.1")
     (source
      (origin
        (method git-fetch)
@@ -261,22 +261,24 @@ kernels are executed as efficiently as possible.")
              (url "https://github.com/parcoach/parcoach")
              (commit version)))
        (file-name (git-file-name name version))
-       (patches
-        (list (local-file "patches/parcoach-unbundle-googletest.patch")))
        (sha256
         (base32
-         "169gpaaxr5i1wqidll70dkp7b9avycc96a2ysx5hnlqhhzsdwsf5"))))
+         "0pp5d0ay6w449a9dnjm9akynk8chrvqgpznmabs1ds6dbfipyhal"))))
     (build-system cmake-build-system)
     (native-inputs
-     (list clang-toolchain-15 python python-lit))
+     (list clang-toolchain-15 python python-lit googletest))
     (inputs
-     (list llvm-15 openmpi googletest))
-    (arguments
-     `(#:tests? #f))
+     (list llvm-15 openmpi))
     (synopsis "Analysis tool for errors detection in parallel
 applications")
     (description "PARCOACH is an Open-source software dedicated to the
 collective errors detection in parallel applications.")
     (home-page "https://parcoach.github.io/")
+    (arguments
+      `(#:build-type "Release"
+        #:test-target "run-lit"
+        #:phases (modify-phases %standard-phases
+                   (add-before 'check 'mpi-setup
+                     ,%openmpi-setup))))
     (license lgpl2.1)))
 
