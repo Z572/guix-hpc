@@ -23,6 +23,7 @@
   #:use-module (gnu packages check)
   #:use-module (inria tadaam)
   #:use-module (inria eztrace)
+  #:use-module (inria llvm)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
   #:use-module (srfi srfi-1)
@@ -253,7 +254,7 @@ kernels are executed as efficiently as possible.")
 (define-public parcoach
   (package
     (name "parcoach")
-    (version "2.3.1")
+    (version "2.4.0")
     (source
      (origin
        (method git-fetch)
@@ -263,10 +264,10 @@ kernels are executed as efficiently as possible.")
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "0pp5d0ay6w449a9dnjm9akynk8chrvqgpznmabs1ds6dbfipyhal"))))
+         "0w3cgk6lk6h57jlqsbhmqkc9d2a4lnk3xh4ifix29v4l91d9bz5c"))))
     (build-system cmake-build-system)
     (native-inputs
-     (list clang-toolchain-15 python python-lit googletest))
+     (list clang-toolchain-15 python python-lit googletest flang-15))
     (inputs
      (list llvm-15 openmpi))
     (synopsis "Analysis tool for errors detection in parallel
@@ -276,6 +277,10 @@ collective errors detection in parallel applications.")
     (home-page "https://parcoach.github.io/")
     (arguments
       `(#:build-type "Release"
+        #:configure-flags '("-DPARCOACH_ENABLE_FORTRAN=ON"
+                            "-DCMAKE_Fortran_COMPILER=flang-new"
+                            "-DCMAKE_Fortran_FLAGS=-flang-experimental-exec"
+                            "-DPARCOACH_VERSION_SUFFIX=''")
         #:test-target "run-lit"
         #:phases (modify-phases %standard-phases
                    (add-before 'check 'mpi-setup
