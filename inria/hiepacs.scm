@@ -743,19 +743,19 @@ etc.")
 (define-public pastix-6
   (package
     (name "pastix")
-    (version "6.2.2")
+    (version "6.3.0")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "6e35c2ba179013b058f5d4e1afd4b451953149c6")
+                    (commit "ee20a7ded080bf6b48e11cc3229feba89507c68c")
                     ;; We need the submodule in 'cmake_modules/morse'.
                     (recursive? #t)))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0bv2lsbkwjbmz4knm08g6sds4irk0g1bm9m0h1scab0yxx2izcka"))))
+                "02v0cx3n3vkrfg8gh8h037fb6kra40wxyxaavg783751jzd3z74h"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
