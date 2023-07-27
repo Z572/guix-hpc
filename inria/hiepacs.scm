@@ -143,6 +143,7 @@ area (CPUs-GPUs, distributed nodes).")
                     ;; We need the submodule in 'CMakeModules/morse_cmake'.
                     (recursive? #t)))
               (file-name (string-append name "-" version "-checkout"))
+              (patches (search-patches "inria/patches/chameleon-cpp.patch"))
               (sha256
                (base32
                 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
