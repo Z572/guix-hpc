@@ -603,7 +603,7 @@ is implemented in MPI.")
     (build-system cmake-build-system)
     (propagated-inputs (list blaspp
                              lapackpp
-                             pastix
+                             pastix-6.2
                              mumps-openmpi
                              arpack-ng-3.9
                              paddle
@@ -832,7 +832,7 @@ memory footprint and/or the time-to-solution.")
 
 (define-public pastix-6.0.3
   (package
-    (name "pastix")
+    (name "pastix-6.0.3")
     (version "6.0.3")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
     (source (origin
@@ -930,16 +930,30 @@ memory footprint and/or the time-to-solution.")
              ("parsec" ,parsec)
              ,@(package-inputs pastix-6)))))
 
+(define-public pastix-6.2
+  (package
+    (inherit pastix-6)
+    (name "pastix-6.2")
+    (version "2.2")
+  (source
+   (origin
+    (method url-fetch)
+    (uri
+     "https://files.inria.fr/pastix/releases/v6/pastix-6.2.2.tar.gz")
+    (sha256
+     (base32
+      "0275xmyv72ixn1pqqhalwb1ss3h4ggvm4nhskwy77dbq8vza3sfc"))))))
+
 (define-public pastix-5
   (package
   (name "pastix-5")
-  (version "5.2.3")
+  (version "2.3")
   (home-page "https://gitlab.inria.fr/solverstack/pastix")
   (source
    (origin
     (method url-fetch)
     (uri
-     "https://gforge.inria.fr/frs/download.php/file/36212/pastix_5.2.3.tar.bz2")
+     "https://files.inria.fr/pastix/releases/v5/pastix_5.2.3.tar.bz2")
     (sha256
      (base32
       "0iqyxr5lzjpavmxzrjj4kwayq62nip3ssjcm80d20zk0n3k7h6b4"))))
