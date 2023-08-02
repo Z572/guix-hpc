@@ -120,6 +120,41 @@ of the available resources.")
       (propagated-inputs (list `(,hwloc "lib")))
       (native-inputs (list gfortran)))))
 
+(define-public dplasma
+  (package
+    (name "dplasma")
+    (version "20230802")
+    (home-page "https://github.com/ICLDisco/dplasma")
+    (synopsis "Dense linear algebra package for distributed, accelerated, heterogeneous systems.")
+    (description
+     "DPLASMA is the leading implementation of a dense linear algebra package
+for distributed, accelerated, heterogeneous systems. It is designed to deliver
+sustained performance for distributed systems where each node featuring
+multiple sockets of multicore processors, and if available, accelerators like
+GPUs or Intel Xeon Phi. DPLASMA achieves this objective through the state of
+the art PaRSEC runtime, porting the Parallel Linear Algebra Software for
+Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
+    (license license:bsd-3)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "45831f1862f977ac5cc485887c77f6f207ebda2b")
+                    (recursive? #t)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "058zc4xg7mfvgyg9yhsa0n4xdl725a86nh0i0dg5s2libinvgi4y"))))
+    (build-system cmake-build-system)
+    (outputs '("debug" "out"))
+    (arguments
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
+			   "-DDPLASMA_INSTALL_TESTS=ON")
+       #:tests? #f))
+    (inputs (list openblas))
+    (propagated-inputs (list `(,hwloc "lib")  openmpi))
+    (native-inputs (list flex bison openssh gfortran pkg-config python))))
+
 (define-public chameleon
   (package
     (name "chameleon")
