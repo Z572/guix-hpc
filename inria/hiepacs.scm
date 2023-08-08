@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2021, 2022 Inria
+;;; Copyright © 2017, 2019, 2021, 2022, 2023 Inria
 
 (define-module (inria hiepacs)
   #:use-module (guix)
@@ -868,7 +868,7 @@ memory footprint and/or the time-to-solution.")
 
 (define-public pastix-6.0.3
   (package
-    (name "pastix-6.0.3")
+    (name "pastix")
     (version "6.0.3")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
     (source (origin
@@ -969,8 +969,8 @@ memory footprint and/or the time-to-solution.")
 (define-public pastix-6.2
   (package
     (inherit pastix-6)
-    (name "pastix-6.2")
-    (version "2.2")
+    (name "pastix")
+    (version "6.2.2")
   (source
    (origin
     (method url-fetch)
@@ -982,8 +982,8 @@ memory footprint and/or the time-to-solution.")
 
 (define-public pastix-5
   (package
-  (name "pastix-5")
-  (version "2.3")
+  (name "pastix")
+  (version "5.2.3")
   (home-page "https://gitlab.inria.fr/solverstack/pastix")
   (source
    (origin
