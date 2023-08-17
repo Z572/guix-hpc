@@ -10,7 +10,6 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system emacs)
   #:use-module (guix build-system gnu)
-;;  #:use-module (guix ubild-system texlive)
   #:use-module (gnu packages)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages algebra)
@@ -30,6 +29,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tex)
+  #:use-module (gnu packages texlive)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
 ;;  #:use-module (hacky gitlab)
@@ -109,7 +109,7 @@
            tree
            which
            wget
-           biber))))
+           texlive-biber))))
 
 (define-public laplacian-example
   (package
