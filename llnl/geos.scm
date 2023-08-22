@@ -12,6 +12,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system copy)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
@@ -135,4 +136,41 @@ Testing large-scale high performance computing (HPC) application.")
 provides an intuitive model for describing hierarchical scientific data in
 C++, C, Fortran, and Python.  It is used for data coupling between packages
 in-core, serialization, and I/O tasks.")
+    (license license:bsd-3)))
+
+(define-public silo
+  (package
+    (name "silo")
+    (version "4.11")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/LLNL/Silo/releases/download/v"
+                    version "/silo-" version "-bsd.tar.gz"))
+              (patches (list (local-file "silo-fix-build.patch")))
+              (sha256
+               (base32
+                "1v649dpx2i5j1k381ryy5s2n9k7x9kybbv44036cv3ylg6h8a2kd"))))
+    (build-system gnu-build-system)
+    (native-inputs (list which))
+    (inputs (list hdf5-geosx blt openmpi))
+    (arguments
+     (list #:configure-flags #~`("LIBS=-ldl" "--disable-silex"
+                                 "--disable-fortran"
+                                 "--enable-optimization"
+                                 "--enable-shared=yes"
+                                 "--enable-static=no"
+                                 ,(string-append "--with-hdf5="
+                                                 #$(this-package-input "hdf5")
+                                                 "/include,"
+                                                 #$(this-package-input "hdf5")
+                                                 "/lib"))
+           #:tests? #f))                          ;XXX: tests fail to build
+    (home-page "https://llnl.github.io/Silo")
+    (synopsis "Mesh and field I/O library and scientific database")
+    (description
+     "Silo is a library for reading and writing a wide variety of scientific data
+to binary, disk files.  The files Silo produces and the data within them can
+be easily shared and exchanged between wholly independently developed
+applications running on disparate computing platforms.")
     (license license:bsd-3)))
