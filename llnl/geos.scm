@@ -9,6 +9,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix build-system cmake)
   #:use-module (guix build-system copy)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages compression)
@@ -85,3 +86,53 @@ Testing large-scale high performance computing (HPC) application.")
        #:configure-flags '("--enable-build-mode=production"
                            "--enable-shared=yes" "--enable-parallel")
        #:make-flags (list "CFLAGS=-fPIC -O2 -g" "CXXFLAGS=-fPIC -O2 -g")))))
+
+(define-public conduit
+  (package
+    (name "conduit")
+    (version "0.8.2")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference (url "https://github.com/LLNL/conduit")
+                                  (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0pls45gcaz781q1v1xypzxnwpwb8sg9fffl6m081dlsv3gca7dx4"))))
+    (build-system cmake-build-system)
+    (inputs (list hdf5-geosx blt))
+    (arguments
+     (list #:configure-flags #~`("-DENABLE_DOCS=OFF" "-DENABLE_EXAMPLES=OFF"
+                                 "-DENABLE_FORTRAN=OFF"
+                                 "-DENABLE_TESTS=OFF"
+                                 "-DENABLE_MPI=ON"
+                                 ,(string-append "-DBLT_SOURCE_DIR="
+                                                 #$(this-package-input "blt")
+                                                 "/blt_dir")
+                                 "-DBLT_CXX_STD:STRING=c++11"
+                                 "-DBUILD_SHARED_LIBS=ON"
+                                 "-DENABLE_OPENMP=ON"
+                                 ,(string-append "-DHDF5_DIR="
+                                                 #$(this-package-input "hdf5")))
+           #:tests? #f                            ;XXX: no "test" target
+           #:phases #~(modify-phases %standard-phases
+                        (add-before 'configure 'change-directory
+                          (lambda _
+                            (chdir "src")))
+                        (add-after 'unpack 'unpack-etc
+                          (lambda* (#:key inputs outputs #:allow-other-keys)
+                            ;; Configuration samples are not installed by default.
+                            (let* ((output (assoc-ref outputs "out"))
+                                   (etcdir (string-append output "/etc")))
+                              (for-each (lambda (l)
+                                          (install-file l etcdir))
+                                        (find-files "etc" "\\.cfg$"))))))))
+
+    (home-page "https://software.llnl.gov/conduit/")
+    (synopsis "Simplified data exchange for HPC simulation")
+    (description
+     "Conduit is a project from Lawrence Livermore National Laboratory that
+provides an intuitive model for describing hierarchical scientific data in
+C++, C, Fortran, and Python.  It is used for data coupling between packages
+in-core, serialization, and I/O tasks.")
+    (license license:bsd-3)))
