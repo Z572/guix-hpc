@@ -4,10 +4,18 @@
 ;;; Copyright © 2023 Inria
 
 (define-module (llnl geos)
+  #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix build-system copy))
+  #:use-module (guix build-system copy)
+  #:use-module (guix build-system gnu)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages maths)
+  #:use-module (gnu packages mpi)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages ssh))
 
 (define-public camp
   (package
@@ -54,3 +62,26 @@ but with a focus on wide compiler compatibility across HPC-oriented systems.")
        "BLT is a streamlined CMake-based foundation for Building, Linking and
 Testing large-scale high performance computing (HPC) application.")
       (license license:bsd-3))))
+
+(define-public hdf5-geosx
+  (package
+    (inherit hdf5)
+    (version "1.12.2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/"
+                    "hdf5-" version "/src/hdf5-" version ".tar.gz"))
+              (sha256
+               (base32
+                "050gj5ij9vp8y3001v316mvx26i8871350p1r8nm1rvcsl1sz29a"))
+              (patches (list (local-file "hdf5-config-date.patch")))))
+    (build-system gnu-build-system)
+    (inputs '())
+    (native-inputs (list perl))
+    (propagated-inputs (list openmpi openssh-sans-x zlib))
+    (arguments
+     `(#:tests? #f                                ;XXX: hmm?
+       #:configure-flags '("--enable-build-mode=production"
+                           "--enable-shared=yes" "--enable-parallel")
+       #:make-flags (list "CFLAGS=-fPIC -O2 -g" "CXXFLAGS=-fPIC -O2 -g")))))
