@@ -209,3 +209,37 @@ applications running on disparate computing platforms.")
 that extend the generally-accepted parallel for idiom.  RAJA relies on
 standard C++14 features.")
     (license license:bsd-3)))
+
+(define-public chai 
+  (package
+	(name "chai")
+	(version "2022.03.0")
+	(source
+	  (origin
+		(method url-fetch)
+		(uri "https://github.com/LLNL/CHAI/releases/download/v2022.03.0/chai-2022.03.0.tar.gz")
+		(sha256
+		  (base32 "13y88x2rpvsfzq458zcw8ll4xnlzi2gn54512wzp440z41clvqlc"))))
+	(build-system cmake-build-system)
+	(synopsis  "CHAI is a library that handles automatic data migration to different memory spaces behind an array-style interface")
+	(arguments
+	  (list #:configure-flags #~`("-DENABLE_OPENMP=ON"
+							     ,(string-append "-DBLT_SOURCE_DIR=" #$(this-package-input "blt") "/blt_dir")
+							     "-DENABLE_TESTS:BOOL=ON"
+							     "-DBUILD_SHARED_LIBS=ON"
+							     "-DENABLE_EXAMPLES:BOOL=OFF"
+							     "-DENABLE_BENCHMARKS=OFF"
+							     "-DENABLE_DOXYGEN=OFF"
+							     "-DENABLE_DOCS=OFF"
+							     "-DENABLE_SPHINX=OFF"
+							     "-DCHAI_ENABLE_RAJA_PLUGIN=ON"
+							     "-DUMPIRE_ENABLE_C=ON"
+							     ) 
+		#:tests? #f))
+	(inputs (list blt python raja))
+	(description "CHAI is a C++ libary providing an array object that can be used transparently in multiple memory spaces. Data is automatically migrated based on copy-construction, allowing for correct data access regardless of location. CHAI can be used standalone, but is best when paired with the RAJA library, which has built-in CHAI integration that takes care of everything")
+	(license license:bsd-3)
+	(home-page "https://github.com/LLNL/CHAI")))
+
+
+
