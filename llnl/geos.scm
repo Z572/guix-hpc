@@ -17,6 +17,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages ssh))
 
 (define-public camp
@@ -173,4 +174,38 @@ in-core, serialization, and I/O tasks.")
 to binary, disk files.  The files Silo produces and the data within them can
 be easily shared and exchanged between wholly independently developed
 applications running on disparate computing platforms.")
+    (license license:bsd-3)))
+
+(define-public raja
+  (package
+    (name "raja")
+    (version "2022.03.0")
+    (home-page "https://github.com/LLNL/RAJA")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "06mzzx29hgjq0pikj1zzvxwn27yxvjwvg8x1si0j6zm8lkmg1v3w"))))
+    (build-system cmake-build-system)
+    (synopsis "RAJA is a library of C++ abstractions")
+    (arguments
+     (list #:configure-flags
+           #~`("-DENABLE_OPENMP=ON" ,(string-append "-DBLT_SOURCE_DIR="
+                                                    #$(this-package-input "blt")
+                                                    "/blt_dir")
+               "-DENABLE_TESTS:BOOL=ON"
+               "-DBUILD_SHARED_LIBS=ON"
+               "-DENABLE_EXAMPLES:BOOL=OFF"
+               ,(string-append "-DEXTERNAL_CAMP_SOURCE_DIR="
+                               #$(this-package-input "camp")
+                               "/camp_dir"))))
+    (inputs (list blt python camp))
+    (description
+     "RAJA offers portable, parallel loop execution by providing building blocks
+that extend the generally-accepted parallel for idiom.  RAJA relies on
+standard C++14 features.")
     (license license:bsd-3)))
