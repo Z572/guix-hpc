@@ -43,7 +43,7 @@ but with a focus on wide compiler compatibility across HPC-oriented systems.")
     (license license:bsd-3)))
 
 (define-public blt
-  (let ((commit "6a73c2cc3ad8147d2686c4eaa79beb43e77e1724")
+  (let ((commit "5a792c1775e7a7628d84dcde31652a689f1df7b5")
         (revision "20230605"))
     (package
       (name "blt")
@@ -55,7 +55,7 @@ but with a focus on wide compiler compatibility across HPC-oriented systems.")
                       (commit commit)))
                 (sha256
                  (base32
-                  "1jiygcb2wzxxf82x95xcs8469z3ik0y7d14dblp1zaxq8vyz6x7p"))))
+                  "110xb9ssm5vpq09q83qraqjdg40z58qid2nq67sr8lfk95rf49ym"))))
       (build-system copy-build-system)
       (arguments
        '(#:install-plan '(("." "blt_dir"))))
@@ -106,6 +106,7 @@ Testing large-scale high performance computing (HPC) application.")
     (arguments
      (list #:configure-flags #~`("-DENABLE_DOCS=OFF" "-DENABLE_EXAMPLES=OFF"
                                  "-DENABLE_FORTRAN=OFF"
+                                 "-DBLT_CXX_STD:STRING=c++17"
                                  "-DENABLE_TESTS=OFF"
                                  "-DENABLE_MPI=ON"
                                  ,(string-append "-DBLT_SOURCE_DIR="
