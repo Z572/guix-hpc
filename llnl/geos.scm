@@ -66,9 +66,10 @@ but with a focus on wide compiler compatibility across HPC-oriented systems.")
 Testing large-scale high performance computing (HPC) application.")
       (license license:bsd-3))))
 
-(define-public hdf5-geosx
+(define-public hdf5-geos
   (package
     (inherit hdf5)
+    (name "hdf5-geos")
     (version "1.12.2")
     (source (origin
               (method url-fetch)
@@ -102,7 +103,7 @@ Testing large-scale high performance computing (HPC) application.")
                (base32
                 "0pls45gcaz781q1v1xypzxnwpwb8sg9fffl6m081dlsv3gca7dx4"))))
     (build-system cmake-build-system)
-    (inputs (list hdf5-geosx blt))
+    (inputs (list hdf5-geos blt))
     (arguments
      (list #:configure-flags #~`("-DENABLE_DOCS=OFF" "-DENABLE_EXAMPLES=OFF"
                                  "-DENABLE_FORTRAN=OFF"
@@ -116,7 +117,7 @@ Testing large-scale high performance computing (HPC) application.")
                                  "-DBUILD_SHARED_LIBS=ON"
                                  "-DENABLE_OPENMP=ON"
                                  ,(string-append "-DHDF5_DIR="
-                                                 #$(this-package-input "hdf5")))
+                                                 #$(this-package-input "hdf5-geos")))
            #:tests? #f                            ;XXX: no "test" target
            #:phases #~(modify-phases %standard-phases
                         (add-before 'configure 'change-directory
@@ -155,7 +156,7 @@ in-core, serialization, and I/O tasks.")
                 "1v649dpx2i5j1k381ryy5s2n9k7x9kybbv44036cv3ylg6h8a2kd"))))
     (build-system gnu-build-system)
     (native-inputs (list which))
-    (inputs (list hdf5-geosx blt openmpi))
+    (inputs (list hdf5-geos blt openmpi))
     (arguments
      (list #:configure-flags #~`("LIBS=-ldl" "--disable-silex"
                                  "--disable-fortran"
@@ -163,9 +164,9 @@ in-core, serialization, and I/O tasks.")
                                  "--enable-shared=yes"
                                  "--enable-static=no"
                                  ,(string-append "--with-hdf5="
-                                                 #$(this-package-input "hdf5")
+                                                 #$(this-package-input "hdf5-geos")
                                                  "/include,"
-                                                 #$(this-package-input "hdf5")
+                                                 #$(this-package-input "hdf5-geos")
                                                  "/lib"))
            #:tests? #f))                          ;XXX: tests fail to build
     (home-page "https://llnl.github.io/Silo")
