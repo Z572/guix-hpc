@@ -17,6 +17,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages profiling)
   #:use-module (gnu packages python)
   #:use-module (gnu packages ssh))
 
@@ -275,4 +276,38 @@ how long the application spent performing file IO.  Adiak represents this
 metadata as Name/Value pairs.  Names are arbitrary strings, with some
 standardization, and the values are represented by a flexible dynamic type
 system")
+    (license license:bsd-3)))
+
+(define-public caliper
+  (package
+    (name "caliper")
+    (version "2.8.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference (url "https://github.com/LLNL/Caliper")
+                                  (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1nbiy1zn6kh9hyjjk2xp2ff7i1ag9nn0ib790mc3lgkpr40zra1q"))))
+    (build-system cmake-build-system)
+    (inputs (list openmpi blt adiak papi python))
+    (arguments
+     (list #:configure-flags
+           #~`("-DWITH_MPI=ON"
+               "-DWITH_ADIAK=ON"
+               "-DWITH_PAPI=ON"
+               ,(string-append "-Dadiak_DIR="
+                               #$(this-package-input "adiak")
+                               "/lib/cmake/adiak/")
+               "-DBUILD_SHARED_LIBS=ON")
+           #:tests? #f))
+    (home-page "https://software.llnl.gov/caliper/")
+    (synopsis "Performance instrumentation and profiling library")
+    (description
+     "Caliper is a program instrumentation and performance measurement framework.
+It is a performance-analysis toolbox in a library, allowing one to bake
+performance analysis capabilities directly into applications and activate
+them at runtime.  Caliper is primarily aimed at HPC applications, but works
+for any C/C++/Fortran program.")
     (license license:bsd-3)))
