@@ -243,5 +243,36 @@ standard C++14 features.")
 	(license license:bsd-3)
 	(home-page "https://github.com/LLNL/CHAI")))
 
-
-
+(define-public adiak
+  (package
+    (name "adiak")
+    (version "0.2.2")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference (url "https://github.com/LLNL/adiak")
+                                  (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1n0bzibjf1l9pgc5gff5cjsdpgbrnd1wz01ib1jkd672l3zh7w7g"))))
+    (build-system cmake-build-system)
+    (inputs (list openmpi blt))
+    (arguments
+     (list #:configure-flags
+           #~`("-DWITH_MPI=ON"
+               ,(string-append "-DBLT_SOURCE_DIR="
+                               #$(this-package-input "blt")
+                               "/blt_dir")
+               "-DBUILD_SHARED_LIBS=ON"
+               "-DENABLE_TESTS=ON")))
+    (home-page "https://software.llnl.gov/adiak/")
+    (synopsis "Collect metadata from HPC application runs")
+    (description
+     "Adiak is a library for recording meta-data about HPC simulations.  An HPC
+application code may, for example, record what user invoked it, the version
+of the code being run, a computed time history showing density changes, or
+how long the application spent performing file IO.  Adiak represents this
+metadata as Name/Value pairs.  Names are arbitrary strings, with some
+standardization, and the values are represented by a flexible dynamic type
+system")
+    (license license:bsd-3)))
