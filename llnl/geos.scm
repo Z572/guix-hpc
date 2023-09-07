@@ -54,6 +54,7 @@ but with a focus on wide compiler compatibility across HPC-oriented systems.")
                 (uri (git-reference
                       (url "https://github.com/LLNL/blt")
                       (commit commit)))
+                (file-name (git-file-name name version))
                 (sha256
                  (base32
                   "110xb9ssm5vpq09q83qraqjdg40z58qid2nq67sr8lfk95rf49ym"))))
