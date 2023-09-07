@@ -254,7 +254,7 @@ kernels are executed as efficiently as possible.")
 (define-public parcoach
   (package
     (name "parcoach")
-    (version "2.4.0")
+    (version "2.4.1")
     (source
      (origin
        (method git-fetch)
@@ -264,7 +264,7 @@ kernels are executed as efficiently as possible.")
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "0w3cgk6lk6h57jlqsbhmqkc9d2a4lnk3xh4ifix29v4l91d9bz5c"))))
+         "05fqxvfsfc2phckj6mpgrw9lcd38s6d17cikp3akayb5ljhpzhpj"))))
     (build-system cmake-build-system)
     (native-inputs
      (list clang-toolchain-15 python python-lit googletest flang-15))
