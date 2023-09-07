@@ -251,6 +251,15 @@ area (CPUs-GPUs, distributed nodes).")
     (propagated-inputs (list starpu openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
 
+(define openmpi->nmad
+  ;; Rewrite the dependency graph of the given package, replacing Open MPI
+  ;; with NewMadeleine.
+  (package-input-rewriting `((,openmpi . ,nmad))))
+
+(define-public chameleon-nmad
+  ;; The package corresponding to 'chameleon --with-input=openmpi=nmad'.
+  (openmpi->nmad (hidden-package chameleon)))
+
 (define-public chameleon+simgrid+nosmpi
   (package
    (inherit chameleon)
