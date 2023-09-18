@@ -28,8 +28,20 @@
 (define-public vtk-8
   (package
     (inherit vtk)
-    (name "vtk-8")
-    (version "v8.1.2")
+    (name "vtk")
+    (version "8.1.2")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/Kitware/VTK.git")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (patches
+               (search-patches "inria/patches/removeprobe.patch"
+                               "inria/patches/qpainterpath.patch"))
+              (sha256
+               (base32
+                "0rj106p41rkn06dw9xp901qaaxkbqn3braqybypad4q07sqmxm0k"))))
     (arguments
      (list #:build-type "Release"          ;Build without '-g' to save space.
            #:configure-flags
@@ -57,24 +69,11 @@
     (inputs (modify-inputs (package-inputs vtk)
               (append qtbase-5
                       qttools-5
-                      qtx11extras)))
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/Kitware/VTK.git")
-                    (commit version)))
-              (file-name (git-file-name name version))
-              (patches
-               (search-patches "inria/patches/removeprobe.patch"
-                               "inria/patches/qpainterpath.patch"))
-              (sha256
-               (base32
-                "0rj106p41rkn06dw9xp901qaaxkbqn3braqybypad4q07sqmxm0k"))))))
+                      qtx11extras)))))
 
 (define-public insight-toolkit-without-test
   (package
     (inherit insight-toolkit)
-    (name "itk-no-test")
     (arguments
      (list #:configure-flags #~'("-DITK_USE_GPU=ON"
                                  "-DITK_USE_SYSTEM_LIBRARIES=ON"
