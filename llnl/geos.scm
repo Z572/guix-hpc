@@ -204,9 +204,15 @@ applications running on disparate computing platforms.")
                "-DENABLE_TESTS:BOOL=ON"
                "-DBUILD_SHARED_LIBS=ON"
                "-DENABLE_EXAMPLES:BOOL=OFF"
-               ,(string-append "-DEXTERNAL_CAMP_SOURCE_DIR="
-                               #$(this-package-input "camp")
-                               "/camp_dir"))))
+               )
+           #:phases
+              #~(modify-phases %standard-phases
+                (add-before 'configure 'chdir-src-and-link
+                   (lambda _
+                     (begin
+                       (rmdir "tpl/camp")
+                       (copy-recursively (string-append #$(this-package-input
+                                          "camp") "/camp_dir") "tpl/camp")))))))
     (inputs (list blt python camp))
     (description
      "RAJA offers portable, parallel loop execution by providing building blocks
