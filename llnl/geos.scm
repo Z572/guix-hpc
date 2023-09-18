@@ -28,19 +28,22 @@
     (home-page "https://github.com/LLNL/camp")
     (source (origin
               (method git-fetch)
-              (uri (git-reference (url home-page)
-                                  (commit (string-append "v" version))))
+              (uri (git-reference
+                    (url home-page)
+                    (commit (string-append "v" version))))
               (file-name (git-file-name name version))
               (sha256
                (base32
                 "1allmiszvl4dy5z7vzbf4zrvnw2i92fd7hwl3vlch3w6hl6dfg96"))))
     (build-system copy-build-system)
-    (arguments '(#:install-plan '(("." "camp_dir"))))
+    (arguments
+     '(#:install-plan '(("." "camp_dir"))))
     (synopsis "CAMP Concepts And Meta-Programming library")
     (description
-     "CAMP collects a variety of macros and metaprogramming facilities for C++
-projects. It's in the direction of projects like metal (a major influence)
-but with a focus on wide compiler compatibility across HPC-oriented systems.")
+     "CAMP collects a variety of macros and metaprogramming
+     facilities for C++ projects.  It's in the direction
+     of projects like metal (a major influence) but with
+     a focus on wide compiler compatibility across HPC-oriented systems.")
     (license license:bsd-3)))
 
 (define-public blt
@@ -207,7 +210,7 @@ applications running on disparate computing platforms.")
                )
            #:phases
               #~(modify-phases %standard-phases
-                (add-before 'configure 'chdir-src-and-link
+                (add-after 'unpack 'copy-camp-sources
                    (lambda _
                      (begin
                        (rmdir "tpl/camp")
@@ -220,7 +223,7 @@ that extend the generally-accepted parallel for idiom.  RAJA relies on
 standard C++14 features.")
     (license license:bsd-3)))
 
-(define-public chai 
+(define-public chai
   (package
 	(name "chai")
 	(version "2022.03.0")
@@ -244,7 +247,7 @@ standard C++14 features.")
 							     "-DENABLE_SPHINX=OFF"
 							     "-DCHAI_ENABLE_RAJA_PLUGIN=ON"
 							     "-DUMPIRE_ENABLE_C=ON"
-							     ) 
+							     )
 		#:tests? #f))
 	(inputs (list blt python raja))
 	(description "CHAI is a C++ libary providing an array object that can be used transparently in multiple memory spaces. Data is automatically migrated based on copy-construction, allowing for correct data access regardless of location. CHAI can be used standalone, but is best when paired with the RAJA library, which has built-in CHAI integration that takes care of everything")
