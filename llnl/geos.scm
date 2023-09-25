@@ -222,7 +222,7 @@ discovery, provision, and management of memory on machines with multiple memory 
 (define-public raja
   (package
     (name "raja")
-    (version "2022.03.0")
+    (version "2023.06.1")
     (home-page "https://github.com/LLNL/RAJA")
     (source (origin
               (method git-fetch)
@@ -232,26 +232,20 @@ discovery, provision, and management of memory on machines with multiple memory 
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "06mzzx29hgjq0pikj1zzvxwn27yxvjwvg8x1si0j6zm8lkmg1v3w"))))
+                "13ik310kjvdpn474mxdgzp5vdbkz80jj482x9hvyvckc5phz8xdk"))))
     (build-system cmake-build-system)
     (synopsis "RAJA is a library of C++ abstractions")
     (arguments
      (list #:configure-flags
-           #~`("-DENABLE_OPENMP=ON" ,(string-append "-DBLT_SOURCE_DIR="
-                                                    #$(this-package-input "blt")
-                                                    "/blt_dir")
-               "-DENABLE_TESTS:BOOL=ON"
+           #~`("-DENABLE_OPENMP=ON" 
+               ,(string-append "-DBLT_SOURCE_DIR="
+                   #$(this-package-input "blt")
+                   "/blt_dir")
+              ,(string-append "-Dcamp_DIR=" #$(this-package-input "camp"))
+              "-DENABLE_TESTS:BOOL=ON"
                "-DBUILD_SHARED_LIBS=ON"
                "-DENABLE_EXAMPLES:BOOL=OFF"
-               )
-           #:phases
-              #~(modify-phases %standard-phases
-                (add-after 'unpack 'copy-camp-sources
-                   (lambda _
-                     (begin
-                       (rmdir "tpl/camp")
-                       (copy-recursively (string-append #$(this-package-input
-                                          "camp") "/camp_dir") "tpl/camp")))))))
+               )))
     (inputs (list blt python camp))
     (description
      "RAJA offers portable, parallel loop execution by providing building blocks
