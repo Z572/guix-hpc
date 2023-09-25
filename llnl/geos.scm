@@ -183,6 +183,32 @@ be easily shared and exchanged between wholly independently developed
 applications running on disparate computing platforms.")
     (license license:bsd-3)))
 
+(define-public umpire
+  (let ((commit "1e5ef604de88e81bb3b6fc4a5d914be833529da5")
+        (revision "0"))
+    (package
+      (name "umpire")
+      (version (git-version "023.06.0" revision commit))
+      (home-page "https://github.com/LLNL/Umpire/")
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url home-page)
+                      (commit commit)))
+                (file-name (git-file-name name commit))
+                (sha256
+                 (base32
+                  "13syi8x1fwn70yjjb8qhmi5pc9wplpaj9w4i8p270n0q4xfg7bsh"))))
+      (build-system copy-build-system)
+      (arguments
+       '(#:install-plan '(("." "umpire_dir"))))
+      (synopsis "LLNL debugging library")
+      (description
+       "Umpire is a resource management library that allows the
+discovery, provision, and management of memory on machines with multiple memory devices like NUMA and GPUs.")
+      (license license:bsd-3))))
+
+
 (define-public raja
   (package
     (name "raja")
