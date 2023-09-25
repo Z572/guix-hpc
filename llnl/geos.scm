@@ -35,9 +35,19 @@
               (sha256
                (base32
                 "1allmiszvl4dy5z7vzbf4zrvnw2i92fd7hwl3vlch3w6hl6dfg96"))))
-    (build-system copy-build-system)
+    (build-system cmake-build-system)
     (arguments
-     '(#:install-plan '(("." "camp_dir"))))
+     (list #:configure-flags #~`("-DENABLE_DOCS=OFF" "-DENABLE_CUDA:BOOL=OFF"
+                                 "-DENABLE_TESTS=ON"
+                                 "-DBLT_CXX_STD:STRING=c++17"
+                                 "-DCMAKE_CXX_FLAGS:STRING=-std=c++17"
+                                 "-DENABLE_MPI=ON"
+                                 ,(string-append "-DBLT_SOURCE_DIR="
+                                                 #$(this-package-input "blt")
+                                                 "/blt_dir")
+                                 "-DBUILD_SHARED_LIBS=ON"
+                                 "-DENABLE_OPENMP=ON")))
+    (propagated-inputs (list openmpi openssh-sans-x blt))
     (synopsis "CAMP Concepts And Meta-Programming library")
     (description
      "CAMP collects a variety of macros and metaprogramming
