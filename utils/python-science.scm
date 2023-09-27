@@ -10,6 +10,7 @@
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages machine-learning)
   #:use-module (guix build-system python)
+  #:use-module (guix build-system pyproject)
   #:use-module (guix licenses))
 
 (define-public python-pyamg
@@ -205,3 +206,21 @@ learning applications.
 As the solvers are implemented in PyTorch, algorithms in this repository are
 fully supported to run on the GPU.")
     (license expat)))
+
+(define-public python-pyevtk
+  (package
+    (name "python-pyevtk")
+    (version "1.6.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "pyevtk" version))
+              (sha256
+               (base32
+                "1x55zpnxwlfwss9jmzz7lbqlzr779zd525c6b215q01sda3yfsqz"))))
+    (build-system pyproject-build-system)
+    (propagated-inputs (list python-numpy))
+    (native-inputs (list python-pytest python-pytest-cov))
+    (home-page "https://github.com/pyscience-projects/pyevtk")
+    (synopsis "Export data as binary VTK files")
+    (description "Export data as binary VTK files")
+    (license #f)))
