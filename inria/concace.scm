@@ -10,7 +10,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system emacs)
   #:use-module (guix build-system gnu)
-;;  #:use-module (guix ubild-system texlive)
+  ;;  #:use-module (guix build-system texlive)
   #:use-module (gnu packages)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages algebra)
@@ -42,6 +42,123 @@
   #:use-module (srfi srfi-1)
   )
 
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-early-init publicly defined below intead
+(define emacs-bedrock-early-init-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-early-init")
+    (version "1.2.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "961797e55adc26e0203dac7f936820fb41efebc7")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
+    (build-system emacs-build-system)
+    ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
+    (propagated-inputs (list emacs))))
+
+(define emacs-instead-of-emacs-minimal
+  (package-input-rewriting `((,emacs-minimal . ,emacs))))
+
+;; emacs-bedrock-early-init with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-early-init
+  (emacs-instead-of-emacs-minimal emacs-bedrock-early-init-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-minimal publicly defined below intead
+(define emacs-bedrock-minimal-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-minimal")
+    (version "1.2.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-minimal")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "4be549039094c0c5d07a5d8b0f5ef8279d02185c")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "1lkhfm0b12l2cb8inlwrhs1vf4mx5il5bsggav8249j47yxwjp22"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list bash
+	   bzip2
+           coreutils
+	   emacs-bedrock-early-init
+	   emacs-which-key
+           gawk
+           git
+           grep
+           gzip
+           sed
+           tar
+           tree
+           which))))
+
+;; emacs-bedrock-minimal with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-minimal
+  (emacs-instead-of-emacs-minimal emacs-bedrock-minimal-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-base publicly defined below intead
+(define emacs-bedrock-base-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-base")
+    (version "1.2.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-base")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "ca997a07e27ee82a5e8982356ff6511cb3dfbd29")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"16z34l3bv2qigr6mwmhi7zwbq5n6c24fhdcbi27l0290mm4g1bmb"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-avy
+	   emacs-bedrock-minimal
+	   emacs-cape
+	   emacs-consult
+	   emacs-corfu
+	   ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
+	   emacs-corfu-terminal
+	   emacs-embark
+	   ;; emacs-embark-consult: library provided within emacs-embark package
+	   ;; emacs-eshell
+	   emacs-kind-icon
+	   emacs-marginalia
+	   emacs-orderless
+	   emacs-vertico
+	   ;; emacs-vertico-directory: library provided within emacs-vertico package
+	   emacs-wgrep))))
+
+;; emacs-bedrock-base with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-base
+  (emacs-instead-of-emacs-minimal emacs-bedrock-base-with-emacs-minimal))
+
 (define-public emacs-ob-compose-latexpicture
   (package
    (name "emacs-ob-compose-latexpicture")
@@ -58,7 +175,7 @@
                     (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
-               (base32
+	       (base32
                 "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
     (build-system emacs-build-system)
     (propagated-inputs (list emacs-org))))
@@ -109,7 +226,7 @@
            tree
            which
            wget
-           biber))))
+           texlive-biber))))
 
 (define-public laplacian-example
   (package
