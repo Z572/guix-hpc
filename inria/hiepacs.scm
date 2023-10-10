@@ -745,9 +745,11 @@ is implemented in MPI.")
            "-DMAPHYSPP_Fortran_DRIVER=OFF"
            "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
            "-DMAPHYSPP_COMPILE_TESTS=ON"))))
-    (inputs (fold alist-delete
-                  (package-inputs maphys++)
-                  '("mumps" "paddle" "fabulous")))))
+
+    (inputs
+    (modify-inputs (package-inputs maphys)
+      (prepend pastix-6.2-nopython-notest)
+      (delete "pastix" "mumps" "paddle" "fabulous")))))
 
 ;; maphys++ with librsb for sparse matrix operations
 (define-public maphys++-librsb
@@ -764,8 +766,8 @@ is implemented in MPI.")
 (define-public blaspp
   (package
     (name "blaspp")
-    (version "2021.04.01")
-    (home-page "https://bitbucket.org/icl/blaspp")
+    (version "2023.08.25")
+    (home-page "https://github.com/icl-utk-edu/blaspp")
     (synopsis "C++ API for the Basic Linear Algebra Subroutines")
     (description
      "The Basic Linear Algebra Subprograms (BLAS) have been around for many
@@ -779,11 +781,11 @@ such as: namespaces, templates, exceptions, etc.")
              (method git-fetch)
              (uri (git-reference
                    (url home-page)
-                   (commit "314bafceead689a35aab826e03aa76bf329cfb0e")))
+                   (commit "f8f983d5b45a8f366aae41fbe9888b14cbae20f8")))
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0n57c02jcd2kmw9zldyhvxp80xgy1gmmaccy1sr6g5nnp3jl175m"))))
+	       "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
     (arguments
      '(#:configure-flags '("-Dbuild_tests=OFF")
                          #:tests? #f))
@@ -796,8 +798,8 @@ such as: namespaces, templates, exceptions, etc.")
 (define-public lapackpp
   (package
    (name "lapackpp")
-   (version "2021.04.00")
-   (home-page "https://bitbucket.org/icl/lapackpp")
+   (version "2023.08.25")
+   (home-page "https://github.com/icl-utk-edu/lapackpp")
    (synopsis "C++ API for the Linear Algebra PACKage")
    (description
     "The Linear Algebra PACKage (LAPACK) is a standard software library for
@@ -810,11 +812,11 @@ etc.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "31d969200a9f65390f56ac2ea48888bd10a13397")))
+                  (commit "62680a16a9aba2a426e3d089dd13e18bfd140c74")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "06xipc9j9xgh5rk1fxxgpk1gla5mjq2l0511q6487zd81720ka7w"))))
+	      "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
    (arguments
     '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF"
                           "-Dbuild_tests=OFF")
@@ -1339,6 +1341,15 @@ and/or the time-to-solution.")
 (define-public pastix-nopython-notest
   (package
    (inherit pastix)
+   (name "pastix-nopython-notest")
+   (arguments
+    (substitute-keyword-arguments (package-arguments chameleon)
+                                  ((#:configure-flags flags '())
+                                   `(cons "-DPASTIX_BUILD_TESTING=OFF" ,flags))))))
+
+(define-public pastix-6.2-nopython-notest
+  (package
+   (inherit pastix-6.2)
    (name "pastix-nopython-notest")
    (arguments
     (substitute-keyword-arguments (package-arguments chameleon)
