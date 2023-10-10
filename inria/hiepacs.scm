@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2021, 2022 Inria
+;;; Copyright © 2017, 2019, 2021, 2022, 2023 Inria
 
 (define-module (inria hiepacs)
   #:use-module (guix)
@@ -38,6 +38,45 @@
   #:use-module (guix build-system python)
   #:use-module (gnu packages python-science)
   )
+
+(define-public flame
+  (package
+    (name "flame")
+    (version "3.11.0")
+    (source (origin
+	      (method git-fetch)
+	      (uri (git-reference (url "https://github.com/Reference-LAPACK/lapack")
+				  (commit (string-append "v" version))))
+	      (file-name (string-append name "-" version "-checkout"))
+	      (sha256
+		(base32
+		  "0wm9bkp4aw91hkb57xifxz2360cdhgv36rnqswccgjzlxvrgp001"))))
+    (build-system cmake-build-system)
+    (home-page "https://www.netlib.org/lapack/")
+    (inputs (list gfortran python-wrapper))
+    (propagated-inputs (list blis libflame))
+    (arguments
+     `(#:configure-flags (list
+                          "-DBUILD_SHARED_LIBS=ON"
+                          "-DCBLAS=ON"
+                          "-DLAPACKE=ON"
+                          "-DLAPACKE_WITH_TMG=ON"
+                          "-DUSE_OPTIMIZED_BLAS=ON"
+                          "-DUSE_OPTIMIZED_LAPACK=ON")
+       ;; testings require specific symbols defined in this reference lapack
+       ;; package only. USE_OPTIMIZED_LAPACK=ON involves this lapack is not
+       ;; compiled and replaced by libflame so that the specific symbols are
+       ;; missing
+       #:tests? #f))
+    (synopsis
+     "Meta package libflame + blis + C wrappers (cblas, lapacke, tmglib).")
+    (description
+     "Meta package to be able use the libflame+blis libraries with all standard
+      symbols (C interfaces). This is done by using the referenced lapack
+      package built on top of libflame as external optimized lapack and blis as
+      external optimized blas.")
+    (license (license:non-copyleft "file://LICENSE"
+                                "See LICENSE in the distribution."))))
 
 (define-public parsec
   (let ((commit "6022a61dc96c25f11dd2aeabff2a5b3d7bce867d")
@@ -120,10 +159,45 @@ of the available resources.")
       (propagated-inputs (list `(,hwloc "lib")))
       (native-inputs (list gfortran)))))
 
+(define-public dplasma
+  (package
+    (name "dplasma")
+    (version "20230802")
+    (home-page "https://github.com/ICLDisco/dplasma")
+    (synopsis "Dense linear algebra package for distributed, accelerated, heterogeneous systems.")
+    (description
+     "DPLASMA is the leading implementation of a dense linear algebra package
+for distributed, accelerated, heterogeneous systems. It is designed to deliver
+sustained performance for distributed systems where each node featuring
+multiple sockets of multicore processors, and if available, accelerators like
+GPUs or Intel Xeon Phi. DPLASMA achieves this objective through the state of
+the art PaRSEC runtime, porting the Parallel Linear Algebra Software for
+Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
+    (license license:bsd-3)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "45831f1862f977ac5cc485887c77f6f207ebda2b")
+                    (recursive? #t)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "058zc4xg7mfvgyg9yhsa0n4xdl725a86nh0i0dg5s2libinvgi4y"))))
+    (build-system cmake-build-system)
+    (outputs '("debug" "out"))
+    (arguments
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
+			   "-DDPLASMA_INSTALL_TESTS=ON")
+       #:tests? #f))
+    (inputs (list openblas))
+    (propagated-inputs (list `(,hwloc "lib")  openmpi))
+    (native-inputs (list flex bison openssh gfortran pkg-config python))))
+
 (define-public chameleon
   (package
     (name "chameleon")
-    (version "1.1.0")
+    (version "1.2.0")
     (home-page "https://gitlab.inria.fr/solverstack/chameleon")
     (synopsis "Dense linear algebra solver")
     (description
@@ -139,13 +213,14 @@ area (CPUs-GPUs, distributed nodes).")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "4db899ca30d29927018d83964b9b6d517269abe1")
+                    (commit "v1.2.0")
                     ;; We need the submodule in 'CMakeModules/morse_cmake'.
                     (recursive? #t)))
               (file-name (string-append name "-" version "-checkout"))
+              (patches (search-patches "inria/patches/chameleon-cpp.patch"))
               (sha256
                (base32
-                "0mpnacmkn1287c003a6n3c4r0n395l6fnjilzi7z53lb34s8kaap"))))
+                "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
@@ -173,8 +248,17 @@ area (CPUs-GPUs, distributed nodes).")
                                               (setenv "HOME" (getcwd))
                                               #t)))))
     (inputs (list openblas))
-    (propagated-inputs (list starpu-1.3 openmpi))
+    (propagated-inputs (list starpu openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
+
+(define openmpi->nmad
+  ;; Rewrite the dependency graph of the given package, replacing Open MPI
+  ;; with NewMadeleine.
+  (package-input-rewriting `((,openmpi . ,nmad))))
+
+(define-public chameleon-nmad
+  ;; The package corresponding to 'chameleon --with-input=openmpi=nmad'.
+  (openmpi->nmad (hidden-package chameleon)))
 
 (define-public chameleon+simgrid+nosmpi
   (package
@@ -239,7 +323,7 @@ area (CPUs-GPUs, distributed nodes).")
                                    `(cons "-DCHAMELEON_SCHED=OPENMP" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
-      (delete "starpu-1.3" "openmpi")))))
+      (delete "starpu" "openmpi")))))
 
 (define-public chameleon+quark
   (package
@@ -252,7 +336,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend quark)
-      (delete "starpu-1.3" "openmpi")))))
+      (delete "starpu" "openmpi")))))
 
 (define-public chameleon+parsec
   (package
@@ -265,7 +349,7 @@ area (CPUs-GPUs, distributed nodes).")
    (propagated-inputs
     (modify-inputs (package-propagated-inputs chameleon)
       (prepend parsec)
-      (delete "starpu-1.3" "openmpi")))))
+      (delete "starpu" "openmpi")))))
 
 (define-public mini-chameleon
   (package
@@ -603,7 +687,7 @@ is implemented in MPI.")
     (build-system cmake-build-system)
     (propagated-inputs (list blaspp
                              lapackpp
-                             pastix
+                             pastix-6.2
                              mumps-openmpi
                              arpack-ng-3.9
                              paddle
@@ -661,9 +745,11 @@ is implemented in MPI.")
            "-DMAPHYSPP_Fortran_DRIVER=OFF"
            "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
            "-DMAPHYSPP_COMPILE_TESTS=ON"))))
-    (inputs (fold alist-delete
-                  (package-inputs maphys++)
-                  '("mumps" "paddle" "fabulous")))))
+
+    (inputs
+    (modify-inputs (package-inputs maphys)
+      (prepend pastix-6.2-nopython-notest)
+      (delete "pastix" "mumps" "paddle" "fabulous")))))
 
 ;; maphys++ with librsb for sparse matrix operations
 (define-public maphys++-librsb
@@ -680,8 +766,8 @@ is implemented in MPI.")
 (define-public blaspp
   (package
     (name "blaspp")
-    (version "2021.04.01")
-    (home-page "https://bitbucket.org/icl/blaspp")
+    (version "2023.08.25")
+    (home-page "https://github.com/icl-utk-edu/blaspp")
     (synopsis "C++ API for the Basic Linear Algebra Subroutines")
     (description
      "The Basic Linear Algebra Subprograms (BLAS) have been around for many
@@ -695,11 +781,11 @@ such as: namespaces, templates, exceptions, etc.")
              (method git-fetch)
              (uri (git-reference
                    (url home-page)
-                   (commit "314bafceead689a35aab826e03aa76bf329cfb0e")))
+                   (commit "f8f983d5b45a8f366aae41fbe9888b14cbae20f8")))
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0n57c02jcd2kmw9zldyhvxp80xgy1gmmaccy1sr6g5nnp3jl175m"))))
+	       "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
     (arguments
      '(#:configure-flags '("-Dbuild_tests=OFF")
                          #:tests? #f))
@@ -712,8 +798,8 @@ such as: namespaces, templates, exceptions, etc.")
 (define-public lapackpp
   (package
    (name "lapackpp")
-   (version "2021.04.00")
-   (home-page "https://bitbucket.org/icl/lapackpp")
+   (version "2023.08.25")
+   (home-page "https://github.com/icl-utk-edu/lapackpp")
    (synopsis "C++ API for the Linear Algebra PACKage")
    (description
     "The Linear Algebra PACKage (LAPACK) is a standard software library for
@@ -726,11 +812,11 @@ etc.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "31d969200a9f65390f56ac2ea48888bd10a13397")))
+                  (commit "62680a16a9aba2a426e3d089dd13e18bfd140c74")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "06xipc9j9xgh5rk1fxxgpk1gla5mjq2l0511q6487zd81720ka7w"))))
+	      "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
    (arguments
     '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF"
                           "-Dbuild_tests=OFF")
@@ -743,19 +829,19 @@ etc.")
 (define-public pastix-6
   (package
     (name "pastix")
-    (version "6.2.2")
+    (version "6.3.0")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "6e35c2ba179013b058f5d4e1afd4b451953149c6")
+                    (commit "ee20a7ded080bf6b48e11cc3229feba89507c68c")
                     ;; We need the submodule in 'cmake_modules/morse'.
                     (recursive? #t)))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0bv2lsbkwjbmz4knm08g6sds4irk0g1bm9m0h1scab0yxx2izcka"))))
+                "02v0cx3n3vkrfg8gh8h037fb6kra40wxyxaavg783751jzd3z74h"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
@@ -930,16 +1016,30 @@ memory footprint and/or the time-to-solution.")
              ("parsec" ,parsec)
              ,@(package-inputs pastix-6)))))
 
+(define-public pastix-6.2
+  (package
+    (inherit pastix-6)
+    (name "pastix")
+    (version "6.2.2")
+  (source
+   (origin
+    (method url-fetch)
+    (uri
+     "https://files.inria.fr/pastix/releases/v6/pastix-6.2.2.tar.gz")
+    (sha256
+     (base32
+      "0275xmyv72ixn1pqqhalwb1ss3h4ggvm4nhskwy77dbq8vza3sfc"))))))
+
 (define-public pastix-5
   (package
-  (name "pastix-5")
+  (name "pastix")
   (version "5.2.3")
   (home-page "https://gitlab.inria.fr/solverstack/pastix")
   (source
    (origin
     (method url-fetch)
     (uri
-     "https://gforge.inria.fr/frs/download.php/file/36212/pastix_5.2.3.tar.bz2")
+     "https://files.inria.fr/pastix/releases/v5/pastix_5.2.3.tar.bz2")
     (sha256
      (base32
       "0iqyxr5lzjpavmxzrjj4kwayq62nip3ssjcm80d20zk0n3k7h6b4"))))
@@ -1247,6 +1347,15 @@ and/or the time-to-solution.")
                                   ((#:configure-flags flags '())
                                    `(cons "-DPASTIX_BUILD_TESTING=OFF" ,flags))))))
 
+(define-public pastix-6.2-nopython-notest
+  (package
+   (inherit pastix-6.2)
+   (name "pastix-nopython-notest")
+   (arguments
+    (substitute-keyword-arguments (package-arguments chameleon)
+                                  ((#:configure-flags flags '())
+                                   `(cons "-DPASTIX_BUILD_TESTING=OFF" ,flags))))))
+
 (define-public pmtool
   (package
     (name "pmtool")
@@ -1283,52 +1392,48 @@ this limitation.")
 
 (define-public scalable-python
   (package
-   (inherit python-2.7)
-   (name "scalable-python")
-   (version "2.7.13")
-   (home-page "https://github.com/CSCfi/scalable-python.git")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")
-                  ))
-            (patches (search-patches
-                      "inria/patches/scalable-python.patch"
-                      "python-2.7-search-paths.patch"
-                      "python-2-deterministic-build-info.patch"
-                      "python-2.7-site-prefixes.patch"
-                      ))
-            (sha256
-             (base32
-              "0ivxsf17x7vjxr5h4g20rb5i3k705vgd502ma024z95fnyzd0bqi"))))
-   (arguments
-    (substitute-keyword-arguments (package-arguments python-2.7)
-                                  ((#:phases phases)
-                                   `(modify-phases ,phases
-                                                   (add-before 'configure 'permissions_gramfiles
-                                                               (lambda _
-                                                                 (chmod "Python/graminit.c" #o764)
-                                                                 (chmod "Include/graminit.h" #o764) #t))
-                                                   (add-before 'build 'fix_makefile
-                                                               (lambda _
-                                                                 (chmod "Python/graminit.c" #o764)
-                                                                 (chmod "Include/graminit.h" #o764) #t))
-                                                   (replace 'move-tk-inter (lambda _ #t)) ;; Not sure what this is anyway
-                                                   ))
-                                  ((#:configure-flags flags '())
-                                   `(cons "--enable-mpi" (cons "--without-ensurepip" (delete "--with-ensurepip=install",flags))))
-                                  ((#:make-flags makeflags '())
-                                   `(cons "mpi" (cons "install" (cons "install-mpi",makeflags))))
-                                  ((#:tests? runtests '())
-                                   #f)
-                                  ))
-   (description
-    "Modified python 2.7.13. Scalable Python performs the I/O operations used
+    (inherit python-2.7)
+    (name "scalable-python")
+    (version "2.7.13")
+    (home-page "https://github.com/CSCfi/scalable-python.git")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")))
+              (patches (search-patches "inria/patches/scalable-python.patch"
+                                       "python-2.7-search-paths.patch"
+                                       "python-2-deterministic-build-info.patch"
+                                       "python-2.7-site-prefixes.patch"))
+              (sha256
+               (base32
+                "0ivxsf17x7vjxr5h4g20rb5i3k705vgd502ma024z95fnyzd0bqi"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments python-2.7)
+       ((#:phases phases)
+        #~(modify-phases #$phases
+            (add-before 'configure 'permissions_gramfiles
+              (lambda _
+                (chmod "Python/graminit.c" #o764)
+                (chmod "Include/graminit.h" #o764)))
+            (add-before 'build 'fix_makefile
+              (lambda _
+                (chmod "Python/graminit.c" #o764)
+                (chmod "Include/graminit.h" #o764)))
+            (delete 'move-tk-inter)))           ;not sure what this is anyway
+       ((#:configure-flags flags #~())
+        #~(append (list "--enable-mpi" "--without-ensurepip")
+                  (delete "--with-ensurepip=install" #$flags)))
+       ((#:make-flags makeflags #~())
+        #~(append (list "mpi" "install" "install-mpi")
+                  #$makeflags))
+       ((#:tests? _ #t)
+        #f)))                                     ;disable tests
+    (propagated-inputs (list openmpi))
+    (description
+     "Modified python 2.7.13. Scalable Python performs the I/O operations used
 e.g. by import statements in a single process and uses MPI to transmit data
-to/from all other processes.")
-   (propagated-inputs (list openmpi))
-   ))
+to/from all other processes.")))
 
 ;; Fix python2-sympy
 (define-public fixed-python2-sympy

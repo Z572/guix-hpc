@@ -20,8 +20,10 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages python)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages check)
   #:use-module (inria tadaam)
   #:use-module (inria eztrace)
+  #:use-module (inria llvm)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
   #:use-module (srfi srfi-1)
@@ -249,54 +251,39 @@ kernels are executed as efficiently as possible.")
      (modify-inputs (package-native-inputs starpu)
        (prepend python-wrapper)))))
 
-(define-public parcoach-1.2
+(define-public parcoach
   (package
     (name "parcoach")
-    (version "1.2")
+    (version "2.4.1")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url "https://github.com/parcoach/parcoach")
-             (commit (string-append "v" version))))
+             (commit version)))
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "14l90xddz8qx6jp7dkvys1k8mdg2dp5jwg62y94y8i7yx0qi4pxi"))))
+         "05fqxvfsfc2phckj6mpgrw9lcd38s6d17cikp3akayb5ljhpzhpj"))))
     (build-system cmake-build-system)
     (native-inputs
-     (list clang-9 clang-toolchain-9 python-3))
+     (list clang-toolchain-15 python python-lit googletest flang-15))
     (inputs
-     (list llvm-9 openmpi))
-    (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (add-before 'install 'substitute-script
-           (lambda* (#:key source inputs outputs #:allow-other-keys)
-             (let ((out  (assoc-ref outputs "out"))
-                   (llvm (assoc-ref inputs "llvm")))
-               (copy-file (string-append source "/src/aSSA/parcoach.in")
-                          "parcoach.in")
-               (substitute* "parcoach.in"
-                 (("@LLVM_TOOLS_BINARY_DIR@")
-                  (string-append llvm "/bin")))
-               (substitute* "parcoach.in"
-                 (("@PARCOACH_LIB@")
-                  (string-append out "/lib/aSSA.so"))))))
-         (add-after 'install 'install-script
-           (lambda* (#:key outputs #:allow-other-keys)
-             (let* ((out      (assoc-ref outputs "out"))
-                    (out-bin  (string-append out "/bin"))
-                    (parcoach (string-append out-bin "/parcoach")))
-               (mkdir out-bin)
-               (copy-file "parcoach.in" parcoach)))))))
+     (list llvm-15 openmpi))
     (synopsis "Analysis tool for errors detection in parallel
 applications")
     (description "PARCOACH is an Open-source software dedicated to the
 collective errors detection in parallel applications.")
     (home-page "https://parcoach.github.io/")
+    (arguments
+      `(#:build-type "Release"
+        #:configure-flags '("-DPARCOACH_ENABLE_FORTRAN=ON"
+                            "-DCMAKE_Fortran_COMPILER=flang-new"
+                            "-DCMAKE_Fortran_FLAGS=-flang-experimental-exec"
+                            "-DPARCOACH_VERSION_SUFFIX=''")
+        #:test-target "run-lit"
+        #:phases (modify-phases %standard-phases
+                   (add-before 'check 'mpi-setup
+                     ,%openmpi-setup))))
     (license lgpl2.1)))
 
-(define-public parcoach
-  parcoach-1.2)
