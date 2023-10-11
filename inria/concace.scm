@@ -159,6 +159,61 @@
 (define-public emacs-bedrock-base
   (emacs-instead-of-emacs-minimal emacs-bedrock-base-with-emacs-minimal))
 
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-dev publicly defined below intead
+(define emacs-bedrock-dev-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-dev")
+    (version "1.2.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "d0937b6c2e302ddb2501323fbbf8383855796423")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0sry4nbj4v3rgnv77727sgv012f7qjrn8l3r38z0fr773yih4kpi"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-base
+	   emacs-json-mode
+	   emacs-magit
+	   emacs-yaml-mode
+	   ))))
+
+;; emacs-bedrock-base with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-dev
+  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
+
+(define-public emacs-bedrock-default
+  (package
+   (name "emacs-bedrock-default")
+    (version "1.2.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-default")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el startup file.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "c4daf2966303ece463ad0ad5fd49d043fda27c08")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1grs9dk4445xfc5nc1yc5nf8hnsykw2cl769k6asirafhqq2956f"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-dev))))
+
 (define-public emacs-ob-compose-latexpicture
   (package
    (name "emacs-ob-compose-latexpicture")
