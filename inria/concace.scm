@@ -185,6 +185,7 @@
 	   emacs-json-mode
 	   emacs-magit
 	   emacs-yaml-mode
+	   openssh
 	   ))))
 
 ;; emacs-bedrock-base with emacs instead of emacs-minimal
