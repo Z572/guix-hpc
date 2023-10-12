@@ -48,7 +48,7 @@
 (define emacs-bedrock-early-init-with-emacs-minimal
   (package
    (name "emacs-bedrock-early-init")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
     (description
@@ -80,7 +80,7 @@
 (define emacs-bedrock-minimal-with-emacs-minimal
   (package
    (name "emacs-bedrock-minimal")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-minimal")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal setup.")
     (description
@@ -90,11 +90,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "4be549039094c0c5d07a5d8b0f5ef8279d02185c")))
+                    (commit "b0b2d5c0814e1a457372a7cbe9b0b009efae16ca")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1lkhfm0b12l2cb8inlwrhs1vf4mx5il5bsggav8249j47yxwjp22"))))
+                "15hsn5cc87j2jddcgwhhva7ybxb7igphykqwhhr875db1wrhlfd3"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -121,7 +121,7 @@
 (define emacs-bedrock-base-with-emacs-minimal
   (package
    (name "emacs-bedrock-base")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-base")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base setup.")
     (description
@@ -131,11 +131,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "ca997a07e27ee82a5e8982356ff6511cb3dfbd29")))
+                    (commit "b15c21c5b1141e1b6537213532548284ae02853c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"16z34l3bv2qigr6mwmhi7zwbq5n6c24fhdcbi27l0290mm4g1bmb"))))
+		"1lfl6aja2655yx56pvbs70sp5bim0wr21rmryirdxhjgg8j0a7f9"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -165,7 +165,7 @@
 (define emacs-bedrock-dev-with-emacs-minimal
   (package
    (name "emacs-bedrock-dev")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev setup.")
     (description
@@ -175,11 +175,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "d0937b6c2e302ddb2501323fbbf8383855796423")))
+                    (commit "d9357dfd0dde594c07d8837dd1f0ff0ed0c90e17")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0sry4nbj4v3rgnv77727sgv012f7qjrn8l3r38z0fr773yih4kpi"))))
+		"1cxfxmc03g9l6rvzya5p0hrzp880g3s501gdlwqygd5axs10b8n9"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
@@ -199,7 +199,7 @@
 (define emacs-bedrock-full-with-emacs-minimal
   (package
    (name "emacs-bedrock-full")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
     (description
@@ -209,11 +209,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "eea19038c5a5973c66df8f85b97cdc70e869458a")))
+                    (commit "b7e0d835c29dd3636b0dd5f487d1faafecefe4fa")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1z45x1pa4iigsq87ibp5zfvidcjgp36h136lx0z4ywl5agbpipg6"))))
+		"0bciscvmhj0f1g18dl6y64zicggkpxp9r00zi7pmh4lg5icn8y50"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev
@@ -239,13 +239,13 @@
 
 (define-public emacs-bedrock
   (package
-   (inherit emacs-bedrock-dev)
+   (inherit emacs-bedrock-full)
    (name "emacs-bedrock")))
 
 (define-public emacs-bedrock-as-default
   (package
    (name "emacs-bedrock-as-default")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-default")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file.")
     (description
@@ -255,11 +255,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "c4daf2966303ece463ad0ad5fd49d043fda27c08")))
+                    (commit "bc578e89488627406fe524747b43a9ecd2ad773a")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1grs9dk4445xfc5nc1yc5nf8hnsykw2cl769k6asirafhqq2956f"))))
+		"107xh411a79w0l7i1h0zgq4c5mk7yc2s50w0gsv408m21jjsibha"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock))))
