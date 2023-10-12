@@ -193,9 +193,14 @@
 (define-public emacs-bedrock-dev
   (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
 
-(define-public emacs-bedrock-default
+(define-public emacs-bedrock
   (package
-   (name "emacs-bedrock-default")
+   (inherit emacs-bedrock-dev)
+   (name "emacs-bedrock")))
+
+(define-public emacs-bedrock-as-default
+  (package
+   (name "emacs-bedrock-as-default")
     (version "1.2.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-default")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file.")
@@ -213,7 +218,7 @@
 		"1grs9dk4445xfc5nc1yc5nf8hnsykw2cl769k6asirafhqq2956f"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-dev))))
+     (list emacs-bedrock))))
 
 (define-public emacs-ob-compose-latexpicture
   (package
