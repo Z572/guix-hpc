@@ -30,6 +30,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texlive)
+  #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
 ;;  #:use-module (hacky gitlab)
@@ -192,6 +193,49 @@
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
 (define-public emacs-bedrock-dev
   (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-full publicly defined below intead
+(define emacs-bedrock-full-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-full")
+    (version "1.2.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "eea19038c5a5973c66df8f85b97cdc70e869458a")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1z45x1pa4iigsq87ibp5zfvidcjgp36h136lx0z4ywl5agbpipg6"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-dev
+           tree-sitter
+	   tree-sitter-bash
+	   tree-sitter-bibtex
+	   tree-sitter-c
+	   tree-sitter-cpp
+	   tree-sitter-cmake
+	   tree-sitter-julia
+	   tree-sitter-markdown
+	   tree-sitter-org
+	   tree-sitter-python
+	   tree-sitter-scheme
+	   tree-sitter-r
+	   tree-sitter-rust
+	   ))))
+
+;; emacs-bedrock-full with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-full
+  (emacs-instead-of-emacs-minimal emacs-bedrock-full-with-emacs-minimal))
 
 (define-public emacs-bedrock
   (package
