@@ -1,0 +1,30 @@
+;; This is -*- Scheme -*-.
+;;;
+;;; This module extends GNU Guix and is licensed under the same terms, those
+;;; of the GNU GPL version 3 or (at your option) any later version.
+;;;
+;;; Copyright © 2023 Inria
+
+;; Manifest for continuous integration of Guix-HPC, using the latest release
+;; of a several key packages before they're even packaged.
+
+(use-modules (guix transformations)
+             (ice-9 match))
+
+(define cutting-edge-packages
+  '("openmpi" "hwloc" "intel-mpi-benchmarks" "openblas"
+    "starpu" "chameleon"))
+
+(define the-latest
+  ;; Transformation that returns the given package built against the latest
+  ;; release of each of CUTTING-EDGE-PACKAGES.
+  (options->transformation
+   (map (lambda (package)
+          `(with-latest . ,package))
+        cutting-edge-packages)))
+
+(packages->manifest
+ (map (match-lambda
+        ((package . output)
+         (cons (the-latest package) output)))
+      (specifications->packages cutting-edge-packages)))
