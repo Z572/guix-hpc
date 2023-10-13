@@ -101,6 +101,7 @@
 	   bzip2
            coreutils
 	   emacs-bedrock-early-init
+	   emacs-evil
 	   emacs-which-key
            gawk
            git
@@ -217,6 +218,7 @@
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev
+	   gdb
            tree-sitter
 	   tree-sitter-bash
 	   tree-sitter-bibtex
