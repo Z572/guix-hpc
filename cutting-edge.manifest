@@ -12,7 +12,10 @@
              (ice-9 match))
 
 (define cutting-edge-packages
-  '("openmpi" "hwloc" "intel-mpi-benchmarks" "openblas"
+  '("openmpi" "hwloc"
+    "ucx" "psm2" "rdma-core" "libfabric" "opensm"
+    "slurm" "intel-mpi-benchmarks"
+    "openblas"
     "starpu" "chameleon"))
 
 (define the-latest
