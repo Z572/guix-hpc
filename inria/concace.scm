@@ -19,6 +19,7 @@
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages gawk)
+  #:use-module (gnu packages gdb)  
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
