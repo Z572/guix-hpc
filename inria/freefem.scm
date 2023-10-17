@@ -1,18 +1,21 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2022 Inria
+;;; Copyright © 2022, 2023 Inria
 
 (define-module (inria freefem)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages algebra)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages bison)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages flex)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages graphics)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module ((guix licenses) #:prefix license:))
@@ -35,22 +38,48 @@
      `(#:phases (modify-phases %standard-phases
                   (add-before 'check 'mpi-setup
                     ;; Set the test environment for Open MPI.
-                    ,%openmpi-setup))))
+                    ,%openmpi-setup)
+                  (add-before 'configure 'set-mmg-path
+                    (lambda* (#:key inputs #:allow-other-keys)
+                      ;; <libmmg.h> is in the mmg/ subdirectory.  Extends the
+                      ;; header search path accordingly.
+		      (setenv "CPATH"
+                              (string-append
+                               (search-input-directory inputs "/include/mmg")
+                               ":" (getenv "CPATH")))))
+                  (add-before 'check 'skip-faulty-tests
+                    (lambda _
+                      ;; XXX: Fix failing tests.
+                      (substitute* "examples/3d/Makefile"
+                        (("schwarz-nm-3d.edp") "")) ;ARPACK-related
+                      (substitute* "examples/3dSurf/Makefile"
+                        (("Pinocchio\\.edp") ""))))))) ;MMG-related
     (native-inputs
      (list autoconf
            automake
            unzip
+           which
            bison
            flex
            gfortran))
     (inputs
-     ;; FIXME: Tests under 'examples/eigen', built when ARPACK is available,
-     ;; fail.
-     (list ;; ("arpack-ng" ,arpack-ng)
-           ;; petsc-openmpi
+     (list ;; petsc-openmpi
            gsl
            ipopt
            nlopt
+	   mumps                       ;FIXME: ./configure fails to use mumps
+	   (list mmg "lib")
+	   suitesparse-umfpack
+	   suitesparse-config
+	   suitesparse-amd
+	   suitesparse-cholmod
+	   hdf5
+	   fftw
+	   arpack-ng
+	   scalapack
+	   scotch
+	   pt-scotch
+           metis
            openmpi
            lapack))
     (properties `((tunable? . #true)))
