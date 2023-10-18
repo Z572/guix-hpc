@@ -17,6 +17,7 @@
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages emacs)
+  #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gdb)  
@@ -91,11 +92,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "b0b2d5c0814e1a457372a7cbe9b0b009efae16ca")))
+                    (commit "6f5889cfa6945c2adf7426ca75724c3d67e02a8c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "15hsn5cc87j2jddcgwhhva7ybxb7igphykqwhhr875db1wrhlfd3"))))
+                "07vnc2ggqr752lh8ckkybrfrk4a5vz2ql0vbqg34vq2xc1hhjkmb"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -133,11 +134,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "b15c21c5b1141e1b6537213532548284ae02853c")))
+                    (commit "e88b80bb98eb8af6e3b71b676eaf7b5c508ac699")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1lfl6aja2655yx56pvbs70sp5bim0wr21rmryirdxhjgg8j0a7f9"))))
+		"1m02z0nbbb46bq8kwrpzscgr4j7lfdaxynrn46qdb7akv9gbfsac"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -153,6 +154,7 @@
 	   emacs-kind-icon
 	   emacs-marginalia
 	   emacs-orderless
+	   emacs-ripgrep
 	   emacs-vertico
 	   ;; emacs-vertico-directory: library provided within emacs-vertico package
 	   emacs-wgrep))))
@@ -161,6 +163,40 @@
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
 (define-public emacs-bedrock-base
   (emacs-instead-of-emacs-minimal emacs-bedrock-base-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-org publicly defined below intead
+(define emacs-bedrock-org-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-org")
+    (version "1.3.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-org")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "7e6095db6929537c1126bc8fc9cf49495ca9d9b8")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"07nnvbm921grrrnxqpl536231vc8m5qga0nzbsxknlab711p29bx"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-base
+	   emacs-org ;; more recent version of org-mode
+	   emacs-org-ql ;; for a better speed (to be investigated) 
+	   emacs-org-roam
+	   emacs-org-roam-ui))))
+
+;; emacs-bedrock-base with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-org
+  (emacs-instead-of-emacs-minimal emacs-bedrock-org-with-emacs-minimal))
+
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-dev publicly defined below intead
@@ -211,14 +247,16 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "b7e0d835c29dd3636b0dd5f487d1faafecefe4fa")))
+                    (commit "12f4fe6ae43a002990556ce654c8069baff2987d")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0bciscvmhj0f1g18dl6y64zicggkpxp9r00zi7pmh4lg5icn8y50"))))
+		"13r8iq5hm2s4knzicgdzjhh2ki27hv5k44rpia83110d6ij95jzn"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev
+	   emacs-bedrock-org
+	   emacs-envrc
 	   gdb
            tree-sitter
 	   tree-sitter-bash
@@ -258,11 +296,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "bc578e89488627406fe524747b43a9ecd2ad773a")))
+                    (commit "ac50af88d3d90cc8aa8c6b0747bab90b514b9725")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"107xh411a79w0l7i1h0zgq4c5mk7yc2s50w0gsv408m21jjsibha"))))
+		"0f4nzdnyvp96gar9bwzsk472qhbnyyl18rw6ykisvpbrbks5s4bk"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock))))
