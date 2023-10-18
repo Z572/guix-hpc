@@ -179,11 +179,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "7e6095db6929537c1126bc8fc9cf49495ca9d9b8")))
+                    (commit "f51bc41498e5a9c5fbb0169c0dd51b9320213f1e")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"07nnvbm921grrrnxqpl536231vc8m5qga0nzbsxknlab711p29bx"))))
+		"1pyb59yx5wc5798vwima0rcjxalvwsb1q01fa0pwyhg0j08aphxp"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
