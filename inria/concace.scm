@@ -17,7 +17,7 @@
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages emacs)
-  #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
+  ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gdb)  
@@ -190,7 +190,8 @@
 	   emacs-org ;; more recent version of org-mode
 	   emacs-org-ql ;; for a better speed (to be investigated) 
 	   emacs-org-roam
-	   emacs-org-roam-ui))))
+	   ;; emacs-org-roam-ui
+	   ))))
 
 ;; emacs-bedrock-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
