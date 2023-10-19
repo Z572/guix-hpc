@@ -747,9 +747,8 @@ is implemented in MPI.")
            "-DMAPHYSPP_COMPILE_TESTS=ON"))))
 
     (inputs
-    (modify-inputs (package-inputs maphys)
-      (prepend pastix-6.2-nopython-notest)
-      (delete "pastix" "mumps" "paddle" "fabulous")))))
+     (modify-inputs (package-inputs maphys)
+		    (delete "mumps" "paddle" "fabulous")))))
 
 ;; maphys++ with librsb for sparse matrix operations
 (define-public maphys++-librsb
@@ -1350,7 +1349,7 @@ and/or the time-to-solution.")
 (define-public pastix-6.2-nopython-notest
   (package
    (inherit pastix-6.2)
-   (name "pastix-nopython-notest")
+   (name "pastix-6.2-nopython-notest")
    (arguments
     (substitute-keyword-arguments (package-arguments chameleon)
                                   ((#:configure-flags flags '())
