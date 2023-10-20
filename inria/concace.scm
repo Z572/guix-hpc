@@ -134,11 +134,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "e88b80bb98eb8af6e3b71b676eaf7b5c508ac699")))
+                    (commit "3bd384dfe7c090217a7fa999855d0b5247b6596d")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1m02z0nbbb46bq8kwrpzscgr4j7lfdaxynrn46qdb7akv9gbfsac"))))
+		"1wq4r1w8h1112ljhyybpg5spzhs2rl0fsyd038nb6wr9dw4j50lh"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -179,11 +179,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f51bc41498e5a9c5fbb0169c0dd51b9320213f1e")))
+                    (commit "0cf910a1aee2b3b595928db0cf4f06f5d310423e")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1pyb59yx5wc5798vwima0rcjxalvwsb1q01fa0pwyhg0j08aphxp"))))
+		"0d15j4r6rdafkfh6i2b4ag687bxkfn6v7hbrbnrfsi8cipchfbjz"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
@@ -200,25 +200,25 @@
 
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-dev publicly defined below intead
-(define emacs-bedrock-dev-with-emacs-minimal
+;; Use emacs-bedrock-dev-minimal publicly defined below intead
+(define emacs-bedrock-dev-minimal-with-emacs-minimal
   (package
-   (name "emacs-bedrock-dev")
+   (name "emacs-bedrock-dev-minimal")
     (version "1.3.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev setup.")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev-minimal")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev minimal setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev setup.")
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev minimal setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "d9357dfd0dde594c07d8837dd1f0ff0ed0c90e17")))
+                    (commit "585c1458adb66c841825fb997c63490255d1e963")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1cxfxmc03g9l6rvzya5p0hrzp880g3s501gdlwqygd5axs10b8n9"))))
+		"1ll03cmx2zp809c1j3gcf4p3c8lwi0qpzmffvrdabmgqnbqsgsra"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
@@ -228,37 +228,38 @@
 	   openssh
 	   ))))
 
-;; emacs-bedrock-base with emacs instead of emacs-minimal
+;; emacs-bedrock-dev-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-dev
-  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
+(define-public emacs-bedrock-dev-minimal
+  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-minimal-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-full publicly defined below intead
-(define emacs-bedrock-full-with-emacs-minimal
+;; Use emacs-bedrock-dev publicly defined below instead
+(define emacs-bedrock-dev-with-emacs-minimal
   (package
-   (name "emacs-bedrock-full")
+   (name "emacs-bedrock-dev")
     (version "1.3.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev full setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev full setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "12f4fe6ae43a002990556ce654c8069baff2987d")))
+                    (commit "fe260731f761a4c9e1046eb3b2b397cc7eb9117c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"13r8iq5hm2s4knzicgdzjhh2ki27hv5k44rpia83110d6ij95jzn"))))
+		"1fvd095iyd2waclb1g4sld16vwvbhd553v46a4fsz8jalck5r38s"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-dev
-	   emacs-bedrock-org
+     (list emacs-bedrock-dev-minimal
+	   ;; emacs-crdt
 	   emacs-envrc
 	   gdb
+	   emacs-rmsbolt
            tree-sitter
 	   tree-sitter-bash
 	   tree-sitter-bibtex
@@ -273,6 +274,71 @@
 	   tree-sitter-r
 	   tree-sitter-rust
 	   ))))
+
+;; emacs-bedrock-dev with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-dev
+  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-write publicly defined below intead
+(define emacs-bedrock-write-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-write")
+   (version "1.3.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-write")
+   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Write setup.")
+   (description
+    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Write setup.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "90fa348abc464fd6377e5191d622745365c1f310")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+               (base32
+		"1jj7chndzxcw9081sx9izqwrcgfs40v5jhjagcfxi5p9nls5qqcp"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-bedrock-base
+	  emacs-jinx))))
+
+;; emacs-bedrock-write with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-write
+  (emacs-instead-of-emacs-minimal emacs-bedrock-write-with-emacs-minimal))
+
+
+
+
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-full publicly defined below intead
+(define emacs-bedrock-full-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-full")
+   (version "1.3.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
+   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+   (description
+    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "707c9631b9655c7180049ff72036e3cb867fbf46")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+               (base32
+		"15q1cb9ih7chlcrq128519skkd421j5r6a3a0x5214hjbz4x9pjr"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-bedrock-dev
+	  emacs-bedrock-org
+	  emacs-bedrock-write))))
 
 ;; emacs-bedrock-full with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -297,11 +363,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "ac50af88d3d90cc8aa8c6b0747bab90b514b9725")))
+                    (commit "0eda3addb8ce73961ecaf32655e83db5566cad76")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0f4nzdnyvp96gar9bwzsk472qhbnyyl18rw6ykisvpbrbks5s4bk"))))
+		"0zbn23p3i0rj42yhq31ssdr5sljqp6vyfsrik48ks93x4x341q21"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock))))
