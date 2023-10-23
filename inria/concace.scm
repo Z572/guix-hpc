@@ -16,6 +16,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
@@ -134,11 +135,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "3bd384dfe7c090217a7fa999855d0b5247b6596d")))
+                    (commit "646b79a649c0c500fb236d380b80306dbe7ec576")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1wq4r1w8h1112ljhyybpg5spzhs2rl0fsyd038nb6wr9dw4j50lh"))))
+		"0f58npnaixdb53fq4mrrmsrsh1wpdmj6fxbcwny9sw378jvnpnwv"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -179,11 +180,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "0cf910a1aee2b3b595928db0cf4f06f5d310423e")))
+                    (commit "3a65ef42c00ab61e8341821b4111bc2361c93902")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0d15j4r6rdafkfh6i2b4ag687bxkfn6v7hbrbnrfsi8cipchfbjz"))))
+		"0wdj2annghx05zbjqr597kw955smfi8ibds7lsm7wnj3wfmqs0fw"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
@@ -214,11 +215,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "585c1458adb66c841825fb997c63490255d1e963")))
+                    (commit "58a651acd19241f8175f3339a0ec0f8e9f756a9c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1ll03cmx2zp809c1j3gcf4p3c8lwi0qpzmffvrdabmgqnbqsgsra"))))
+		"0qzrqv0a0kkx0xfji3hknivci58qz5h4scnx82ss7z0yh1d7kkpz"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
@@ -248,28 +249,31 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "fe260731f761a4c9e1046eb3b2b397cc7eb9117c")))
+                    (commit "05127e1b07415411ff3e94107a07b34f38491991")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1fvd095iyd2waclb1g4sld16vwvbhd553v46a4fsz8jalck5r38s"))))
+		"18jra9bpd7ddkbk3pxrln6cd2jg6krca4m575pygzfc7pw9hj5b3"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev-minimal
 	   ;; emacs-crdt
+	   bash
+	   ccls ;; c / c++ language server
 	   emacs-envrc
-	   gdb
 	   emacs-rmsbolt
+	   gdb
+	   python-lsp-server ;; pyton language server
            tree-sitter
 	   tree-sitter-bash
 	   tree-sitter-bibtex
-	   tree-sitter-c
-	   tree-sitter-cpp
+	   tree-sitter-c ;; see also ccls language server
+	   tree-sitter-cpp ;; see also ccls language server
 	   tree-sitter-cmake
 	   tree-sitter-julia
 	   tree-sitter-markdown
 	   tree-sitter-org
-	   tree-sitter-python
+	   tree-sitter-python ;; see also python-lsp-server language server
 	   tree-sitter-scheme
 	   tree-sitter-r
 	   tree-sitter-rust
@@ -295,7 +299,7 @@
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "90fa348abc464fd6377e5191d622745365c1f310")))
+                  (commit "11cb30235b83ae83fea01e6e8c7d6f7759ec9823")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
@@ -303,16 +307,14 @@
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-base
+	  emacs-citar
+	  emacs-citar-org-roam
 	  emacs-jinx))))
 
 ;; emacs-bedrock-write with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
 (define-public emacs-bedrock-write
   (emacs-instead-of-emacs-minimal emacs-bedrock-write-with-emacs-minimal))
-
-
-
-
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-full publicly defined below intead
@@ -329,11 +331,11 @@
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "707c9631b9655c7180049ff72036e3cb867fbf46")))
+                  (commit "4802f3ad1c157b2c245494814e26584840d1477e")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-		"15q1cb9ih7chlcrq128519skkd421j5r6a3a0x5214hjbz4x9pjr"))))
+		"1xxj1jn00q6pi6sm5847i5qr4fd5z0xg5llz88k26vlgccg40hbg"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-dev
@@ -363,11 +365,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "0eda3addb8ce73961ecaf32655e83db5566cad76")))
+                    (commit "8e5047a9c6007839ad939a6b3d58b562a533386b")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0zbn23p3i0rj42yhq31ssdr5sljqp6vyfsrik48ks93x4x341q21"))))
+		"1p4j4jj9fylscxhxn936zh8516bwqzlai1cdg783mkw2fxf6pb8d"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock))))
