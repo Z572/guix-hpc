@@ -90,6 +90,57 @@ files that can be interpreted by visualization tools such as
     (license license:cecill-c)                    ;FIXME: really CECILL-B
     (home-page "https://eztrace.gitlab.io/eztrace/")))
 
+(define-public eztrace-1
+  ;; Version 1.1 provides a tracing API not found in 2.x, used by PasTiX.
+  (package
+    (inherit eztrace)
+    (name "eztrace")
+    (version "1.1-10")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://gitlab.com/eztrace/eztrace")
+                    (commit (string-append "eztrace-" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0m0gw183nka2z7mkski1zzphdyqggxgi0blrgml6dww3z3bqhlic"))
+
+              ;; Remove bundled libraries.
+              ;; FIXME: There's few more under extlib/.
+              ;; FIXME: The bundled litl is different from the latest
+              ;; release (0.1.8), so we have to use it.
+              ;; (snippet '(delete-file-recursively "extlib/litl"))
+              ))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:configure-flags
+           #~(list "LDFLAGS=-liberty"             ;for bfd
+                   "--disable-pptrace"            ;depends on Binutils 2.33
+                   (string-append "--with-mpi="
+                                  #$(this-package-input "openmpi")))
+
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'unpack 'make-source-writable
+                 (lambda _
+                   ;; Make sure 'autoreconf' can write 'configure' files.
+                   (for-each make-file-writable
+                             (find-files "." "^configure$"))))
+               (add-before 'bootstrap 'patch-build-tool-shebangs
+                 (lambda _
+                   ;; These scripts are executed from 'autoreconf'.
+                   (for-each patch-shebang
+                             (find-files "." "\\.sh$")))))
+
+           ;; FIXME: There are test failures in bundled libraries.
+           #:tests? #f))
+    (native-inputs (list autoconf automake libtool))
+    (inputs (list gfortran
+                  libiberty                       ;for bfd
+                  zlib                            ;for bfd
+                  openmpi))))
+
 (define-public litl
   (package
     (name "litl")
