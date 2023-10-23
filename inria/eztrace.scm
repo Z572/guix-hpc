@@ -95,16 +95,16 @@ files that can be interpreted by visualization tools such as
   (package
     (inherit eztrace)
     (name "eztrace")
-    (version "1.1-10")
+    (version "1.1-13")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://gitlab.com/eztrace/eztrace")
-                    (commit (string-append "eztrace-" version))))
+                    (commit version)))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0m0gw183nka2z7mkski1zzphdyqggxgi0blrgml6dww3z3bqhlic"))
+                "17jyhyab79qs4zcpwxvqii34fik0c9d2ziamc65p75cgjry541n7"))
 
               ;; Remove bundled libraries.
               ;; FIXME: There's few more under extlib/.
@@ -135,7 +135,7 @@ files that can be interpreted by visualization tools such as
 
            ;; FIXME: There are test failures in bundled libraries.
            #:tests? #f))
-    (native-inputs (list autoconf automake libtool))
+    (native-inputs (list autoconf-2.71 automake libtool))
     (inputs (list gfortran
                   libiberty                       ;for bfd
                   zlib                            ;for bfd
