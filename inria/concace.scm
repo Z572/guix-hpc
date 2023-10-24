@@ -48,6 +48,9 @@
   #:use-module (srfi srfi-1)
   )
 
+(define emacs-instead-of-emacs-minimal
+  (package-input-rewriting `((,emacs-minimal . ,emacs))))
+
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-early-init publicly defined below intead
 (define emacs-bedrock-early-init-with-emacs-minimal
@@ -72,9 +75,6 @@
     ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
     (propagated-inputs (list emacs))))
 
-(define emacs-instead-of-emacs-minimal
-  (package-input-rewriting `((,emacs-minimal . ,emacs))))
-
 ;; emacs-bedrock-early-init with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
 (define-public emacs-bedrock-early-init
@@ -95,11 +95,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "6f5889cfa6945c2adf7426ca75724c3d67e02a8c")))
+                    (commit "af3458baf0d65a86b2f73c1bfd7a5cd2c98b68d0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "07vnc2ggqr752lh8ckkybrfrk4a5vz2ql0vbqg34vq2xc1hhjkmb"))))
+                "0rq72xvd78x1d9iadcxsfn91w0idpdmf5bl00s7wwk69xc41g035"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -108,7 +108,7 @@
 	   emacs-bedrock-early-init
 	   emacs-evil
 	   emacs-which-key
-	   fd
+	   findutils
            gawk
            git
            grep
@@ -140,11 +140,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "646b79a649c0c500fb236d380b80306dbe7ec576")))
+                    (commit "4e6fa430f48197ed49aa9be3f879fea5242cb601")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0f58npnaixdb53fq4mrrmsrsh1wpdmj6fxbcwny9sw378jvnpnwv"))))
+		"1r2b1i0ry7304kbws96jl0xw0rh6gi02mka5yf570hp2ik7il6lf"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -221,11 +221,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "58a651acd19241f8175f3339a0ec0f8e9f756a9c")))
+                    (commit "181f0a64316bfe9ff9b49deef23a381c73b61599")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0qzrqv0a0kkx0xfji3hknivci58qz5h4scnx82ss7z0yh1d7kkpz"))))
+		"0cfj13i18nviiza13ybwg7bhj0r8ny2zq0w0yqssnikxfq52inwl"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
@@ -307,14 +307,15 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "05127e1b07415411ff3e94107a07b34f3849199")))
+                    (commit "083614ad5884daae5888705532c42b685a08e780")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
 		"0ma4ayvc048l1i407lr6bhk0wvv5y5sml2ximrimn3q7bb8d7qh2"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-geiser-guile)
+     (list emacs-geiser-guile
+	   emacs-paredit))))
 
 ;; emacs-bedrock-dev-parentheses with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -376,6 +377,7 @@ scheme.")
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-dev
+	  emacs-bedrock-dev-parentheses
 	  emacs-bedrock-org
 	  emacs-bedrock-write))))
 
@@ -402,14 +404,38 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "8e5047a9c6007839ad939a6b3d58b562a533386b")))
+                    (commit "44865d853840a1c68088152d19c94b11f2ad4c2c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1p4j4jj9fylscxhxn936zh8516bwqzlai1cdg783mkw2fxf6pb8d"))))
+		"1i8yg11cskrmscmjdg301q7j1ypss52nydymmykbaaiygilq2yzy"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock))))
+
+;; site-start.el is already deployed by guix.
+;; As a consequence the following package would have no effect.
+;; (define-public emacs-bedrock-as-site-start
+;;   (package
+;;    (name "emacs-bedrock-as-site-start")
+;;     (version "1.3.0")
+;;     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-site-start")
+;;     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a site-start.el starup file.")
+;;     (description
+;;      "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a site-start.el startup file.")
+;;     (license license:cecill-c)
+;;     (source (origin
+;;               (method git-fetch)
+;;               (uri (git-reference
+;;                     (url home-page)
+;;                     (commit "6fa923bd5c6c7785cf62134d49a1ab1075311757")))
+;;               (file-name (string-append name "-" version "-checkout"))
+;;               (sha256
+;;                (base32
+;; 		"0xk3jq6l2h1jb8ya8pmsgk5dfx7gwfwzsiczkfj7rkiqvzkin0mp"))))
+;;     (build-system emacs-build-system)
+;;     (propagated-inputs
+;;      (list emacs-bedrock))))
 
 (define-public emacs-ob-compose-latexpicture
   (package
