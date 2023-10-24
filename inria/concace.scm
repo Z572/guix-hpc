@@ -25,11 +25,13 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
+  #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages rust-apps) ;; for ripgrep
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texlive)
@@ -106,10 +108,13 @@
 	   emacs-bedrock-early-init
 	   emacs-evil
 	   emacs-which-key
+	   fd
            gawk
            git
            grep
            gzip
+	   man-db
+	   man-pages
            sed
            tar
            tree
@@ -158,7 +163,8 @@
 	   emacs-ripgrep
 	   emacs-vertico
 	   ;; emacs-vertico-directory: library provided within emacs-vertico package
-	   emacs-wgrep))))
+	   emacs-wgrep
+           ripgrep))))
 
 ;; emacs-bedrock-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
