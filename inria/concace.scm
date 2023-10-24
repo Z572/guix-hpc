@@ -186,14 +186,15 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "dbee27c6d397d9350b1361cea6b8eedfdc16082a")))
+                    (commit "90c897e38766247b884a1fcaf9567c5e44f3c67f")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1vx0rkvd0p6cqlx85paj0jxl6gcn9alvvxhqhkyw2jan9ll4z6kx"))))
+		"0q9m0pcikk8n1nqxy640729v5jk2kdbi9frpj0y7ym5f4lnnnsf2"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
+	   emacs-consult-org-roam
 	   emacs-org ;; more recent version of org-mode
 	   emacs-org-ql ;; for a better speed (to be investigated) 
 	   emacs-org-roam
