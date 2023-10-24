@@ -291,6 +291,37 @@
   (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-dev-parentheses publicly defined below instead
+(define emacs-bedrock-dev-parentheses-with-emacs-minimal
+  (package
+   (name "emacs-bedrock-dev-parentheses")
+    (version "1.3.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev-parentheses")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Setup for languages with parentheses or alike: lisp, scheme.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs
+experience. Setup for languages with parentheses or alike: lisp,
+scheme.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "05127e1b07415411ff3e94107a07b34f3849199")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0ma4ayvc048l1i407lr6bhk0wvv5y5sml2ximrimn3q7bb8d7qh2"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-geiser-guile)
+
+;; emacs-bedrock-dev-parentheses with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-dev-parentheses
+  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-parentheses-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-write publicly defined below intead
 (define emacs-bedrock-write-with-emacs-minimal
   (package
