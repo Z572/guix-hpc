@@ -95,11 +95,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "af3458baf0d65a86b2f73c1bfd7a5cd2c98b68d0")))
+                    (commit "48496430fa09827b97e81bb37d3a3bdaf9cac6d4")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0rq72xvd78x1d9iadcxsfn91w0idpdmf5bl00s7wwk69xc41g035"))))
+                "1l8cr00dv10djlrvcazxh4nvlfjr8b64zdvhjr2i7h1nmhbv6qgw"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -186,11 +186,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "90c897e38766247b884a1fcaf9567c5e44f3c67f")))
+                    (commit "b67ba69ffabb731d2bc48ef11bb98fa719bf96db")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0q9m0pcikk8n1nqxy640729v5jk2kdbi9frpj0y7ym5f4lnnnsf2"))))
+		"0z6n024fr96iqzvnq1hzndnpgffcv49mlx6zmgxw8ymlk95f3v2c"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
