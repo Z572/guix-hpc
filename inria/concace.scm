@@ -56,7 +56,7 @@
 (define emacs-bedrock-early-init-with-emacs-minimal
   (package
    (name "emacs-bedrock-early-init")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
     (description
@@ -85,7 +85,7 @@
 (define emacs-bedrock-minimal-with-emacs-minimal
   (package
    (name "emacs-bedrock-minimal")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-minimal")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal setup.")
     (description
@@ -130,7 +130,7 @@
 (define emacs-bedrock-base-with-emacs-minimal
   (package
    (name "emacs-bedrock-base")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-base")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base setup.")
     (description
@@ -176,7 +176,7 @@
 (define emacs-bedrock-org-with-emacs-minimal
   (package
    (name "emacs-bedrock-org")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-org")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode setup.")
     (description
@@ -212,7 +212,7 @@
 (define emacs-bedrock-dev-minimal-with-emacs-minimal
   (package
    (name "emacs-bedrock-dev-minimal")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev-minimal")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev minimal setup.")
     (description
@@ -246,7 +246,7 @@
 (define emacs-bedrock-dev-with-emacs-minimal
   (package
    (name "emacs-bedrock-dev")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev full setup.")
     (description
@@ -296,7 +296,7 @@
 (define emacs-bedrock-dev-parentheses-with-emacs-minimal
   (package
    (name "emacs-bedrock-dev-parentheses")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev-parentheses")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Setup for languages with parentheses or alike: lisp, scheme.")
     (description
@@ -328,7 +328,7 @@ scheme.")
 (define emacs-bedrock-write-with-emacs-minimal
   (package
    (name "emacs-bedrock-write")
-   (version "1.3.0")
+   (version "1.4.0")
    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-write")
    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Write setup.")
    (description
@@ -360,7 +360,7 @@ scheme.")
 (define emacs-bedrock-full-with-emacs-minimal
   (package
    (name "emacs-bedrock-full")
-   (version "1.3.0")
+   (version "1.4.0")
    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
    (description
@@ -370,11 +370,11 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "4802f3ad1c157b2c245494814e26584840d1477e")))
+                  (commit "1a536ecc827f1e3cca8c821686c891af0801f437")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-		"1xxj1jn00q6pi6sm5847i5qr4fd5z0xg5llz88k26vlgccg40hbg"))))
+		"0h68xpc4mz1gw3vjmp2jq5dcn1nsxkb7ynbk1b7f8dh28ywy38mh"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-dev
@@ -395,7 +395,7 @@ scheme.")
 (define-public emacs-bedrock-as-default
   (package
    (name "emacs-bedrock-as-default")
-    (version "1.3.0")
+    (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-default")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file.")
     (description
@@ -419,7 +419,7 @@ scheme.")
 ;; (define-public emacs-bedrock-as-site-start
 ;;   (package
 ;;    (name "emacs-bedrock-as-site-start")
-;;     (version "1.3.0")
+;;     (version "1.4.0")
 ;;     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-site-start")
 ;;     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a site-start.el starup file.")
 ;;     (description
