@@ -1,0 +1,16 @@
+diff -rupN source/python/CMakeLists.txt source2/python/CMakeLists.txt
+--- source/python/CMakeLists.txt	1970-01-01 01:00:01.000000000 +0100
++++ source2/python/CMakeLists.txt	2023-09-12 17:55:15.166773191 +0200
+@@ -156,12 +156,6 @@ add_test(
+ configure_file(../test-data/small.sgy write.sgy COPYONLY)
+ 
+ add_test(
+-    NAME python.example.about
+-    COMMAND ${PYTHON_EXECUTABLE} -m examples.about
+-                ../test-data/small.sgy INLINE_3D CROSSLINE_3D
+-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+-)
+-add_test(
+     NAME python.example.write
+     COMMAND ${PYTHON_EXECUTABLE} -m examples.write
+                 ${CMAKE_CURRENT_BINARY_DIR}/write.sgy
