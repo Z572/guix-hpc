@@ -222,14 +222,15 @@
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "181f0a64316bfe9ff9b49deef23a381c73b61599")))
+                    (commit "8bea28393a423fdf370af31f6e43767d87e63123")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0cfj13i18nviiza13ybwg7bhj0r8ny2zq0w0yqssnikxfq52inwl"))))
+		"0jm1y1ic8pfsrljqs4w08f5q6vkzycw6ladsa5iirxspl0s07w1l"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
+	   emacs-editorconfig
 	   emacs-json-mode
 	   emacs-magit
 	   emacs-yaml-mode
