@@ -30,6 +30,7 @@
   #:use-module (inria tadaam)
   #:use-module (inria eztrace)
   #:use-module (inria simgrid)
+  #:use-module (inria mipp)
   #:use-module (guix utils)
   #:use-module (srfi srfi-1)
   #:use-module (lrz librsb)
@@ -370,19 +371,23 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "5428506835e6772bd7f5dc97c5d142943a417433")
+                    (commit "c74bf0733a680c1e9f810d3f93ab09f49f181fb7")
                     ;; We need the submodule in 'CMakeModules/morse_cmake'.
                     (recursive? #t)))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0hsfpi90i8d3hhbykwgfq4mgsr34ymiahxc8gla9ywhcw8ma59f8"))))
+                "0zy5sycyp9cz58749cm5sm625q84m2axwbsiq0ca46mz3jqxiny8"))))
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon)
                                    ((#:configure-flags flags '())
-                                    `(cons "-DENABLE_MPI=ON" (cons "-DENABLE_STARPU=ON" (delete "-DCHAMELEON_USE_MPI=ON"
-,flags))))))
-    (properties '((tunable? . #true)))))
+                                    `(cons "-DENABLE_MPI=ON" (cons "-DENABLE_STARPU=ON" (cons "-DENABLE_MIPP=ON" (delete "-DCHAMELEON_USE_MPI=ON"
+,flags)))))))
+    (properties '((tunable? . #true)))
+    (inputs (modify-inputs (package-inputs chameleon)
+			   (prepend mipp)))
+    (native-inputs  (modify-inputs (package-native-inputs chameleon)
+				       (delete "python" "gfortran")))))
 
 (define-public starpu-example-dgemm
   (package
