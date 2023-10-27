@@ -376,3 +376,223 @@ performance analysis capabilities directly into applications and activate
 them at runtime.  Caliper is primarily aimed at HPC applications, but works
 for any C/C++/Fortran program.")
     (license license:bsd-3)))
+
+
+(define-public pvtpackage
+  (let ((revision "0")
+        (commit "a92dd22bf4e2ddd16d3253613ca40a8fb769827a"))
+    (package
+      (name "pvtpackage")
+      (version (git-version "0.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/GEOS-DEV/PVTPackage")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0w4wziqm5dm1680bm6kf629lzn43kzqrvfnx5ipr53f9rla1fxhd"))))
+      (build-system copy-build-system)
+      (arguments
+       '(#:install-plan '(("." "pvtpackage"))))
+      (home-page "https://github.com/GEOS-DEV/PVTPackage")
+      (synopsis "No synopsis on the website")
+      (description
+       "No description on the website")
+      (license license:bsd-3))))
+
+(define-public lvarray
+  (let ((revision "0")
+        (commit "145bb1c530a68afa7d446e21c7a90b9c6a987d1f"))
+    (package
+      (name "lvarray")
+      (version (git-version "0.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/GEOS-DEV/LvArray")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1snvwvcz5rxzazjfhkbc636anfdxnc1q0hhqd101r5ris9ld56yw"))))
+      (build-system copy-build-system)
+      (arguments
+       '(#:install-plan '(("." "lvarray"))
+          #:phases  (modify-phases %standard-phases
+                           (add-after 'unpack 'suppress-cxx20-warnings
+                           (lambda _ (substitute* "src/python/pythonHelpers.hpp"
+                    ((".*Pragma.*GCC.*diagnostic.*20.*extensions.*") "")))))))
+      (home-page "https://github.com/GEOS-DEV/LvArray")
+      (synopsis "Collection of array classes for high-performance simulation software")
+      (description
+       "LvArray is a collection of container classes designed for performance
+       portability in that they are usable on the host and device and provide
+       performance similar to direct pointer manipulation")
+      (license license:bsd-3))))
+
+(define-public python-mpi4py-geos
+  (package
+    (inherit python-mpi4py)
+    (name "python-mpi4py-geos")
+    (version "3.1.1")
+    (source (origin
+       (method url-fetch)
+       (uri (pypi-uri "mpi4py" version))
+       (sha256
+        (base32 "0p4zdgyw6kf1hjw8421wv1jvk1mmck3dxb96hm6b4fxrlf3qa7z1"))))))
+
+(define-public python-h5py-geos
+  (package
+    (name "python-h5py-geos")
+    (version "3.9.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "h5py" version))
+              (sha256
+               (base32
+                "05zqjmgaw19d6x8jcbbgci3cqlvzhjf27bbzpp36gqy145jxn176"))))
+    (build-system python-build-system)
+    (arguments (list
+                 #:phases #~(modify-phases %standard-phases
+                           (add-before 'build 'hdf5-fix-parallel
+                            (lambda _ (begin
+                                (setenv "HDF5_MPI" "ON")
+                                (setenv "HDF5_DIR"
+                                #$(this-package-input "hdf5-geos"))))))
+                 #:tests? #f)) ; because page buffering is disabled for parallel
+    (native-inputs (list python-cython))
+    (propagated-inputs (list python-numpy
+                             hdf5-geos
+                             openmpi
+                             python-mpi4py-geos))
+    (home-page "https://docs.h5py.org/en/stable/index.html")
+    (synopsis "Read and write HDF5 files from Python")
+    (description "Read and write HDF5 files from Python")
+    (license license:bsd-3)))
+
+(define-public hdf5-interface
+  (let ((commit "5136554439e791dc5e948f2a74ede31c4c697ef5"))
+    (package
+      (name "hdf5-interface")
+      (version commit)
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/GEOS-DEV/hdf5_interface")
+                      (commit commit)))
+                (sha256
+                 (base32
+                  "1qvjjw2rmd2n85zcgny4gz4ya9psnsmns2cypsscfqs3s4rvb0s0"))))
+      (build-system copy-build-system)
+      (arguments
+       '(#:install-plan '(("." "hdf5_interface"))))
+      (home-page "https://github.com/GEOS-DEV/hdf5_interface")
+      (synopsis "No synopsis on the website")
+      (description "No description on the website")
+      (license license:bsd-3))))
+
+
+(define-public pugixml-geos
+  (package
+    (name "pugixml-geos")
+    (version "1.13")
+    (source
+     (origin
+      (method url-fetch)
+      (uri (string-append "https://github.com/zeux/pugixml/releases/download/v"
+                           version "/pugixml-" version ".tar.gz"))
+      (sha256
+       (base32 "1gmb29m1hy7npv0r3ns1dc14cr0ky5dyamzs81b4hcf19s8v7h20"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
+                            "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+       #:tests? #f))                    ; no tests
+    (native-inputs
+     (list pkg-config))
+    (home-page "https://pugixml.org")
+    (synopsis "Light-weight, simple and fast XML parser for C++ with XPath support")
+    (description "Pugixml is a C++ XML processing library, which consists of a DOM-like
+interface with rich traversal/modification capabilities, a fast XML parser
+which constructs the DOM tree from an XML file/buffer, and an XPath 1.0
+implementation for complex data-driven tree queries.  Full Unicode support is
+also available, with Unicode interface variants and conversions between
+different Unicode encodings which happen automatically during
+parsing/saving.")
+    (license license:expat)))
+
+(define-public vtk-geos
+  (package/inherit vtk
+    (name "vtk-geos")
+    (version "9.1.0")
+    (source (origin
+       (method url-fetch)
+       (uri (string-append "https://vtk.org/files/release/"
+                                  (version-major+minor version)
+                                  "/VTK-" version ".tar.gz"))
+       (sha256
+        (base32 "15nflmf3xx07v1m138v1048hgnkimnlyls3v221q1sziz3s45vcg"))
+        (patch-flags '("-p0"))
+        (patches (list  (local-file "vtk-geos-cmake-fix.patch")
+                        (local-file "vtk-geos-disable_traits.patch")
+                        (local-file "vtk-geos-duplicate-points-fix.patch")
+                        (local-file "vtk-geos-vtkXMLReader-fpe.patch")))))
+    (inputs (list hdf5-geos
+                  libtheora
+                  openmpi
+                  python
+                  zlib))
+   (arguments
+    (substitute-keyword-arguments (package-arguments vtk)
+                  ((#:configure-flags flags '())
+                   #~(list "-DVTK_MODULE_ENABLE_VTK_IOParallelXML=YES"
+                           "-DVTK_MODULE_ENABLE_VTK_FiltersParallelDIY2=YES"
+                           "-DVTK_GROUP_ENABLE_Imaging=DONT_WANT"
+                           "-DVTK_GROUP_ENABLE_MPI=DONT_WANT"
+                           "-DVTK_GROUP_ENABLE_Qt=DONT_WANT"
+                           "-DVTK_GROUP_ENABLE_Rendering=DONT_WANT"
+                           "-DVTK_GROUP_ENABLE_StandAlone=DONT_WANT"
+                           "-DVTK_GROUP_ENABLE_Views=DONT_WANT"
+                           "-DVTK_GROUP_ENABLE_Web=DONT_WANT"
+                           "-DVTK_BUILD_ALL_MODULES=OFF"
+                           "-DVTK_WRAP_PYTHON=ON"
+                           "-DVTK_WRAP_JAVA=OFF"
+                           "-DVTK_USE_MPI=ON"
+                           "-DVTK_MODULE_ENABLE_VTK_vtkm=DONT_WANT"
+                           "-DVTK_MODULE_ENABLE_VTK_IOXML=YES"
+                           "-DVTK_MODULE_ENABLE_VTK_IOLegacy=YES"
+                           "-DVTK_BUILD_TESTING=OFF"
+                           "-DVTK_LEGACY_REMOVE=ON"))
+                  ((#:tests? #f #f) #f)
+                  ((#:validate-runpath? #f #f) #f)))))
+
+(define-public segyio
+  (package
+    (name "segyio")
+    (version "1.9.10")
+    (home-page "https://github.com/equinor/segyio")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (patch-flags '("-p1"))
+              (patches (list (local-file "segyio.patch"))) ;to suppress test.about.example
+              (sha256
+               (base32
+                "06h7qd1jr73qwwc2m7ddjjbsvzibs10dpd34gvwd85k2l68m1l53"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
+                           "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+       #:validate-runpath? #f ;Kontuz !
+       ))
+    (inputs (list python-numpy python python-scikit-build python-pytest-runner))
+    (native-inputs (list python-setuptools-scm python-pytest))
+    (synopsis "Fast Python library for SEGY file")
+    (description
+     "Segyio is a small LGPL licensed C library for easy interaction with SEG-Y and Seismic Unix formatted seismic data, with language bindings for Python and Matlab")
+    (license license:expat)))
