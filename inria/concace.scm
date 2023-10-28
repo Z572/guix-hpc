@@ -48,6 +48,33 @@
   #:use-module (srfi srfi-1)
   )
 
+;; Updated version of the emacs-rmsbolt from guix channel to have tree-sitter (ts) support
+;; TODO: update guix channel instead
+(define-public emacs-rmsbolt-ts
+  ;; There is no release tag. Version is extracted from main file.
+  (let ((commit "86c6e12a85db472e6660ef7fef12a4e719ef3c66")
+        (revision "0")
+        (version "0.1.2"))
+    (package
+      (name "emacs-rmsbolt")
+      (version (git-version version revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://gitlab.com/jgkamat/rmsbolt")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "1kvl8syz700vl2dbva4k1vdzxd67sjby4w4zsl62njvbvwzvcj0r"))))
+      (build-system emacs-build-system)
+      (home-page "https://gitlab.com/jgkamat/rmsbolt")
+      (synopsis "Emacs viewer for compiler output")
+      (description
+       "RMSBolt is a package to provide assembly or bytecode output for
+a source code input file.")
+      (license license:agpl3+))))
+
 (define emacs-instead-of-emacs-minimal
   (package-input-rewriting `((,emacs-minimal . ,emacs))))
 
@@ -269,7 +296,7 @@
 	   bash
 	   ccls ;; c / c++ language server
 	   emacs-envrc
-	   emacs-rmsbolt
+	   emacs-rmsbolt-ts
 	   gdb
 	   python-lsp-server ;; pyton language server
            tree-sitter
