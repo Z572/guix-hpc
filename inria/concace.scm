@@ -467,11 +467,11 @@ experience. Minimal dependencies for org-mode latex export (ox-latex)." )
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "1a536ecc827f1e3cca8c821686c891af0801f437")))
+                    (commit "fd1a0f3e55f5dea9f7e7eba0490e3c7ed8bc32c9")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0h68xpc4mz1gw3vjmp2jq5dcn1nsxkb7ynbk1b7f8dh28ywy38mh"))))
+		"1a277q3xln05ign045j9qpkv4pcfrg45h4iqb27iax2xjc6xw90a"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev
