@@ -471,7 +471,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex)." )
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1a277q3xln05ign045j9qpkv4pcfrg45h4iqb27iax2xjc6xw90a"))))
+		"0h68xpc4mz1gw3vjmp2jq5dcn1nsxkb7ynbk1b7f8dh28ywy38mh"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev
