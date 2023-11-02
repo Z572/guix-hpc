@@ -122,11 +122,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "48496430fa09827b97e81bb37d3a3bdaf9cac6d4")))
+                    (commit "2cc52b3a33dfa0c6296e75b8c6655a5467b4a056")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1l8cr00dv10djlrvcazxh4nvlfjr8b64zdvhjr2i7h1nmhbv6qgw"))))
+                "18sijqiiad2pk7m0gbj7rnf3l0vzn6a75gm5aiia784rcgdgvk6g"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -167,17 +167,18 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "4e6fa430f48197ed49aa9be3f879fea5242cb601")))
+                    (commit "433d5b33dc47836cdf6f3cb46fb821088c410f67")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1r2b1i0ry7304kbws96jl0xw0rh6gi02mka5yf570hp2ik7il6lf"))))
+		"037z9zxvhywaik2yv1fysp5lg9c4dhgn708npadhvb0vvlswrq0i"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
 	   emacs-bedrock-minimal
 	   emacs-cape
 	   emacs-consult
+	   emacs-consult-xdg-recent-files
 	   emacs-corfu
 	   ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
 	   emacs-corfu-terminal
@@ -186,10 +187,13 @@ a source code input file.")
 	   ;; emacs-eshell
 	   emacs-kind-icon
 	   emacs-marginalia
+	   emacs-multi-vterm
 	   emacs-orderless
+	   emacs-pdf-tools
 	   emacs-ripgrep
 	   emacs-vertico
 	   ;; emacs-vertico-directory: library provided within emacs-vertico package
+	   emacs-vterm-toggle
 	   emacs-wgrep
            ripgrep))))
 
