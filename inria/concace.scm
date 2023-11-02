@@ -10,6 +10,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system emacs)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system trivial)
   #:use-module (gnu packages)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages algebra)
@@ -387,32 +388,97 @@ scheme.")
 (define-public emacs-bedrock-write
   (emacs-instead-of-emacs-minimal emacs-bedrock-write-with-emacs-minimal))
 
+(define-public emacs-bedrock-ox-latex-minimal
+  (package
+    (name "emacs-bedrock-ox-latex-minimal")
+    (version "1.4.0")
+    (arguments
+     `(#:builder (mkdir (assoc-ref %outputs "out"))))
+    (source #f)
+    (build-system trivial-build-system)
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal dependencies for org-mode latex export (ox-latex).")
+    (description "Emacs bedrock starter kit. Stepping stones to a better Emacs
+experience. Minimal dependencies for org-mode latex export (ox-latex)." )
+    (home-page "dummy")
+    (license #f)
+    (propagated-inputs
+     (list texlive-scheme-basic
+           texlive-amsfonts
+           texlive-babel
+           texlive-babel-french
+           texlive-bibtex
+           texlive-capt-of
+           texlive-carlisle
+           texlive-fontaxes
+           texlive-hyperref
+           texlive-inconsolata
+           texlive-jknapltx
+           texlive-libertine
+           texlive-ulem
+           texlive-upquote
+           texlive-wrapfig
+           texlive-xcolor
+           texlive-xkeyval
+           rubber))))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-ox-beamer publicly defined below intead
+(define emacs-bedrock-ox-beamer-minimal-with-emacs-minimal
+  (package
+    (name "emacs-bedrock-ox-beamer-minimal")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-beamer-minimal")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode latex beamer (ox-beamer) setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode latex beamer (ox-beamer) setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "c1efc3a60b3014fdc58a287735b98ef31cf4cc7a")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0i7ir3dmi053bzczv3fh37yxbmi02cf4hb2wlpddvzwns02ss1zs"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-ox-latex-minimal
+           texlive-beamer))))
+
+;; emacs-bedrock-ox-beamer with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-ox-beamer-minimal
+  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-beamer-minimal-with-emacs-minimal))
+
+
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-full publicly defined below intead
 (define emacs-bedrock-full-with-emacs-minimal
   (package
-   (name "emacs-bedrock-full")
-   (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
-   (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
-   (license license:cecill-c)
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "1a536ecc827f1e3cca8c821686c891af0801f437")))
-            (file-name (string-append name "-" version "-checkout"))
-            (sha256
+    (name "emacs-bedrock-full")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "1a536ecc827f1e3cca8c821686c891af0801f437")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
                (base32
-		"0h68xpc4mz1gw3vjmp2jq5dcn1nsxkb7ynbk1b7f8dh28ywy38mh"))))
-   (build-system emacs-build-system)
-   (propagated-inputs
-    (list emacs-bedrock-dev
-	  emacs-bedrock-dev-parentheses
-	  emacs-bedrock-org
-	  emacs-bedrock-write))))
+		"1a277q3xln05ign045j9qpkv4pcfrg45h4iqb27iax2xjc6xw90a"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-dev
+	   emacs-bedrock-dev-parentheses
+	   emacs-bedrock-org
+	   emacs-bedrock-ox-beamer-minimal
+	   emacs-bedrock-write))))
 
 ;; emacs-bedrock-full with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
