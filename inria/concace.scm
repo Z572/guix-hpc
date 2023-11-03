@@ -683,56 +683,85 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 ;; Use emacs-bedrock-ox publicly defined below instead
 (define emacs-bedrock-ox-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox")
-    (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
-    (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "7a4f0e715679d282f571687f423f87f687cb0c6e")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-		"0rwl6g8lggrj705pvvpa6jgrrvrj38pcrsp48fgi98da6p27y1ar"))))
-    (build-system emacs-build-system)
-    (propagated-inputs
-     (list emacs-bedrock-ox-beamer-minimal
-	   emacs-bedrock-ox-html
-	   emacs-bedrock-ox-latex
-	   emacs-org-re-reveal))))
+   (name "emacs-bedrock-ox")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox")
+   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
+   (description
+    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "7a4f0e715679d282f571687f423f87f687cb0c6e")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+	      "0rwl6g8lggrj705pvvpa6jgrrvrj38pcrsp48fgi98da6p27y1ar"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-bedrock-ox-beamer-minimal
+	  emacs-bedrock-ox-html
+	  emacs-bedrock-ox-latex
+	  emacs-org-re-reveal))))
 
 ;; emacs-bedrock-ox with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
 (define-public emacs-bedrock-ox
   (emacs-instead-of-emacs-minimal emacs-bedrock-ox-with-emacs-minimal))
 
-(define-public emacs-bedrock-ox-as-default
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-ox-publish publicly defined below instead
+(define emacs-bedrock-ox-publish-with-emacs-minimal
   (package
-   (name "emacs-bedrock-ox-as-default")
+    (name "emacs-bedrock-ox-publish")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-publish")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode publish (ox-publish) setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode publish (ox-publish) setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "80c2e58e809fc1654b9911fe72ccc04581eb1b7e")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1f28bcamcz00scah8q68yzsl3l1xx2wj5yb5cb5xamnlv7myd4fa"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-ox))))
+
+;; emacs-bedrock-ox-publish with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-ox-publish
+  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-publish-with-emacs-minimal))
+
+(define-public emacs-bedrock-ox-publish-as-default
+  (package
+   (name "emacs-bedrock-ox-publish-as-default")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-default")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file for export-only bedrock setup together with a vanilla emacs IDE.")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-publish-default")
+   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file for export-only + publish bedrock setup together with a vanilla emacs IDE.")
    (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el startup file for export-only bedrock setup together with a vanilla emacs IDE.")
+    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el startup file for export-only + publish bedrock setup together with a vanilla emacs IDE.")
    (license license:cecill-c)
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "86218e0643480894490558273cb2935c7739d6c7")))
+                  (commit "2a4d63920087275d97707ede8272f662895e604c")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "1x59c4264c3zvwcfgwvdsb00fx6218y4bf1v4f7xjalm6h3jf4ph"))))
+	      "00m1j74jfhk5a7znabpl7qag87j25jry2rkc387lk49kj1x0s8ap"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs
-	  emacs-bedrock-ox))))
+	  emacs-bedrock-ox-publish))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-full publicly defined below instead
@@ -749,17 +778,17 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "319b1ff048ec1618477ab260b56378b44893e973")))
+                  (commit "f783ba0e257bd8d2d21b7199d57ebd4c279b1b1a")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "1rszi64g7zj27cgks9zcaara9zgc1ym9mip926www2240ykiipdc"))))
+	      "0phy92cdk2m4xmk35m66mdcm1zy07rpghxzn7yqhsxlvq6lmm5lq"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-dev
 	  emacs-bedrock-dev-parentheses
 	  emacs-bedrock-org
-	  emacs-bedrock-ox
+	  emacs-bedrock-ox-publish
 	  emacs-bedrock-write))))
 
 ;; emacs-bedrock-full with emacs instead of emacs-minimal
