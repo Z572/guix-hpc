@@ -466,11 +466,11 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "c1efc3a60b3014fdc58a287735b98ef31cf4cc7a")))
+                    (commit "fb0a17ae31385cb070057065f0805ba14615b2b4")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0i7ir3dmi053bzczv3fh37yxbmi02cf4hb2wlpddvzwns02ss1zs"))))
+		"159sf04wsvf9wsdb21fr6jd4xfw3h96adpylrfvkvfb6ppwy4fj9"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-ox-latex-minimal
@@ -597,8 +597,11 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
      (list emacs-bedrock-ox-base
 	   emacs-bedrock-ox-latex-classes
 	   emacs-bedrock-ox-latex-minimal
+;;	   python          ;; for minted
+;;	   python-pygments ;; for minted
 	   texlive-algorithm2e
 	   texlive-amsmath
+	   texlive-biber
 	   texlive-braket
 	   texlive-ifoddpage
 	   texlive-koma-script
@@ -646,6 +649,92 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 ;;   (emacs-instead-of-emacs-minimal emacs-bedrock-ox-beamer--with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-ox-latex publicly defined below instead
+(define emacs-bedrock-ox-html-with-emacs-minimal
+  (package
+    (name "emacs-bedrock-ox-html")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-html")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode html (ox-html) setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode html (ox-html) setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "5d7d15fd9b80cbf2a303c1543e9f57c63f2a6d4b")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0hsx95f1i9aipjvkr125fpyql43fyqz272k3kmzbp2bpi7c1agi9"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-ox-base
+	   emacs-citeproc-el
+	   emacs-htmlize))))
+
+;; emacs-bedrock-ox-html with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-ox-html
+  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-html-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-ox publicly defined below instead
+(define emacs-bedrock-ox-with-emacs-minimal
+  (package
+    (name "emacs-bedrock-ox")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "7a4f0e715679d282f571687f423f87f687cb0c6e")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0rwl6g8lggrj705pvvpa6jgrrvrj38pcrsp48fgi98da6p27y1ar"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-bedrock-ox-beamer-minimal
+	   emacs-bedrock-ox-html
+	   emacs-bedrock-ox-latex
+	   emacs-org-re-reveal))))
+
+;; emacs-bedrock-ox with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-bedrock-ox
+  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-with-emacs-minimal))
+
+(define-public emacs-bedrock-ox-as-default
+  (package
+   (name "emacs-bedrock-ox-as-default")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-default")
+   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file for export-only bedrock setup together with a vanilla emacs IDE.")
+   (description
+    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el startup file for export-only bedrock setup together with a vanilla emacs IDE.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "86218e0643480894490558273cb2935c7739d6c7")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+	      "1x59c4264c3zvwcfgwvdsb00fx6218y4bf1v4f7xjalm6h3jf4ph"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs
+	  emacs-bedrock-ox))))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-full publicly defined below instead
 (define emacs-bedrock-full-with-emacs-minimal
   (package
@@ -660,18 +749,17 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "0b22f6df79958f30d7e2365d498b7aebcd04286b")))
+                  (commit "319b1ff048ec1618477ab260b56378b44893e973")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "04apynhkg087qzsa52823g8v0ay6cayphdfq7p66gais1cbgwvvi"))))
+	      "1rszi64g7zj27cgks9zcaara9zgc1ym9mip926www2240ykiipdc"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-dev
 	  emacs-bedrock-dev-parentheses
 	  emacs-bedrock-org
-	  emacs-bedrock-ox-beamer-minimal
-	  emacs-bedrock-ox-latex
+	  emacs-bedrock-ox
 	  emacs-bedrock-write))))
 
 ;; emacs-bedrock-full with emacs instead of emacs-minimal
