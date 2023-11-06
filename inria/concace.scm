@@ -8,6 +8,7 @@
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system copy)
   #:use-module (guix build-system emacs)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system trivial)
@@ -22,7 +23,7 @@
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages gawk)
-  #:use-module (gnu packages gdb)  
+  #:use-module (gnu packages gdb)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
@@ -48,6 +49,37 @@
   #:use-module (guix utils)
   #:use-module (srfi srfi-1)
   )
+
+(define-public texlive-bedrock
+  (package
+   (name "texlive-bedrock")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/compose-styles")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Texlive add-on.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Texlive add-on.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "27a5a0aeca37c8489b1c5dee2b4e8459693b4a63")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "075j1ciywizg0iiv04xnrha8z1apk531zh8vh9npss39s0nxd9f8"))))
+    (build-system copy-build-system)
+    (arguments
+     '(#:install-plan
+       '(("siam" "share/texmf-dist/tex/latex/siam")
+	 ("beamerthemeguix" "share/texmf-dist/tex/latex/beamerthemeguix")
+         ("beamerthemeinria" "share/texmf-dist/tex/latex/beamerthemeinria")
+	 ("compas" "share/texmf-dist/tex/latex/compas")
+	 ("IEEEoverride" "share/texmf-dist/tex/latex/ieeeoverride")
+	 ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
+	 ("RR" "share/texmf-dist/tex/latex/inriarr")
+	 ("poster" "share/texmf-dist/tex/latex/inriaposter"))))))
+
 
 ;; Updated version of the emacs-rmsbolt from guix channel to have tree-sitter (ts) support
 ;; TODO: update guix channel instead
@@ -123,11 +155,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "2cc52b3a33dfa0c6296e75b8c6655a5467b4a056")))
+                    (commit "f7886ca47f5cf77ac29d2271a790fdfb05c9d80f")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "18sijqiiad2pk7m0gbj7rnf3l0vzn6a75gm5aiia784rcgdgvk6g"))))
+                "10ix927813f3w6yjxnm3namgxizj5yvhgzym8x0i5a33qjydcym6"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -258,7 +290,7 @@ a source code input file.")
      (list emacs-bedrock-base
 	   emacs-bedrock-org-minimal
 	   emacs-consult-org-roam
-	   emacs-org-ql ;; for a better speed (to be investigated) 
+	   emacs-org-ql ;; for a better speed (to be investigated)
 	   emacs-org-roam
 	   ;; emacs-org-roam-ui
 	   ))))
@@ -564,14 +596,21 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
+	   inkscape ;; for beamerthemeguix (et probably other) from texlive-bedrock requested by the svg package
 	   texlive-acmconf
 	   texlive-acmart
+	   texlive-algorithms ;; for siamart220329 from texlive-bedrock
 	   texlive-anonymous-acm
+	   texlive-beamerposter ;; for inriaposter in texlive-bedrock
+	   texlive-bedrock ;; See above definition (!): guix, inria, siam
 	   texlive-booktabs ;; for texlive-acmart
 	   texlive-caption ;; for texlive-acmart
+	   texlive-cleveref ;; for siamart220329 from texlive-bedrock
 	   texlive-cmap ;; for texlive-acmart
 	   texlive-comment ;; for texlive-acmart
 	   texlive-environ ;; for texlive-acmart
+	   texlive-euler ;; for compas from texlive-bedrock
+	   texlive-helvetic ;; for beamerthemeguix from texlive-bedrock
 	   texlive-hyperxmp ;; for texlive-acmart
 	   texlive-ieeeconf
 	   texlive-ieeetran ;; https://ctan.tetaneutral.net/macros/latex/contrib/IEEEtran/IEEEtran_HOWTO.pdf
@@ -581,8 +620,12 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 	   texlive-llncsconf
 	   texlive-microtype ;; for texlive-acmart
 	   texlive-ncctools ;; for texlive-acmart (for manyfoot; TODO checkout bigfoot)
+	   texlive-ntheorem ;; for siamart220329 from texlive-bedrock
+	   texlive-palatino ;; for compas from texlive-bedrock
 	   texlive-setspace ;; for texlive-acmart
+	   texlive-shadow ;; for compas from texlive-bedrock
 	   texlive-textcase ;; for texlive-acmart
+	   texlive-type1cm ;; for beamerposter requested by inriaposter in texlive-bedrock
 	   texlive-times ;; for texlive-ieeetran
 	   texlive-totpages ;; for texlive-acmart
 	   ;; TODO SIAM
