@@ -39,7 +39,7 @@
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
-;;  #:use-module (hacky gitlab)
+  ;;  #:use-module (hacky gitlab)
   #:use-module (inria hiepacs)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
@@ -564,6 +564,28 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
+	   texlive-acmconf
+	   texlive-acmart
+	   texlive-anonymous-acm
+	   texlive-booktabs ;; for texlive-acmart
+	   texlive-caption ;; for texlive-acmart
+	   texlive-cmap ;; for texlive-acmart
+	   texlive-comment ;; for texlive-acmart
+	   texlive-environ ;; for texlive-acmart
+	   texlive-hyperxmp ;; for texlive-acmart
+	   texlive-ieeeconf
+	   texlive-ieeetran ;; https://ctan.tetaneutral.net/macros/latex/contrib/IEEEtran/IEEEtran_HOWTO.pdf
+	   texlive-ifmtarg ;; for texlive-acmart
+	   texlive-inriafonts
+	   texlive-llncs
+	   texlive-llncsconf
+	   texlive-microtype ;; for texlive-acmart
+	   texlive-ncctools ;; for texlive-acmart (for manyfoot; TODO checkout bigfoot)
+	   texlive-setspace ;; for texlive-acmart
+	   texlive-textcase ;; for texlive-acmart
+	   texlive-times ;; for texlive-ieeetran
+	   texlive-totpages ;; for texlive-acmart
+	   ;; TODO SIAM
 	   ;;texlive-XXX
 	   ))))
 
