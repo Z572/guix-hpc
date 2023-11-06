@@ -906,6 +906,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            gzip
            imagemagick
            inkscape
+	   nss-certs
            python
            python-pygments
            sed
