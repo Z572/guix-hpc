@@ -431,7 +431,7 @@ Mechanics, and Computer Graphics.")
                    (lambda _
                      (substitute* "cmake/SiconosSetup.cmake"
                                   (("FATAL_ERROR") "WARNING"))
-                     (substitute* "cmake/fclib-setup.cmake"
+                     (substitute* "cmake/fclib_setup.cmake"
                                   (("find_package(FCLIB 3.0.0 CONFIG REQUIRED)")
                                    "find_package(FCLIB 3.0.0 CONFIG REQUIRED)
                                     set(ConfigPackageLocation lib/cmake/siconos-${SICONOS_VERSION})"))
