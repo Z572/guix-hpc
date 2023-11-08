@@ -78,7 +78,7 @@
              (url "https://github.com/FrictionalContactLibrary/fclib/")
              (commit "a8ba23a694d5addcdfa29357a4c45933451abdfd")))
        (sha256 (base32
-                "1klq8dr1iblz9abhaq92fw3nfqm5c019qwbjca8lhjkjr647m273"))))
+                "1c95yc7w2rynkk2d3mhnzv1bbcjqfpcxsc8qx0nvq78pyxqcaf2g"))))
     (build-system cmake-build-system)
     (arguments
      '(#:build-type "Release"           ;Build without '-g' to save space.
