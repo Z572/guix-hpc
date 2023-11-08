@@ -76,9 +76,9 @@
        (method git-fetch)
        (uri (git-reference
              (url "https://github.com/FrictionalContactLibrary/fclib/")
-             (commit "079e4d221d19ed47c6c3457b50cdfcb3dfd7e28c")))
+             (commit "a8ba23a694d5addcdfa29357a4c45933451abdfd")))
        (sha256 (base32
-                "1zivxh404pk1gjiv32vgyg4dqzlkn0pm2hh5vv7ryahk48xk1flx"))))
+                "1klq8dr1iblz9abhaq92fw3nfqm5c019qwbjca8lhjkjr647m273"
     (build-system cmake-build-system)
     (arguments
      '(#:build-type "Release"           ;Build without '-g' to save space.
