@@ -427,10 +427,15 @@ Mechanics, and Computer Graphics.")
            (lambda _
              (setenv "SOURCE_DATE_EPOCH" "315532800")
              #t))
-        (add-after 'unpack 'hey-look-we-can-go-beyond-the-fatal-error
+        (add-after 'unpack 'some-quick-patches
                    (lambda _
                      (substitute* "cmake/SiconosSetup.cmake"
                                   (("FATAL_ERROR") "WARNING"))
+                     (substitute* "cmake/fclib-setup.cmake"
+                                  (("find_package(FCLIB 3.0.0 CONFIG REQUIRED)")
+                                   "find_package(FCLIB 3.0.0 CONFIG REQUIRED)
+                                    set(ConfigPackageLocation lib/cmake/siconos-${SICONOS_VERSION})"))
+
                      #t))))))))
 
 (define-public siconos siconos-4.4-rc3)
