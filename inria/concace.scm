@@ -25,6 +25,7 @@
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gdb)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages man)
@@ -79,7 +80,6 @@
 	 ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
 	 ("RR" "share/texmf-dist/tex/latex/inriarr")
 	 ("poster" "share/texmf-dist/tex/latex/inriaposter"))))))
-
 
 ;; Updated version of the emacs-rmsbolt from guix channel to have tree-sitter (ts) support
 ;; TODO: update guix channel instead
@@ -171,6 +171,7 @@ a source code input file.")
 	   findutils
            gawk
            git
+	   graphviz
            grep
            gzip
 	   man-db
@@ -251,14 +252,15 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "9d915ebfcc0e339a82b47eae2cf35653f8615b91")))
+                    (commit "53af85db876d2973e89ccb09d522cbe7bf5c8bd6")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"07y0kghjwcfj08ysp0h07xq6j9w700glfhkdbphk7rcwi93mqdlf"))))
+		"06vzf72j65wan99aljlknlgkwjgg2i1fgp7b99lgc2xgq4ay0ykg"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-org))))
+     (list emacs-org
+	   graphviz))))
 
 ;; emacs-bedrock-org-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -596,17 +598,21 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
-	   inkscape ;; for beamerthemeguix (et probably other) from texlive-bedrock requested by the svg package
+	   inkscape ;; requested by the svg package for converging svg to pdf when  ZZZ
+	   ;; small granularity; consider texlive-collection-publishers for a superset
 	   texlive-acmconf
 	   texlive-acmart
 	   texlive-algorithms ;; for siamart220329 from texlive-bedrock
 	   texlive-anonymous-acm
+	   texlive-biblatex-apa ;; typically nice in beamer presentations (#+cite_export: biblatex apa)
+           ;; texlive-biblatex-apa6 ;; check apa vs apa6 vs apa7 vs apacite
 	   texlive-beamerposter ;; for inriaposter in texlive-bedrock
 	   texlive-bedrock ;; See above definition (!): guix, inria, siam
 	   texlive-booktabs ;; for texlive-acmart
 	   texlive-caption ;; for texlive-acmart
 	   texlive-cleveref ;; for siamart220329 from texlive-bedrock
 	   texlive-cmap ;; for texlive-acmart
+	   texlive-cm-super ;; for guix theme in texlive-bedrock
 	   texlive-comment ;; for texlive-acmart
 	   texlive-environ ;; for texlive-acmart
 	   texlive-euler ;; for compas from texlive-bedrock
@@ -652,11 +658,11 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f362d158f4dee73f1ba0cf0c16066000eda4a570")))
+                    (commit "f8c26a64788b280518e9d7a1d4cf13ac44acaaaf")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0qwg2nd22xqyra8b8rna4bh0nk26yf98c9zpr1a5apjsbxyigwgx"))))
+		"0scw1lzli48cw450p9kbxrr7nxln89xlpxaljm3k52mr3hkr3532"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-ox-base
