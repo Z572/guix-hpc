@@ -21,6 +21,11 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages sdl)
+  #:use-module (gnu packages flex)
+  #:use-module (gnu packages tls)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages man)
   #:use-module (inria tadaam)
   #:use-module (inria eztrace)
   #:use-module (inria llvm)
@@ -287,3 +292,49 @@ collective errors detection in parallel applications.")
                      ,%openmpi-setup))))
     (license lgpl2.1)))
 
+; FIXME: this doesn't package easyview; the binary currently assumes too much
+; about the trace file placement.
+(define-public easypap-se
+  (package
+    (name "easypap-se")
+    (version "0.1")
+    (synopsis "EasyPAP Student Edition")
+    (description "EasyPAP description")
+    (home-page "https://gforgeron.gitlab.io/easypap/")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://gitlab.com/gforgeron/easypap-se.git")
+             (recursive? #t)
+             (commit "6e38f498f227da799ce46756c23608924371c4d7")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "16l36c7p2zdj55w298naih2nisfnpsnc1qc0dv28zswisb7zxm75"))
+       (patches (search-patches "inria/patches/easypap.patch"))))
+    (native-inputs (list pkg-config flex))
+    (inputs (list sdl2-image
+                  sdl2-ttf
+                  sdl2
+                  `(,hwloc "lib")
+                  openmpi
+                  openssl-3.0
+                  fxt))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      ; There are no tests in the project.
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (delete 'configure)
+                   (replace 'install
+                     (lambda* (#:key outputs #:allow-other-keys)
+                       ;; The package's Makefile doesn't provide an "install"
+                       ;; rule so do it by ourselves.
+                       (let ((bin (string-append (assoc-ref outputs "out")
+                                                 "/bin"))
+                             (fonts (string-append (assoc-ref outputs "out")
+                                                   "/fonts")))
+                         (install-file "fonts/FreeSansBold.ttf" fonts)
+                         (install-file "bin/easypap" bin)))))))
+    (license bsd-3)))
