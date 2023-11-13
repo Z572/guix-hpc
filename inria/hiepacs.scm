@@ -1526,22 +1526,19 @@ for manual interpretation.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "33ea9ae3f0c39b31fa9fb631653e34340d8100dd")
+                  (commit "12c1993872030de31aa0048eeb19001c35c909e4")
                   ;; We need the submodule in 'cmake_modules/morse_cmake'.
                   (recursive? #t)))
             (file-name (string-append name "-" version))
             (sha256
-             (base32
-              "05n7isr54zynw6gf6mgc973qdg8nm06f434y3l3qvwz2ijjvb43f"))))
+                (base32
+                    "1pyzd24556j9garrmkn0wvj05ayisyaly7yww0rcdf9mrvxflwvi"))))
    (arguments
     '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
                           "-Dscalfmm_BUILD_TOOLS=ON"
                           "-Dscalfmm_BUILD_UNITS=ON")
                         #:tests? #f
                         #:phases (modify-phases %standard-phases
-                                    (add-after 'unpack 'goto-src-dir
-                                        (lambda _
-                                            (chdir "experimental") #t))
                                     (add-before 'check 'prepare-test-environment
                                         (lambda _
                                           ;; Allow tests with more MPI processes than available CPU cores,
