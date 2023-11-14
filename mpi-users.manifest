@@ -1,0 +1,39 @@
+;;; This is -*- Scheme -*-.
+;;;
+;;; This module extends GNU Guix and is licensed under the same terms, those
+;;; of the GNU GPL version 3 or (at your option) any later version.
+;;;
+;;; Copyright © 2023 Inria
+
+;; This manifest contains the list of MPI (actually Open MPI) users, useful
+;; when testing an Open MPI upgrade.
+
+(use-modules (guix graph)
+             ((guix scripts graph) #:select (%bag-node-type))
+             ((guix store)
+              #:select (with-store run-with-store %store-monad))
+             ((guix packages)
+              #:select (package-closure package-superseded))
+             (guix monads)
+             (gnu packages)
+             (gnu packages mpi))
+
+(define (all-packages)
+  "Return the list of all the distro's packages."
+  (fold-packages (lambda (package result)
+                   ;; Ignore deprecated packages.
+                   (if (package-superseded package)
+                       result
+                       (cons package result)))
+                 '()
+                 #:select? (const #t)))           ;include hidden packages
+
+(define openmpi-users
+  (with-store store
+    (run-with-store store
+      (mlet %store-monad ((edges (node-back-edges
+                                  %bag-node-type
+                                  (package-closure (all-packages)))))
+        (return (node-transitive-edges (list openmpi) edges))))))
+
+(packages->manifest openmpi-users)
