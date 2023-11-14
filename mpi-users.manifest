@@ -36,4 +36,4 @@
                                   (package-closure (all-packages)))))
         (return (node-transitive-edges (list openmpi) edges))))))
 
-(packages->manifest openmpi-users)
+(packages->manifest (cons openmpi openmpi-users))
