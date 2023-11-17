@@ -1,0 +1,56 @@
+diff --git a/openmp/libomptarget/CMakeLists.txt b/openmp/libomptarget/CMakeLists.txt
+index 42e97b5502ff..9ace9a107608 100644
+--- a/openmp/libomptarget/CMakeLists.txt
++++ b/openmp/libomptarget/CMakeLists.txt
+@@ -122,8 +122,8 @@ find_package(LLVM QUIET CONFIG PATHS
+    NO_DEFAULT_PATH)
+ if(LLVM_DIR)
+   message(" -- LLVM found at ${LLVM_DIR}")
+-  find_program(CLANG_TOOL clang PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+-  find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_TOOL clang PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(AR_TOOL llvm-ar PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(LINK_TOOL llvm-link PATHS ${LLVM_TOOLS_BINARY_DIR}
+     NO_DEFAULT_PATH)
+diff --git a/openmp/libomptarget/DeviceRTL/CMakeLists.txt b/openmp/libomptarget/DeviceRTL/CMakeLists.txt
+index 969ae2bb7a34..8dc8ba07de28 100644
+--- a/openmp/libomptarget/DeviceRTL/CMakeLists.txt
++++ b/openmp/libomptarget/DeviceRTL/CMakeLists.txt
+@@ -29,7 +29,7 @@ endif()
+ if (LLVM_DIR)
+   # Builds that use pre-installed LLVM have LLVM_DIR set.
+   # A standalone or LLVM_ENABLE_RUNTIMES=openmp build takes this route
+-  find_program(CLANG_TOOL clang PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_TOOL clang PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(LINK_TOOL llvm-link PATHS ${LLVM_TOOLS_BINARY_DIR}
+     NO_DEFAULT_PATH)
+   find_program(OPT_TOOL opt PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+diff --git a/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt b/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
+index 70eef5841a2a..8c4035f802c3 100644
+--- a/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
++++ b/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
+@@ -61,7 +61,7 @@ endif()
+ 
+ if (LLVM_DIR)
+   # Builds that use pre-installed LLVM have LLVM_DIR set.
+-  find_program(CLANG_TOOL clang PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_TOOL clang PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(LINK_TOOL llvm-link PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(OPT_TOOL opt PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   if ((NOT CLANG_TOOL) OR (NOT LINK_TOOL) OR (NOT OPT_TOOL))
+diff --git a/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp b/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp
+index 3c2cb04af41b..fa1d7094d122 100644
+--- a/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp
++++ b/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp
+@@ -27,8 +27,9 @@ bool is_locked(void *ptr, hsa_status_t *err_p, void **agentBaseAddress) {
+   if (err != HSA_STATUS_SUCCESS){
+     DP("Error when getting pointer info\n");
+     return is_locked;
+-  } else
++  } else {
+     is_locked = (info.type == HSA_EXT_POINTER_TYPE_LOCKED);
++  }
+ 
+   if (is_locked && agentBaseAddress != nullptr) {
+     // When user passes in a basePtr+offset we need to fix the

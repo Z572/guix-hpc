@@ -1,0 +1,43 @@
+diff --git a/openmp/libomptarget/CMakeLists.txt b/openmp/libomptarget/CMakeLists.txt
+index 3ff7c9e71dc5..c3af54b5fdca 100644
+--- a/openmp/libomptarget/CMakeLists.txt
++++ b/openmp/libomptarget/CMakeLists.txt
+@@ -125,8 +125,8 @@ find_package(LLVM QUIET CONFIG PATHS
+    NO_DEFAULT_PATH)
+ if(LLVM_DIR)
+   message(" -- LLVM found at ${LLVM_DIR}")
+-  find_program(CLANG_TOOL clang PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+-  find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_TOOL clang PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(AR_TOOL llvm-ar PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(LINK_TOOL llvm-link PATHS ${LLVM_TOOLS_BINARY_DIR}
+     NO_DEFAULT_PATH)
+diff --git a/openmp/libomptarget/DeviceRTL/CMakeLists.txt b/openmp/libomptarget/DeviceRTL/CMakeLists.txt
+index 5a1f1df6d302..bfb058ea2e83 100644
+--- a/openmp/libomptarget/DeviceRTL/CMakeLists.txt
++++ b/openmp/libomptarget/DeviceRTL/CMakeLists.txt
+@@ -27,8 +27,8 @@ endif()
+ if (LLVM_DIR)
+   # Builds that use pre-installed LLVM have LLVM_DIR set.
+   # A standalone or LLVM_ENABLE_RUNTIMES=openmp build takes this route
+-  find_program(CLANG_TOOL clang PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+-  find_program(PACKAGER_TOOL clang-offload-packager PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_TOOL clang PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(PACKAGER_TOOL clang-offload-packager PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(LINK_TOOL llvm-link PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(OPT_TOOL opt PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(EXTRACT_TOOL llvm-extract PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+diff --git a/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt b/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
+index 70eef5841a2a..8c4035f802c3 100644
+--- a/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
++++ b/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
+@@ -61,7 +61,7 @@ endif()
+ 
+ if (LLVM_DIR)
+   # Builds that use pre-installed LLVM have LLVM_DIR set.
+-  find_program(CLANG_TOOL clang PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
++  find_program(CLANG_TOOL clang PATHS ${CLANG_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(LINK_TOOL llvm-link PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   find_program(OPT_TOOL opt PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
+   if ((NOT CLANG_TOOL) OR (NOT LINK_TOOL) OR (NOT OPT_TOOL))
