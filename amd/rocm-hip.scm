@@ -370,7 +370,7 @@ for AMD and NVIDIA GPUs from single source code.")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "hipamd" version))
         (sha256 (base32 (assoc-ref %hipamd-repo-hashes version)))
-        (patches (assoc-ref %hipamd-repo-patches version))))
+        (patches (map search-patch (assoc-ref %hipamd-repo-patches version)))))
 
 (define (make-hipamd hip rocm-comgr rocclr rocm-opencl)
     (package
