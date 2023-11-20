@@ -307,7 +307,8 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "hip" version))
         (sha256 (base32 (assoc-ref %hip-headers-repo-hashes version)))
-        (patches (assoc-ref %hip-headers-repo-patches version))))
+        (patches (map search-patch
+                      (assoc-ref %hip-headers-repo-patches version)))))
 
 (define (make-hip-headers rocminfo rocm-toolchain)
     (hidden-package
