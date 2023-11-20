@@ -259,11 +259,11 @@ to interact with the ROCk driver.")
 
 (define %rocr-runtime-patches
     '(
-        ("5.7.1" . ("gnu/packages/patches/rocr-runtime-5.5.patch"))
-        ("5.6.1" . ("gnu/packages/patches/rocr-runtime-5.5.patch"))
-        ("5.5.1" . ("gnu/packages/patches/rocr-runtime-5.5.patch"))
-        ("5.4.4" . ("gnu/packages/patches/rocr-runtime-5.3.3.patch"))
-        ("5.3.3" . ("gnu/packages/patches/rocr-runtime-5.3.3.patch"))
+        ("5.7.1" . ("amd/patches/rocr-runtime-5.5.patch"))
+        ("5.6.1" . ("amd/patches/rocr-runtime-5.5.patch"))
+        ("5.5.1" . ("amd/patches/rocr-runtime-5.5.patch"))
+        ("5.4.4" . ("amd/patches/rocr-runtime-5.3.3.patch"))
+        ("5.3.3" . ("amd/patches/rocr-runtime-5.3.3.patch"))
     )
 )
 
