@@ -127,11 +127,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "c9ffcab069c2da889758f13612facd3bbc4c09fe")))
+                  (commit "195bf067e5e3fc80864a9d8ca6ab44232074d5cd")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "0zapwx9a6zldx8gqzfz39092myw8w99gq0p18yj2r659a2jggbbv"))))
+	      "1iz117n40p6w8ll7jzgqm1zc9mapfgh0hzxqa95lalpvbf02csxh"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org))))
