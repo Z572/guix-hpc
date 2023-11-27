@@ -112,28 +112,89 @@ a source code input file.")
   (package-input-rewriting `((,emacs-minimal . ,emacs))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-bedrock-ob-latex-macros publicly defined below instead
+(define emacs-ob-latexmacro-with-emacs-minimal
+  (package
+   (name "emacs-ob-latexmacro")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-ob-latexmacro")
+   (synopsis "Extension of ob-latex for supporting common macro definitions for ox-latex and ox-html backends.")
+   (description
+    "Extension of ob-latex for supporting common macro definitions for ox-latex and ox-html backends.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "c9ffcab069c2da889758f13612facd3bbc4c09fe")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+	      "0zapwx9a6zldx8gqzfz39092myw8w99gq0p18yj2r659a2jggbbv"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-org))))
+
+;; emacs-ob-latexmacro with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-ob-latexmacro
+  (emacs-instead-of-emacs-minimal emacs-ob-latexmacro-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-ob-latexpicture publicly defined below instead
+(define emacs-ob-latexpicture-with-emacs-minimal
+  (package
+   (name "emacs-ob-latexpicture")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-ob-latexpicture")
+   (synopsis "Extension of ob-latex for supporting vectorial output for both ox-latex (inlined) and ox-html (through svg generation) backends.")
+   (description
+    "Extension of ob-latex for supporting vectorial output for both ox-latex (inlined) and ox-html (through svg generation) backends. Note it also optionally support macros definition from emacs-ob-latexmacro through :usemacros t header argument.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "c91c20fa10db25d7ac57c0762926afeb7e92509")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+	      "15gpw927pvs9nwrkbl4hfhm7ddvisydqk6f3xqdk78108dyxzhy1"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-org
+	  texlive-biblatex
+	  texlive-listings
+	  texlive-standalone))))
+
+;; emacs-ob-latexmacro with emacs instead of emacs-minimal
+;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+(define-public emacs-ob-latexpicture
+  (emacs-instead-of-emacs-minimal emacs-ob-latexpicture-with-emacs-minimal))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-early-init publicly defined below instead
 (define emacs-bedrock-early-init-with-emacs-minimal
   (package
    (name "emacs-bedrock-early-init")
-    (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
-    (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "961797e55adc26e0203dac7f936820fb41efebc7")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
-    (build-system emacs-build-system)
-    ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
-    (propagated-inputs (list emacs))))
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
+   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+   (description
+    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "961797e55adc26e0203dac7f936820fb41efebc7")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
+   (build-system emacs-build-system)
+   ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
+   (propagated-inputs (list emacs))))
 
 ;; emacs-bedrock-early-init with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -516,35 +577,6 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
   (emacs-instead-of-emacs-minimal emacs-bedrock-ox-beamer-minimal-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ob-latex-macros publicly defined below instead
-(define emacs-bedrock-ob-latex-macros-with-emacs-minimal
-  (package
-    (name "emacs-bedrock-ob-latex-macros")
-    (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ob-latex-macros")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Tip for defining LaTeX macros for use in both LaTeX and HTML/MathJax export.")
-    (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Tip for defining LaTeX macros for use in both LaTeX and HTML/MathJax export. Extend org-src-lang-modes with latex-macros")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "7e01bf32247722d624af83cfb8343ea27338851f")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-		"0rd4fljw1f0la3f5afqk7x36cjgc9z58qhhfhw2js465ayhvd6gk"))))
-    (build-system emacs-build-system)
-    (propagated-inputs
-     (list emacs-org))))
-
-;; emacs-bedrock-ob-latex-macros with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ob-latex-macros
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ob-latex-macros-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-ox-base publicly defined below instead
 (define emacs-bedrock-ox-base-with-emacs-minimal
   (package
@@ -559,16 +591,16 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f48134f7c9a783e215575b2796d41b6d9d306c5d")))
+                    (commit "d3cec28bbbe4308f5178418d61667832e3529da9")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"11zwqqvkyb3hr9i959pr702dcl365jyxh9ic0a679m5p0kdks0l6"))))
+		"1gq1mqscn2j6x08d7l3cqxl74lapf77vcfhskll577fpyaswf1ba"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-org-minimal
-	   emacs-bedrock-ob-latex-macros
-	   texlive-biblatex))))
+	   emacs-ob-latexmacro
+	   emacs-ob-latexpicture))))
 
 ;; emacs-bedrock-ox-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -673,6 +705,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 	   texlive-algorithm2e
 	   texlive-amsmath
 	   texlive-biber
+;;	   texlive-biblatex
 	   texlive-braket
 	   texlive-ifoddpage
 	   texlive-koma-script
