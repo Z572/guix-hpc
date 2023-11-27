@@ -188,7 +188,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.3)
     (name "starpu")
-    (version "1.4.1")
+    (version "1.4.2")
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -196,7 +196,7 @@ kernels are executed as efficiently as possible.")
                    (commit (string-append "starpu-" version))))
              (file-name (git-file-name name version))
              (sha256
-              (base32 "1v7js4qshbr2yff8df2bq6sqqr34vvwjakx8fly8c4jjrj8mf0gg"))
+              (base32 "0k8dq8hj03b2g28hcs6jgdp8afv40p8m9143af3z9m4hliad43ck"))
              (patches (search-patches %patch-path))))
    (arguments
     (substitute-keyword-arguments (package-arguments starpu-1.3)
@@ -254,7 +254,7 @@ kernels are executed as efficiently as possible.")
 (define-public parcoach
   (package
     (name "parcoach")
-    (version "2.4.1")
+    (version "2.4.2")
     (source
      (origin
        (method git-fetch)
@@ -264,7 +264,7 @@ kernels are executed as efficiently as possible.")
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "05fqxvfsfc2phckj6mpgrw9lcd38s6d17cikp3akayb5ljhpzhpj"))))
+         "1sq01gfidly7mkhm233cw8sdrg3jh1xnm238lxf2bcid8vp4issa"))))
     (build-system cmake-build-system)
     (native-inputs
      (list clang-toolchain-15 python python-lit googletest flang-15))
