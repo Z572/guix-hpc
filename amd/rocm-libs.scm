@@ -92,6 +92,7 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
 ; ucx built with rocm
 (define (make-ucx-rocm roct-thunk rocr-runtime hipamd)
   (package
+    (inherit ucx)
     (name "ucx")
     (version (string-append "1.14.1-rocm-" (package-version hipamd)))
     (source
@@ -103,7 +104,6 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
               (file-name (git-file-name name version))
               (sha256 (base32 "0jij2qzy655f1k3slj05lr679zflavj9f3g9bzlnxbqv524a0250")))
     )
-    (build-system gnu-build-system)
     (arguments
         (list
             #:configure-flags
@@ -123,19 +123,7 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
                 #:make-flags
                 #~(list "V=1")))
     (native-inputs (list autoconf automake libtool pkg-config roct-thunk))
-    (inputs (list numactl hipamd rocr-runtime))
-    (synopsis "Optimized communication layer for message passing in HPC")
-    (description
-     "Unified Communication X (UCX) provides an optimized communication layer
-for message passing (MPI), portable global address space (PGAS) languages and
-run-time support libraries, as well as RPC and data-centric applications.
-
-UCX utilizes high-speed networks for inter-node communication, and shared
-memory mechanisms for efficient intra-node communication.")
-    (home-page "https://www.openucx.org/")
-    (license bsd-3)
-    (supported-systems '("x86_64-linux" "aarch64-linux")))
-)
+    (inputs (list numactl hipamd rocr-runtime))))
 
 (define-public ucx-rocm-5.7 (make-ucx-rocm roct-thunk-5.7 rocr-runtime-5.7 hipamd-5.7))
 (define-public ucx-rocm-5.6 (make-ucx-rocm roct-thunk-5.6 rocr-runtime-5.6 hipamd-5.6))
@@ -147,14 +135,13 @@ memory mechanisms for efficient intra-node communication.")
 ; openmpi built with ucx-rocm
 (define (make-openmpi-rocm ucx)
     (package
-        (name "openmpi")
+        (inherit openmpi)
         (version (string-append "5.0.0-ucx-"(package-version ucx)))
         (source
             (origin
                 (method url-fetch)
                 (uri "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.0.tar.bz2")
                 (sha256 (base32 "04ynmkyxns0nxiwhyfzps1xfrxh8rlwd561xz12v9bn19flmr14x"))))
-        (build-system gnu-build-system)
         (arguments
             (list
                 #:configure-flags
@@ -171,10 +158,6 @@ memory mechanisms for efficient intra-node communication.")
                             (setenv "CPLUS_INCLUDE_PATH" (search-input-directory inputs "/include/infiniband")))))))
         (native-inputs (list perl python-wrapper pkg-config))
         (inputs (list hwloc-2 libfabric libevent opensm rdma-core gfortran ucx))
-        (synopsis "synopsis")
-        (description "description")
-        (home-page "home-page")
-        (license bsd-3)
     )
 )
 
