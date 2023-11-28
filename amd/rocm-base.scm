@@ -53,12 +53,12 @@
 
 ; llvm
 (define %llvm-monorepo-hashes
-    '(
-        ("rocm-5.7.1" . "1bwqrsvl2gdygp8lqz25xifhmrqwmwjhjhdnc51dr7lc72f4ksfk")
-        ("rocm-5.6.1" . "080pmr2f7hmnpgixikwrrj8pb67b2mw5c5s5649ik2rl8dyjnmmi")
-        ("rocm-5.5.1" . "0g4w7grbl3qf96biflamhgf0f1hvzxnd747cc0kjzpqa1bfcfrhl")
-        ("rocm-5.4.4" . "1q3jlnmyrrj5mhyx33xpnfdbi8ikw8r28rnq0fhxc5j307lw4fq4")
-        ("rocm-5.3.3" . "06r4zrgjsaifnjc7lsp18nwkg6xvalfrlxmn0r7ixghnrhvkpai0")
+    `(
+        ("rocm-5.7.1" . ,(base32 "1bwqrsvl2gdygp8lqz25xifhmrqwmwjhjhdnc51dr7lc72f4ksfk"))
+        ("rocm-5.6.1" . ,(base32 "080pmr2f7hmnpgixikwrrj8pb67b2mw5c5s5649ik2rl8dyjnmmi"))
+        ("rocm-5.5.1" . ,(base32 "0g4w7grbl3qf96biflamhgf0f1hvzxnd747cc0kjzpqa1bfcfrhl"))
+        ("rocm-5.4.4" . ,(base32 "1q3jlnmyrrj5mhyx33xpnfdbi8ikw8r28rnq0fhxc5j307lw4fq4"))
+        ("rocm-5.3.3" . ,(base32 "06r4zrgjsaifnjc7lsp18nwkg6xvalfrlxmn0r7ixghnrhvkpai0"))
     )
 )
 
@@ -79,7 +79,7 @@
                 (url "https://github.com/RadeonOpenCompute/llvm-project.git")
                 (commit version)))
         (file-name (git-file-name "llvm-project" version))
-        (sha256 (base32 (assoc-ref %llvm-monorepo-hashes version)))
+        (sha256 (assoc-ref %llvm-monorepo-hashes version))
         (patches (map search-patch (assoc-ref %llvm-patches version)))))
 
 (define (make-llvm-rocm version)
@@ -155,12 +155,12 @@
 
 ; rocm-device-libs
 (define %rocm-device-libs-hashes
-    '(
-        ("5.7.1" . "1xc4g5qb8x5hgnvrpzxqxqbsdnwaff1r12aqb8a84mmj5bznq701")
-        ("5.6.1" . "1jg96ycy99s9fis8sk1b7qx5p33anw16mqlm07zqbnhry2gqkcbh")
-        ("5.5.1" . "0apwrwa8av5ylf318blwid4xgz6j6bgdpc4frgzwd8vsjwzwkmm8")
-        ("5.4.4" . "069nc6yg5scp9r0mj8ckb7a5mg74dsavb2ls6fqi75c65n1ny37j")
-        ("5.3.3" . "15bcgwy5azmx7ldimhz5mdmbrmi4wzdfwdwmznj3g4793z81x8xc")
+    `(
+        ("5.7.1" . ,(base32 "1xc4g5qb8x5hgnvrpzxqxqbsdnwaff1r12aqb8a84mmj5bznq701"))
+        ("5.6.1" . ,(base32 "1jg96ycy99s9fis8sk1b7qx5p33anw16mqlm07zqbnhry2gqkcbh"))
+        ("5.5.1" . ,(base32 "0apwrwa8av5ylf318blwid4xgz6j6bgdpc4frgzwd8vsjwzwkmm8"))
+        ("5.4.4" . ,(base32 "069nc6yg5scp9r0mj8ckb7a5mg74dsavb2ls6fqi75c65n1ny37j"))
+        ("5.3.3" . ,(base32 "15bcgwy5azmx7ldimhz5mdmbrmi4wzdfwdwmznj3g4793z81x8xc"))
     )
 )
 
@@ -171,7 +171,7 @@
                 (url "https://github.com/RadeonopenCompute/ROCm-Device-Libs.git")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "rocm-device-libs" version))
-        (sha256 (base32 (assoc-ref %rocm-device-libs-hashes version)))))
+        (sha256 (assoc-ref %rocm-device-libs-hashes version))))
 
 (define (make-rocm-device-libs clang-rocm)
     (package
@@ -206,12 +206,12 @@ a set of AMD specific device-side language runtime libraries.")
 
 ; roct-thunk-interface
 (define %roct-thunk-hashes
-    '(
-        ("5.7.1" . "075advkplqlj9y3m3bsww4yiz3qxrfmxwhcf0giaa9dzrn9020wc")
-        ("5.6.1" . "0v8j4gkbb21gqqmz1b4nmampx5ywva99ipsx8lcjr5ckcg84fn9x")
-        ("5.5.1" . "1digw626k4m3kzcyi89kvba8j69xj4agqgi4avqsnkq5yf0vw9cz")
-        ("5.4.4" . "0can34ccy2dm31m0wq9hhrxb8ykd6jj8bn3gfrlycmdklahnskhi")
-        ("5.3.3" . "1adzhpa38lfsk0xj0m09fm11ird84vc594nspmhwqqmf3q3zrkkh")
+    `(
+        ("5.7.1" . ,(base32 "075advkplqlj9y3m3bsww4yiz3qxrfmxwhcf0giaa9dzrn9020wc"))
+        ("5.6.1" . ,(base32 "0v8j4gkbb21gqqmz1b4nmampx5ywva99ipsx8lcjr5ckcg84fn9x"))
+        ("5.5.1" . ,(base32 "1digw626k4m3kzcyi89kvba8j69xj4agqgi4avqsnkq5yf0vw9cz"))
+        ("5.4.4" . ,(base32 "0can34ccy2dm31m0wq9hhrxb8ykd6jj8bn3gfrlycmdklahnskhi"))
+        ("5.3.3" . ,(base32 "1adzhpa38lfsk0xj0m09fm11ird84vc594nspmhwqqmf3q3zrkkh"))
     )
 )
 
@@ -222,7 +222,7 @@ a set of AMD specific device-side language runtime libraries.")
                 (url "https://github.com/RadeonopenCompute/ROCT-Thunk-Interface.git")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "roct-thunk-interface" version))
-        (sha256 (base32 (assoc-ref %roct-thunk-hashes version)))))
+        (sha256 (assoc-ref %roct-thunk-hashes version))))
 
 (define (make-roct-thunk version)
     (package
@@ -248,12 +248,12 @@ to interact with the ROCk driver.")
 
 ; rocr-runtime
 (define %rocr-runtime-hashes
-    '(
-        ("5.7.1" . "02g53357i15d8laxlhvib7h01kfarlq8hyfm7rm3ii2wgrm23c0g")
-        ("5.6.1" . "07wh7s1kgvpw8ydxmr2wvvn05fdqcmcc20qjbmnc3cbbhxviksyr")
-        ("5.5.1" . "0zhqlbnkq2w0zqdqiqk4l2mksy618fl0zivkp2h6f5pjfnishpw9")
-        ("5.4.4" . "09kpnfn5vpfcjh0amxbk1885hyib9jbisfmh2p9224cx156xfi16")
-        ("5.3.3" . "18hf3abq6g7hyxlkfzd61a661j8lxgq42nkarrs2x5491ny3p8fv")
+    `(
+        ("5.7.1" . ,(base32 "02g53357i15d8laxlhvib7h01kfarlq8hyfm7rm3ii2wgrm23c0g"))
+        ("5.6.1" . ,(base32 "07wh7s1kgvpw8ydxmr2wvvn05fdqcmcc20qjbmnc3cbbhxviksyr"))
+        ("5.5.1" . ,(base32 "0zhqlbnkq2w0zqdqiqk4l2mksy618fl0zivkp2h6f5pjfnishpw9"))
+        ("5.4.4" . ,(base32 "09kpnfn5vpfcjh0amxbk1885hyib9jbisfmh2p9224cx156xfi16"))
+        ("5.3.3" . ,(base32 "18hf3abq6g7hyxlkfzd61a661j8lxgq42nkarrs2x5491ny3p8fv"))
     )
 )
 
@@ -274,7 +274,7 @@ to interact with the ROCk driver.")
                 (url "https://github.com/RadeonOpenCompute/ROCR-Runtime.git")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "rocr-runtime" version))
-        (sha256 (base32 (assoc-ref %rocr-runtime-hashes version)))
+        (sha256 (assoc-ref %rocr-runtime-hashes version))
         (patches (map search-patch (assoc-ref %rocr-runtime-patches version)))))
 
 (define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm)
