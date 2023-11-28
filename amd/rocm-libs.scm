@@ -44,12 +44,12 @@
 
 ; rocprim
 (define %rocprim-hashes
-    '(
-        ("5.7.1" . "0rawbvyilzb1swj03f03h56i0gs52cg9kbcyz591ipdgqmd0bsgs")
-        ("5.6.1" . "1dms8wm2b4f6h0jwmd76sibmb34g4fh1vdfqs178ncndsmcddgs0")
-        ("5.5.1" . "0dwkshxkbbx4v48mppmkfp4d0gj0y3j9dlgn9f24pq8pqmwc8zld")
-        ("5.4.4" . "1p1q95sw1d66kkh8s3m7nar68x91g147a6mxa85bp5i7pffp5j0s")
-        ("5.3.3" . "0m97rlay6q56gxnn17h79830rp96smvncd6sll8w1cpj8ccfxx4d")
+    `(
+        ("5.7.1" . ,(base32 "0rawbvyilzb1swj03f03h56i0gs52cg9kbcyz591ipdgqmd0bsgs"))
+        ("5.6.1" . ,(base32 "1dms8wm2b4f6h0jwmd76sibmb34g4fh1vdfqs178ncndsmcddgs0"))
+        ("5.5.1" . ,(base32 "0dwkshxkbbx4v48mppmkfp4d0gj0y3j9dlgn9f24pq8pqmwc8zld"))
+        ("5.4.4" . ,(base32 "1p1q95sw1d66kkh8s3m7nar68x91g147a6mxa85bp5i7pffp5j0s"))
+        ("5.3.3" . ,(base32 "0m97rlay6q56gxnn17h79830rp96smvncd6sll8w1cpj8ccfxx4d"))
     )
 )
 
@@ -60,7 +60,7 @@
                 (url "https://github.com/ROCmSoftwarePlatform/rocPRIM.git")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "rocprim" version))
-        (sha256 (base32 (assoc-ref %rocprim-hashes version)))))
+        (sha256 (assoc-ref %rocprim-hashes version))))
 
 (define (make-rocprim rocm-cmake hipamd)
     (package
