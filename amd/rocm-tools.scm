@@ -31,12 +31,12 @@
 
 ; rocminfo
 (define %rocminfo-hashes
-    '(
-        ("5.7.1" . "1a6viq9i7hcjn7xfyswzg7ivb5sp577097fiplzf7znkl3dahcsk")
-        ("5.6.1" . "150bvyxp9krq8f7jqd1g5b4l85rih4ch322y4sg1hnciqpabn6a6")
-        ("5.5.1" . "150bvyxp9krq8f7jqd1g5b4l85rih4ch322y4sg1hnciqpabn6a6")
-        ("5.4.4" . "1i8p1w8f2wqdc2b9sq8j0xkdd1mbasn65bny24qnz00rj2dm61p3")
-        ("5.3.3" . "1i8p1w8f2wqdc2b9sq8j0xkdd1mbasn65bny24qnz00rj2dm61p3")
+    `(
+        ("5.7.1" . ,(base32 "1a6viq9i7hcjn7xfyswzg7ivb5sp577097fiplzf7znkl3dahcsk"))
+        ("5.6.1" . ,(base32 "150bvyxp9krq8f7jqd1g5b4l85rih4ch322y4sg1hnciqpabn6a6"))
+        ("5.5.1" . ,(base32 "150bvyxp9krq8f7jqd1g5b4l85rih4ch322y4sg1hnciqpabn6a6"))
+        ("5.4.4" . ,(base32 "1i8p1w8f2wqdc2b9sq8j0xkdd1mbasn65bny24qnz00rj2dm61p3"))
+        ("5.3.3" . ,(base32 "1i8p1w8f2wqdc2b9sq8j0xkdd1mbasn65bny24qnz00rj2dm61p3"))
     )
 )
 
@@ -47,7 +47,7 @@
                 (url "https://github.com/RadeonOpenCompute/rocminfo.git")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "rocminfo" version))
-        (sha256 (base32 (assoc-ref %rocminfo-hashes version)))))
+        (sha256 (assoc-ref %rocminfo-hashes version))))
 
 (define (make-rocminfo rocr-runtime)
     (package
@@ -72,12 +72,12 @@
 
 ; rocm-smi
 (define %rocmsmi-hashes
-    '(
-        ("5.7.1" . "0d9cacap0k8k7hmlfbpnrqbrj86pmxk3w1fl8ijglm8a3267i51m")
-        ("5.6.1" . "0jxd74y4lgar0jy2y3kqbs872f23cdfj9yrfgjz9hmrp903c9hql")
-        ("5.5.1" . "19qxgdc757f4qbkkggkwk8rs3c1jv8d8jgyhsg228s8w6gcr80ga")
-        ("5.4.4" . "14f898i9xrbc5nvrpk9zkhjq6hwn0av13gbphq3a6lsd6f49sj4y")
-        ("5.3.3" . "0x76gy8kzp4h6x9ssgrbswqpxajxlrps04kvpxh0z1dggn89pcai")
+    `(
+        ("5.7.1" . ,(base32 "0d9cacap0k8k7hmlfbpnrqbrj86pmxk3w1fl8ijglm8a3267i51m"))
+        ("5.6.1" . ,(base32 "0jxd74y4lgar0jy2y3kqbs872f23cdfj9yrfgjz9hmrp903c9hql"))
+        ("5.5.1" . ,(base32 "19qxgdc757f4qbkkggkwk8rs3c1jv8d8jgyhsg228s8w6gcr80ga"))
+        ("5.4.4" . ,(base32 "14f898i9xrbc5nvrpk9zkhjq6hwn0av13gbphq3a6lsd6f49sj4y"))
+        ("5.3.3" . ,(base32 "0x76gy8kzp4h6x9ssgrbswqpxajxlrps04kvpxh0z1dggn89pcai"))
     )
 )
 
@@ -88,7 +88,7 @@
                 (url "https://github.com/RadeonOpenCompute/rocm_smi_lib.git")
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "rocm-smi" version))
-        (sha256 (base32 (assoc-ref %rocmsmi-hashes version)))))
+        (sha256 (assoc-ref %rocmsmi-hashes version))))
 
 (define (make-rocm-smi version)
     (package
