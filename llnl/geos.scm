@@ -482,15 +482,17 @@ for any C/C++/Fortran program.")
     (license license:bsd-3)))
 
 (define-public hdf5-interface
-  (let ((commit "5136554439e791dc5e948f2a74ede31c4c697ef5"))
+  (let ((commit "5136554439e791dc5e948f2a74ede31c4c697ef5")
+        (revision "0"))
     (package
       (name "hdf5-interface")
-      (version commit)
+      (version (git-version "0.0" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
                       (url "https://github.com/GEOS-DEV/hdf5_interface")
                       (commit commit)))
+                (file-name (git-file-name name version))
                 (sha256
                  (base32
                   "1qvjjw2rmd2n85zcgny4gz4ya9psnsmns2cypsscfqs3s4rvb0s0"))))
@@ -498,9 +500,9 @@ for any C/C++/Fortran program.")
       (arguments
        '(#:install-plan '(("." "hdf5_interface"))))
       (home-page "https://github.com/GEOS-DEV/hdf5_interface")
-      (synopsis "No synopsis on the website")
-      (description "No description on the website")
-      (license license:bsd-3))))
+      (synopsis "HDF5 tools for use by GEOS")
+      (description synopsis)
+      (license license:lgpl2.1))))
 
 
 (define-public pugixml-geos
