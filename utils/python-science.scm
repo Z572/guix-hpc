@@ -39,47 +39,51 @@
     (license gpl3+)))
 
 (define-public python-ttpy
-  (package
-   (name "python-ttpy")
-   (version "1.2")
-   (home-page "https://github.com/oseledets/ttpy")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "5fd095177f0474f8b977f15574139ca9e3acb06f")
-                  (recursive? #t)))
-            (sha256
-             (base32
-              "10apkcnc6sfa8q0snhzb2ag1qxdcsx0hp76nn1ivyhwwaj6skd8h"))))
+  ;; This commit contains a fix for
+  ;; <https://github.com/oseledets/ttpy/issues/80> among other things.
+  (let ((commit "a50d5e0ce2a033a4b1aa703715cb85d715b9b34a")
+        (revision "0"))
+    (package
+      (name "python-ttpy")
+      (version (git-version "1.2.0" revision commit))
+      (home-page "https://github.com/oseledets/ttpy")
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url home-page)
+                      (commit commit)
+                      (recursive? #t)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1b8rhkkivkmswahhx15x80r3cz8hp666b9z0ax4g6dr16j9788wb"))))
+      (build-system python-build-system)
+      (arguments
+       `(#:phases (modify-phases %standard-phases
+                    (add-before 'build 'patch-before-build
+                      (lambda _
+                        ;; Indicate we want to use "CPU = i8-gnu"
+                        (rename-file "tt/tt-fort/Makefile.cpu.default" "tt/tt-fort/Makefile.cpu")
+                        ;; Removing lapack dependency
+                        (substitute* "tt/__init__.py"
+                          (("liblapack.so")  "libopenblas.so"))
+                        ;; Python seems to be checking LD_LIBRARY_PATH for dependencies
+                        ;; so we copy the paths in LIBRARY_PATH to help it
+                        (setenv "LD_LIBRARY_PATH"
+                                (getenv "LIBRARY_PATH"))
+                        #t)))
 
-   (build-system python-build-system)
-   (arguments
-    `(#:phases (modify-phases %standard-phases
-                              (add-before 'build 'patch-before-build
-                                          (lambda _
-                                            ;; Indicate we want to use "CPU = i8-gnu"
-                                            (rename-file "tt/tt-fort/Makefile.cpu.default" "tt/tt-fort/Makefile.cpu")
-                                            ;; Removing lapack dependency
-                                            (substitute* "tt/__init__.py"
-                                                         (("liblapack.so")  "libopenblas.so"))
-                                            ;; Python seems to be checking LD_LIBRARY_PATH for dependencies
-                                            ;; so we copy the paths in LIBRARY_PATH to help it
-                                            (setenv "LD_LIBRARY_PATH"
-                                                    (getenv "LIBRARY_PATH"))
-                                            #t)))
+         #:tests? #f))
 
-               #:tests? #f))
+      (native-inputs (list python-pytest python-cython gfortran))
+      (inputs (list gmp mpfr openblas))
+      (propagated-inputs (list python-numpy python-scipy python-six))
 
-   (native-inputs (list python-pytest python-cython gfortran))
-   (inputs (list gmp mpfr openblas))
-   (propagated-inputs (list python-numpy python-scipy python-six))
-
-   (synopsis
-    "TTPY: Python implementation of the Tensor Train (TT) - Toolbox.")
-   (description
-    "Python implementation of the Tensor Train (TT) -Toolbox. It contains several important packages for working with the TT-format in Python. It is able to do TT-interpolation, solve linear systems, eigenproblems, solve dynamical problems. Several computational routines are done in Fortran (which can be used separately), and are wrapped with the f2py tool.")
-   (license #f))
+      (synopsis
+       "TTPY: Python implementation of the Tensor Train (TT) - Toolbox.")
+      (description
+       "Python implementation of the Tensor Train (TT) -Toolbox. It contains several important packages for working with the TT-format in Python. It is able to do TT-interpolation, solve linear systems, eigenproblems, solve dynamical problems. Several computational routines are done in Fortran (which can be used separately), and are wrapped with the f2py tool.")
+      (license #f)))
   )
 
 (define-public python-easydict
