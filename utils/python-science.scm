@@ -1,4 +1,5 @@
 (define-module (utils python-science)
+  #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -59,28 +60,30 @@
                   "1b8rhkkivkmswahhx15x80r3cz8hp666b9z0ax4g6dr16j9788wb"))))
       (build-system python-build-system)
       (arguments
-       `(#:phases (modify-phases %standard-phases
-                    (add-before 'build 'patch-before-build
-                      (lambda* (#:key inputs #:allow-other-keys)
-                        ;; Indicate we want to use "CPU = i8-gnu"
-                        (rename-file "tt/tt-fort/Makefile.cpu.default" "tt/tt-fort/Makefile.cpu")
-                        ;; Removing lapack dependency
-                        (substitute* "tt/__init__.py"
-                          (("liblapack.so")
-                           (search-input-file inputs "lib/libopenblas.so"))))))
-
-         #:tests? #f))
-
+       (list #:phases
+             #~(modify-phases %standard-phases
+                 (add-before 'build 'patch-before-build
+                   (lambda* (#:key inputs #:allow-other-keys)
+                     ;; Indicate we want to use "CPU = i8-gnu"
+                     (rename-file "tt/tt-fort/Makefile.cpu.default"
+                                  "tt/tt-fort/Makefile.cpu")
+                     ;; Removing lapack dependency
+                     (substitute* "tt/__init__.py"
+                       (("liblapack.so")
+                        (search-input-file inputs
+                                           "lib/libopenblas.so"))))))
+             #:tests? #f))
       (native-inputs (list python-pytest python-cython gfortran))
       (inputs (list gmp mpfr openblas))
       (propagated-inputs (list python-numpy python-scipy python-six))
-
-      (synopsis
-       "TTPY: Python implementation of the Tensor Train (TT) - Toolbox.")
+      (synopsis "Python implementation of the Tensor Train (TT) toolbox")
       (description
-       "Python implementation of the Tensor Train (TT) -Toolbox. It contains several important packages for working with the TT-format in Python. It is able to do TT-interpolation, solve linear systems, eigenproblems, solve dynamical problems. Several computational routines are done in Fortran (which can be used separately), and are wrapped with the f2py tool.")
-      (license #f)))
-  )
+       "Python implementation of the Tensor Train (TT) toolbox.  It contains several
+important packages for working with the TT-format in Python.  It is able to
+do TT-interpolation, solve linear systems, eigenproblems, solve dynamical
+problems.  Several computational routines are done in Fortran (which can be
+used separately), and are wrapped with the @command{f2py} tool.")
+      (license expat))))
 
 (define-public python-easydict
   (package
