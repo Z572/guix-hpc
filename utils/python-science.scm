@@ -61,17 +61,13 @@
       (arguments
        `(#:phases (modify-phases %standard-phases
                     (add-before 'build 'patch-before-build
-                      (lambda _
+                      (lambda* (#:key inputs #:allow-other-keys)
                         ;; Indicate we want to use "CPU = i8-gnu"
                         (rename-file "tt/tt-fort/Makefile.cpu.default" "tt/tt-fort/Makefile.cpu")
                         ;; Removing lapack dependency
                         (substitute* "tt/__init__.py"
-                          (("liblapack.so")  "libopenblas.so"))
-                        ;; Python seems to be checking LD_LIBRARY_PATH for dependencies
-                        ;; so we copy the paths in LIBRARY_PATH to help it
-                        (setenv "LD_LIBRARY_PATH"
-                                (getenv "LIBRARY_PATH"))
-                        #t)))
+                          (("liblapack.so")
+                           (search-input-file inputs "lib/libopenblas.so"))))))
 
          #:tests? #f))
 
