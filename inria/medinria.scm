@@ -119,7 +119,7 @@
 (define-public ttk
   (package
     (name "ttk")
-    (version "v4.0")
+    (version "4.0")
     (synopsis "TTK")
     (description "TTK")
     (home-page "https://github.com/medInria/TTK")
@@ -128,7 +128,7 @@
         (method git-fetch)
         (uri (git-reference
               (url home-page)
-              (commit version)))
+              (commit (string-append "v" version))))
         (file-name (git-file-name name version))
         (sha256 (base32 "1qlr2y0s9aplaacf19gdvlr1097l2maw7mivccykl9nb4c6yhvaz"))))
     (inputs
@@ -147,7 +147,7 @@
 (define-public qtdcm
   (package
     (name "qtdcm")
-    (version "v4.0")
+    (version "4.0")
     (synopsis "QtDcm")
     (description "QtDcm")
     (home-page "https://github.com/medInria/qtdcm")
@@ -156,7 +156,7 @@
         (method git-fetch)
         (uri (git-reference
               (url home-page)
-              (commit version)))
+              (commit (string-append "v" version))))
         (file-name (git-file-name name version))
         (sha256 (base32 "0dagl5p50ycy13yk11iykbpsmwgcxvkxqkg67sv20d53zfmz3lrd"))))
     (inputs
@@ -170,7 +170,7 @@
 (define-public rpi
   (package
     (name "rpi")
-    (version "v4.0")
+    (version "4.0")
     (synopsis "RPI")
     (description "RPI")
     (home-page "https://github.com/medInria/RPI")
@@ -179,7 +179,7 @@
         (method git-fetch)
         (uri (git-reference
               (url home-page)
-              (commit version)))
+              (commit (string-append "v" version))))
         (file-name (git-file-name name version))
 
         (sha256 (base32 "1wfd0i693nw95vycdpnghz2d7ypj4qrn7vcs8f70vjzq6qjyjlpg"))))
