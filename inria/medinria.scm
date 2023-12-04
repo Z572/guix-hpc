@@ -198,7 +198,7 @@
 (define-public medinria
   (package
     (name "medinria")
-    (version "dev")
+    (version "de16bedcf10f5712606cd4a6745800e21b38374e")
     (synopsis "medInria is a multi-platform medical image processing and visualization software.")
     (description "medInria is a multi-platform medical image processing and visualization software. It is free and open-source. Through an intuitive user interface, medInria offers from standard to cutting-edge processing functionalities for your medical images such as 2D/3D/4D image visualization, image registration, diffusion MR processing and tractography.")
     (home-page "https://med.inria.fr/")
@@ -211,7 +211,7 @@
         (patches
               (search-patches "inria/patches/medinria-fix-qtdcm-include.patch"))
         (file-name (git-file-name name version))
-        (sha256 (base32 "12irbmfrw1fh4harhv4gci6hbdjqbqm5nwrs95dvl2asq4z1y4cc"))))
+        (sha256 (base32 "0dzzpnja30di39213pv8yqs5hnm5s8x9mpqqzx8nclbncd67l8bn"))))
     (inputs (list 
 	      dtk
 	      dcmtk-medinria-config
