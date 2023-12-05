@@ -64,9 +64,9 @@
 
 (define %llvm-patches
     '(
-        ("rocm-5.7.1" . ("amd/patches/llvm-rocm-5.6.1.patch" "amd/patches/libomp-rocm-5.6.1.patch" "amd/patches/llvm-rocm-5.7.1-gtest.patch"))
-        ("rocm-5.6.1" . ("amd/patches/llvm-rocm-5.6.1.patch" "amd/patches/libomp-rocm-5.6.1.patch"))
-        ("rocm-5.5.1" . ("amd/patches/llvm-rocm-5.5.1.patch" "amd/patches/libomp-rocm-5.5.1.patch"))
+        ("rocm-5.7.1" . ("amd/patches/llvm-rocm-5.6.1.patch"))
+        ("rocm-5.6.1" . ("amd/patches/llvm-rocm-5.6.1.patch"))
+        ("rocm-5.5.1" . ("amd/patches/llvm-rocm-5.5.1.patch"))
         ("rocm-5.4.4" . ("amd/patches/rocm-5.4-llvm-project.patch"))
         ("rocm-5.3.3" . ("amd/patches/rocm-5.3-llvm-project.patch"))
     )
@@ -82,79 +82,83 @@
         (sha256 (assoc-ref %llvm-monorepo-hashes version))
         (patches (map search-patch (assoc-ref %llvm-patches version)))))
 
-(define (make-llvm-rocm version)
+(define (make-llvm-rocm version llvm)
     (package
-        (inherit llvm-15)
+        (inherit llvm)
         (version (string-append "rocm-" version))
         (source (llvm-rocm-monorepo version))
-        (inputs (modify-inputs (package-inputs llvm-15) (replace "libffi" libffi-shared)))
-        (properties `((hidden? . #t) ,@(package-properties llvm-15)))))
+        (inputs (modify-inputs (package-inputs llvm) (replace "libffi" libffi-shared)))
+        ;(properties `((hidden? . #t) ,@(package-properties llvm)))
+    ))
 
-(define-public llvm-rocm-5.7 (make-llvm-rocm "5.7.1"))
-(define-public llvm-rocm-5.6 (make-llvm-rocm "5.6.1"))
-(define-public llvm-rocm-5.5 (make-llvm-rocm "5.5.1"))
-(define-public llvm-rocm-5.4 (make-llvm-rocm "5.4.4"))
-(define-public llvm-rocm-5.3 (make-llvm-rocm "5.3.3"))
+(define-public llvm-rocm-5.7 (make-llvm-rocm "5.7.1" llvm-17))
+(define-public llvm-rocm-5.6 (make-llvm-rocm "5.6.1" llvm-16))
+(define-public llvm-rocm-5.5 (make-llvm-rocm "5.5.1" llvm-16))
+(define-public llvm-rocm-5.4 (make-llvm-rocm "5.4.4" llvm-15))
+(define-public llvm-rocm-5.3 (make-llvm-rocm "5.3.3" llvm-15))
 
 
 ; clang runtime
-(define-public (make-clang-runtime-rocm llvm-rocm)
+(define-public (make-clang-runtime-rocm llvm-rocm clang-runtime)
     (package
-        (inherit clang-runtime-15)
+        (inherit clang-runtime)
         (version (package-version llvm-rocm))
         (source (llvm-rocm-monorepo version))
-        (inputs (modify-inputs (package-inputs clang-runtime-15)
+        (inputs (modify-inputs (package-inputs clang-runtime)
             (replace "llvm" llvm-rocm)
             (replace "libffi" libffi-shared)))
-        (properties `((hidden? . #t) ,@(package-properties clang-runtime-15)))))
+        ;(properties `((hidden? . #t) ,@(package-properties clang-runtime)))
+    ))
 
-(define-public clang-runtime-rocm-5.7 (make-clang-runtime-rocm llvm-rocm-5.7))
-(define-public clang-runtime-rocm-5.6 (make-clang-runtime-rocm llvm-rocm-5.6))
-(define-public clang-runtime-rocm-5.5 (make-clang-runtime-rocm llvm-rocm-5.5))
-(define-public clang-runtime-rocm-5.4 (make-clang-runtime-rocm llvm-rocm-5.4))
-(define-public clang-runtime-rocm-5.3 (make-clang-runtime-rocm llvm-rocm-5.3))
+(define-public clang-runtime-rocm-5.7 (make-clang-runtime-rocm llvm-rocm-5.7 clang-runtime-17))
+(define-public clang-runtime-rocm-5.6 (make-clang-runtime-rocm llvm-rocm-5.6 clang-runtime-16))
+(define-public clang-runtime-rocm-5.5 (make-clang-runtime-rocm llvm-rocm-5.5 clang-runtime-16))
+(define-public clang-runtime-rocm-5.4 (make-clang-runtime-rocm llvm-rocm-5.4 clang-runtime-15))
+(define-public clang-runtime-rocm-5.3 (make-clang-runtime-rocm llvm-rocm-5.3 clang-runtime-15))
 
 
 ; clang
-(define (make-clang-rocm llvm-rocm clang-runtime-rocm)
+(define (make-clang-rocm llvm-rocm clang-runtime-rocm clang)
     (package
-        (inherit clang-15)
+        (inherit clang)
         (version (package-version llvm-rocm))
         (source (llvm-rocm-monorepo version))
-        (inputs (modify-inputs (package-inputs clang-15)
+        (inputs (modify-inputs (package-inputs clang)
             (delete "clang-tools-extra")))
-        (propagated-inputs (modify-inputs (package-propagated-inputs clang-15)
+        (propagated-inputs (modify-inputs (package-propagated-inputs clang)
             (replace "llvm" llvm-rocm)
             (replace "clang-runtime" clang-runtime-rocm)))
         (arguments
-            (substitute-keyword-arguments (package-arguments clang-15)
+            (substitute-keyword-arguments (package-arguments clang)
                 ((#:phases phases '(@ () %standard-phases))
                     #~(modify-phases #$phases
                         (replace 'add-tools-extra
                             (lambda _ (copy-recursively "../clang-tools-extra" "tools/extra")))))))
-        (properties `((hidden? . #t) ,@(package-properties clang-15)))))
+        ;(properties `((hidden? . #t) ,@(package-properties clang)))
+        ))
 
-(define-public clang-rocm-5.7 (make-clang-rocm llvm-rocm-5.7 clang-runtime-rocm-5.7))
-(define-public clang-rocm-5.6 (make-clang-rocm llvm-rocm-5.6 clang-runtime-rocm-5.6))
-(define-public clang-rocm-5.5 (make-clang-rocm llvm-rocm-5.5 clang-runtime-rocm-5.5))
-(define-public clang-rocm-5.4 (make-clang-rocm llvm-rocm-5.4 clang-runtime-rocm-5.4))
-(define-public clang-rocm-5.3 (make-clang-rocm llvm-rocm-5.3 clang-runtime-rocm-5.5))
+(define-public clang-rocm-5.7 (make-clang-rocm llvm-rocm-5.7 clang-runtime-rocm-5.7 clang-17))
+(define-public clang-rocm-5.6 (make-clang-rocm llvm-rocm-5.6 clang-runtime-rocm-5.6 clang-16))
+(define-public clang-rocm-5.5 (make-clang-rocm llvm-rocm-5.5 clang-runtime-rocm-5.5 clang-16))
+(define-public clang-rocm-5.4 (make-clang-rocm llvm-rocm-5.4 clang-runtime-rocm-5.4 clang-15))
+(define-public clang-rocm-5.3 (make-clang-rocm llvm-rocm-5.3 clang-runtime-rocm-5.5 clang-15))
 
 
 ; lld
-(define (make-lld-rocm llvm-rocm)
+(define (make-lld-rocm llvm-rocm lld)
     (package
-        (inherit lld-15)
+        (inherit lld)
         (version (package-version llvm-rocm))
         (source (llvm-rocm-monorepo version))
         (inputs (list llvm-rocm))
-        (properties `((hidden? . #t) ,@(package-properties lld-15)))))
+        ;(properties `((hidden? . #t) ,@(package-properties lld)))
+    ))
 
-(define-public lld-rocm-5.7 (make-lld-rocm llvm-rocm-5.7))
-(define-public lld-rocm-5.6 (make-lld-rocm llvm-rocm-5.6))
-(define-public lld-rocm-5.5 (make-lld-rocm llvm-rocm-5.5))
-(define-public lld-rocm-5.4 (make-lld-rocm llvm-rocm-5.4))
-(define-public lld-rocm-5.3 (make-lld-rocm llvm-rocm-5.3))
+(define-public lld-rocm-5.7 (make-lld-rocm llvm-rocm-5.7 lld-17))
+(define-public lld-rocm-5.6 (make-lld-rocm llvm-rocm-5.6 lld-16))
+(define-public lld-rocm-5.5 (make-lld-rocm llvm-rocm-5.5 lld-16))
+(define-public lld-rocm-5.4 (make-lld-rocm llvm-rocm-5.4 lld-15))
+(define-public lld-rocm-5.3 (make-lld-rocm llvm-rocm-5.3 lld-15))
 
 
 ; rocm-device-libs
@@ -324,15 +328,15 @@ core runtime is also available.")
 
 
 ; libomp
-(define (make-libomp-rocm llvm-rocm clang-rocm lld-rocm rocm-device-libs rocr-runtime roct-thunk)
+(define (make-libomp-rocm llvm-rocm clang-rocm lld-rocm rocm-device-libs rocr-runtime roct-thunk libomp)
     (package
-        (inherit libomp-15)
+        (inherit libomp)
         (version (package-version llvm-rocm))
         (source (llvm-rocm-monorepo version))
         (native-inputs
             (append
                 (list `("gcc:lib" ,gcc "lib"))
-                (modify-inputs (package-native-inputs libomp-15)
+                (modify-inputs (package-native-inputs libomp)
                     (replace "clang" clang-rocm)
                     (replace "llvm"  llvm-rocm)
                     (replace "python"  python-wrapper)
@@ -340,7 +344,7 @@ core runtime is also available.")
                     (append elfutils))
             )
         )
-        (inputs (modify-inputs (package-inputs libomp-15)
+        (inputs (modify-inputs (package-inputs libomp)
             (append libdrm)     ; required for rocm-5.7 onwards
             (append numactl)    ; required for rocm-5.7 onwards
             (append roct-thunk) ; required for rocm-5.7 onwards
@@ -348,7 +352,7 @@ core runtime is also available.")
             (append rocm-device-libs)
             (append rocr-runtime)))
         (arguments
-            (substitute-keyword-arguments (package-arguments libomp-15)
+            (substitute-keyword-arguments (package-arguments libomp)
                 ((#:configure-flags flags)
                  #~(append
                     (list "-DOPENMP_ENABLE_LIBOMPTARGET=1"
@@ -359,7 +363,7 @@ core runtime is also available.")
                           "-DCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=lld"   ;can be removed if we use lld-as-ld-wrapper
                           "-DLIBOMPTARGET_AMDGCN_GFXLIST=gfx906;gfx908;gfx90a;gfx940;gfx1030"
                           (string-append "-DDEVICELIBS_ROOT=" #$(this-package-input "rocm-device-libs"))
-                          (string-append "-DCLANG_BINARY_DIR=" #$(this-package-native-input "clang") "/bin")
+                          ;(string-append "-DCLANG_BINARY_DIR=" #$(this-package-native-input "clang") "/bin")
                           (string-append "-DLLVM_DIR=" #$(this-package-native-input "llvm")))
                     #$flags))
                 ((#:phases phases '(@ () %standard-phases))
@@ -368,14 +372,37 @@ core runtime is also available.")
                             (lambda* (#:key inputs #:allow-other-keys)
                                 (setenv "LD_LIBRARY_PATH"
                                     (string-append (assoc-ref inputs "llvm") "/lib" ":"
-                                                                (assoc-ref inputs "gcc:lib") "/lib"))))))))
-        (properties `((hidden? . #t) ,@(package-properties libomp-15)))))
+                                                   (assoc-ref inputs "gcc:lib") "/lib"))))
+                        (add-after 'unpack 'patch-clang-tools
+                            (lambda _
+                                (substitute* (list "openmp/libomptarget/CMakeLists.txt"
+                                                   "openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+                                                   "openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt")
+                                    (("find_program\\(CLANG_TOOL clang PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\} NO_DEFAULT_PATH\\)")
+                                     (string-append
+                                      "find_program(CLANG_TOOL clang PATHS " #$clang-rocm "/bin" " NO_DEFAULT_PATH)"))
+                                    (("find_program\\(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\} NO_DEFAULT_PATH\\)")
+                                     (string-append
+                                      "find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS " #$clang-rocm "/bin" " NO_DEFAULT_PATH)"))
+                                    (("find_program\\(PACKAGER_TOOL clang-offload-packager PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\} NO_DEFAULT_PATH\\)")
+                                     (string-append
+                                      "find_program(PACKAGER_TOOL clang-offload-packager PATHS " #$clang-rocm "/bin" " NO_DEFAULT_PATH)"))
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        ;(properties `((hidden? . #t) ,@(package-properties libomp)))
+    )
+)
 
-(define-public libomp-rocm-5.7 (make-libomp-rocm llvm-rocm-5.7 clang-rocm-5.7 lld-wrapper-rocm-5.7 rocm-device-libs-5.7 rocr-runtime-5.7 roct-thunk-5.7))
-(define-public libomp-rocm-5.6 (make-libomp-rocm llvm-rocm-5.6 clang-rocm-5.6 lld-wrapper-rocm-5.6 rocm-device-libs-5.6 rocr-runtime-5.6 roct-thunk-5.6))
-(define-public libomp-rocm-5.5 (make-libomp-rocm llvm-rocm-5.5 clang-rocm-5.5 lld-wrapper-rocm-5.5 rocm-device-libs-5.5 rocr-runtime-5.5 roct-thunk-5.5))
-(define-public libomp-rocm-5.4 (make-libomp-rocm llvm-rocm-5.4 clang-rocm-5.4 lld-wrapper-rocm-5.4 rocm-device-libs-5.4 rocr-runtime-5.4 roct-thunk-5.4))
-(define-public libomp-rocm-5.3 (make-libomp-rocm llvm-rocm-5.3 clang-rocm-5.3 lld-wrapper-rocm-5.3 rocm-device-libs-5.3 rocr-runtime-5.3 roct-thunk-5.3))
+(define-public libomp-rocm-5.7 (make-libomp-rocm llvm-rocm-5.7 clang-rocm-5.7 lld-wrapper-rocm-5.7 rocm-device-libs-5.7 rocr-runtime-5.7 roct-thunk-5.7 libomp-17))
+(define-public libomp-rocm-5.6 (make-libomp-rocm llvm-rocm-5.6 clang-rocm-5.6 lld-wrapper-rocm-5.6 rocm-device-libs-5.6 rocr-runtime-5.6 roct-thunk-5.6 libomp-16))
+(define-public libomp-rocm-5.5 (make-libomp-rocm llvm-rocm-5.5 clang-rocm-5.5 lld-wrapper-rocm-5.5 rocm-device-libs-5.5 rocr-runtime-5.5 roct-thunk-5.5 libomp-16))
+(define-public libomp-rocm-5.4 (make-libomp-rocm llvm-rocm-5.4 clang-rocm-5.4 lld-wrapper-rocm-5.4 rocm-device-libs-5.4 rocr-runtime-5.4 roct-thunk-5.4 libomp-15))
+(define-public libomp-rocm-5.3 (make-libomp-rocm llvm-rocm-5.3 clang-rocm-5.3 lld-wrapper-rocm-5.3 rocm-device-libs-5.3 rocr-runtime-5.3 roct-thunk-5.3 libomp-15))
 
 
 
