@@ -1,0 +1,25 @@
+From ee60c90f6b151a990a385401a5005c2ad3d26f28 Mon Sep 17 00:00:00 2001
+From: CASTELNEAU Julien <julien.castelneau@inria.fr>
+Date: Fri, 27 Oct 2023 13:44:45 +0200
+Subject: [PATCH] [FIX] - std::limits missing include with g++11
+
+---
+ .../gdcmImageChangePhotometricInterpretation.h                  | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Modules/ThirdParty/GDCM/src/gdcm/Source/MediaStorageAndFileFormat/gdcmImageChangePhotometricInterpretation.h b/Modules/ThirdParty/GDCM/src/gdcm/Source/MediaStorageAndFileFormat/gdcmImageChangePhotometricInterpretation.h
+index d55a5ee473..9ee73951a6 100644
+--- a/Modules/ThirdParty/GDCM/src/gdcm/Source/MediaStorageAndFileFormat/gdcmImageChangePhotometricInterpretation.h
++++ b/Modules/ThirdParty/GDCM/src/gdcm/Source/MediaStorageAndFileFormat/gdcmImageChangePhotometricInterpretation.h
+@@ -14,6 +14,8 @@
+ #ifndef GDCMIMAGECHANGEPHOTOMETRICINTERPRETATION_H
+ #define GDCMIMAGECHANGEPHOTOMETRICINTERPRETATION_H
+ 
++#include <limits>
++
+ #include "gdcmImageToImageFilter.h"
+ #include "gdcmPhotometricInterpretation.h"
+ 
+-- 
+2.30.2
+

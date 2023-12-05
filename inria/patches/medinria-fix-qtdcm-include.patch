@@ -1,0 +1,68 @@
+From 866f20b531ac10349e3d6bb28229bc35d358d78e Mon Sep 17 00:00:00 2001
+From: CASTELNEAU Julien <julien.castelneau@inria.fr>
+Date: Thu, 23 Nov 2023 17:16:12 +0100
+Subject: [PATCH] Patch for guix
+
+---
+ src/layers/legacy/medUtilities/medUtilities.cpp        | 3 ++-
+ src/plugins/legacy/medAPHPDataSource/medAPHP.cpp       | 2 +-
+ src/plugins/legacy/medAPHPDataSource/medAPHP.h         | 2 +-
+ src/plugins/legacy/medAPHPDataSource/medAPHPPlugin.cpp | 2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/src/layers/legacy/medUtilities/medUtilities.cpp b/src/layers/legacy/medUtilities/medUtilities.cpp
+index 1f8221390..90d88a4c8 100644
+--- a/src/layers/legacy/medUtilities/medUtilities.cpp
++++ b/src/layers/legacy/medUtilities/medUtilities.cpp
+@@ -303,7 +303,8 @@ void medUtilities::computeMedian(QList<double> samples,
+     }
+     else
+     {
+-        qSort(samples.begin(), samples.end());
++        // qSort(samples.begin(), samples.end());
++        std::sort(samples.begin(), samples.end());
+         if (size % 2 == 0)
+         {
+             *median = (samples[size / 2 - 1] + samples[size / 2]) / 2.0;
+diff --git a/src/plugins/legacy/medAPHPDataSource/medAPHP.cpp b/src/plugins/legacy/medAPHPDataSource/medAPHP.cpp
+index 96f519280..e20ef82a8 100644
+--- a/src/plugins/legacy/medAPHPDataSource/medAPHP.cpp
++++ b/src/plugins/legacy/medAPHPDataSource/medAPHP.cpp
+@@ -13,7 +13,7 @@
+ 
+ #include "medAPHP.h"
+ 
+-#include <PluginAPHP/QtDcmInterface.h>
++#include <QtDcmInterface.h>
+ #include <dcmtk/dcmdata/dcdeftag.h>
+ #include <medGroupParameter.h>
+ #include <medIntParameter.h>
+diff --git a/src/plugins/legacy/medAPHPDataSource/medAPHP.h b/src/plugins/legacy/medAPHPDataSource/medAPHP.h
+index e73a2f525..95ceab0e9 100644
+--- a/src/plugins/legacy/medAPHPDataSource/medAPHP.h
++++ b/src/plugins/legacy/medAPHPDataSource/medAPHP.h
+@@ -16,7 +16,7 @@
+ #include <sphereDicomWeb/medAbstractAnnotation.h>
+ 
+ #include <medAbstractSource.h>
+-#include <PluginAPHP/QtDcmInterface.h>
++#include <QtDcmInterface.h>
+ 
+ #include <atomic>
+ 
+diff --git a/src/plugins/legacy/medAPHPDataSource/medAPHPPlugin.cpp b/src/plugins/legacy/medAPHPDataSource/medAPHPPlugin.cpp
+index 968c48e92..f722bff2c 100644
+--- a/src/plugins/legacy/medAPHPDataSource/medAPHPPlugin.cpp
++++ b/src/plugins/legacy/medAPHPDataSource/medAPHPPlugin.cpp
+@@ -14,7 +14,7 @@
+ #include "medAPHPPlugin.h"
+ #include "medAPHP.h"
+ #include "sphereDicomWeb/medAnnotation.h"
+-#include <PluginAPHP/QtDcmInterface.h>
++#include <QtDcmInterface.h>
+ 
+ medAPHPPlugin::medAPHPPlugin(QObject *parent) : medPluginLegacy(parent)
+ {
+-- 
+2.30.2
+
