@@ -87,7 +87,8 @@
         (inherit llvm-15)
         (version (string-append "rocm-" version))
         (source (llvm-rocm-monorepo version))
-        (inputs (modify-inputs (package-inputs llvm-15) (replace "libffi" libffi-shared)))))
+        (inputs (modify-inputs (package-inputs llvm-15) (replace "libffi" libffi-shared)))
+        (properties `((hidden? . #t) ,@(package-properties llvm-15)))))
 
 (define-public llvm-rocm-5.7 (make-llvm-rocm "5.7.1"))
 (define-public llvm-rocm-5.6 (make-llvm-rocm "5.6.1"))
@@ -104,7 +105,8 @@
         (source (llvm-rocm-monorepo version))
         (inputs (modify-inputs (package-inputs clang-runtime-15)
             (replace "llvm" llvm-rocm)
-            (replace "libffi" libffi-shared)))))
+            (replace "libffi" libffi-shared)))
+        (properties `((hidden? . #t) ,@(package-properties clang-runtime-15)))))
 
 (define-public clang-runtime-rocm-5.7 (make-clang-runtime-rocm llvm-rocm-5.7))
 (define-public clang-runtime-rocm-5.6 (make-clang-runtime-rocm llvm-rocm-5.6))
@@ -129,7 +131,8 @@
                 ((#:phases phases '(@ () %standard-phases))
                     #~(modify-phases #$phases
                         (replace 'add-tools-extra
-                            (lambda _ (copy-recursively "../clang-tools-extra" "tools/extra")))))))))
+                            (lambda _ (copy-recursively "../clang-tools-extra" "tools/extra")))))))
+        (properties `((hidden? . #t) ,@(package-properties clang-15)))))
 
 (define-public clang-rocm-5.7 (make-clang-rocm llvm-rocm-5.7 clang-runtime-rocm-5.7))
 (define-public clang-rocm-5.6 (make-clang-rocm llvm-rocm-5.6 clang-runtime-rocm-5.6))
@@ -144,7 +147,8 @@
         (inherit lld-15)
         (version (package-version llvm-rocm))
         (source (llvm-rocm-monorepo version))
-        (inputs (list llvm-rocm))))
+        (inputs (list llvm-rocm))
+        (properties `((hidden? . #t) ,@(package-properties lld-15)))))
 
 (define-public lld-rocm-5.7 (make-lld-rocm llvm-rocm-5.7))
 (define-public lld-rocm-5.6 (make-lld-rocm llvm-rocm-5.6))
@@ -364,7 +368,8 @@ core runtime is also available.")
                             (lambda* (#:key inputs #:allow-other-keys)
                                 (setenv "LD_LIBRARY_PATH"
                                     (string-append (assoc-ref inputs "llvm") "/lib" ":"
-                                                                (assoc-ref inputs "gcc:lib") "/lib"))))))))))
+                                                                (assoc-ref inputs "gcc:lib") "/lib"))))))))
+        (properties `((hidden? . #t) ,@(package-properties libomp-15)))))
 
 (define-public libomp-rocm-5.7 (make-libomp-rocm llvm-rocm-5.7 clang-rocm-5.7 lld-wrapper-rocm-5.7 rocm-device-libs-5.7 rocr-runtime-5.7 roct-thunk-5.7))
 (define-public libomp-rocm-5.6 (make-libomp-rocm llvm-rocm-5.6 clang-rocm-5.6 lld-wrapper-rocm-5.6 rocm-device-libs-5.6 rocr-runtime-5.6 roct-thunk-5.6))
