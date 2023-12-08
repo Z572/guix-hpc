@@ -407,22 +407,22 @@ core runtime is also available.")
 
 
 ; rocm-toolchain
-(define (make-rocm-toolchain clang-rocm libomp-rocm lld-wrapper-rocm rocr-runtime rocm-device-libs)
+(define (make-rocm-toolchain clang-rocm libomp-rocm lld-wrapper-rocm rocr-runtime rocm-device-libs roct-thunk)
     (let ((rocm-clang-toolchain (make-clang-toolchain clang-rocm libomp-rocm)))
         (package
             (inherit rocm-clang-toolchain)
             (name "rocm-toolchain")
             (version (list-ref (string-split (package-version rocm-clang-toolchain) #\-) 1)); extract version without the rocm prefix
             (inputs (modify-inputs (package-inputs rocm-clang-toolchain)
-                (append lld-wrapper-rocm rocr-runtime rocm-device-libs)))
+                (append lld-wrapper-rocm rocr-runtime rocm-device-libs roct-thunk)))
             (synopsis "Complete ROCm toolchain, based on the Clang toolchain, for C/C++ development")
             (description "This package provides a complete ROCm toolchain for C/C++
 development to be installed in user profiles. This includes Clang, as well as
 libc (headers and binaries, plus debugging symbols in the @code{debug}
 output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
 
-(define-public rocm-toolchain-5.7 (make-rocm-toolchain clang-rocm-5.7 libomp-rocm-5.7 lld-wrapper-rocm-5.7 rocr-runtime-5.7 rocm-device-libs-5.7))
-(define-public rocm-toolchain-5.6 (make-rocm-toolchain clang-rocm-5.6 libomp-rocm-5.6 lld-wrapper-rocm-5.6 rocr-runtime-5.6 rocm-device-libs-5.6))
-(define-public rocm-toolchain-5.5 (make-rocm-toolchain clang-rocm-5.5 libomp-rocm-5.5 lld-wrapper-rocm-5.5 rocr-runtime-5.5 rocm-device-libs-5.5))
-(define-public rocm-toolchain-5.4 (make-rocm-toolchain clang-rocm-5.4 libomp-rocm-5.4 lld-wrapper-rocm-5.4 rocr-runtime-5.4 rocm-device-libs-5.4))
-(define-public rocm-toolchain-5.3 (make-rocm-toolchain clang-rocm-5.3 libomp-rocm-5.3 lld-wrapper-rocm-5.3 rocr-runtime-5.3 rocm-device-libs-5.3))
+(define-public rocm-toolchain-5.7 (make-rocm-toolchain clang-rocm-5.7 libomp-rocm-5.7 lld-wrapper-rocm-5.7 rocr-runtime-5.7 rocm-device-libs-5.7 roct-thunk-5.7))
+(define-public rocm-toolchain-5.6 (make-rocm-toolchain clang-rocm-5.6 libomp-rocm-5.6 lld-wrapper-rocm-5.6 rocr-runtime-5.6 rocm-device-libs-5.6 roct-thunk-5.6))
+(define-public rocm-toolchain-5.5 (make-rocm-toolchain clang-rocm-5.5 libomp-rocm-5.5 lld-wrapper-rocm-5.5 rocr-runtime-5.5 rocm-device-libs-5.5 roct-thunk-5.5))
+(define-public rocm-toolchain-5.4 (make-rocm-toolchain clang-rocm-5.4 libomp-rocm-5.4 lld-wrapper-rocm-5.4 rocr-runtime-5.4 rocm-device-libs-5.4 roct-thunk-5.4))
+(define-public rocm-toolchain-5.3 (make-rocm-toolchain clang-rocm-5.3 libomp-rocm-5.3 lld-wrapper-rocm-5.3 rocr-runtime-5.3 rocm-device-libs-5.3 roct-thunk-5.3))
