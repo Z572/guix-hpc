@@ -378,15 +378,15 @@ core runtime is also available.")
                                 (substitute* (list "openmp/libomptarget/CMakeLists.txt"
                                                    "openmp/libomptarget/DeviceRTL/CMakeLists.txt"
                                                    "openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt")
-                                    (("find_program\\(CLANG_TOOL clang PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\} NO_DEFAULT_PATH\\)")
+                                    (("find_program\\(CLANG_TOOL clang PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                                      (string-append
-                                      "find_program(CLANG_TOOL clang PATHS " #$clang-rocm "/bin" " NO_DEFAULT_PATH)"))
-                                    (("find_program\\(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\} NO_DEFAULT_PATH\\)")
+                                      "find_program(CLANG_TOOL clang PATHS " #$clang-rocm "/bin"))
+                                    (("find_program\\(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                                      (string-append
-                                      "find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS " #$clang-rocm "/bin" " NO_DEFAULT_PATH)"))
-                                    (("find_program\\(PACKAGER_TOOL clang-offload-packager PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\} NO_DEFAULT_PATH\\)")
+                                      "find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS " #$clang-rocm "/bin"))
+                                    (("find_program\\(PACKAGER_TOOL clang-offload-packager PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                                      (string-append
-                                      "find_program(PACKAGER_TOOL clang-offload-packager PATHS " #$clang-rocm "/bin" " NO_DEFAULT_PATH)"))
+                                      "find_program(PACKAGER_TOOL clang-offload-packager PATHS " #$clang-rocm "/bin"))
                                 )
                             )
                         )
