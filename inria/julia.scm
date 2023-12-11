@@ -127,11 +127,8 @@
 
        ;; The test suite takes many times longer than building and
        ;; can easily fail on smaller machines when they run out of memory.
-       ;; FIXME: they work, but let's speed up the build process atm
-       #:tests? #f
-       ;; #:tests? ,(not (or (%current-target-system)
-       ;; (target-aarch64?)))
-       
+       #:tests? ,(not (or (%current-target-system)
+                          (target-aarch64?)))
        ;; Do not strip binaries to keep support for full backtraces.
        ;; See https://github.com/JuliaLang/julia/issues/17831
        #:strip-binaries? #f
@@ -213,14 +210,16 @@
                             (jlbasepath (lambda (pkgname)
                                           (string-append "base/" pkgname ".jl")))
                             (tolib (lambda (pkg libname)
-                                     (string-append (assoc-ref inputs pkg)
-                                                    "/lib/" libname ".so")))
+                                     (search-input-file inputs
+                                                        (string-append "/lib/"
+                                                         libname ".so"))))
                             (toquotedlib (lambda (pkg libname)
                                            (string-append "\""
-                                                          (assoc-ref inputs
-                                                                     pkg)
-                                                          "/lib/" libname
-                                                          ".so\"")))
+                                                          (search-input-file
+                                                           inputs
+                                                           (string-append
+                                                            "/lib/" libname
+                                                            ".so")) "\"")))
                             (from (lambda (libname)
                                     (string-append "const " libname
                                                    " = .*\\.so")))
@@ -229,24 +228,24 @@
                                   (string-append "const "
                                                  (or libname_jl libname)
                                                  " = \""
-                                                 (assoc-ref inputs pkg)
-                                                 "/lib/"
-                                                 libname
-                                                 ".so"))))
+                                                 (search-input-file inputs
+                                                                    (string-append
+                                                                     "/lib/"
+                                                                     libname
+                                                                     ".so"))))))
                         (substitute* "src/jitlayers.cpp"
                           (("libatomic.so")
-                           (string-append (assoc-ref inputs "gfortran:lib")
-                                          "/lib/libatomic.so")))
+                           (search-input-file inputs "/lib/libatomic.so")))
                         (substitute* (jlbasepath "linking")
                           (("\"lld\"")
                            (string-append "\""
-                                          (assoc-ref inputs "lld")
-                                          "/bin/lld\"")))
+                                          (search-input-file inputs "bin/lld")
+                                          "\"")))
                         (substitute* (jlpath "LLD")
                           (("\"lld\"")
                            (string-append "\""
-                                          (assoc-ref inputs "lld")
-                                          "/bin/lld\"")))
+                                          (search-input-file inputs "bin/lld")
+                                          "\"")))
                         (substitute* (jlbasepath "pcre")
                           (("libpcre2-8")
                            (tolib "pcre2" "libpcre2-8")))
@@ -539,7 +538,7 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                                          (assoc-ref %build-inputs "libuv")
                                          "/include"))))
     (inputs `(("coreutils" ,coreutils)
-               ;for bindings to "mkdir" and the like
+              ;; for bindings to "mkdir" and the like
               ("curl" ,curl-ssh)
               ("gfortran" ,gfortran)
               ;; required for libgcc_s.so
@@ -556,9 +555,9 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
               ("lld" ,lld-14)
               ("mbedtls-apache" ,mbedtls-apache)
               ("mpfr" ,mpfr)
-              ,@(if (target-x86-64?)
-                    `(("openblas" ,openblas-ilp64))
-                    `(("openblas" ,openblas)))
+              ("openblas" ,@(if (target-x86-64?)
+                                `(,openblas-ilp64)
+                                `(,openblas)))
               ("openlibm" ,openlibm)
               ("p7zip" ,p7zip)
               ("pcre2" ,pcre2-julia)
