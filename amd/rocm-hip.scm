@@ -129,7 +129,7 @@ for AMD and NVIDIA GPUs from single source code.")
 
 (define %hipcc-patches
     '(
-        ("5.7.1" . "amd/patches/hipcc-5.7.1.patch")
+        ("5.7.1" . "amd/patches/hipcc-5.6.1.patch")
         ("5.6.1" . "amd/patches/hipcc-5.6.1.patch")
     )
 )
@@ -148,21 +148,7 @@ for AMD and NVIDIA GPUs from single source code.")
                     (sha256 (assoc-ref %hipcc-hashes version))
                     (patches (search-patches (assoc-ref %hipcc-patches version)))))
             (build-system cmake-build-system)
-            (arguments
-                (list
-                    #:build-type "Release"
-                    #:tests? #f
-                    #:phases
-                    #~(modify-phases %standard-phases
-                        (add-after 'install 'patch-hipvars
-                            (lambda* (#:key outputs inputs #:allow-other-keys)
-                                (substitute* (string-append (assoc-ref outputs "out") "/bin/hipvars.pm")
-                                    (("@ROCMINFO_PATH@") (assoc-ref inputs "rocminfo"))
-                                    (("@CLANG_TOOLCHAIN@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@ROCR_RUNTIME_PATH@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@CLANG_RUNTIME@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@DEVICE_LIB_PATH@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@HIP_VERSION@") #$version)))))))
+            (arguments (list #:build-type "Release" #:tests? #f))
             (propagated-inputs (list rocminfo rocm-toolchain))
             (synopsis "HIP compiler driver (hipcc)")
             (description "The HIP compiler driver (hipcc) is a compiler utility that will call
@@ -218,10 +204,27 @@ clang and pass the appropriate include and library options for the target compil
                 )
                 #:phases
                 #~(modify-phases %standard-phases
-                    (add-after 'install 'set-paths
+                    (add-after 'install 'overwrite-hipvars
                         (lambda* (#:key outputs inputs #:allow-other-keys)
-                            (substitute* (string-append (assoc-ref outputs "out") "/bin/hipvars.pm")
-                                (("@HIP_PATH@") (assoc-ref outputs "out"))))))))
+                            (with-output-to-file (string-append (assoc-ref outputs "out") "/bin/hipvars.pm")
+                                (lambda ()
+                                    (display (string-append
+                                        "package hipvars;\n"
+                                        "$isWindows = 0;\n"
+                                        "$CUDA_PATH = \"\";\n"
+                                        "$HIP_PLATFORM = \"amd\";\n"
+                                        "$HIP_COMPILER = \"clang\";\n"
+                                        "$HIP_RUNTIME = \"rocclr\";\n"
+                                        "$HIP_CLANG_RUNTIME = \""  (assoc-ref inputs "rocm-toolchain") "\";\n"
+                                        "$DEVICE_LIB_PATH = \"" (assoc-ref inputs "rocm-toolchain") "/amdgcn/bitcode\";\n"
+                                        "$HIP_CLANG_PATH = \"" (assoc-ref inputs "rocm-toolchain") "/bin\";\n"
+                                        "$HIP_PATH = \"" #$output "\";\n"
+                                        "$HIP_VERSION= \"" #$version "\";\n"
+                                        "$ROCMINFO_PATH = \"" (assoc-ref inputs "rocminfo") "\";\n"
+                                        "$ROCR_RUNTIME_PATH = \"" (assoc-ref inputs "rocm-toolchain") "\";\n"
+                                        "$HIP_INFO_PATH = \"$HIP_PATH/lib/.hipInfo\";\n"
+                                        "$HIP_ROCCLR_HOME = $HIP_PATH;\n"
+                                        "$ROCM_PATH = \"" (assoc-ref inputs "rocm-toolchain") "\";")))))))))
         (native-inputs (list mesa libffi git perl python-wrapper python-cppheaderparser hip hipcc))
         (propagated-inputs (modify-inputs (package-propagated-inputs hipcc) (append rocm-comgr)))
         (synopsis "AMD CLR - Compute Language Runtimes for HIP applications")
