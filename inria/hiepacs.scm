@@ -45,13 +45,13 @@
     (name "flame")
     (version "3.11.0")
     (source (origin
-	      (method git-fetch)
-	      (uri (git-reference (url "https://github.com/Reference-LAPACK/lapack")
-				  (commit (string-append "v" version))))
-	      (file-name (string-append name "-" version "-checkout"))
-	      (sha256
-		(base32
-		  "0wm9bkp4aw91hkb57xifxz2360cdhgv36rnqswccgjzlxvrgp001"))))
+              (method git-fetch)
+              (uri (git-reference (url "https://github.com/Reference-LAPACK/lapack")
+                                  (commit (string-append "v" version))))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+                (base32
+                  "0wm9bkp4aw91hkb57xifxz2360cdhgv36rnqswccgjzlxvrgp001"))))
     (build-system cmake-build-system)
     (home-page "https://www.netlib.org/lapack/")
     (inputs (list gfortran python-wrapper))
@@ -189,7 +189,7 @@ Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
     (outputs '("debug" "out"))
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-			   "-DDPLASMA_INSTALL_TESTS=ON")
+                           "-DDPLASMA_INSTALL_TESTS=ON")
        #:tests? #f))
     (inputs (list openblas))
     (propagated-inputs (list `(,hwloc "lib")  openmpi))
@@ -385,9 +385,9 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
 ,flags)))))))
     (properties '((tunable? . #true)))
     (inputs (modify-inputs (package-inputs chameleon)
-			   (prepend mipp)))
+                           (prepend mipp)))
     (native-inputs  (modify-inputs (package-native-inputs chameleon)
-				       (delete "python" "gfortran")))))
+                                       (delete "python" "gfortran")))))
 
 (define-public starpu-example-dgemm
   (package
@@ -431,9 +431,9 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		;;guix hash -x -r .
+                ;;guix hash -x -r .
                 "0gfw2s2yn69bjf11s9v6bpdgpwi9c0wi3kb5dw0h9mfjpd0l22p2"
-		))))))
+                ))))))
 
 (define-public starpu-example-cppgemm
   (package
@@ -753,7 +753,7 @@ is implemented in MPI.")
 
     (inputs
      (modify-inputs (package-inputs maphys)
-		    (delete "mumps" "paddle" "fabulous")))))
+                    (delete "mumps" "paddle" "fabulous")))))
 
 ;; maphys++ with librsb for sparse matrix operations
 (define-public maphys++-librsb
@@ -789,7 +789,7 @@ such as: namespaces, templates, exceptions, etc.")
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-	       "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
+               "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
     (arguments
      '(#:configure-flags '("-Dbuild_tests=OFF")
                          #:tests? #f))
@@ -820,7 +820,7 @@ etc.")
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
+              "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
    (arguments
     '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF"
                           "-Dbuild_tests=OFF")
@@ -833,19 +833,19 @@ etc.")
 (define-public pastix-6
   (package
     (name "pastix")
-    (version "6.3.1")
+    (version "6.3.2")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "c91b3e97ef634c73a1f12915356f5944c2f938f3")
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1yk3kf136hi555p16cpia5270q0cc0frydmy4cjsv7p52sin0sfd"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "bff79df1a462e5be8b3cbdaef5787a9017aa8622")
+             ;; We need the submodule in 'cmake_modules/morse'.
+             (recursive? #t)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0fyf64v848qb4vsw14gskaxifbjpk2df8p02k3wv2mqljkj3vlzq"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
