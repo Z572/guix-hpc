@@ -452,7 +452,7 @@ for any C/C++/Fortran program.")
 
 (define-public python-h5py-geos
   (package
-    (name "python-h5py-geos")
+    (inherit python-h5py)
     (version "3.9.0")
     (source (origin
               (method url-fetch)
@@ -461,23 +461,20 @@ for any C/C++/Fortran program.")
                (base32
                 "05zqjmgaw19d6x8jcbbgci3cqlvzhjf27bbzpp36gqy145jxn176"))))
     (build-system python-build-system)
-    (arguments (list
-                 #:phases #~(modify-phases %standard-phases
-                           (add-before 'build 'hdf5-fix-parallel
-                            (lambda _ (begin
-                                (setenv "HDF5_MPI" "ON")
-                                (setenv "HDF5_DIR"
-                                #$(this-package-input "hdf5-geos"))))))
-                 #:tests? #f)) ; because page buffering is disabled for parallel
+    (arguments
+     (list
+      #:phases #~(modify-phases %standard-phases
+                   (add-before 'build 'hdf5-fix-parallel
+                     (lambda _
+                       (setenv "HDF5_MPI" "ON")
+                       (setenv "HDF5_DIR" #$(this-package-input "hdf5-geos")))))
+      #:tests? #f))         ; because page buffering is disabled for parallel
     (native-inputs (list python-cython))
+    (inputs '())
     (propagated-inputs (list python-numpy
                              hdf5-geos
                              openmpi
-                             python-mpi4py-geos))
-    (home-page "https://docs.h5py.org/en/stable/index.html")
-    (synopsis "Read and write HDF5 files from Python")
-    (description "Read and write HDF5 files from Python")
-    (license license:bsd-3)))
+                             python-mpi4py-geos))))
 
 (define-public hdf5-interface
   (let ((commit "5136554439e791dc5e948f2a74ede31c4c697ef5")
