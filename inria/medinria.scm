@@ -123,7 +123,7 @@
   (package
     (name "ttk")
     (version "4.0")
-    (synopsis "TTK")
+    (synopsis "TTK")                              ;FIXME: What's this about?
     (description "TTK")
     (home-page "https://github.com/medInria/TTK")
     (source
@@ -149,14 +149,15 @@
       #:configure-flags #~'("-DBUILD_SHARED_LIBS=ON" "-DTTK_USE_ACML=OFF"
                             "-DTTK_USE_GMM=OFF" "-DTTK_USE_MIPS=OFF"
                             "-DTTK_USE_MKL=OFF" "-DTTK_USE_VTKINRIA3D=OFF")))
-    (license gpl3)))
+
+    ;; FIXME: This is released under a non-free license (being discussed with
+    ;; upstream; move elsewhere if license cannot be changed).
+    (license #f)))
 
 (define-public qtdcm
   (package
     (name "qtdcm")
     (version "4.0")
-    (synopsis "QtDcm")
-    (description "QtDcm")
     (home-page "https://github.com/medInria/qtdcm")
     (source
      (origin
@@ -179,14 +180,19 @@
       #:tests? #f
       #:build-type "Release"
       #:configure-flags #~'("-DDCMTK_FIND_PACKAGE_USE_CONFIG_ONLY=ON")))
-    (license gpl3)))
+    (synopsis "Qt widgets for manipulating Dicom data")
+    (description
+     "QtDCM implements several Qt widgets for manipulating Dicom data.  With QtDCM,
+it is possible to explore a Dicom CD-ROM, to search and download from a
+PACS (Pictures Archive and Communications System) and to convert series of
+images to the nifti format.  Thanks to its simple design, QtDcm is very easy
+to integrate in other application (see the example directory in the code).")
+    (license license:lgpl3+)))
 
 (define-public rpi
   (package
     (name "rpi")
     (version "4.0")
-    (synopsis "RPI")
-    (description "RPI")
     (home-page "https://github.com/medInria/RPI")
     (source
      (origin
@@ -210,16 +216,17 @@
                             "-DBUILD_ResampleImage=OFF"
                             "-DBUILD_RegistrationAddOn=OFF"
                             "-DCMAKE_CXX_STANDARD=17")))
-    (license gpl3)))
+    (synopsis
+     "Lightweight framework to encapsulate image registration algorithms")
+    (description
+     "The @acronym{RPI, Registration Programming Interface} is a lightweight
+framework to encapsulate image registration algorithms.")
+    (license license:bsd-1)))
 
 (define-public medinria
   (package
     (name "medinria")
     (version "de16bedcf10f5712606cd4a6745800e21b38374e")
-    (synopsis
-     "medInria is a multi-platform medical image processing and visualization software.")
-    (description
-     "medInria is a multi-platform medical image processing and visualization software. It is free and open-source. Through an intuitive user interface, medInria offers from standard to cutting-edge processing functionalities for your medical images such as 2D/3D/4D image visualization, image registration, diffusion MR processing and tractography.")
     (home-page "https://med.inria.fr/")
     (source
      (origin
@@ -266,5 +273,10 @@
                            "-DCMAKE_C_FLAGS_RELEASE= -O3 -DNDEBUG"
                            "-DCMAKE_CXX_FLAGS_RELEASE= -O3 -DNDEBUG"
                            "-DCMAKE_CXX_FLAGS:STRING= -Wall -Wno-unknown-pragmas -fpermissive")))
-    (license gpl3)))
-
+    (synopsis "Medical image processing and visualization software")
+    (description
+     "medInria is a multi-platform medical image processing and visualization
+software.  medInria offers from standard to cutting-edge processing
+functionalities for your medical images such as 2D/3D/4D image visualization,
+image registration, diffusion MR processing and tractography.")
+    (license license:bsd-4)))
