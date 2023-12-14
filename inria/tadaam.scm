@@ -37,13 +37,12 @@
 (define %pm2-git "https://gitlab.inria.fr/pm2/pm2.git")
 (define %pm2-commit "6aa6970d90c3cf754939de011690482a78575278")
 (define %pm2-hash "0fg704d6wp4hlkwrac5gs9jkr8imp1ca60r4bssalv2zwdfm4jr6") ; guix hash -rx .
+(define %pm2-version "2022-11-22")
 
-(define %v2022-11-22 "2022-11-22")
-
-(define-public puk-2022-11-22
+(define-public puk
   (package
    (name "puk")
-   (version %v2022-11-22)
+   (version %pm2-version)
    (home-page (string-append %pm2-home-page "PadicoTM"))
    (source (origin
             (method git-fetch)
@@ -75,13 +74,10 @@ modules, software components, and basic data structures (lists, vectors,
 hashtables, lock-free queues). It may be used with")
    (license license:gpl2)))
 
-(define-public puk
-  puk-2022-11-22)
-
-(define-public pioman-2022-11-22
+(define-public pioman
   (package
    (name "pioman")
-   (version %v2022-11-22)
+   (version %pm2-version)
    (home-page (string-append %pm2-home-page "pioman"))
    (source (origin
             (method git-fetch)
@@ -122,13 +118,10 @@ communication library and its companion MPI implementation called Mad-MPI
 supporting MPI_THREAD_MULTIPLE multi-threading level.")
    (license license:gpl2)))
 
-(define-public pioman
-  pioman-2022-11-22)
-
-(define-public pukabi-2022-11-22
+(define-public pukabi
   (package
    (name "pukabi")
-   (version %v2022-11-22)
+   (version %pm2-version)
    (home-page (string-append %pm2-home-page "PadicoTM"))
    (source (origin
             (method git-fetch)
@@ -161,13 +154,10 @@ user-supplied function; add hooks for locking with another thread library
 than libc pthread; add hooks for memory.")
    (license license:gpl2)))
 
-(define-public pukabi
-  pukabi-2022-11-22)
-
-(define-public padicotm-2022-11-22
+(define-public padicotm
   (package
    (name "padicotm")
-   (version %v2022-11-22)
+   (version %pm2-version)
    (home-page (string-append %pm2-home-page "PadicoTM"))
    (source (origin
             (method git-fetch)
@@ -233,10 +223,7 @@ different services running at the same time run in a cooperative
 way rather than competitive.")
    (license license:gpl2)))
 
-(define-public padicotm
-  padicotm-2022-11-22)
-
-(define-public padicotm-mini-2022-11-22
+(define-public padicotm-mini
   (package
    (inherit padicotm)
    (name "padicotm-mini")
@@ -247,11 +234,8 @@ way rather than competitive.")
    (propagated-inputs
     `(,@(delete `("pioman" ,pioman) (package-propagated-inputs padicotm))))))
 
-(define-public padicotm-mini
-  padicotm-mini-2022-11-22)
-
 ;;see comment above nmad*-pukabi packages definition
-(define-public padicotm-pukabi-2022-11-22
+(define-public padicotm-pukabi
   (package
    (inherit padicotm)
    (name "padicotm-pukabi")
@@ -262,10 +246,7 @@ way rather than competitive.")
    (propagated-inputs
     `(,@(delete `("pukabi" ,pukabi) (package-propagated-inputs padicotm))))))
 
-(define-public padicotm-pukabi
-  padicotm-pukabi-2022-11-22)
-
-(define-public padicotm-mini-pukabi-2022-11-22
+(define-public padicotm-mini-pukabi
   (package
    (inherit padicotm-mini)
    (name "padicotm-mini-pukabi")
@@ -276,13 +257,10 @@ way rather than competitive.")
    (propagated-inputs
     `(,@(delete `("pukabi" ,pukabi) (package-propagated-inputs padicotm-mini))))))
 
-(define-public padicotm-mini-pukabi
-  padicotm-mini-pukabi-2022-11-22)
-
-(define-public nmad-2022-11-22
+(define-public nmad
   (package
    (name "nmad")
-   (version %v2022-11-22)
+   (version %pm2-version)
    (home-page (string-append %pm2-home-page "newmadeleine"))
    (source (origin
             (method git-fetch)
@@ -355,10 +333,7 @@ libraries and from multiple threads. Its MPI implementation Mad-MPI fully suppor
 the MPI_THREAD_MULTIPLE multi-threading level.")
    (license license:gpl2)))
 
-(define-public nmad
-  nmad-2022-11-22)
-
-(define-public nmad-mini-2022-11-22
+(define-public nmad-mini
   (package
    (inherit nmad)
    (name "nmad-mini")
@@ -370,13 +345,10 @@ the MPI_THREAD_MULTIPLE multi-threading level.")
     `(("padicotm" ,padicotm-mini)
       ,@(delete `("padicotm" ,padicotm) (package-propagated-inputs nmad))))))
 
-(define-public nmad-mini
-  nmad-mini-2022-11-22)
-
 ;;nmad-pukabi and nmad-mini-pukabi corresponds to old packages that were not using pukabi
 ;;they should only be used in case something goes wrong with the default ones
 ;;they are not meant to be maintained
-(define-public nmad-pukabi-2022-11-22
+(define-public nmad-pukabi
   (package
    (inherit nmad)
    (name "nmad-pukabi")
@@ -388,7 +360,7 @@ the MPI_THREAD_MULTIPLE multi-threading level.")
     `(("padicotm" ,padicotm-pukabi)
       ,@(delete `("padicotm" ,padicotm) (package-propagated-inputs nmad))))))
 
-(define-public nmad-mini-pukabi-2022-11-22
+(define-public nmad-mini-pukabi
   (package
    (inherit nmad-mini)
    (name "nmad-mini-pukabi")
@@ -443,10 +415,10 @@ Benchmarks are point-to-point, running on two nodes. Collective operations
 are not benchmarked yet.")
    (license license:gpl2)))
 
-(define-public mpi_sync_clocks-2022-11-22
+(define-public mpi_sync_clocks
   (package
    (name "mpi_sync_clocks")
-   (version %v2022-11-22)
+   (version %pm2-version)
    (home-page %pm2-home-page)
    (source (origin
             (method git-fetch)
@@ -516,9 +488,6 @@ Its main features are:
 - Portable on Unix-like systems (Linux, OS-X, etc.).
 - Many useful options (level of verbosity, topology optimization, partitioning, etc.).")
     (license license:bsd-3)))
-
-(define-public mpi_sync_clocks
-  mpi_sync_clocks-2022-11-22)
 
 (define-public scotch-6
   ;; Copied from Guix commit 4c1dff9abeb383ca58dbfcbc27e1bd464d2ad2ea.
