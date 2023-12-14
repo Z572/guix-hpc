@@ -283,7 +283,7 @@ way rather than competitive.")
   (package
    (name "nmad")
    (version %v2022-11-22)
-   (home-page (string-append %pm2-home-page "NewMadeleine"))
+   (home-page (string-append %pm2-home-page "newmadeleine"))
    (source (origin
             (method git-fetch)
             (uri (git-reference
