@@ -27,6 +27,7 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages parallel)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages linux)
@@ -211,7 +212,7 @@ than libc pthread; add hooks for memory.")
                        #t))))))
    (inputs (list util-linux procps inetutils hwloc which))
    (native-inputs
-    (list pkg-config autoconf automake `(,hwloc "lib") rdma-core psm psm2))
+    (list pkg-config autoconf automake `(,hwloc "lib") rdma-core psm psm2 slurm))
    (propagated-inputs (list puk pioman pukabi))
    (synopsis "A High-performance Communication Framework for Grids")
    (description "PadicoTM is composed of a core which provides a
@@ -311,7 +312,7 @@ way rather than competitive.")
    (propagated-inputs
     (list padicotm))
    (inputs
-    (list rdma-core psm psm2))
+    (list rdma-core psm psm2 slurm))
    (synopsis "An Optimizing Communication Library for High-Performance Networks")
    (description "NewMadeleine is the fourth incarnation of the Madeleine
 communication library. The new architecture aims at enabling the use of a much
