@@ -277,9 +277,6 @@ standard C++14 features.")
                (base32
                 "16qjnx1bvddiyhp1g0f17hral88361f7mjm365iy144dv0ar50yw"))))
     (build-system cmake-build-system)
-    (synopsis
-     "CHAI is a library that handles automatic data
-migration to different memory spaces behind an array-style interface")
     (arguments
      (list #:configure-flags #~`("-DENABLE_OPENMP=ON" 
                                  ,(string-append
@@ -309,6 +306,7 @@ migration to different memory spaces behind an array-style interface")
 
            ))
     (inputs (list blt python raja camp umpire))
+    (synopsis "C++ array-style interface for automatic data migration")
     (description
      "CHAI is a C++ libary providing an array object that
 can be used transparently in multiple memory spaces.  Data is
