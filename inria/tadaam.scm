@@ -35,9 +35,9 @@
 
 (define %pm2-home-page "https://pm2.gitlabpages.inria.fr/")
 (define %pm2-git "https://gitlab.inria.fr/pm2/pm2.git")
-(define %pm2-commit "6aa6970d90c3cf754939de011690482a78575278")
-(define %pm2-hash "0fg704d6wp4hlkwrac5gs9jkr8imp1ca60r4bssalv2zwdfm4jr6") ; guix hash -rx .
-(define %pm2-version "2022-11-22")
+(define %pm2-commit "dce4fedf6d0c3c1ef80d1fce3267c935f4bf1926")
+(define %pm2-hash "12pdqzwcghs0kahhnml06cxh0kv4q93861g9xrbbh0gxnb1jwq18") ; guix hash -rx .
+(define %pm2-version "2023-12-14")
 
 (define-public puk
   (package
