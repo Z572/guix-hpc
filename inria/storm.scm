@@ -158,7 +158,8 @@ kernels are executed as efficiently as possible.")
                           (lookup-package-propagated-input package
                                                            "openmpi"))
                       (lambda (package)
-                        (string=? "nmad" (package-name package))))
+                        (and (string-prefix? "nmad" (package-name package))
+                             (not (string=? (package-name package) "nmad-mini")))))
                '("--enable-nmad")
                '())))
 
