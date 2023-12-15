@@ -224,59 +224,61 @@ framework to encapsulate image registration algorithms.")
     (license license:bsd-1)))
 
 (define-public medinria
-  (package
-    (name "medinria")
-    (version "de16bedcf10f5712606cd4a6745800e21b38374e")
-    (home-page "https://med.inria.fr/")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/medInria/medInria-public")
-             (commit version)))
-       (patches (search-patches
-                 "inria/patches/medinria-fix-qtdcm-include.patch"))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "0dzzpnja30di39213pv8yqs5hnm5s8x9mpqqzx8nclbncd67l8bn"))))
-    (inputs (list dtk
-                  dcmtk-medinria-config
-                  qtdcm
-                  insight-toolkit-5.1.1
-                  vtk-8
-                  qtbase-5
-                  qttools-5
-                  qtx11extras
-                  qtdeclarative-5
-                  qtsvg-5
-                  rpi
-                  ttk
-                  boost))
-    (build-system cmake-build-system)
-    (arguments
-     (list
-      #:tests? #f
-      #:build-type "Release"
-      #:phases #~(modify-phases %standard-phases
-                   (add-before 'configure 'change-directory
-                     (lambda _
-                       (chdir "src"))))
-      #:configure-flags #~(list "-DACTIVATE_WALL_OPTION:BOOL=OFF"
-                           "-DBUILD_SHARED_LIBS:BOOL=ON"
-                           "-DBUILD_ALL_PLUGINS:BOOL=OFF"
-                           "-DBUILD_COMPOSITEDATASET_PLUGIN:BOOL=OFF"
-                           "-DBUILD_EXAMPLE_PLUGINS:BOOL=OFF"
-                           "-DUSE_DTKIMAGING:BOOL=OFF"
-                           "-DUSE_OSPRay:BOOL=OFF"
-                           "-DCMAKE_CXX_STANDARD=17"
-                           "-DCMAKE_C_FLAGS= -Wall"
-                           "-DCMAKE_C_FLAGS_RELEASE= -O3 -DNDEBUG"
-                           "-DCMAKE_CXX_FLAGS_RELEASE= -O3 -DNDEBUG"
-                           "-DCMAKE_CXX_FLAGS:STRING= -Wall -Wno-unknown-pragmas -fpermissive")))
-    (synopsis "Medical image processing and visualization software")
-    (description
-     "medInria is a multi-platform medical image processing and visualization
+  (let ((commit "de16bedcf10f5712606cd4a6745800e21b38374e")
+        (revision "0"))
+    (package
+      (name "medinria")
+      (version (git-version "4.0.0" revision commit))
+      (home-page "https://med.inria.fr/")
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/medInria/medInria-public")
+               (commit commit)))
+         (patches (search-patches
+                   "inria/patches/medinria-fix-qtdcm-include.patch"))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "0dzzpnja30di39213pv8yqs5hnm5s8x9mpqqzx8nclbncd67l8bn"))))
+      (inputs (list dtk
+                    dcmtk-medinria-config
+                    qtdcm
+                    insight-toolkit-5.1.1
+                    vtk-8
+                    qtbase-5
+                    qttools-5
+                    qtx11extras
+                    qtdeclarative-5
+                    qtsvg-5
+                    rpi
+                    ttk
+                    boost))
+      (build-system cmake-build-system)
+      (arguments
+       (list
+        #:tests? #f
+        #:build-type "Release"
+        #:phases #~(modify-phases %standard-phases
+                     (add-before 'configure 'change-directory
+                       (lambda _
+                         (chdir "src"))))
+        #:configure-flags #~(list "-DACTIVATE_WALL_OPTION:BOOL=OFF"
+                             "-DBUILD_SHARED_LIBS:BOOL=ON"
+                             "-DBUILD_ALL_PLUGINS:BOOL=OFF"
+                             "-DBUILD_COMPOSITEDATASET_PLUGIN:BOOL=OFF"
+                             "-DBUILD_EXAMPLE_PLUGINS:BOOL=OFF"
+                             "-DUSE_DTKIMAGING:BOOL=OFF"
+                             "-DUSE_OSPRay:BOOL=OFF"
+                             "-DCMAKE_CXX_STANDARD=17"
+                             "-DCMAKE_C_FLAGS= -Wall"
+                             "-DCMAKE_C_FLAGS_RELEASE= -O3 -DNDEBUG"
+                             "-DCMAKE_CXX_FLAGS_RELEASE= -O3 -DNDEBUG"
+                             "-DCMAKE_CXX_FLAGS:STRING= -Wall -Wno-unknown-pragmas -fpermissive")))
+      (synopsis "Medical image processing and visualization software")
+      (description
+       "medInria is a multi-platform medical image processing and visualization
 software.  medInria offers from standard to cutting-edge processing
 functionalities for your medical images such as 2D/3D/4D image visualization,
 image registration, diffusion MR processing and tractography.")
-    (license license:bsd-4)))
+      (license license:bsd-4))))
