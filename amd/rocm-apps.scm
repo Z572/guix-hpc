@@ -20,6 +20,7 @@
     #:use-module (guix build-system cmake)
     #:use-module (guix git-download)
     #:use-module (guix packages)
+    #:use-module (guix licenses)
 
     #:use-module (gnu packages)
     #:use-module (gnu packages linux)
@@ -32,20 +33,19 @@
 (define-public hpcg
     (package
         (name "hpcg")
-        (version "rocm-5.6")
+        (version "rocm-5.7")
         (source
             (origin
                 (method git-fetch)
                 (uri (git-reference
                             (url "https://github.com/ROCmSoftwarePlatform/rocHPCG.git")
-                            (commit "c3fdac837c6a8359d75a9858783f68ef675ce98f")))
+                            (commit "release/rocm-rel-5.7")))
                 (file-name (git-file-name name version))
-                (sha256 (base32 "0fnivjkbk875jis97c5qaxn53a26wzaz6dccwfq20ch6g5fchrnd"))
-                (patches (search-patches "amd/patches/hpcg-cmake.patch"))))
+                (sha256 (base32 "1dz32xsiccpb7099jvp2hkbabqnmsdjfn0p0h1x2z745c7a6p2ac"))))
         (build-system cmake-build-system)
         (arguments
             (list
-                #:tests? #f ; No tests.
+                #:tests? #f ;Not tests provided.
                 #:configure-flags
                 #~(list
                     "-DGPU_AWARE_MPI=ON"
@@ -53,17 +53,16 @@
                     "-DOPT_MEMMGMT=ON"
                     "-DOPT_DEFRAG=ON"
                     "-DOPT_ROCTX=OFF"
-                    "-DCMAKE_CXX_FLAGS=--offload-arch=gfx1030,gfx90a"
                     (string-append "-DHIP_ROOT_DIR=" #$(this-package-native-input "hipamd"))
                     (string-append "-DROCM_PATH=" #$(this-package-native-input "hipamd"))
                     (string-append "-DCMAKE_CXX_COMPILER=" #$(this-package-native-input "hipamd") "/bin/hipcc"))))
-        (native-inputs (list git hipamd-5.6 rocm-cmake-5.6))
-        (inputs (list numactl rocprim-5.6))
-        (propagated-inputs (list openmpi-rocm-5.6))
-        (synopsis "This is rocHPCG")
-        (description "Using Guix to deliver to you the latest and greatest rocHPCG")
+        (native-inputs (list git hipamd-5.7 rocm-cmake-5.7))
+        (inputs (list numactl rocprim-5.7))
+        (propagated-inputs (list openmpi-rocm-5.7))
+        (synopsis "ROCm version of the synthetic HPCG benchmark.")
+        (description "rocHPCG is implemented on top of ROCm runtime and toolchains using the HIP programming language, and optimized for AMD's discrete GPUs.")
         (home-page "https://github.com/ROCmSoftwarePlatform/rocHPCG.git")
-        (license #f)))
+        (license bsd-3)))
 
 
 (define-public babelstream-hip
@@ -89,7 +88,7 @@
                     (string-append "-DMODEL=hip")
                     (string-append "-DCMAKE_CXX_COMPILER=" #$(this-package-input "hipamd") "/bin/hipcc")
                     (string-append "-DCXX_EXTRA_FLAGS=--offload-arch=gfx1030,gfx908,gfx90a"))))
-        (inputs (list hipamd-5.6))
+        (inputs (list hipamd-5.7))
         (synopsis "BabelStream: Stream benchmark for GPUs using HIP")
         (description "Measure memory transfer rates to/from global device memory on GPUs.
 This benchmark is similar in spirit, and based on, John D McCalpin's STREAM benchmark for CPUs.
