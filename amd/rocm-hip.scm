@@ -215,7 +215,7 @@ clang and pass the appropriate include and library options for the target compil
                                         "$HIP_PLATFORM = \"amd\";\n"
                                         "$HIP_COMPILER = \"clang\";\n"
                                         "$HIP_RUNTIME = \"rocclr\";\n"
-                                        "$HIP_CLANG_RUNTIME = \""  (assoc-ref inputs "rocm-toolchain") "\";\n"
+                                        "$HIP_CLANG_RUNTIME = \"" (assoc-ref inputs "rocm-toolchain") "\";\n"
                                         "$DEVICE_LIB_PATH = \"" (assoc-ref inputs "rocm-toolchain") "/amdgcn/bitcode\";\n"
                                         "$HIP_CLANG_PATH = \"" (assoc-ref inputs "rocm-toolchain") "/bin\";\n"
                                         "$HIP_PATH = \"" #$output "\";\n"
@@ -310,8 +310,7 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
                 (commit (string-append "rocm-" version))))
         (file-name (git-file-name "hip" version))
         (sha256 (assoc-ref %hip-headers-repo-hashes version))
-        (patches (map search-patch
-                      (assoc-ref %hip-headers-repo-patches version)))))
+        (patches (map search-patch (assoc-ref %hip-headers-repo-patches version)))))
 
 (define (make-hip-headers rocminfo rocm-toolchain)
     (hidden-package
@@ -320,21 +319,7 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
             (version (package-version rocm-toolchain))
             (source (hip-headers-origin version))
             (build-system copy-build-system)
-            (arguments
-                (list
-                    #:install-plan
-                    #~`(("." "/"))
-                    #:phases
-                    #~(modify-phases %standard-phases
-                        (add-after 'install 'patch-hipvars
-                            (lambda* (#:key outputs inputs #:allow-other-keys)
-                                (substitute* (string-append (assoc-ref outputs "out") "/bin/hipvars.pm")
-                                    (("@ROCMINFO_PATH@") (assoc-ref inputs "rocminfo"))
-                                    (("@CLANG_TOOLCHAIN@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@ROCR_RUNTIME_PATH@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@CLANG_RUNTIME@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@DEVICE_LIB_PATH@") (assoc-ref inputs "rocm-toolchain"))
-                                    (("@HIP_VERSION@") #$version)))))))
+            (arguments (list #:install-plan #~`(("." "/"))))
             (propagated-inputs (list rocminfo rocm-toolchain))
             (synopsis "The Heterogeneous Interface for Portability (HIP) framework")
             (description "The Heterogeneous Interface for Portability (HIP) framework is a
@@ -361,7 +346,7 @@ for AMD and NVIDIA GPUs from single source code.")
     '(
         ("5.5.1" . ())
         ("5.4.4" . ("amd/patches/hipamd-5.4.4.patch"))
-        ("5.3.3" . ("amd/patches/hipamd-5.3.3-add-clang-rt-dir.patch"))
+        ("5.3.3" . ())
     )
 )
 
@@ -394,14 +379,28 @@ for AMD and NVIDIA GPUs from single source code.")
                     "-DHIP_PLATFORM=amd")
                 #:phases
                 #~(modify-phases %standard-phases
-                    (add-after 'install 'set-paths
+                    (add-after 'install 'overwrite-hipvars
                         (lambda* (#:key outputs inputs #:allow-other-keys)
-                            (substitute* (string-append (assoc-ref outputs "out") "/bin/hipvars.pm")
-                                (("@HIP_PATH@") (assoc-ref outputs "out")))))
-                    (add-after 'install 'patch-hipconfig-cmake
-                        (lambda* (#:key outputs inputs #:allow-other-keys)
-                            (substitute* (string-append (assoc-ref outputs "out") "/lib/cmake/hip/hip-config.cmake")
-                                (("GUIX_CLANG_RUNTIME_DIR") (assoc-ref inputs "rocm-toolchain"))))))))
+                            (make-file-writable (string-append (assoc-ref outputs "out") "/bin/hipvars.pm"))
+                            (with-output-to-file (string-append (assoc-ref outputs "out") "/bin/hipvars.pm")
+                                (lambda ()
+                                    (display (string-append
+                                        "package hipvars;\n"
+                                        "$isWindows = 0;\n"
+                                        "$CUDA_PATH = \"\";\n"
+                                        "$HIP_PLATFORM = \"amd\";\n"
+                                        "$HIP_COMPILER = \"clang\";\n"
+                                        "$HIP_RUNTIME = \"rocclr\";\n"
+                                        "$HIP_CLANG_RUNTIME = \"" (assoc-ref inputs "rocm-toolchain") "\";\n"
+                                        "$DEVICE_LIB_PATH = \"" (assoc-ref inputs "rocm-toolchain") "/amdgcn/bitcode\";\n"
+                                        "$HIP_CLANG_PATH = \"" (assoc-ref inputs "rocm-toolchain") "/bin\";\n"
+                                        "$HIP_PATH = \"" #$output "\";\n"
+                                        "$HIP_VERSION= \"" #$version "\";\n"
+                                        "$ROCMINFO_PATH = \"" (assoc-ref inputs "rocminfo") "\";\n"
+                                        "$ROCR_RUNTIME_PATH = \"" (assoc-ref inputs "rocm-toolchain") "\";\n"
+                                        "$HIP_INFO_PATH = \"$HIP_PATH/lib/.hipInfo\";\n"
+                                        "$HIP_ROCCLR_HOME = $HIP_PATH;\n"
+                                        "$ROCM_PATH = \"" (assoc-ref inputs "rocm-toolchain") "\";")))))))))
         (native-inputs (list mesa libffi git perl python-wrapper python-cppheaderparser))
         (inputs (modify-inputs (package-inputs hip) (append numactl)))
         (propagated-inputs (modify-inputs (package-propagated-inputs hip) (append rocm-comgr)))
