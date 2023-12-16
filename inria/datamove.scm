@@ -42,7 +42,7 @@
 (define-public batsim
   (package
     (name "batsim")
-    (version "4.1.0")
+    (version "4.2.0")
     (home-page "https://framagit.org/batsim/batsim")
     (source (origin
               (method git-fetch)
@@ -52,7 +52,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0zhl0f22hyljxd63kirv4b071bx3smikd8ci1flky752dffyrdk4"))))
+                "1hlh3s5y40rbsa51a9ynx05a9nlpfdm69hcgsfya8bw93czfzj26"))))
     (build-system meson-build-system)
     (native-inputs (list boost pkg-config))
     (propagated-inputs (list simgrid

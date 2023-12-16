@@ -11,10 +11,12 @@
   #:use-module (guix build-system copy)
   #:use-module (guix build-system emacs)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system python)
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages algebra)
+  #:use-module (gnu packages aspell)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages certs)
@@ -34,8 +36,10 @@
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rust-apps) ;; for ripgrep
+  #:use-module (gnu packages shellutils) ;; for direnv
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texlive)
@@ -54,7 +58,7 @@
 
 (define-public texlive-bedrock
   (package
-   (name "texlive-bedrock")
+    (name "texlive-bedrock")
     (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/compose-styles")
     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Texlive add-on.")
@@ -80,7 +84,8 @@
 	 ("IEEEoverride" "share/texmf-dist/tex/latex/ieeeoverride")
 	 ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
 	 ("RR" "share/texmf-dist/tex/latex/inriarr")
-	 ("poster" "share/texmf-dist/tex/latex/inriaposter"))))))
+	 ("poster" "share/texmf-dist/tex/latex/inriaposter"))))
+    (propagated-inputs (list texlive-rsfs)))) ;; for RR
 
 ;; Updated version of the emacs-rmsbolt from guix channel to have tree-sitter (ts) support
 ;; TODO: update guix channel instead
@@ -156,11 +161,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "c91c20fa10db25d7ac57c0762926afeb7e92509")))
+                  (commit "6ad7672cfe613b0ee4b0a6b94345cafdc1204f5f")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "15gpw927pvs9nwrkbl4hfhm7ddvisydqk6f3xqdk78108dyxzhy1"))))
+	      "1z80l4yvgwi72z4y4ai176klwdfd6nhhi1iqsz2y2zr1zkkvywgh"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org
@@ -173,29 +178,46 @@ a source code input file.")
 (define-public emacs-ob-latexpicture
   (emacs-instead-of-emacs-minimal emacs-ob-latexpicture-with-emacs-minimal))
 
+(define-public emacs-lob-ob-latexpicture
+  (package
+    (inherit emacs-ob-latexpicture)
+    (name "emacs-lob-ob-latexpicture")
+    (synopsis "Extension of library of babel (lob) for ob-latexpicture")
+    (description
+     "Extension of library of babel (lob) for ob-latexpicture")
+    (build-system copy-build-system)
+    (native-search-paths
+     (list (search-path-specification
+            (variable "EMACSLOBPATH")
+            (files (list "share/emacs/site-lob")))))
+    (arguments
+     '(
+       #:install-plan
+       '(("lob-ob-latexpicture.org" "share/emacs/site-lob/lob-ob-latexpicture.org"))))))
+
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-early-init publicly defined below instead
 (define emacs-bedrock-early-init-with-emacs-minimal
   (package
-   (name "emacs-bedrock-early-init")
-   (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
-   (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
-   (license license:cecill-c)
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "961797e55adc26e0203dac7f936820fb41efebc7")))
-            (file-name (string-append name "-" version "-checkout"))
-            (sha256
-             (base32
-              "10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
-   (build-system emacs-build-system)
-   ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
-   (propagated-inputs (list emacs))))
+    (name "emacs-bedrock-early-init")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
+    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+    (description
+     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "961797e55adc26e0203dac7f936820fb41efebc7")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
+    (build-system emacs-build-system)
+    ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
+    (propagated-inputs (list emacs))))
 
 ;; emacs-bedrock-early-init with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -217,11 +239,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f7886ca47f5cf77ac29d2271a790fdfb05c9d80f")))
+                    (commit "90361bf6255a0ef89bc3fb04d371261dcbc3a5fd")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "10ix927813f3w6yjxnm3namgxizj5yvhgzym8x0i5a33qjydcym6"))))
+                "0iyzk2aw14p8z3gy4kqhb664ly1n3482kvs4ww7fcixm3bnbc8j7"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
@@ -263,11 +285,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "c04acf4471f603fb1f37390efa1c2a2f8a14f2de")))
+                    (commit "4b6c61108ae96f096142b12cf84c6bf486ac6a37")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0gyrs01vv8xkzhc0lhw9838gmqmlbd82cl0j5kf2c6avyidlsnki"))))
+		"187vgfs9i14h3nh0y8dv4mfvnxrcwdv2shyrx142kswmlhllpp6v"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -314,11 +336,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "53af85db876d2973e89ccb09d522cbe7bf5c8bd6")))
+                    (commit "39a5845274c5ac21ba17dfd1b52080d690890736")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"06vzf72j65wan99aljlknlgkwjgg2i1fgp7b99lgc2xgq4ay0ykg"))))
+		"088vcyj26jl1v8q86l1xbqs2cfacwnj4rk5919dscf4cf9p4gmzv"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
@@ -425,6 +447,7 @@ a source code input file.")
 	   ;; emacs-crdt
 	   bash
 	   ccls ;; c / c++ language server
+	   direnv ;; not necessary for emacs-envrc (already a dependency of it) but so that we have it in a terminal
 	   emacs-envrc
 	   emacs-rmsbolt-ts
 	   gdb
@@ -433,8 +456,11 @@ a source code input file.")
 	   tree-sitter-bash
 	   tree-sitter-bibtex
 	   tree-sitter-c ;; see also ccls language server
-	   tree-sitter-cpp ;; see also ccls language server
 	   tree-sitter-cmake
+	   tree-sitter-cpp ;; see also ccls language server
+	   tree-sitter-css
+	   tree-sitter-javascript
+	   tree-sitter-json
 	   tree-sitter-julia
 	   tree-sitter-markdown
 	   tree-sitter-org
@@ -442,6 +468,7 @@ a source code input file.")
 	   tree-sitter-scheme
 	   tree-sitter-r
 	   tree-sitter-rust
+	   tree-sitter-typescript
 	   ))))
 
 ;; emacs-bedrock-dev with emacs instead of emacs-minimal
@@ -503,7 +530,10 @@ scheme.")
 		"0x6i6pw1zyxr8gbkr701if778yhgzga08hkhf2m2c9kg0ipisn3d"))))
    (build-system emacs-build-system)
    (propagated-inputs
-    (list emacs-bedrock-base
+    (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
+	  aspell-dict-en
+	  aspell-dict-fr
+          emacs-bedrock-base
 	  emacs-citar
 	  emacs-citar-org-roam
 	  emacs-jinx))))
@@ -592,14 +622,15 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "d3cec28bbbe4308f5178418d61667832e3529da9")))
+                    (commit "955846e1ccdaf02c949a2db0972a091a5b276b5b")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1gq1mqscn2j6x08d7l3cqxl74lapf77vcfhskll577fpyaswf1ba"))))
+		"07g5g11pprid1113nl6qv7hjbgh076d4i6ysl46yx1la1fkc0p9s"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-org-minimal
+	   emacs-lob-ob-latexpicture
 	   emacs-ob-latexmacro
 	   emacs-ob-latexpicture))))
 
@@ -701,8 +732,8 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
      (list emacs-bedrock-ox-base
 	   emacs-bedrock-ox-latex-classes
 	   emacs-bedrock-ox-latex-minimal
-;;	   python          ;; for minted
-;;	   python-pygments ;; for minted
+	   python          ;; for minted
+	   python-pygments ;; for minted
 	   texlive-algorithm2e
 	   texlive-amsmath
 	   texlive-biber
