@@ -67,8 +67,8 @@
         ("rocm-5.7.1" . ("amd/patches/llvm-rocm-5.6.1.patch"))
         ("rocm-5.6.1" . ("amd/patches/llvm-rocm-5.6.1.patch"))
         ("rocm-5.5.1" . ("amd/patches/llvm-rocm-5.5.1.patch"))
-        ("rocm-5.4.4" . ("amd/patches/rocm-5.4-llvm-project.patch"))
-        ("rocm-5.3.3" . ("amd/patches/rocm-5.3-llvm-project.patch"))
+        ("rocm-5.4.4" . ("amd/patches/llvm-rocm-5.4.4.patch"))
+        ("rocm-5.3.3" . ("amd/patches/llvm-rocm-5.3.3.patch"))
     )
 )
 
@@ -296,9 +296,7 @@ to interact with the ROCk driver.")
                 #:build-type "Release"
                 #:tests? #f ; No tests.
                 #:configure-flags
-                #~(list
-                    (string-append "-DBITCODE_DIR=" #$(this-package-input "rocm-device-libs") "/amdgcn/bitcode/")
-                )
+                #~(list (string-append "-DBITCODE_DIR=" #$(this-package-input "rocm-device-libs") "/amdgcn/bitcode/"))
                 #:phases
                 #~(modify-phases %standard-phases
                     (add-after 'unpack 'chdir
@@ -363,7 +361,6 @@ core runtime is also available.")
                           "-DCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=lld"   ;can be removed if we use lld-as-ld-wrapper
                           "-DLIBOMPTARGET_AMDGCN_GFXLIST=gfx906;gfx908;gfx90a;gfx940;gfx1030"
                           (string-append "-DDEVICELIBS_ROOT=" #$(this-package-input "rocm-device-libs"))
-                          ;(string-append "-DCLANG_BINARY_DIR=" #$(this-package-native-input "clang") "/bin")
                           (string-append "-DLLVM_DIR=" #$(this-package-native-input "llvm")))
                     #$flags))
                 ((#:phases phases '(@ () %standard-phases))
@@ -386,14 +383,7 @@ core runtime is also available.")
                                       "find_program(CLANG_OFFLOAD_BUNDLER_TOOL clang-offload-bundler PATHS " #$clang-rocm "/bin"))
                                     (("find_program\\(PACKAGER_TOOL clang-offload-packager PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                                      (string-append
-                                      "find_program(PACKAGER_TOOL clang-offload-packager PATHS " #$clang-rocm "/bin"))
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
+                                      "find_program(PACKAGER_TOOL clang-offload-packager PATHS " #$clang-rocm "/bin")))))))))
         ;(properties `((hidden? . #t) ,@(package-properties libomp)))
     )
 )
