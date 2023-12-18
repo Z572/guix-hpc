@@ -108,8 +108,12 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
         (list
             #:configure-flags
                 #~(list
-                    "--enable-optimizations"
-;                    "--enable-mt"
+                   ;; XXX: Disable optimizations specific to the build
+                   ;; machine (AVX, etc.)  There's apparently no way to
+                   ;; have them picked up at load time.
+                   "--disable-optimizations"
+
+                   ;; "--enable-mt"
                     "--disable-logging"
                     "--disable-debug"
                     "--disable-assertions"
@@ -123,7 +127,9 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
                 #:make-flags
                 #~(list "V=1")))
     (native-inputs (list autoconf automake libtool pkg-config roct-thunk))
-    (inputs (list numactl hipamd rocr-runtime))))
+    (inputs (list numactl hipamd rocr-runtime))
+    (properties `((tunable? . #t)
+                  ,@(package-properties ucx)))))
 
 (define-public ucx-rocm-5.7 (make-ucx-rocm roct-thunk-5.7 rocr-runtime-5.7 hipamd-5.7))
 (define-public ucx-rocm-5.6 (make-ucx-rocm roct-thunk-5.6 rocr-runtime-5.6 hipamd-5.6))
