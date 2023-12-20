@@ -150,7 +150,16 @@ kernels are executed as efficiently as possible.")
                ;; the future, it would be nice to give the opportunity to
                ;; change it at will when parametrized packages will be there.
                '("--enable-maxcpus=128"))
-         ,@(if (lookup-package-propagated-input package "nmad")
+
+         ;; XXX: When using '--with-input=openmpi=nmad', the resulting input
+         ;; label remains "openmpi" so we cannot really look for "nmad",
+         ;; hence the extra 'lookup-package-propagated-input' call.
+         ,@(if (and=> (or (lookup-package-propagated-input package "nmad")
+                          (lookup-package-propagated-input package
+                                                           "openmpi"))
+                      (lambda (package)
+                        (and (string-prefix? "nmad" (package-name package))
+                             (not (string=? (package-name package) "nmad-mini")))))
                '("--enable-nmad")
                '())))
 

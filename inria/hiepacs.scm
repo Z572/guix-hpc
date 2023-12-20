@@ -7,7 +7,8 @@
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
-  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix licenses)
+                #:prefix license:)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages)
@@ -37,33 +38,32 @@
   ;; To remove when/if python2 packages sympy and mpi4py
   ;; are fixed in official repo
   #:use-module (guix build-system python)
-  #:use-module (gnu packages python-science)
-  )
+  #:use-module (gnu packages python-science))
 
 (define-public flame
   (package
     (name "flame")
     (version "3.11.0")
-    (source (origin
-	      (method git-fetch)
-	      (uri (git-reference (url "https://github.com/Reference-LAPACK/lapack")
-				  (commit (string-append "v" version))))
-	      (file-name (string-append name "-" version "-checkout"))
-	      (sha256
-		(base32
-		  "0wm9bkp4aw91hkb57xifxz2360cdhgv36rnqswccgjzlxvrgp001"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/Reference-LAPACK/lapack")
+             (commit (string-append "v" version))))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "0wm9bkp4aw91hkb57xifxz2360cdhgv36rnqswccgjzlxvrgp001"))))
     (build-system cmake-build-system)
     (home-page "https://www.netlib.org/lapack/")
     (inputs (list gfortran python-wrapper))
     (propagated-inputs (list blis libflame))
     (arguments
-     `(#:configure-flags (list
-                          "-DBUILD_SHARED_LIBS=ON"
-                          "-DCBLAS=ON"
-                          "-DLAPACKE=ON"
-                          "-DLAPACKE_WITH_TMG=ON"
-                          "-DUSE_OPTIMIZED_BLAS=ON"
-                          "-DUSE_OPTIMIZED_LAPACK=ON")
+     `(#:configure-flags (list "-DBUILD_SHARED_LIBS=ON"
+                               "-DCBLAS=ON"
+                               "-DLAPACKE=ON"
+                               "-DLAPACKE_WITH_TMG=ON"
+                               "-DUSE_OPTIMIZED_BLAS=ON"
+                               "-DUSE_OPTIMIZED_LAPACK=ON")
        ;; testings require specific symbols defined in this reference lapack
        ;; package only. USE_OPTIMIZED_LAPACK=ON involves this lapack is not
        ;; compiled and replaced by libflame so that the specific symbols are
@@ -77,7 +77,7 @@
       package built on top of libflame as external optimized lapack and blis as
       external optimized blas.")
     (license (license:non-copyleft "file://LICENSE"
-                                "See LICENSE in the distribution."))))
+                                   "See LICENSE in the distribution."))))
 
 (define-public parsec
   (let ((commit "6022a61dc96c25f11dd2aeabff2a5b3d7bce867d")
@@ -92,15 +92,16 @@
 and management of micro-tasks on distributed many-core heterogeneous
 architectures.")
       (license license:bsd-2)
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference (url home-page)
-                                    (commit commit)
-                                    (recursive? #t)))
-                (file-name (string-append name "-" version "-checkout"))
-                (sha256
-                 (base32
-                  "10w6ma0r6fdfav5za8yv6m5qhqvcvka5raiz2x38r42snwj0i4c8"))))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url home-page)
+               (commit commit)
+               (recursive? #t)))
+         (file-name (string-append name "-" version "-checkout"))
+         (sha256
+          (base32 "10w6ma0r6fdfav5za8yv6m5qhqvcvka5raiz2x38r42snwj0i4c8"))))
       (build-system cmake-build-system)
       (arguments
        '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
@@ -116,8 +117,11 @@ architectures.")
     (name "parsec-mpi")
     (arguments
      (substitute-keyword-arguments (package-arguments parsec)
-                                   ((#:configure-flags flags '())
-                                    `(cons "-DPARSEC_DIST_WITH_MPI=ON" (delete "-DPARSEC_DIST_WITH_MPI=OFF" ,flags)))))
+       ((#:configure-flags flags
+         '())
+        `(cons "-DPARSEC_DIST_WITH_MPI=ON"
+               (delete "-DPARSEC_DIST_WITH_MPI=OFF"
+                       ,flags)))))
     (propagated-inputs (modify-inputs (package-inputs parsec)
                          (prepend openmpi)))))
 
@@ -125,7 +129,7 @@ architectures.")
   (let ((commit "db4aef9a66a00487d849cf8591927dcebe18ef2f")
         (revision "0"))
     (package
-      (name "quark")             ;XXX: there's a same-named package in 'guix'
+      (name "quark") ;XXX: there's a same-named package in 'guix'
       (version (git-version "0.0" revision commit))
       (home-page "https://github.com/ecrc/quark")
       (synopsis "QUeuing And Runtime for Kernels")
@@ -138,23 +142,24 @@ way that the data is used, and then executes the tasks in an
 asynchronous, dynamic fashion in order to achieve a high utilization
 of the available resources.")
       (license license:bsd-2)
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference (url home-page) (commit commit)))
-                (file-name (string-append name "-" version "-checkout"))
-                (sha256
-                 (base32
-                  "1bwh8247d70lmbr13h5cb8fpr6m0k9vcaim4bq7j8mynfclb6r77"))))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url home-page)
+               (commit commit)))
+         (file-name (string-append name "-" version "-checkout"))
+         (sha256
+          (base32 "1bwh8247d70lmbr13h5cb8fpr6m0k9vcaim4bq7j8mynfclb6r77"))))
       (build-system cmake-build-system)
       (arguments
        '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON")
-         #:phases
-         (modify-phases %standard-phases
-           (add-after 'unpack 'patch-makefile
-             (lambda _
-               (substitute* "CMakeLists.txt"
-                 (("DESTINATION quark")  "DESTINATION include"))
-               #t)))
+         #:phases (modify-phases %standard-phases
+                    (add-after 'unpack 'patch-makefile
+                      (lambda _
+                        (substitute* "CMakeLists.txt"
+                          (("DESTINATION quark")
+                           "DESTINATION include")) #t)))
          ;; No target for tests
          #:tests? #f))
       (propagated-inputs (list `(,hwloc "lib")))
@@ -165,7 +170,8 @@ of the available resources.")
     (name "dplasma")
     (version "20230802")
     (home-page "https://github.com/ICLDisco/dplasma")
-    (synopsis "Dense linear algebra package for distributed, accelerated, heterogeneous systems.")
+    (synopsis
+     "Dense linear algebra package for distributed, accelerated, heterogeneous systems.")
     (description
      "DPLASMA is the leading implementation of a dense linear algebra package
 for distributed, accelerated, heterogeneous systems. It is designed to deliver
@@ -175,25 +181,30 @@ GPUs or Intel Xeon Phi. DPLASMA achieves this objective through the state of
 the art PaRSEC runtime, porting the Parallel Linear Algebra Software for
 Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
     (license license:bsd-3)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "45831f1862f977ac5cc485887c77f6f207ebda2b")
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "058zc4xg7mfvgyg9yhsa0n4xdl725a86nh0i0dg5s2libinvgi4y"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "45831f1862f977ac5cc485887c77f6f207ebda2b")
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "058zc4xg7mfvgyg9yhsa0n4xdl725a86nh0i0dg5s2libinvgi4y"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-			   "-DDPLASMA_INSTALL_TESTS=ON")
+                           "-DDPLASMA_INSTALL_TESTS=ON")
        #:tests? #f))
     (inputs (list openblas))
-    (propagated-inputs (list `(,hwloc "lib")  openmpi))
-    (native-inputs (list flex bison openssh gfortran pkg-config python))))
+    (propagated-inputs (list `(,hwloc "lib") openmpi))
+    (native-inputs (list flex
+                         bison
+                         openssh
+                         gfortran
+                         pkg-config
+                         python))))
 
 (define-public chameleon
   (package
@@ -210,44 +221,44 @@ tasks on the processing units.  A run-time system such as StarPU is able to
 manage automatically data transfers between not shared memory
 area (CPUs-GPUs, distributed nodes).")
     (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "v1.2.0")
-                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (patches (search-patches "inria/patches/chameleon-cpp.patch"))
-              (sha256
-               (base32
-                "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "v1.2.0")
+             ;; We need the submodule in 'CMakeModules/morse_cmake'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (patches (search-patches "inria/patches/chameleon-cpp.patch"))
+       (sha256
+        (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
-     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-                           "-DCHAMELEON_USE_MPI=ON")
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DCHAMELEON_USE_MPI=ON")
 
        ;; FIXME: MPI tests too long for gitlab-runner CI
        #:tests? #f
 
-       #:phases  (modify-phases %standard-phases
-                                ;; Without this variable, pkg-config removes paths in already in CFLAGS
-                                ;; However, gfortran does not check CPATH to find fortran modules
-                                ;; and and the module fabulous_mod cannot be found
-                                (add-before 'configure 'fix-pkg-config-env
-                                            (lambda _ (setenv "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" "1") #t))
-                                ;; Allow tests with more MPI processes than available CPU cores,
-                                ;; which is not allowed by default by OpenMPI
-                                (add-before 'check 'prepare-test-environment
-                                            (lambda _
-                                              (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t))
-                                ;; Some of the tests use StarPU, which expects $HOME
-                                ;; to be writable.
-                                (add-before 'check 'set-home
-                                            (lambda _
-                                              (setenv "HOME" (getcwd))
-                                              #t)))))
+       #:phases (modify-phases %standard-phases
+                  ;; Without this variable, pkg-config removes paths in already in CFLAGS
+                  ;; However, gfortran does not check CPATH to find fortran modules
+                  ;; and and the module fabulous_mod cannot be found
+                  (add-before 'configure 'fix-pkg-config-env
+                    (lambda _
+                      (setenv "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" "1") #t))
+                  ;; Allow tests with more MPI processes than available CPU cores,
+                  ;; which is not allowed by default by OpenMPI
+                  (add-before 'check 'prepare-test-environment
+                    (lambda _
+                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t))
+                  ;; Some of the tests use StarPU, which expects $HOME
+                  ;; to be writable.
+                  (add-before 'check 'set-home
+                    (lambda _
+                      (setenv "HOME"
+                              (getcwd)) #t)))))
     (inputs (list openblas))
     (propagated-inputs (list starpu openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
@@ -255,7 +266,7 @@ area (CPUs-GPUs, distributed nodes).")
 (define openmpi->nmad
   ;; Rewrite the dependency graph of the given package, replacing Open MPI
   ;; with NewMadeleine.
-  (package-input-rewriting `((,openmpi . ,nmad))))
+  (package-input-rewriting `((,openmpi unquote nmad))))
 
 (define-public chameleon-nmad
   ;; The package corresponding to 'chameleon --with-input=openmpi=nmad'.
@@ -263,101 +274,120 @@ area (CPUs-GPUs, distributed nodes).")
 
 (define-public chameleon+simgrid+nosmpi
   (package
-   (inherit chameleon)
-   (name "chameleon-simgrid-nosmpi")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(cons "-DCHAMELEON_SIMULATION=ON" (cons "-DCHAMELEON_USE_CUDA=ON" (delete "-DCHAMELEON_USE_MPI=ON" ,flags))))))
-   (inputs (modify-inputs (package-inputs chameleon)
-             (prepend simgrid)))
-   (propagated-inputs
-    (modify-inputs (package-propagated-inputs chameleon)
-      (delete "starpu")
-      (prepend starpu+simgrid)))))
+    (inherit chameleon)
+    (name "chameleon-simgrid-nosmpi")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(cons "-DCHAMELEON_SIMULATION=ON"
+               (cons "-DCHAMELEON_USE_CUDA=ON"
+                     (delete "-DCHAMELEON_USE_MPI=ON"
+                             ,flags))))))
+    (inputs (modify-inputs (package-inputs chameleon)
+              (prepend simgrid)))
+    (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
+                         (delete "starpu")
+                         (prepend starpu+simgrid)))))
 
 (define-public chameleon+simgrid
   (package
-   (inherit chameleon+simgrid+nosmpi)
-   (name "chameleon-simgrid")
-   (source
-    (origin
-      (inherit (package-source chameleon+simgrid+nosmpi))
-      (patches (append (origin-patches (package-source chameleon+simgrid+nosmpi))
-                       (search-patches "inria/patches/chameleon-simgrid-smpi.patch")))))
-   ;; (home-page "https://gitlab.inria.fr/solverstack/chameleon")
-   ;; (version "1.1.0")
-   ;; (source (origin
-   ;;          (method git-fetch)
-   ;;          (uri (git-reference
-   ;;                (url home-page)
-   ;;                (commit "4db899ca30d29927018d83964b9b6d517269abe1")
-   ;;                ;; We need the submodule in 'CMakeModules/morse_cmake'.
-   ;;                (recursive? #t)))
-   ;;          (file-name (string-append name "-" version "-checkout"))
-   ;;          (sha256
-   ;;           (base32
-   ;;            "0mpnacmkn1287c003a6n3c4r0n395l6fnjilzi7z53lb34s8kaap"))
-   ;;          (patches (search-patches "inria/patches/chameleon-simgrid-smpi.patch"))))
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon+simgrid+nosmpi)
-                                  ((#:configure-flags flags '())
-                                   `(delete "-DBUILD_SHARED_LIBS=ON" (cons "-DCHAMELEON_USE_MPI=ON" (cons "-DCMAKE_C_COMPILER=smpicc" (cons "-DCMAKE_CXX_COMPILER=smpicxx" (cons "-DCMAKE_Fortran_COMPILER=smpif90" ,flags))))))
-                                  ((#:phases phases '%standard-phases)
-                                   `(modify-phases ,phases
-                                                   (add-before 'configure 'configure-smpi
-                                                               (lambda _
-                                                                 ;; https://simgrid.org/doc/latest/app_smpi.html
-                                                                 (setenv "SMPI_PRETEND_CC" "1")))
-                                                   (add-before 'build 'build-smpi
-                                                                (lambda _
-                                                                  ;; https://simgrid.org/doc/latest/app_smpi.html
-                                                                  (unsetenv "SMPI_PRETEND_CC")))))))))
+    (inherit chameleon+simgrid+nosmpi)
+    (name "chameleon-simgrid")
+    (source
+     (origin
+       (inherit (package-source chameleon+simgrid+nosmpi))
+       (patches (append (origin-patches (package-source
+                                         chameleon+simgrid+nosmpi))
+                        (search-patches
+                         "inria/patches/chameleon-simgrid-smpi.patch")))))
+    ;; (home-page "https://gitlab.inria.fr/solverstack/chameleon")
+    ;; (version "1.1.0")
+    ;; (source (origin
+    ;; (method git-fetch)
+    ;; (uri (git-reference
+    ;; (url home-page)
+    ;; (commit "4db899ca30d29927018d83964b9b6d517269abe1")
+    ;; ;; We need the submodule in 'CMakeModules/morse_cmake'.
+    ;; (recursive? #t)))
+    ;; (file-name (string-append name "-" version "-checkout"))
+    ;; (sha256
+    ;; (base32
+    ;; "0mpnacmkn1287c003a6n3c4r0n395l6fnjilzi7z53lb34s8kaap"))
+    ;; (patches (search-patches "inria/patches/chameleon-simgrid-smpi.patch"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon+simgrid+nosmpi)
+       ((#:configure-flags flags
+         '())
+        `(delete "-DBUILD_SHARED_LIBS=ON"
+                 (cons "-DCHAMELEON_USE_MPI=ON"
+                       (cons "-DCMAKE_C_COMPILER=smpicc"
+                             (cons "-DCMAKE_CXX_COMPILER=smpicxx"
+                                   (cons "-DCMAKE_Fortran_COMPILER=smpif90"
+                                         ,flags))))))
+       ((#:phases phases
+         '%standard-phases)
+        `(modify-phases ,phases
+           (add-before 'configure 'configure-smpi
+             (lambda _
+               ;; https://simgrid.org/doc/latest/app_smpi.html
+               (setenv "SMPI_PRETEND_CC" "1")))
+           (add-before 'build 'build-smpi
+             (lambda _
+               ;; https://simgrid.org/doc/latest/app_smpi.html
+               (unsetenv "SMPI_PRETEND_CC")))))))))
 
 (define-public chameleon+openmp
   (package
-   (inherit chameleon)
-   (name "chameleon-openmp")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(cons "-DCHAMELEON_SCHED=OPENMP" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
-   (propagated-inputs
-    (modify-inputs (package-propagated-inputs chameleon)
-      (delete "starpu" "openmpi")))))
+    (inherit chameleon)
+    (name "chameleon-openmp")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(cons "-DCHAMELEON_SCHED=OPENMP"
+               (delete "-DCHAMELEON_USE_MPI=ON"
+                       ,flags)))))
+    (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
+                         (delete "starpu" "openmpi")))))
 
 (define-public chameleon+quark
   (package
-   (inherit chameleon)
-   (name "chameleon-quark")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(cons "-DCHAMELEON_SCHED=QUARK" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
-   (propagated-inputs
-    (modify-inputs (package-propagated-inputs chameleon)
-      (prepend quark)
-      (delete "starpu" "openmpi")))))
+    (inherit chameleon)
+    (name "chameleon-quark")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(cons "-DCHAMELEON_SCHED=QUARK"
+               (delete "-DCHAMELEON_USE_MPI=ON"
+                       ,flags)))))
+    (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
+                         (prepend quark)
+                         (delete "starpu" "openmpi")))))
 
 (define-public chameleon+parsec
   (package
-   (inherit chameleon)
-   (name "chameleon-parsec")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(cons "-DCHAMELEON_SCHED=PARSEC" (delete "-DCHAMELEON_USE_MPI=ON" ,flags)))))
-   (propagated-inputs
-    (modify-inputs (package-propagated-inputs chameleon)
-      (prepend parsec)
-      (delete "starpu" "openmpi")))))
+    (inherit chameleon)
+    (name "chameleon-parsec")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(cons "-DCHAMELEON_SCHED=PARSEC"
+               (delete "-DCHAMELEON_USE_MPI=ON"
+                       ,flags)))))
+    (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
+                         (prepend parsec)
+                         (delete "starpu" "openmpi")))))
 
 (define-public mini-chameleon
   (package
     (inherit chameleon)
     (name "mini-chameleon")
     (version "0.2.0")
-    (home-page "https://gitlab.inria.fr/solverstack/mini-examples/mini-chameleon/")
+    (home-page
+     "https://gitlab.inria.fr/solverstack/mini-examples/mini-chameleon/")
     (synopsis "Educational-purpose dense linear algebra solver")
     (description
      "Mini-chameleon is an educational purpose dense linear algebra solver.
@@ -367,157 +397,165 @@ product and an LU factorization, first targeting a sequential implementation,
 followed by an simd version, a shared-memory openmp one, a distributed memory
 MPI one, an MPI+openmp one and a runtime-based starpu one.")
     (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "c74bf0733a680c1e9f810d3f93ab09f49f181fb7")
-                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "0zy5sycyp9cz58749cm5sm625q84m2axwbsiq0ca46mz3jqxiny8"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "c74bf0733a680c1e9f810d3f93ab09f49f181fb7")
+             ;; We need the submodule in 'CMakeModules/morse_cmake'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "0zy5sycyp9cz58749cm5sm625q84m2axwbsiq0ca46mz3jqxiny8"))))
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon)
-                                   ((#:configure-flags flags '())
-                                    `(cons "-DENABLE_MPI=ON" (cons "-DENABLE_STARPU=ON" (cons "-DENABLE_MIPP=ON" (delete "-DCHAMELEON_USE_MPI=ON"
-,flags)))))))
-    (properties '((tunable? . #true)))
+       ((#:configure-flags flags
+         '())
+        `(cons "-DENABLE_MPI=ON"
+               (cons "-DENABLE_STARPU=ON"
+                     (cons "-DENABLE_MIPP=ON"
+                           (delete "-DCHAMELEON_USE_MPI=ON"
+                                   ,flags)))))))
+    (properties '((tunable? . #t)))
     (inputs (modify-inputs (package-inputs chameleon)
-			   (prepend mipp)))
-    (native-inputs  (modify-inputs (package-native-inputs chameleon)
-				       (delete "python" "gfortran")))))
+              (prepend mipp)))
+    (native-inputs (modify-inputs (package-native-inputs chameleon)
+                     (delete "python" "gfortran")))))
 
 (define-public starpu-example-dgemm
   (package
     (inherit mini-chameleon)
     (name "starpu-example-dgemm")
     (version "0.1.0")
-    (home-page "https://gitlab.inria.fr/solverstack/mini-examples/starpu_example_dgemm/")
+    (home-page
+     "https://gitlab.inria.fr/solverstack/mini-examples/starpu_example_dgemm/")
     (synopsis "StarPU example of a distributed gemm")
     (description
      "Example showing how to use starpu for implementing a distributed gemm.")
     (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "90efe3d1ce2a56253755a5cfb0acbba64975e451")
-                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1f8mcg4hcj45cyknb8v5jxba9qzkhimdl6rihf053la30jk72cvd"))))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "90efe3d1ce2a56253755a5cfb0acbba64975e451")
+             ;; We need the submodule in 'CMakeModules/morse_cmake'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "1f8mcg4hcj45cyknb8v5jxba9qzkhimdl6rihf053la30jk72cvd"))))))
 
 (define-public starpu-example-stencil
   (package
     (inherit mini-chameleon)
     (name "starpu-example-stencil")
     (version "0.1.0")
-    (home-page "https://gitlab.inria.fr/solverstack/mini-examples/starpu_example_stencil/")
+    (home-page
+     "https://gitlab.inria.fr/solverstack/mini-examples/starpu_example_stencil/")
     (synopsis "StarPU example of a distributed regular 2D stencil")
     (description
      "Example showing how to use starpu to implement a distributed regular 2D stencil with communication-avoiding techniques")
     (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "583dbc00582dbd65b43edc35b9406b07e40789d3")
-                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-		;;guix hash -x -r .
-                "0gfw2s2yn69bjf11s9v6bpdgpwi9c0wi3kb5dw0h9mfjpd0l22p2"
-		))))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "583dbc00582dbd65b43edc35b9406b07e40789d3")
+             ;; We need the submodule in 'CMakeModules/morse_cmake'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32
+         ;; guix hash -x -r .
+         "0gfw2s2yn69bjf11s9v6bpdgpwi9c0wi3kb5dw0h9mfjpd0l22p2"))))))
 
 (define-public starpu-example-cppgemm
   (package
-   (name "starpu-example-cppgemm")
-   (version "0.1.0")
-   (home-page "https://github.com/Blixodus/starpu_gemm")
-   (synopsis "C++ StarPU example of a distributed gemm")
-   (description
-    "Example showing how to use starpu for implementing a distributed gemm in C++.")
-   (license license:cecill-c)
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "c9f8467cfc55fc5b7ebcecb1a5b0b7cee501a146")
-                  (recursive? #t)))
-            (file-name (string-append name "-" version "-checkout"))
-            (sha256
-             (base32
-              "0bxs48rqaj0lq36snn798gx6apvnk5mw5jkjqiwdgyclsjfg0c7y"))))
+    (name "starpu-example-cppgemm")
+    (version "0.1.0")
+    (home-page "https://github.com/Blixodus/starpu_gemm")
+    (synopsis "C++ StarPU example of a distributed gemm")
+    (description
+     "Example showing how to use starpu for implementing a distributed gemm in C++.")
+    (license license:cecill-c)
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "c9f8467cfc55fc5b7ebcecb1a5b0b7cee501a146")
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "0bxs48rqaj0lq36snn798gx6apvnk5mw5jkjqiwdgyclsjfg0c7y"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON")
        #:tests? #f
-       #:phases  (modify-phases %standard-phases
-                                ;; Allow tests with more MPI processes than available CPU cores,
-                                ;; which is not allowed by default by OpenMPI
-                                (add-before 'check 'prepare-test-environment
-                                            (lambda _
-                                              (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t))
-                                ;; Some of the tests use StarPU, which expects $HOME
-                                ;; to be writable.
-                                (add-before 'check 'set-home
-                                            (lambda _
-                                              (setenv "HOME" (getcwd))
-                                              #t)))))
+       #:phases (modify-phases %standard-phases
+                  ;; Allow tests with more MPI processes than available CPU cores,
+                  ;; which is not allowed by default by OpenMPI
+                  (add-before 'check 'prepare-test-environment
+                    (lambda _
+                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t))
+                  ;; Some of the tests use StarPU, which expects $HOME
+                  ;; to be writable.
+                  (add-before 'check 'set-home
+                    (lambda _
+                      (setenv "HOME"
+                              (getcwd)) #t)))))
     (inputs (list fmt openblas))
     (propagated-inputs (list starpu openmpi))
     (native-inputs (list pkg-config openssh))))
-
 
 (define-public maphys
   (package
     (name "maphys")
     (version "1.0.0")
     (home-page "https://gitlab.inria.fr/solverstack/maphys/maphys")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit version)
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "0pcwfac2x574f6ggfdmahhx9v2hfswyd3nkf3bmc3cd3173312h3"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit version)
+             ;; We need the submodule in 'cmake_modules/morse'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "0pcwfac2x574f6ggfdmahhx9v2hfswyd3nkf3bmc3cd3173312h3"))))
     (build-system cmake-build-system)
     (arguments
-
-     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-                           "-DMAPHYS_BUILD_TESTS=ON"
+     
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DMAPHYS_BUILD_TESTS=ON"
                            "-DMAPHYS_SDS_MUMPS=ON"
                            "-DMAPHYS_SDS_PASTIX=ON"
                            "-DCMAKE_EXE_LINKER_FLAGS=-lstdc++"
                            "-DMAPHYS_ITE_FABULOUS=ON"
                            "-DMAPHYS_ORDERING_PADDLE=ON"
-                           "-DMAPHYS_BLASMT=ON"
-                           )
+                           "-DMAPHYS_BLASMT=ON")
 
        #:phases (modify-phases %standard-phases
                   ;; Without this variable, pkg-config removes paths in already in CFLAGS
                   ;; However, gfortran does not check CPATH to find fortran modules
                   ;; and and the module fabulous_mod cannot be found
                   (add-before 'configure 'fix-pkg-config-env
-                    (lambda _ (setenv "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" "1")))
+                    (lambda _
+                      (setenv "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" "1")))
                   (add-before 'configure 'set-fortran-flags
                     (lambda _
                       (define supported-flag?
                         ;; Is '-fallow-argument-mismatch' supported?  It is
                         ;; supported by GCC 10 but not by GCC 7.5.
-                        (zero? (system* "gfortran" "-c" "-o" "/tmp/t.o"
-                                        "/dev/null" "-fallow-argument-mismatch")))
+                        (zero? (system* "gfortran"
+                                        "-c"
+                                        "-o"
+                                        "/tmp/t.o"
+                                        "/dev/null"
+                                        "-fallow-argument-mismatch")))
 
                       (when supported-flag?
                         (substitute* "CMakeLists.txt"
@@ -565,32 +603,36 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
     (name "paddle")
     (version "0.3.6")
     (home-page "https://gitlab.inria.fr/solverstack/paddle")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "fef4224069c5617366a9fcdfe895514a48acef45")
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "0y4csl9r3nr18w1f48k5l83bj0fivjy08fc6njks99qhn3pdwvm1"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "fef4224069c5617366a9fcdfe895514a48acef45")
+             ;; We need the submodule in 'cmake_modules/morse'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "0y4csl9r3nr18w1f48k5l83bj0fivjy08fc6njks99qhn3pdwvm1"))))
     (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-                           "-DPADDLE_BUILD_TESTS=ON"
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DPADDLE_BUILD_TESTS=ON"
                            "-DPADDLE_ORDERING_PARMETIS=OFF")
        #:phases (modify-phases %standard-phases
                   (add-before 'configure 'change-directory
-                    (lambda _ (chdir "src")))
+                    (lambda _
+                      (chdir "src")))
                   (add-before 'configure 'set-fortran-flags
                     (lambda _
                       (define supported-flag?
                         ;; Is '-fallow-argument-mismatch' supported?  It is
                         ;; supported by GCC 10 but not by GCC 7.5.
-                        (zero? (system* "gfortran" "-c" "-o" "/tmp/t.o"
-                                        "/dev/null" "-fallow-argument-mismatch")))
+                        (zero? (system* "gfortran"
+                                        "-c"
+                                        "-o"
+                                        "/tmp/t.o"
+                                        "/dev/null"
+                                        "-fallow-argument-mismatch")))
 
                       (when supported-flag?
                         (substitute* "CMakeLists.txt"
@@ -613,24 +655,23 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
   implemented for the MaPHyS linear solver.")
     (license license:cecill-c)))
 
-
 (define-public fabulous
   (package
     (name "fabulous")
     (version "1.1.2")
     (home-page "https://gitlab.inria.fr/solverstack/fabulous")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    ;; release-1.1.2 branch
-                    (commit "5c737d31291ae8dc72983e00d4c05929756e2121")
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1w7gnj9skz8ls9nwy8fn08iw73z95gk8ialblsskfyax801n1j1x"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             ;; release-1.1.2 branch
+             (commit "5c737d31291ae8dc72983e00d4c05929756e2121")
+             ;; We need the submodule in 'cmake_modules/morse'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "1w7gnj9skz8ls9nwy8fn08iw73z95gk8ialblsskfyax801n1j1x"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DFABULOUS_BUILD_C_API=ON"
@@ -641,16 +682,16 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
                            "-DBUILD_SHARED_LIBS=ON"
                            "-DFABULOUS_BUILD_EXAMPLES=ON"
                            "-DFABULOUS_BUILD_TESTS=OFF")
-                         #:tests? #f))
-     (inputs (list openblas lapack))
-     (native-inputs (list gfortran pkg-config))
-     (synopsis "Fast Accurate Block Linear krylOv Solver")
-     (description
-      "Library implementing Block-GMres with Inexact Breakdown and Deflated Restarting,
+       #:tests? #f))
+    (inputs (list openblas lapack))
+    (native-inputs (list gfortran pkg-config))
+    (synopsis "Fast Accurate Block Linear krylOv Solver")
+    (description
+     "Library implementing Block-GMres with Inexact Breakdown and Deflated Restarting,
 Breakdown Free Block Conjudate Gradiant, Block General Conjugate Residual and
 Block General Conjugate Residual with Inner Orthogonalization and with inexact breakdown
 and deflated restarting")
-     (license license:cecill-c)))
+    (license license:cecill-c)))
 
 (define maphys++-with-scotch7
   (package
@@ -667,22 +708,21 @@ those (hybrid solve using the Schur complement, with adapted
 preconditioners).  Parallelism is based on domain decomposition methods and
 is implemented in MPI.")
     (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "03558fbfa85b41582bfe30e37d5b3220c37f9863")
-                    ;; We need the submodule in 'cmake_modules/morse_cmake'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1gbb26v92bis487kg4pl47jzhrqls16x834yn9n4bd99yd7clb8b"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "03558fbfa85b41582bfe30e37d5b3220c37f9863")
+             ;; We need the submodule in 'cmake_modules/morse_cmake'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "1gbb26v92bis487kg4pl47jzhrqls16x834yn9n4bd99yd7clb8b"))))
     (arguments
      '(#:configure-flags '("-DMAPHYSPP_USE_EIGEN=OFF"
                            "-DMAPHYSPP_USE_FABULOUS=ON"
-                           "-DMAPHYSPP_USE_PADDLE=ON"
-                           )
+                           "-DMAPHYSPP_USE_PADDLE=ON")
        #:phases (modify-phases %standard-phases
                   (add-before 'check 'prepare-test-environment
                     (lambda _
@@ -696,17 +736,17 @@ is implemented in MPI.")
                              mumps-openmpi
                              arpack-ng-3.9
                              paddle
-                             pt-scotch-6 ;; not clear why it must be here
+                             pt-scotch-6 ;not clear why it must be here
                              fabulous
                              openmpi
                              openssh))
     (native-inputs (list gfortran pkg-config))
-    (properties '((tunable? . #true)))))
+    (properties '((tunable? . #t)))))
 
 (define scotch-6-instead-of-scotch-7
   ;; This is a procedure to replace scotch (7) by scotch-6, recursively.
-  (package-input-rewriting `((,scotch . ,scotch-6)
-                             (,pt-scotch . ,pt-scotch-6))))
+  (package-input-rewriting `((,scotch unquote scotch-6)
+                             (,pt-scotch unquote pt-scotch-6))))
 
 (define-public maphys++
   ;; For now Maphys must be built against (pt-)scotch 6.x.
@@ -718,18 +758,16 @@ is implemented in MPI.")
 (define-public maphys++-minimal
   (package/inherit maphys++
     (name "maphys++-minimal")
-    (arguments
-     (substitute-keyword-arguments (package-arguments maphys++)
-       ((#:configure-flags flags)
-        ''("-DMAPHYSPP_USE_PASTIX=OFF"
-           "-DMAPHYSPP_USE_MUMPS=OFF"
-           "-DMAPHYSPP_USE_EIGEN=OFF"
-           "-DMAPHYSPP_USE_ARPACK=OFF"
-           "-DMAPHYSPP_DRIVERS=OFF"
-           "-DMAPHYSPP_C_DRIVER=OFF"
-           "-DMAPHYSPP_Fortran_DRIVER=OFF"
-           "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
-           "-DMAPHYSPP_COMPILE_TESTS=ON"))))
+    (arguments (substitute-keyword-arguments (package-arguments maphys++)
+                 ((#:configure-flags flags)
+                  ''("-DMAPHYSPP_USE_PASTIX=OFF" "-DMAPHYSPP_USE_MUMPS=OFF"
+                     "-DMAPHYSPP_USE_EIGEN=OFF"
+                     "-DMAPHYSPP_USE_ARPACK=OFF"
+                     "-DMAPHYSPP_DRIVERS=OFF"
+                     "-DMAPHYSPP_C_DRIVER=OFF"
+                     "-DMAPHYSPP_Fortran_DRIVER=OFF"
+                     "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
+                     "-DMAPHYSPP_COMPILE_TESTS=ON"))))
     (inputs (fold alist-delete
                   (package-inputs maphys++)
                   '("pastix" "mumps" "arpack" "paddle" "fabulous")))))
@@ -738,34 +776,32 @@ is implemented in MPI.")
 (define-public maphys++-lite
   (package/inherit maphys++
     (name "maphys++-lite")
-    (arguments
-     (substitute-keyword-arguments (package-arguments maphys++)
-       ((#:configure-flags flags)
-        ''("-DMAPHYSPP_USE_PASTIX=ON"
-           "-DMAPHYSPP_USE_MUMPS=OFF"
-           "-DMAPHYSPP_USE_EIGEN=OFF"
-           "-DMAPHYSPP_USE_ARPACK=ON"
-           "-DMAPHYSPP_DRIVERS=OFF"
-           "-DMAPHYSPP_C_DRIVER=OFF"
-           "-DMAPHYSPP_Fortran_DRIVER=OFF"
-           "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
-           "-DMAPHYSPP_COMPILE_TESTS=ON"))))
+    (arguments (substitute-keyword-arguments (package-arguments maphys++)
+                 ((#:configure-flags flags)
+                  ''("-DMAPHYSPP_USE_PASTIX=ON" "-DMAPHYSPP_USE_MUMPS=OFF"
+                     "-DMAPHYSPP_USE_EIGEN=OFF"
+                     "-DMAPHYSPP_USE_ARPACK=ON"
+                     "-DMAPHYSPP_DRIVERS=OFF"
+                     "-DMAPHYSPP_C_DRIVER=OFF"
+                     "-DMAPHYSPP_Fortran_DRIVER=OFF"
+                     "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
+                     "-DMAPHYSPP_COMPILE_TESTS=ON"))))
 
-    (inputs
-     (modify-inputs (package-inputs maphys)
-		    (delete "mumps" "paddle" "fabulous")))))
+    (inputs (modify-inputs (package-inputs maphys)
+              (delete "mumps" "paddle" "fabulous")))))
 
 ;; maphys++ with librsb for sparse matrix operations
 (define-public maphys++-librsb
   (package/inherit maphys++
-                   (name "maphys++-librsb")
-                   (arguments
-                    (substitute-keyword-arguments (package-arguments maphys++)
-                                                  ((#:configure-flags flags '())
-                                                   `(cons "-DMAPHYSPP_USE_RSB=ON"
-                                                          (cons "-DMAPHYSPP_USE_RSB_SPBLAS=ON" ,flags)))))
-                   (inputs `(("librsb" ,librsb)
-                             ,@(package-inputs maphys++)))))
+    (name "maphys++-librsb")
+    (arguments (substitute-keyword-arguments (package-arguments maphys++)
+                 ((#:configure-flags flags
+                   '())
+                  `(cons "-DMAPHYSPP_USE_RSB=ON"
+                         (cons "-DMAPHYSPP_USE_RSB_SPBLAS=ON"
+                               ,flags)))))
+    (inputs `(("librsb" ,librsb)
+              ,@(package-inputs maphys++)))))
 
 (define-public blaspp
   (package
@@ -781,50 +817,49 @@ objective of BLAS++ is to provide a convenient, performance oriented API for
 development in the C++ language, that, for the most part, preserves established
 conventions, while, at the same time, takes advantages of modern C++ features,
 such as: namespaces, templates, exceptions, etc.")
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   (url home-page)
-                   (commit "f8f983d5b45a8f366aae41fbe9888b14cbae20f8")))
-             (file-name (string-append name "-" version "-checkout"))
-             (sha256
-              (base32
-	       "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "f8f983d5b45a8f366aae41fbe9888b14cbae20f8")))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
     (arguments
      '(#:configure-flags '("-Dbuild_tests=OFF")
-                         #:tests? #f))
+       #:tests? #f))
     ;; tests would need testsweeper https://bitbucket.org/icl/testsweeper
-    ;;'(#:configure-flags '("-DBLASPP_BUILD_TESTS=ON")))
+    ;; '(#:configure-flags '("-DBLASPP_BUILD_TESTS=ON")))
     (build-system cmake-build-system)
-    (propagated-inputs (list openblas)) ;; technically only blas
+    (propagated-inputs (list openblas)) ;technically only blas
     (license license:bsd-3)))
 
 (define-public lapackpp
   (package
-   (name "lapackpp")
-   (version "2023.08.25")
-   (home-page "https://github.com/icl-utk-edu/lapackpp")
-   (synopsis "C++ API for the Linear Algebra PACKage")
-   (description
-    "The Linear Algebra PACKage (LAPACK) is a standard software library for
+    (name "lapackpp")
+    (version "2023.08.25")
+    (home-page "https://github.com/icl-utk-edu/lapackpp")
+    (synopsis "C++ API for the Linear Algebra PACKage")
+    (description
+     "The Linear Algebra PACKage (LAPACK) is a standard software library for
 numerical linear algebra. The objective of LAPACK++ is to provide a convenient,
 performance oriented API for development in the C++ language, that, for the most
 part, preserves established conventions, while, at the same time, takes
 advantages of modern C++ features, such as: namespaces, templates, exceptions,
 etc.")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "62680a16a9aba2a426e3d089dd13e18bfd140c74")))
-            (file-name (string-append name "-" version "-checkout"))
-            (sha256
-             (base32
-	      "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
-   (arguments
-    '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF"
-                          "-Dbuild_tests=OFF")
-                        #:tests? #f))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "62680a16a9aba2a426e3d089dd13e18bfd140c74")))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
+    (arguments
+     '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF" "-Dbuild_tests=OFF")
+       #:tests? #f))
     ;; tests would need testsweeper https://bitbucket.org/icl/testsweeper
     (build-system cmake-build-system)
     (inputs (list blaspp))
@@ -833,23 +868,22 @@ etc.")
 (define-public pastix-6
   (package
     (name "pastix")
-    (version "6.3.1")
+    (version "6.3.2")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "c91b3e97ef634c73a1f12915356f5944c2f938f3")
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1yk3kf136hi555p16cpia5270q0cc0frydmy4cjsv7p52sin0sfd"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "bff79df1a462e5be8b3cbdaef5787a9017aa8622")
+             ;; We need the submodule in 'cmake_modules/morse'.
+             (recursive? #t)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0fyf64v848qb4vsw14gskaxifbjpk2df8p02k3wv2mqljkj3vlzq"))))
     (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-                           "-DPASTIX_WITH_MPI=ON"
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DPASTIX_WITH_MPI=ON"
                            "-DPASTIX_WITH_PARSEC=ON"
                            "-DPASTIX_WITH_STARPU=ON"
                            "-DPASTIX_ORDERING_METIS=OFF"
@@ -860,14 +894,14 @@ etc.")
                   (add-before 'check 'prepare-test-environment
                     (lambda _
                       ;; StarPU expects $HOME to be writable.
-                      (setenv "HOME" (getcwd))
+                      (setenv "HOME"
+                              (getcwd))
 
                       ;; The Python-driven tests want to dlopen PaSTiX
                       ;; libraries (via ctypes) so we need to help them.
-                      (let* ((libraries   (find-files "." "\\.so$"))
+                      (let* ((libraries (find-files "." "\\.so$"))
                              (directories (map (compose canonicalize-path
-                                                        dirname)
-                                               libraries)))
+                                                        dirname) libraries)))
                         (setenv "LD_LIBRARY_PATH"
                                 (string-join directories ":"))
 
@@ -885,28 +919,26 @@ etc.")
                                                    (getenv "PYTHONPATH"))))))))
 
        ;; XXX: The 'python_simple' test fails with:
-       ;;   ValueError: Attempted relative import in non-package
+       ;; ValueError: Attempted relative import in non-package
        #:tests? #f))
-    (native-inputs
-     (list pkg-config gfortran))
-    (inputs
-     (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
-           openblas
-           ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
+    (native-inputs (list pkg-config gfortran))
+    (inputs (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
+                  openblas
+                  ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
+                  
+                  ;; Python bindings and Python tests. Python3
+                  python
 
-           ;; Python bindings and Python tests. Python3
-           python
-
-           python-numpy
-           ;;("python-scipy" ,python-scipy)
-           ))
+                  python-numpy
+                  ;; ("python-scipy" ,python-scipy)
+                  ))
     (propagated-inputs (list `(,hwloc "lib")
                              scotch
 
                              ;; The following are optional dependencies.
-                             ;;GM: somehow these two are needed in propagated-inputs
-                             ;;in order to compile maphys++ (otherwise cmake fails
-                             ;;to find them)
+                             ;; GM: somehow these two are needed in propagated-inputs
+                             ;; in order to compile maphys++ (otherwise cmake fails
+                             ;; to find them)
                              parsec+mpi
                              starpu))
     (synopsis "Sparse matrix direct solver")
@@ -925,22 +957,21 @@ memory footprint and/or the time-to-solution.")
     (name "pastix")
     (version "6.0.3")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit (string-append "v" version))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit (string-append "v" version))
 
-                    ;; We need the submodule in 'cmake_modules/morse'.
-                    (recursive? #t)))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1ccj5p1zm50x3qd6yr7j5ajh2dlpmm95lhzrbyv9rbnxrk66azid"))))
+             ;; We need the submodule in 'cmake_modules/morse'.
+             (recursive? #t)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1ccj5p1zm50x3qd6yr7j5ajh2dlpmm95lhzrbyv9rbnxrk66azid"))))
     (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-                           "-DPASTIX_WITH_MPI=ON"
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DPASTIX_WITH_MPI=ON"
                            "-DPASTIX_WITH_PARSEC=ON"
                            "-DPASTIX_WITH_STARPU=ON"
                            "-DPASTIX_ORDERING_METIS=OFF"
@@ -951,14 +982,14 @@ memory footprint and/or the time-to-solution.")
                   (add-before 'check 'prepare-test-environment
                     (lambda _
                       ;; StarPU expects $HOME to be writable.
-                      (setenv "HOME" (getcwd))
+                      (setenv "HOME"
+                              (getcwd))
 
                       ;; The Python-driven tests want to dlopen PaSTiX
                       ;; libraries (via ctypes) so we need to help them.
-                      (let* ((libraries   (find-files "." "\\.so$"))
+                      (let* ((libraries (find-files "." "\\.so$"))
                              (directories (map (compose canonicalize-path
-                                                        dirname)
-                                               libraries)))
+                                                        dirname) libraries)))
                         (setenv "LD_LIBRARY_PATH"
                                 (string-join directories ":"))
 
@@ -977,25 +1008,23 @@ memory footprint and/or the time-to-solution.")
                         #t))))
 
        ;; XXX: The 'python_simple' test fails with:
-       ;;   ValueError: Attempted relative import in non-package
+       ;; ValueError: Attempted relative import in non-package
        #:tests? #f))
-    (native-inputs
-     (list pkg-config gfortran))
-    (inputs
-     (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
-           openblas
-           ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
+    (native-inputs (list pkg-config gfortran))
+    (inputs (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
+                  openblas
+                  ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
+                  
+                  ;; The following are optional dependencies.
+                  parsec+mpi
+                  starpu
 
-           ;; The following are optional dependencies.
-           parsec+mpi
-           starpu
+                  ;; Python bindings and Python tests. Python3
+                  python
 
-           ;; Python bindings and Python tests. Python3
-           python
-
-           python-numpy
-           ;;("python-scipy" ,python-scipy)
-           ))
+                  python-numpy
+                  ;; ("python-scipy" ,python-scipy)
+                  ))
     (propagated-inputs (list `(,hwloc "lib") scotch))
     (synopsis "Sparse matrix direct solver")
     (description
@@ -1010,56 +1039,55 @@ memory footprint and/or the time-to-solution.")
 
 (define-public pastix-nompi
   (package
-   (inherit pastix-6)
-   (name "pastix-nompi")
-   (arguments
-    (substitute-keyword-arguments (package-arguments pastix-6)
-                                  ((#:configure-flags flags '())
-                                   `(delete "-DPASTIX_WITH_MPI=ON" ,flags))))
-   (inputs `(,@(delete `("parsec" ,parsec+mpi) (package-inputs pastix-6))
-             ("parsec" ,parsec)
-             ,@(package-inputs pastix-6)))))
+    (inherit pastix-6)
+    (name "pastix-nompi")
+    (arguments
+     (substitute-keyword-arguments (package-arguments pastix-6)
+       ((#:configure-flags flags
+         '())
+        `(delete "-DPASTIX_WITH_MPI=ON"
+                 ,flags))))
+    (inputs `(,@(delete `("parsec" ,parsec+mpi)
+                        (package-inputs pastix-6)) ("parsec" ,parsec)
+              ,@(package-inputs pastix-6)))))
 
 (define-public pastix-6.2
   (package
     (inherit pastix-6)
     (name "pastix")
     (version "6.2.2")
-  (source
-   (origin
-    (method url-fetch)
-    (uri
-     "https://files.inria.fr/pastix/releases/v6/pastix-6.2.2.tar.gz")
-    (sha256
-     (base32
-      "0275xmyv72ixn1pqqhalwb1ss3h4ggvm4nhskwy77dbq8vza3sfc"))))))
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://files.inria.fr/pastix/releases/v6/pastix-6.2.2.tar.gz")
+       (sha256
+        (base32 "0275xmyv72ixn1pqqhalwb1ss3h4ggvm4nhskwy77dbq8vza3sfc"))))))
 
 (define-public pastix-5
   (package
-  (name "pastix")
-  (version "5.2.3")
-  (home-page "https://gitlab.inria.fr/solverstack/pastix")
-  (source
-   (origin
-    (method url-fetch)
-    (uri
-     "https://files.inria.fr/pastix/releases/v5/pastix_5.2.3.tar.bz2")
-    (sha256
-     (base32
-      "0iqyxr5lzjpavmxzrjj4kwayq62nip3ssjcm80d20zk0n3k7h6b4"))))
-  (build-system gnu-build-system)
-  (arguments
-   '(#:make-flags (list (string-append "PREFIX=" (assoc-ref %outputs "out")))
-     #:phases
-     (modify-phases %standard-phases
-                    (add-after 'unpack 'goto-src-dir
-                             (lambda _
-                               (chdir "src") #t))
-                    (replace 'configure
-                             (lambda* (#:key inputs #:allow-other-keys)
-                               (call-with-output-file "config.in"
-                                 (lambda (port)
-                                   (format port "
+    (name "pastix")
+    (version "5.2.3")
+    (home-page "https://gitlab.inria.fr/solverstack/pastix")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://files.inria.fr/pastix/releases/v5/pastix_5.2.3.tar.bz2")
+       (sha256
+        (base32 "0iqyxr5lzjpavmxzrjj4kwayq62nip3ssjcm80d20zk0n3k7h6b4"))))
+    (build-system gnu-build-system)
+    (arguments
+     '(#:make-flags (list (string-append "PREFIX="
+                                         (assoc-ref %outputs "out")))
+       #:phases (modify-phases %standard-phases
+                  (add-after 'unpack 'goto-src-dir
+                    (lambda _
+                      (chdir "src") #t))
+                  (replace 'configure
+                    (lambda* (#:key inputs #:allow-other-keys)
+                      (call-with-output-file "config.in"
+                        (lambda (port)
+                          (format port
+                           "
 HOSTARCH    = i686_pc_linux
 VERSIONBIT  = _32bit
 EXEEXT      =
@@ -1314,51 +1342,52 @@ FFLAGS   = $(CCFOPT)
 LDFLAGS  = $(EXTRALIB) $(BLASLIB)
 CTAGS    = $(CTAGSPROG)
 "
-                                           (assoc-ref inputs "scotch32")
-                                           (assoc-ref inputs "hwloc")
-                                   ))) #t))
-                    (replace 'check
-                             (lambda _
-                               (invoke "make" "examples")
-                               (invoke "./example/bin/simple" "-lap" "100"))))))
-  (inputs
-   (list `(,gfortran "lib") openblas))
-  (native-inputs
-   (list pkg-config gfortran perl))
-  (propagated-inputs
-   (list openmpi-with-mpi1-compat
-         `(,hwloc-1 "lib") openssh scotch32))
-  (outputs '( "out" "debug" ))
-  (synopsis "Sparse matrix direct solver (version 5)")
-  (description
-   "PaStiX (Parallel Sparse matriX package, version 5) is a scientific library
+                           (assoc-ref inputs "scotch32")
+                           (assoc-ref inputs "hwloc")))) #t))
+                  (replace 'check
+                    (lambda _
+                      (invoke "make" "examples")
+                      (invoke "./example/bin/simple" "-lap" "100"))))))
+    (inputs (list `(,gfortran "lib") openblas))
+    (native-inputs (list pkg-config gfortran perl))
+    (propagated-inputs (list openmpi-with-mpi1-compat
+                             `(,hwloc-1 "lib") openssh scotch32))
+    (outputs '("out" "debug"))
+    (synopsis "Sparse matrix direct solver (version 5)")
+    (description
+     "PaStiX (Parallel Sparse matriX package, version 5) is a scientific library
 that provides a high performance parallel solver for very large sparse linear
 systems based on direct methods.  Numerical algorithms are implemented in single
 or double precision (real or complex) using LLt, LDLt and LU with static
 pivoting (for non symmetric matrices having a symmetric pattern). This solver
 also provides some low-rank compression methods to reduce the memory footprint
 and/or the time-to-solution.")
-  (license license:cecill)))
+    (license license:cecill)))
 
-(define-public pastix pastix-6)
+(define-public pastix
+  pastix-6)
 
 (define-public pastix-nopython-notest
   (package
-   (inherit pastix)
-   (name "pastix-nopython-notest")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(cons "-DPASTIX_BUILD_TESTING=OFF" ,flags))))))
+    (inherit pastix)
+    (name "pastix-nopython-notest")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(cons "-DPASTIX_BUILD_TESTING=OFF"
+               ,flags))))))
 
 (define-public pastix-6.2-nopython-notest
   (package
-   (inherit pastix-6.2)
-   (name "pastix-6.2-nopython-notest")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(cons "-DPASTIX_BUILD_TESTING=OFF" ,flags))))))
+    (inherit pastix-6.2)
+    (name "pastix-6.2-nopython-notest")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(cons "-DPASTIX_BUILD_TESTING=OFF"
+               ,flags))))))
 
 (define-public pmtool
   (package
@@ -1373,16 +1402,16 @@ performance of different schedulers in a simple context. Limitations:
 ignore communications for the moment; branch comms attempts to remove
 this limitation.")
     (license license:gpl3+)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "e11dc2996ab976275ac678c2686db2afcf480137")
-                    (recursive? #f)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "18dad0w21av8jps8mfzj99mb237lrr27mmgbh3s16g94lfpnffd9"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "e11dc2996ab976275ac678c2686db2afcf480137")
+             (recursive? #f)))
+       (file-name (string-append name "-" version "-checkout"))
+       (sha256
+        (base32 "18dad0w21av8jps8mfzj99mb237lrr27mmgbh3s16g94lfpnffd9"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
@@ -1400,18 +1429,18 @@ this limitation.")
     (name "scalable-python")
     (version "2.7.13")
     (home-page "https://github.com/CSCfi/scalable-python.git")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")))
-              (patches (search-patches "inria/patches/scalable-python.patch"
-                                       "python-2.7-search-paths.patch"
-                                       "python-2-deterministic-build-info.patch"
-                                       "python-2.7-site-prefixes.patch"))
-              (sha256
-               (base32
-                "0ivxsf17x7vjxr5h4g20rb5i3k705vgd502ma024z95fnyzd0bqi"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")))
+       (patches (search-patches "inria/patches/scalable-python.patch"
+                                "python-2.7-search-paths.patch"
+                                "python-2-deterministic-build-info.patch"
+                                "python-2.7-site-prefixes.patch"))
+       (sha256
+        (base32 "0ivxsf17x7vjxr5h4g20rb5i3k705vgd502ma024z95fnyzd0bqi"))))
     (arguments
      (substitute-keyword-arguments (package-arguments python-2.7)
        ((#:phases phases)
@@ -1424,15 +1453,18 @@ this limitation.")
               (lambda _
                 (chmod "Python/graminit.c" #o764)
                 (chmod "Include/graminit.h" #o764)))
-            (delete 'move-tk-inter)))           ;not sure what this is anyway
-       ((#:configure-flags flags #~())
+            (delete 'move-tk-inter))) ;not sure what this is anyway
+       ((#:configure-flags flags
+         #~())
         #~(append (list "--enable-mpi" "--without-ensurepip")
-                  (delete "--with-ensurepip=install" #$flags)))
-       ((#:make-flags makeflags #~())
+                  (delete "--with-ensurepip=install"
+                          #$flags)))
+       ((#:make-flags makeflags
+         #~())
         #~(append (list "mpi" "install" "install-mpi")
                   #$makeflags))
        ((#:tests? _ #t)
-        #f)))                                     ;disable tests
+        #f))) ;disable tests
     (propagated-inputs (list openmpi))
     (description
      "Modified python 2.7.13. Scalable Python performs the I/O operations used
@@ -1442,65 +1474,64 @@ to/from all other processes.")))
 ;; Fix python2-sympy
 (define-public fixed-python2-sympy
   (package
-   (inherit (package-with-python2 python-sympy))
-   (name "fixed-python2-sympy")
-   (arguments
-    `(#:python ,python-2
-               #:phases
-               (modify-phases %standard-phases
-                              ;; Run the core tests after installation.  By default it would run
-                              ;; *all* tests, which take a very long time to complete and are known
-                              ;; to be flaky.
-                              (delete 'check)
-                              (add-after 'install 'check
-                                         (lambda* (#:key outputs #:allow-other-keys)
-                                                  (invoke "python" "-c" "import sympy; sympy.test(\"/core\")")
-                                                  #t)))))))
+    (inherit (package-with-python2 python-sympy))
+    (name "fixed-python2-sympy")
+    (arguments
+     `(#:python ,python-2
+       #:phases (modify-phases %standard-phases
+                  ;; Run the core tests after installation.  By default it would run
+                  ;; *all* tests, which take a very long time to complete and are known
+                  ;; to be flaky.
+                  (delete 'check)
+                  (add-after 'install 'check
+                    (lambda* (#:key outputs #:allow-other-keys)
+                      (invoke "python" "-c"
+                              "import sympy; sympy.test(\"/core\")") #t)))))))
 ;; Add mpi4py with python2
 (define-public python2-mpi4py
   (package-with-python2 python-mpi4py))
 
 (define-public arpack-ng-3.9
   (package
-   (name "arpack-ng-3.9")
-   (version "3.9.0")
-   (home-page "https://github.com/opencollab/arpack-ng")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference (url home-page) (commit version)))
-            (file-name (git-file-name name version))
-            (sha256
-             (base32
-              "09smxilyn8v9xs3kpx3nlj2s7ql3v8z40mpc09kccbb6smyd35iv"))))
-   (build-system cmake-build-system)
-   (arguments
-    '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
-                          "-DICB=ON")))
-   (inputs
-    (list lapack gfortran))
-   (synopsis "Fortran subroutines for solving eigenvalue problems")
-   (description
-    "ARPACK-NG is a collection of Fortran77 subroutines designed to solve
+    (name "arpack-ng-3.9")
+    (version "3.9.0")
+    (home-page "https://github.com/opencollab/arpack-ng")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "09smxilyn8v9xs3kpx3nlj2s7ql3v8z40mpc09kccbb6smyd35iv"))))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DICB=ON")))
+    (inputs (list lapack gfortran))
+    (synopsis "Fortran subroutines for solving eigenvalue problems")
+    (description
+     "ARPACK-NG is a collection of Fortran77 subroutines designed to solve
 large scale eigenvalue problems.")
-   (license (license:non-copyleft "file://COPYING"
-                                  "See COPYING in the distribution."))))
+    (license (license:non-copyleft "file://COPYING"
+                                   "See COPYING in the distribution."))))
 
 ;; Technically this is just jube version 2.4.1
 ;; supporting yaml (in addition of xml) for bench files from version 2.4.0
 (define-public jube-with-yaml
   (package
     ;; This is a command-line tool, so no "python-" prefix.
-   (name "jube-with-yaml")
+    (name "jube-with-yaml")
     (version "2.4.1")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "http://apps.fz-juelich.de/jsc/jube/jube2/download.php?version="
-                    version))
-              (sha256
-               (base32
-                "05lhpq3mxm3z9k35bxvvbi2r5r5r0n39jdi839rcvirrsczs7m6m"))
-              (file-name (string-append "jube-" version ".tar.gz"))))
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "http://apps.fz-juelich.de/jsc/jube/jube2/download.php?version="
+             version))
+       (sha256
+        (base32 "05lhpq3mxm3z9k35bxvvbi2r5r5r0n39jdi839rcvirrsczs7m6m"))
+       (file-name (string-append "jube-" version ".tar.gz"))))
     (build-system python-build-system)
     (home-page "https://apps.fz-juelich.de/jsc/jube/jube2/docu/index.html")
     (synopsis "Benchmarking environment")
@@ -1515,64 +1546,63 @@ for manual interpretation.")
 
 (define-public scalfmm
   (package
-   (name "scalfmm")
-   (version "3.0")
-   (home-page "https://gitlab.inria.fr/solverstack/ScalFMM.git")
-   (synopsis "Fast Multipole Methos Framework")
-   (description
-    "ScalFMM is a C++ library that implements a kernel independent Fast Multipole Method.")
-   (license license:cecill-c)
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "12c1993872030de31aa0048eeb19001c35c909e4")
-                  ;; We need the submodule in 'cmake_modules/morse_cmake'.
-                  (recursive? #t)))
-            (file-name (string-append name "-" version))
-            (sha256
-                (base32
-                    "1pyzd24556j9garrmkn0wvj05ayisyaly7yww0rcdf9mrvxflwvi"))))
-   (arguments
-    '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
-                          "-Dscalfmm_BUILD_TOOLS=ON"
-                          "-Dscalfmm_BUILD_UNITS=ON")
-                        #:tests? #f
-                        #:phases (modify-phases %standard-phases
-                                    (add-before 'check 'prepare-test-environment
-                                        (lambda _
-                                          ;; Allow tests with more MPI processes than available CPU cores,
-                                          ;; which is not allowed by default by OpenMPI
-                                          (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))
-                        ))
-   (build-system cmake-build-system)
-   (inputs (list openblas fftw fftwf))
-   (propagated-inputs (list openmpi openssh))
-   (native-inputs (list pkg-config))
-   (properties '((tunable? . #true)))))
+    (name "scalfmm")
+    (version "3.0")
+    (home-page "https://gitlab.inria.fr/solverstack/ScalFMM.git")
+    (synopsis "Fast Multipole Methos Framework")
+    (description
+     "ScalFMM is a C++ library that implements a kernel independent Fast Multipole Method.")
+    (license license:cecill-c)
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "12c1993872030de31aa0048eeb19001c35c909e4")
+             ;; We need the submodule in 'cmake_modules/morse_cmake'.
+             (recursive? #t)))
+       (file-name (string-append name "-" version))
+       (sha256
+        (base32 "1pyzd24556j9garrmkn0wvj05ayisyaly7yww0rcdf9mrvxflwvi"))))
+    (arguments
+     '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
+                           "-Dscalfmm_BUILD_TOOLS=ON"
+                           "-Dscalfmm_BUILD_UNITS=ON")
+       #:tests? #f
+       #:phases (modify-phases %standard-phases
+                  (add-before 'check 'prepare-test-environment
+                    (lambda _
+                      ;; Allow tests with more MPI processes than available CPU cores,
+                      ;; which is not allowed by default by OpenMPI
+                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))))
+    (build-system cmake-build-system)
+    (inputs (list openblas fftw fftwf))
+    (propagated-inputs (list openmpi openssh))
+    (native-inputs (list pkg-config))
+    (properties '((tunable? . #t)))))
 
 (define-public ddmpy
   (package
-   (name "ddmpy")
-   (version "0.1")
-   (synopsis "DDMPY: a Domain Decomposition Methods PYthon package")
-   (home-page "https://gitlab.inria.fr/compose/ddmpy.git")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "66dc3cc79dfdc5864fc62aa371173c8a576cc0ae")))
-            (sha256
-             (base32
-              "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
-   (build-system python-build-system)
-   (propagated-inputs (list openmpi
-                            openssh
-                            python
-                            python-numpy
-                            python-scipy
-                            python-mpi4py))
+    (name "ddmpy")
+    (version "0.1")
+    (synopsis "DDMPY: a Domain Decomposition Methods PYthon package")
+    (home-page "https://gitlab.inria.fr/compose/ddmpy.git")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "66dc3cc79dfdc5864fc62aa371173c8a576cc0ae")))
+       (sha256
+        (base32 "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
+    (build-system python-build-system)
+    (propagated-inputs (list openmpi
+                             openssh
+                             python
+                             python-numpy
+                             python-scipy
+                             python-mpi4py))
     (description
      "Linear algebra package implementing advanced parallel domain decomposition
 methods.")
-  (license license:cecill-c)))
+    (license license:cecill-c)))
