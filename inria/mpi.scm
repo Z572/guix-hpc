@@ -25,7 +25,7 @@
 (define-public hello-mpi
   (package
    (name "hello-mpi")
-   (version "1.0.0")
+   (version "1.1.0")
    (home-page "https://gitlab.inria.fr/solverstack/hello-mpi.git")
    (synopsis "Hello world MPI")
    (description
@@ -35,11 +35,11 @@
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "6d89892f0f279828010755883a56a65a822b8a2f")))
+                  (commit "34b9463fdee9b0b5ac3adb9cb932297511e89af9")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0aq33fqi94xmniwy2w25dkg1rv2jbawcjjqc8vjcznc5rd1ycybw"))))
+              "1nblqpsbyrynv43jgrq8lfzg9a721v17saxcy6kwq4lifq1nmml6"))))
    (arguments
     '(
       ;; #:configure-flags '("-DBUILD_SHARED_LIBS=ON"
