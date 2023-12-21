@@ -23,6 +23,7 @@
     #:use-module (guix git-download)
     #:use-module (guix packages)
     #:use-module (guix utils)
+    #:use-module (srfi srfi-1)
     #:use-module (gnu packages)
     #:use-module (gnu packages base)
     #:use-module (gnu packages xml)
@@ -88,7 +89,7 @@
         (version (string-append "rocm-" version))
         (source (llvm-rocm-monorepo version))
         (inputs (modify-inputs (package-inputs llvm) (replace "libffi" libffi-shared)))
-        ;(properties `((hidden? . #t) ,@(package-properties llvm)))
+        (properties `((hidden? . #t) ,@(package-properties llvm)))
     ))
 
 (define-public llvm-rocm-5.7 (make-llvm-rocm "5.7.1" llvm-17))
@@ -107,7 +108,7 @@
         (inputs (modify-inputs (package-inputs clang-runtime)
             (replace "llvm" llvm-rocm)
             (replace "libffi" libffi-shared)))
-        ;(properties `((hidden? . #t) ,@(package-properties clang-runtime)))
+        (properties `((hidden? . #t) ,@(package-properties clang-runtime)))
     ))
 
 (define-public clang-runtime-rocm-5.7 (make-clang-runtime-rocm llvm-rocm-5.7 clang-runtime-17))
@@ -134,7 +135,7 @@
                     #~(modify-phases #$phases
                         (replace 'add-tools-extra
                             (lambda _ (copy-recursively "../clang-tools-extra" "tools/extra")))))))
-        ;(properties `((hidden? . #t) ,@(package-properties clang)))
+        (properties `((hidden? . #t) ,@(package-properties clang)))
         ))
 
 (define-public clang-rocm-5.7 (make-clang-rocm llvm-rocm-5.7 clang-runtime-rocm-5.7 clang-17))
@@ -151,7 +152,7 @@
         (version (package-version llvm-rocm))
         (source (llvm-rocm-monorepo version))
         (inputs (list llvm-rocm))
-        ;(properties `((hidden? . #t) ,@(package-properties lld)))
+        (properties `((hidden? . #t) ,@(package-properties lld)))
     ))
 
 (define-public lld-rocm-5.7 (make-lld-rocm llvm-rocm-5.7 lld-17))
@@ -384,7 +385,7 @@ core runtime is also available.")
                                     (("find_program\\(PACKAGER_TOOL clang-offload-packager PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                                      (string-append
                                       "find_program(PACKAGER_TOOL clang-offload-packager PATHS " #$clang-rocm "/bin")))))))))
-        ;(properties `((hidden? . #t) ,@(package-properties libomp)))
+        (properties `((hidden? . #t) ,@(package-properties libomp)))
     )
 )
 
@@ -405,6 +406,7 @@ core runtime is also available.")
             (version (list-ref (string-split (package-version rocm-clang-toolchain) #\-) 1)); extract version without the rocm prefix
             (inputs (modify-inputs (package-inputs rocm-clang-toolchain)
                 (append lld-wrapper-rocm rocr-runtime rocm-device-libs roct-thunk)))
+            (properties (alist-delete 'hidden? (package-properties rocm-clang-toolchain)))
             (synopsis "Complete ROCm toolchain, based on the Clang toolchain, for C/C++ development")
             (description "This package provides a complete ROCm toolchain for C/C++
 development to be installed in user profiles. This includes Clang, as well as
