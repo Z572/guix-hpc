@@ -379,6 +379,11 @@ for AMD and NVIDIA GPUs from single source code.")
                     "-DHIP_PLATFORM=amd")
                 #:phases
                 #~(modify-phases %standard-phases
+                    (add-after 'install 'fix-clangrt-search-path
+                        (lambda* (#:key outputs inputs #:allow-other-keys)
+                            (substitute* (string-append (assoc-ref outputs "out") "/lib/cmake/hip/hip-config.cmake")
+                                (("\\$\\{HIP_CLANGRT_LIB_SEARCH_PATHS\\}")
+                                    (string-append (assoc-ref inputs "rocm-toolchain") "/lib/linux" )))))
                     (add-after 'install 'overwrite-hipvars
                         (lambda* (#:key outputs inputs #:allow-other-keys)
                             (make-file-writable (string-append (assoc-ref outputs "out") "/bin/hipvars.pm"))
