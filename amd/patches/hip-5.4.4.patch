@@ -1,0 +1,62 @@
+diff --git a/bin/hipcc.pl b/bin/hipcc.pl
+index da9559be..7df2b3cb 100755
+--- a/bin/hipcc.pl
++++ b/bin/hipcc.pl
+@@ -118,12 +118,15 @@ $HIP_RUNTIME    =   $hipvars::HIP_RUNTIME;
+ $HIP_PLATFORM   =   $hipvars::HIP_PLATFORM;
+ $HIP_COMPILER   =   $hipvars::HIP_COMPILER;
+ $HIP_CLANG_PATH =   $hipvars::HIP_CLANG_PATH;
++$HIP_CLANG_RUNTIME = $hipvars::HIP_CLANG_RUNTIME;
+ $CUDA_PATH      =   $hipvars::CUDA_PATH;
+ $HIP_PATH       =   $hipvars::HIP_PATH;
+ $ROCM_PATH      =   $hipvars::ROCM_PATH;
++$ROCMINFO_PATH  =   $hipvars::ROCMINFO_PATH;
+ $HIP_VERSION    =   $hipvars::HIP_VERSION;
+-$HSA_PATH       =   $hipvars::HSA_PATH;
+-$HIP_ROCCLR_HOME =   $hipvars::HIP_ROCCLR_HOME;
++$HIP_ROCCLR_HOME =  $hipvars::HIP_ROCCLR_HOME;
++$DEVICE_LIB_PATH =  $hipvars::DEVICE_LIB_PATH;
++$HSA_PATH       =   "$ROCM_PATH/hsa";
+ 
+ if ($HIP_PLATFORM eq "amd") {
+   # If using ROCclr runtime, need to find HIP_ROCCLR_HOME
+@@ -218,7 +221,6 @@ if ($HIP_PLATFORM eq "amd") {
+     }
+ 
+     if (not $isWindows) {
+-        $HSA_PATH=$ENV{'HSA_PATH'} // "$ROCM_PATH/hsa";
+         $HIPCXXFLAGS .= " -isystem $HSA_PATH/include";
+         $HIPCFLAGS .= " -isystem $HSA_PATH/include";
+     }
+@@ -625,7 +627,7 @@ if($HIP_PLATFORM eq "amd"){
+             $targetsStr = $ENV{HCC_AMDGPU_TARGET};
+         } elsif (not $isWindows) {
+             # Else try using rocm_agent_enumerator
+-            $ROCM_AGENT_ENUM = "${ROCM_PATH}/bin/rocm_agent_enumerator";
++            $ROCM_AGENT_ENUM = "${ROCMINFO_PATH}/bin/rocm_agent_enumerator";
+             $targetsStr = `${ROCM_AGENT_ENUM} -t GPU`;
+             $targetsStr =~ s/\n/,/g;
+         }
+@@ -729,11 +731,11 @@ if ($HIP_PLATFORM eq "amd") {
+         $toolArgs = ${toolArgs} . " -Wl,-rpath=$HIP_LIB_PATH:$ROCM_PATH/lib -lamdhip64 ";
+       }
+       # To support __fp16 and _Float16, explicitly link with compiler-rt
+-      $HIP_CLANG_BUILTIN_LIB="$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/lib/$HIP_CLANG_TARGET/libclang_rt.builtins.a";
++      $HIP_CLANG_BUILTIN_LIB="$HIP_CLANG_RUNTIME/lib/linux/libclang_rt.builtins.a";
+       if (-e $HIP_CLANG_BUILTIN_LIB) {
+-        $toolArgs .= " -L$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/lib/$HIP_CLANG_TARGET -lclang_rt.builtins "
++        $toolArgs .= " -L$HIP_CLANG_RUNTIME/lib/linux -lclang_rt.builtins "
+       } else {
+-        $toolArgs .= " -L$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/lib/linux -lclang_rt.builtins-x86_64 "
++        $toolArgs .= " -L$HIP_CLANG_RUNTIME/lib/linux -lclang_rt.builtins-x86_64 "
+       }
+     }
+ }
+@@ -761,6 +763,7 @@ if ($needLDFLAGS and not $compileOnly) {
+     $CMD .= " $HIPLDFLAGS";
+ }
+ $CMD .= " $toolArgs";
++$CMD .= " --hip-path=${HIP_PATH}";
+ 
+ if ($verbose & 0x1) {
+     print "hipcc-cmd: ", $CMD, "\n";

@@ -1,0 +1,33 @@
+diff --git a/bin/hipcc.pl b/bin/hipcc.pl
+index 56dcda2..e75ef67 100755
+--- a/bin/hipcc.pl
++++ b/bin/hipcc.pl
+@@ -128,8 +128,10 @@ $HIP_CLANG_PATH =   $hipvars::HIP_CLANG_PATH;
+ $CUDA_PATH      =   $hipvars::CUDA_PATH;
+ $HIP_PATH       =   $hipvars::HIP_PATH;
+ $ROCM_PATH      =   $hipvars::ROCM_PATH;
++$ROCMINFO_PATH  =   $hipvars::ROCMINFO_PATH;
+ $HIP_VERSION    =   $hipvars::HIP_VERSION;
+-$HIP_ROCCLR_HOME =   $hipvars::HIP_ROCCLR_HOME;
++$HIP_ROCCLR_HOME =  $hipvars::HIP_ROCCLR_HOME;
++$DEVICE_LIB_PATH =  $hipvars::DEVICE_LIB_PATH;
+ 
+ if ($HIP_PLATFORM eq "amd") {
+   $HIP_INCLUDE_PATH = "$HIP_ROCCLR_HOME/include";
+@@ -483,7 +485,7 @@ if($HIP_PLATFORM eq "amd"){
+             $targetsStr = $ENV{HCC_AMDGPU_TARGET};
+         } elsif (not $isWindows) {
+             # Else try using rocm_agent_enumerator
+-            $ROCM_AGENT_ENUM = "${ROCM_PATH}/bin/rocm_agent_enumerator";
++            $ROCM_AGENT_ENUM = "${ROCMINFO_PATH}/bin/rocm_agent_enumerator";
+             $targetsStr = `${ROCM_AGENT_ENUM} -t GPU`;
+             $targetsStr =~ s/\n/,/g;
+         }
+@@ -613,6 +615,7 @@ if ($needLDFLAGS and not $compileOnly) {
+     $CMD .= " $HIPLDFLAGS";
+ }
+ $CMD .= " $toolArgs";
++$CMD .= " --hip-path=${HIP_PATH}";
+ 
+ if ($verbose & 0x1) {
+     print "hipcc-cmd: ", $CMD, "\n";
