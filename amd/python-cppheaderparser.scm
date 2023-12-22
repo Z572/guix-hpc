@@ -16,32 +16,29 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (amd python-cppheaderparser)
-    #:use-module (guix packages)
-    #:use-module (guix build-system python)
-    #:use-module (guix download)
-    #:use-module (guix utils)
-    #:use-module (guix licenses)
+  #:use-module (guix packages)
+  #:use-module (guix build-system python)
+  #:use-module (guix download)
+  #:use-module (guix utils)
+  #:use-module (guix licenses)
 
-    #:use-module (gnu packages python-xyz)
-)
-
+  #:use-module (gnu packages python-xyz))
 
 (define-public python-cppheaderparser
   (package
     (name "python-cppheaderparser")
     (version "2.7.4")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "CppHeaderParser" version))
-              (sha256
-              (base32
-                "0hncwd9y5ayk8wa6bqhp551mcamcvh84h89ba3labc4mdm0k0arq"))))
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "CppHeaderParser" version))
+       (sha256
+        (base32 "0hncwd9y5ayk8wa6bqhp551mcamcvh84h89ba3labc4mdm0k0arq"))))
     (build-system python-build-system)
     (propagated-inputs (list python-ply))
     (home-page "http://senexcanis.com/open-source/cppheaderparser/")
     (synopsis
-    "Parse C++ header files and generate a data structure representing the class")
+     "Parse C++ header files and generate a data structure representing the class")
     (description
-    "Parse C++ header files and generate a data structure representing the class")
-    (license bsd-3))
-)
+     "Parse C++ header files and generate a data structure representing the class")
+    (license bsd-3)))
