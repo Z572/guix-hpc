@@ -227,3 +227,36 @@ fully supported to run on the GPU.")
     (synopsis "Export data as binary VTK files")
     (description "Export data as binary VTK files")
     (license bsd-2)))
+
+(define-public python-iterative-statistics
+  (let ((commit "66cacec5756c855f8efcf260a6fb5d7217b9d434")
+        (version "0.1.0")
+	(revision "1"))
+    (package
+      (name "python-iterative-statistics")
+      (version (git-version version revision commit))
+      (source
+       (origin
+	 (method git-fetch)
+	 (uri (git-reference
+               (url
+		"https://github.com/IterativeStatistics/BasicIterativeStatistics")
+               (commit commit)))
+	 (sha256
+          (base32 "02abpqgyhj9wmf7ycafmpax7yx6rckildswxfa4hr6b95jw91352"))))
+      (build-system python-build-system)
+      (inputs (list python-numpy))
+      (arguments
+       ;; For this package, running tests through python setup.py is deprecated
+       ;; and should be carried out using tox
+       '(#:tests? #f
+         #:phases (modify-phases %standard-phases
+		    (delete 'sanity-check))))
+      (home-page
+       "https://github.com/IterativeStatistics/BasicIterativeStatistics")
+      (synopsis "Iterative Statistics Python Library")
+      (description
+       "Implements iterative statistics operators for mean, variance, high-order
+ moments, extrema, covariance, threshold, quantile (experimental) and Sobol'
+ indices")
+      (license bsd-3))))
