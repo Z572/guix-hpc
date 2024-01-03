@@ -575,7 +575,7 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
                   scalapack
                   openblas
                   ;; ("lapack" ,lapack)
-                  pt-scotch-6
+                  pt-scotch
                   mumps-openmpi
                   pastix-6.0.3
                   fabulous
@@ -601,7 +601,7 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
 (define-public paddle
   (package
     (name "paddle")
-    (version "0.3.6")
+    (version "0.3.7")
     (home-page "https://gitlab.inria.fr/solverstack/paddle")
     (source
      (origin
@@ -645,7 +645,8 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
                       ;; Allow tests with more MPI processes than available CPU cores,
                       ;; which is not allowed by default by OpenMPI
                       (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1"))))))
-    (inputs (list openmpi openssh pt-scotch-6))
+    (inputs (list openmpi openssh ))
+    (propagated-inputs (list pt-scotch))
     (native-inputs (list gfortran pkg-config))
     (synopsis "Parallel Algebraic Domain Decomposition for Linear systEms")
     (description
@@ -693,9 +694,9 @@ Block General Conjugate Residual with Inner Orthogonalization and with inexact b
 and deflated restarting")
     (license license:cecill-c)))
 
-(define maphys++-with-scotch7
+(define-public maphys++
   (package
-    (name "maphys++-with-scotch7")
+    (name "maphys++")
     (version "1.1.8")
     (home-page "https://gitlab.inria.fr/solverstack/maphys/maphyspp.git")
     (synopsis "Sparse matrix hybrid solver")
@@ -732,27 +733,15 @@ is implemented in MPI.")
     (build-system cmake-build-system)
     (propagated-inputs (list blaspp
                              lapackpp
-                             pastix-6.2
+                             pastix
                              mumps-openmpi
                              arpack-ng-3.9
                              paddle
-                             pt-scotch-6 ;not clear why it must be here
                              fabulous
                              openmpi
                              openssh))
     (native-inputs (list gfortran pkg-config))
     (properties '((tunable? . #t)))))
-
-(define scotch-6-instead-of-scotch-7
-  ;; This is a procedure to replace scotch (7) by scotch-6, recursively.
-  (package-input-rewriting `((,scotch unquote scotch-6)
-                             (,pt-scotch unquote pt-scotch-6))))
-
-(define-public maphys++
-  ;; For now Maphys must be built against (pt-)scotch 6.x.
-  (package
-    (inherit (scotch-6-instead-of-scotch-7 maphys++-with-scotch7))
-    (name "maphys++")))
 
 ;; Only mpi, blaspp & lapackpp dependencies
 (define-public maphys++-minimal
