@@ -39,7 +39,7 @@
     (sha256 (base32 "1zv36r8gbb92v9s6vvzgdvv8ryli6a51b0i3g61k1rr6l3bvh6g3"))))
 
 (define melissa-version
-  (string-append version "-" commit))
+  (git-version version revision commit))
 
 (define melissa-license
   bsd-3)
