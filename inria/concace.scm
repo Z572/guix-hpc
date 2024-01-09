@@ -47,7 +47,7 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
   ;;  #:use-module (hacky gitlab)
-  #:use-module (inria hiepacs)
+  #:use-module (inria solverstack)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
   #:use-module (inria storm)
@@ -78,13 +78,13 @@
     (arguments
      '(#:install-plan
        '(("siam" "share/texmf-dist/tex/latex/siam")
-	 ("beamerthemeguix" "share/texmf-dist/tex/latex/beamerthemeguix")
+         ("beamerthemeguix" "share/texmf-dist/tex/latex/beamerthemeguix")
          ("beamerthemeinria" "share/texmf-dist/tex/latex/beamerthemeinria")
-	 ("compas" "share/texmf-dist/tex/latex/compas")
-	 ("IEEEoverride" "share/texmf-dist/tex/latex/ieeeoverride")
-	 ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
-	 ("RR" "share/texmf-dist/tex/latex/inriarr")
-	 ("poster" "share/texmf-dist/tex/latex/inriaposter"))))
+         ("compas" "share/texmf-dist/tex/latex/compas")
+         ("IEEEoverride" "share/texmf-dist/tex/latex/ieeeoverride")
+         ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
+         ("RR" "share/texmf-dist/tex/latex/inriarr")
+         ("poster" "share/texmf-dist/tex/latex/inriaposter"))))
     (propagated-inputs (list texlive-rsfs)))) ;; for RR
 
 ;; Updated version of the emacs-rmsbolt from guix channel to have tree-sitter (ts) support
@@ -136,7 +136,7 @@ a source code input file.")
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "1iz117n40p6w8ll7jzgqm1zc9mapfgh0hzxqa95lalpvbf02csxh"))))
+              "1iz117n40p6w8ll7jzgqm1zc9mapfgh0hzxqa95lalpvbf02csxh"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org))))
@@ -165,13 +165,13 @@ a source code input file.")
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "1z80l4yvgwi72z4y4ai176klwdfd6nhhi1iqsz2y2zr1zkkvywgh"))))
+              "1z80l4yvgwi72z4y4ai176klwdfd6nhhi1iqsz2y2zr1zkkvywgh"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org
-	  texlive-biblatex
-	  texlive-listings
-	  texlive-standalone))))
+          texlive-biblatex
+          texlive-listings
+          texlive-standalone))))
 
 ;; emacs-ob-latexmacro with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -214,7 +214,7 @@ a source code input file.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
+                "10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
     (build-system emacs-build-system)
     ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
     (propagated-inputs (list emacs))))
@@ -247,19 +247,19 @@ a source code input file.")
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
-	   bzip2
+           bzip2
            coreutils
-	   emacs-bedrock-early-init
-	   emacs-evil
-	   emacs-which-key
-	   findutils
+           emacs-bedrock-early-init
+           emacs-evil
+           emacs-which-key
+           findutils
            gawk
            git
-	   graphviz
+           graphviz
            grep
            gzip
-	   man-db
-	   man-pages
+           man-db
+           man-pages
            sed
            tar
            tree
@@ -289,30 +289,30 @@ a source code input file.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"187vgfs9i14h3nh0y8dv4mfvnxrcwdv2shyrx142kswmlhllpp6v"))))
+                "187vgfs9i14h3nh0y8dv4mfvnxrcwdv2shyrx142kswmlhllpp6v"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
-	   emacs-bedrock-minimal
-	   emacs-cape
-	   emacs-consult
-	   emacs-consult-xdg-recent-files
-	   emacs-corfu
-	   ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
-	   emacs-corfu-terminal
-	   emacs-embark
-	   ;; emacs-embark-consult: library provided within emacs-embark package
-	   ;; emacs-eshell
-	   emacs-kind-icon
-	   emacs-marginalia
-	   emacs-multi-vterm
-	   emacs-orderless
-	   emacs-pdf-tools
-	   emacs-ripgrep
-	   emacs-vertico
-	   ;; emacs-vertico-directory: library provided within emacs-vertico package
-	   emacs-vterm-toggle
-	   emacs-wgrep
+           emacs-bedrock-minimal
+           emacs-cape
+           emacs-consult
+           emacs-consult-xdg-recent-files
+           emacs-corfu
+           ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
+           emacs-corfu-terminal
+           emacs-embark
+           ;; emacs-embark-consult: library provided within emacs-embark package
+           ;; emacs-eshell
+           emacs-kind-icon
+           emacs-marginalia
+           emacs-multi-vterm
+           emacs-orderless
+           emacs-pdf-tools
+           emacs-ripgrep
+           emacs-vertico
+           ;; emacs-vertico-directory: library provided within emacs-vertico package
+           emacs-vterm-toggle
+           emacs-wgrep
            ripgrep))))
 
 ;; emacs-bedrock-base with emacs instead of emacs-minimal
@@ -340,11 +340,11 @@ a source code input file.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"088vcyj26jl1v8q86l1xbqs2cfacwnj4rk5919dscf4cf9p4gmzv"))))
+                "088vcyj26jl1v8q86l1xbqs2cfacwnj4rk5919dscf4cf9p4gmzv"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
-	   graphviz))))
+           graphviz))))
 
 ;; emacs-bedrock-org-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -370,16 +370,16 @@ a source code input file.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1j87k8582qcj5ipf1grj73ps5wm15m7yyg0wkpsripin3z2mds4m"))))
+                "1j87k8582qcj5ipf1grj73ps5wm15m7yyg0wkpsripin3z2mds4m"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
-	   emacs-bedrock-org-minimal
-	   emacs-consult-org-roam
-	   emacs-org-ql ;; for a better speed (to be investigated)
-	   emacs-org-roam
-	   ;; emacs-org-roam-ui
-	   ))))
+           emacs-bedrock-org-minimal
+           emacs-consult-org-roam
+           emacs-org-ql ;; for a better speed (to be investigated)
+           emacs-org-roam
+           ;; emacs-org-roam-ui
+           ))))
 
 ;; emacs-bedrock-org with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -405,16 +405,16 @@ a source code input file.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0jm1y1ic8pfsrljqs4w08f5q6vkzycw6ladsa5iirxspl0s07w1l"))))
+                "0jm1y1ic8pfsrljqs4w08f5q6vkzycw6ladsa5iirxspl0s07w1l"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-base
-	   emacs-editorconfig
-	   emacs-json-mode
-	   emacs-magit
-	   emacs-yaml-mode
-	   openssh
-	   ))))
+           emacs-editorconfig
+           emacs-json-mode
+           emacs-magit
+           emacs-yaml-mode
+           openssh
+           ))))
 
 ;; emacs-bedrock-dev-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -440,36 +440,36 @@ a source code input file.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"18jra9bpd7ddkbk3pxrln6cd2jg6krca4m575pygzfc7pw9hj5b3"))))
+                "18jra9bpd7ddkbk3pxrln6cd2jg6krca4m575pygzfc7pw9hj5b3"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-dev-minimal
-	   ;; emacs-crdt
-	   bash
-	   ccls ;; c / c++ language server
-	   direnv ;; not necessary for emacs-envrc (already a dependency of it) but so that we have it in a terminal
-	   emacs-envrc
-	   emacs-rmsbolt-ts
-	   gdb
-	   python-lsp-server ;; pyton language server
+           ;; emacs-crdt
+           bash
+           ccls ;; c / c++ language server
+           direnv ;; not necessary for emacs-envrc (already a dependency of it) but so that we have it in a terminal
+           emacs-envrc
+           emacs-rmsbolt-ts
+           gdb
+           python-lsp-server ;; pyton language server
            tree-sitter
-	   tree-sitter-bash
-	   tree-sitter-bibtex
-	   tree-sitter-c ;; see also ccls language server
-	   tree-sitter-cmake
-	   tree-sitter-cpp ;; see also ccls language server
-	   tree-sitter-css
-	   tree-sitter-javascript
-	   tree-sitter-json
-	   tree-sitter-julia
-	   tree-sitter-markdown
-	   tree-sitter-org
-	   tree-sitter-python ;; see also python-lsp-server language server
-	   tree-sitter-scheme
-	   tree-sitter-r
-	   tree-sitter-rust
-	   tree-sitter-typescript
-	   ))))
+           tree-sitter-bash
+           tree-sitter-bibtex
+           tree-sitter-c ;; see also ccls language server
+           tree-sitter-cmake
+           tree-sitter-cpp ;; see also ccls language server
+           tree-sitter-css
+           tree-sitter-javascript
+           tree-sitter-json
+           tree-sitter-julia
+           tree-sitter-markdown
+           tree-sitter-org
+           tree-sitter-python ;; see also python-lsp-server language server
+           tree-sitter-scheme
+           tree-sitter-r
+           tree-sitter-rust
+           tree-sitter-typescript
+           ))))
 
 ;; emacs-bedrock-dev with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -497,11 +497,11 @@ scheme.")
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0ma4ayvc048l1i407lr6bhk0wvv5y5sml2ximrimn3q7bb8d7qh2"))))
+                "0ma4ayvc048l1i407lr6bhk0wvv5y5sml2ximrimn3q7bb8d7qh2"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-geiser-guile
-	   emacs-paredit))))
+           emacs-paredit))))
 
 ;; emacs-bedrock-dev-parentheses with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -527,16 +527,16 @@ scheme.")
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-		"0x6i6pw1zyxr8gbkr701if778yhgzga08hkhf2m2c9kg0ipisn3d"))))
+                "0x6i6pw1zyxr8gbkr701if778yhgzga08hkhf2m2c9kg0ipisn3d"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
-	  aspell-dict-en
-	  aspell-dict-fr
+          aspell-dict-en
+          aspell-dict-fr
           emacs-bedrock-base
-	  emacs-citar
-	  emacs-citar-org-roam
-	  emacs-jinx))))
+          emacs-citar
+          emacs-citar-org-roam
+          emacs-jinx))))
 
 ;; emacs-bedrock-write with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -568,7 +568,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            texlive-hyperref
            texlive-inconsolata
            texlive-jknapltx
-	   texlive-latexmk
+           texlive-latexmk
            texlive-libertine
            texlive-ulem
            texlive-upquote
@@ -596,7 +596,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"159sf04wsvf9wsdb21fr6jd4xfw3h96adpylrfvkvfb6ppwy4fj9"))))
+                "159sf04wsvf9wsdb21fr6jd4xfw3h96adpylrfvkvfb6ppwy4fj9"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-ox-latex-minimal
@@ -626,13 +626,13 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"07g5g11pprid1113nl6qv7hjbgh076d4i6ysl46yx1la1fkc0p9s"))))
+                "07g5g11pprid1113nl6qv7hjbgh076d4i6ysl46yx1la1fkc0p9s"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-org-minimal
-	   emacs-lob-ob-latexpicture
-	   emacs-ob-latexmacro
-	   emacs-ob-latexpicture))))
+           emacs-lob-ob-latexpicture
+           emacs-ob-latexmacro
+           emacs-ob-latexpicture))))
 
 ;; emacs-bedrock-ox-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -658,49 +658,49 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0416f4m9rrvkakvrnlrs9z3n5648rw7zcrqmsvx12h0snb75f1dm"))))
+                "0416f4m9rrvkakvrnlrs9z3n5648rw7zcrqmsvx12h0snb75f1dm"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
-	   inkscape ;; requested by the svg package for converging svg to pdf when  ZZZ
-	   ;; small granularity; consider texlive-collection-publishers for a superset
-	   texlive-acmconf
-	   texlive-acmart
-	   texlive-algorithms ;; for siamart220329 from texlive-bedrock
-	   texlive-anonymous-acm
-	   texlive-biblatex-apa ;; typically nice in beamer presentations (#+cite_export: biblatex apa)
+           inkscape ;; requested by the svg package for converging svg to pdf when  ZZZ
+           ;; small granularity; consider texlive-collection-publishers for a superset
+           texlive-acmconf
+           texlive-acmart
+           texlive-algorithms ;; for siamart220329 from texlive-bedrock
+           texlive-anonymous-acm
+           texlive-biblatex-apa ;; typically nice in beamer presentations (#+cite_export: biblatex apa)
            ;; texlive-biblatex-apa6 ;; check apa vs apa6 vs apa7 vs apacite
-	   texlive-beamerposter ;; for inriaposter in texlive-bedrock
-	   texlive-bedrock ;; See above definition (!): guix, inria, siam
-	   texlive-booktabs ;; for texlive-acmart
-	   texlive-caption ;; for texlive-acmart
-	   texlive-cleveref ;; for siamart220329 from texlive-bedrock
-	   texlive-cmap ;; for texlive-acmart
-	   texlive-cm-super ;; for guix theme in texlive-bedrock
-	   texlive-comment ;; for texlive-acmart
-	   texlive-environ ;; for texlive-acmart
-	   texlive-euler ;; for compas from texlive-bedrock
-	   texlive-helvetic ;; for beamerthemeguix from texlive-bedrock
-	   texlive-hyperxmp ;; for texlive-acmart
-	   texlive-ieeeconf
-	   texlive-ieeetran ;; https://ctan.tetaneutral.net/macros/latex/contrib/IEEEtran/IEEEtran_HOWTO.pdf
-	   texlive-ifmtarg ;; for texlive-acmart
-	   texlive-inriafonts
-	   texlive-llncs
-	   texlive-llncsconf
-	   texlive-microtype ;; for texlive-acmart
-	   texlive-ncctools ;; for texlive-acmart (for manyfoot; TODO checkout bigfoot)
-	   texlive-ntheorem ;; for siamart220329 from texlive-bedrock
-	   texlive-palatino ;; for compas from texlive-bedrock
-	   texlive-setspace ;; for texlive-acmart
-	   texlive-shadow ;; for compas from texlive-bedrock
-	   texlive-textcase ;; for texlive-acmart
-	   texlive-type1cm ;; for beamerposter requested by inriaposter in texlive-bedrock
-	   texlive-times ;; for texlive-ieeetran
-	   texlive-totpages ;; for texlive-acmart
-	   ;; TODO SIAM
-	   ;;texlive-XXX
-	   ))))
+           texlive-beamerposter ;; for inriaposter in texlive-bedrock
+           texlive-bedrock ;; See above definition (!): guix, inria, siam
+           texlive-booktabs ;; for texlive-acmart
+           texlive-caption ;; for texlive-acmart
+           texlive-cleveref ;; for siamart220329 from texlive-bedrock
+           texlive-cmap ;; for texlive-acmart
+           texlive-cm-super ;; for guix theme in texlive-bedrock
+           texlive-comment ;; for texlive-acmart
+           texlive-environ ;; for texlive-acmart
+           texlive-euler ;; for compas from texlive-bedrock
+           texlive-helvetic ;; for beamerthemeguix from texlive-bedrock
+           texlive-hyperxmp ;; for texlive-acmart
+           texlive-ieeeconf
+           texlive-ieeetran ;; https://ctan.tetaneutral.net/macros/latex/contrib/IEEEtran/IEEEtran_HOWTO.pdf
+           texlive-ifmtarg ;; for texlive-acmart
+           texlive-inriafonts
+           texlive-llncs
+           texlive-llncsconf
+           texlive-microtype ;; for texlive-acmart
+           texlive-ncctools ;; for texlive-acmart (for manyfoot; TODO checkout bigfoot)
+           texlive-ntheorem ;; for siamart220329 from texlive-bedrock
+           texlive-palatino ;; for compas from texlive-bedrock
+           texlive-setspace ;; for texlive-acmart
+           texlive-shadow ;; for compas from texlive-bedrock
+           texlive-textcase ;; for texlive-acmart
+           texlive-type1cm ;; for beamerposter requested by inriaposter in texlive-bedrock
+           texlive-times ;; for texlive-ieeetran
+           texlive-totpages ;; for texlive-acmart
+           ;; TODO SIAM
+           ;;texlive-XXX
+           ))))
 
 ;; emacs-bedrock-ox-latex-classes with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -726,28 +726,28 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0scw1lzli48cw450p9kbxrr7nxln89xlpxaljm3k52mr3hkr3532"))))
+                "0scw1lzli48cw450p9kbxrr7nxln89xlpxaljm3k52mr3hkr3532"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-ox-base
-	   emacs-bedrock-ox-latex-classes
-	   emacs-bedrock-ox-latex-minimal
-	   python          ;; for minted
-	   python-pygments ;; for minted
-	   texlive-algorithm2e
-	   texlive-amsmath
-	   texlive-biber
+           emacs-bedrock-ox-latex-classes
+           emacs-bedrock-ox-latex-minimal
+           python          ;; for minted
+           python-pygments ;; for minted
+           texlive-algorithm2e
+           texlive-amsmath
+           texlive-biber
 ;;	   texlive-biblatex
-	   texlive-braket
-	   texlive-ifoddpage
-	   texlive-koma-script
-	   texlive-minted
-	   texlive-relsize
-	   texlive-tools ;; for xspace (TODO: check if necessary)
-	   texlive-transparent
-	   texlive-svg
-	   texlive-pgf ;; pgd/tikz
-	   texlive-trimspaces))))
+           texlive-braket
+           texlive-ifoddpage
+           texlive-koma-script
+           texlive-minted
+           texlive-relsize
+           texlive-tools ;; for xspace (TODO: check if necessary)
+           texlive-transparent
+           texlive-svg
+           texlive-pgf ;; pgd/tikz
+           texlive-trimspaces))))
 
 ;; emacs-bedrock-ox-latex with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -773,7 +773,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 ;;               (file-name (string-append name "-" version "-checkout"))
 ;;               (sha256
 ;;                (base32
-;; 		"0i7ir3dmi053bzczv3fh37yxbmi02cf4hb2wlpddvzwns02ss1zs"))))
+;;              "0i7ir3dmi053bzczv3fh37yxbmi02cf4hb2wlpddvzwns02ss1zs"))))
 ;;     (build-system emacs-build-system)
 ;;     (propagated-inputs
 ;;      (list emacs-bedrock-ox-beamer-minimal
@@ -803,12 +803,12 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0hsx95f1i9aipjvkr125fpyql43fyqz272k3kmzbp2bpi7c1agi9"))))
+                "0hsx95f1i9aipjvkr125fpyql43fyqz272k3kmzbp2bpi7c1agi9"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-ox-base
-	   emacs-citeproc-el
-	   emacs-htmlize))))
+           emacs-citeproc-el
+           emacs-htmlize))))
 
 ;; emacs-bedrock-ox-html with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -834,13 +834,13 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "0rwl6g8lggrj705pvvpa6jgrrvrj38pcrsp48fgi98da6p27y1ar"))))
+              "0rwl6g8lggrj705pvvpa6jgrrvrj38pcrsp48fgi98da6p27y1ar"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-ox-beamer-minimal
-	  emacs-bedrock-ox-html
-	  emacs-bedrock-ox-latex
-	  emacs-org-re-reveal))))
+          emacs-bedrock-ox-html
+          emacs-bedrock-ox-latex
+          emacs-org-re-reveal))))
 
 ;; emacs-bedrock-ox with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -866,7 +866,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1f28bcamcz00scah8q68yzsl3l1xx2wj5yb5cb5xamnlv7myd4fa"))))
+                "1f28bcamcz00scah8q68yzsl3l1xx2wj5yb5cb5xamnlv7myd4fa"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock-ox))))
@@ -893,11 +893,11 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "00m1j74jfhk5a7znabpl7qag87j25jry2rkc387lk49kj1x0s8ap"))))
+              "00m1j74jfhk5a7znabpl7qag87j25jry2rkc387lk49kj1x0s8ap"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs
-	  emacs-bedrock-ox-publish))))
+          emacs-bedrock-ox-publish))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-bedrock-full publicly defined below instead
@@ -918,14 +918,14 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "0phy92cdk2m4xmk35m66mdcm1zy07rpghxzn7yqhsxlvq6lmm5lq"))))
+              "0phy92cdk2m4xmk35m66mdcm1zy07rpghxzn7yqhsxlvq6lmm5lq"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-bedrock-dev
-	  emacs-bedrock-dev-parentheses
-	  emacs-bedrock-org
-	  emacs-bedrock-ox-publish
-	  emacs-bedrock-write))))
+          emacs-bedrock-dev-parentheses
+          emacs-bedrock-org
+          emacs-bedrock-ox-publish
+          emacs-bedrock-write))))
 
 ;; emacs-bedrock-full with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -954,7 +954,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1i8yg11cskrmscmjdg301q7j1ypss52nydymmykbaaiygilq2yzy"))))
+                "1i8yg11cskrmscmjdg301q7j1ypss52nydymmykbaaiygilq2yzy"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-bedrock))))
@@ -978,7 +978,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 ;;               (file-name (string-append name "-" version "-checkout"))
 ;;               (sha256
 ;;                (base32
-;; 		"0xk3jq6l2h1jb8ya8pmsgk5dfx7gwfwzsiczkfj7rkiqvzkin0mp"))))
+;;              "0xk3jq6l2h1jb8ya8pmsgk5dfx7gwfwzsiczkfj7rkiqvzkin0mp"))))
 ;;     (build-system emacs-build-system)
 ;;     (propagated-inputs
 ;;      (list emacs-bedrock))))
@@ -999,7 +999,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
                     (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
-	       (base32
+               (base32
                 "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
     (build-system emacs-build-system)
     (propagated-inputs (list emacs-org))))
@@ -1042,7 +1042,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            gzip
            imagemagick
            inkscape
-	   nss-certs
+           nss-certs
            python
            python-pygments
            sed

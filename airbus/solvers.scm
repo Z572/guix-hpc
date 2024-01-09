@@ -17,7 +17,7 @@
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages mpi)
   #:use-module (inria storm)
-  #:use-module (inria hiepacs)
+  #:use-module (inria solverstack)
   #:use-module (guix utils)
   #:use-module (srfi srfi-1))
 

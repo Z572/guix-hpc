@@ -13,7 +13,7 @@
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages maths)
-  #:use-module (inria hiepacs)
+  #:use-module (inria solverstack)
   #:use-module (inria storm)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages ssh)

@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2017, 2019, 2021, 2022, 2023 Inria
 
-(define-module (inria hiepacs)
+(define-module (inria solverstack)
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
@@ -529,7 +529,7 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
         (base32 "0pcwfac2x574f6ggfdmahhx9v2hfswyd3nkf3bmc3cd3173312h3"))))
     (build-system cmake-build-system)
     (arguments
-     
+
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DMAPHYS_BUILD_TESTS=ON"
                            "-DMAPHYS_SDS_MUMPS=ON"
                            "-DMAPHYS_SDS_PASTIX=ON"
@@ -914,7 +914,7 @@ etc.")
     (inputs (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
                   openblas
                   ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
-                  
+
                   ;; Python bindings and Python tests. Python3
                   python
 
@@ -1003,7 +1003,7 @@ memory footprint and/or the time-to-solution.")
     (inputs (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
                   openblas
                   ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
-                  
+
                   ;; The following are optional dependencies.
                   parsec+mpi
                   starpu

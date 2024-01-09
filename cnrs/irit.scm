@@ -23,7 +23,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
-  #:use-module (inria hiepacs)
+  #:use-module (inria solverstack)
   #:use-module (inria storm)
   #:use-module (inria tadaam))
 
