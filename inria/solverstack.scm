@@ -122,8 +122,10 @@ architectures.")
         `(cons "-DPARSEC_DIST_WITH_MPI=ON"
                (delete "-DPARSEC_DIST_WITH_MPI=OFF"
                        ,flags)))))
-    (propagated-inputs (modify-inputs (package-inputs parsec)
-                         (prepend openmpi)))))
+    (propagated-inputs (modify-inputs (package-propagated-inputs parsec)
+                                      (prepend openmpi)))
+    (native-inputs (modify-inputs (package-native-inputs parsec)
+                                  (prepend openssh)))))
 
 (define-public quark
   (let ((commit "db4aef9a66a00487d849cf8591927dcebe18ef2f")
@@ -259,18 +261,21 @@ area (CPUs-GPUs, distributed nodes).")
                     (lambda _
                       (setenv "HOME"
                               (getcwd)) #t)))))
-    (inputs (list openblas))
-    (propagated-inputs (list starpu openmpi))
+    (inputs (list openblas starpu))
+    (propagated-inputs (list openmpi))
     (native-inputs (list pkg-config gfortran python openssh))))
 
 (define-public chameleon+nompi
   (package
-   (inherit chameleon)
-   (name "chameleon-nompi")
-   (arguments
-    (substitute-keyword-arguments (package-arguments chameleon)
-                                  ((#:configure-flags flags '())
-                                   `(delete "-DCHAMELEON_USE_MPI=ON" ,flags))))))
+    (inherit chameleon)
+    (name "chameleon-nompi")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        `(delete "-DCHAMELEON_USE_MPI=ON"
+                 ,flags))))))
+
 (define openmpi->nmad
   ;; Rewrite the dependency graph of the given package, replacing Open MPI
   ;; with NewMadeleine.
@@ -293,10 +298,9 @@ area (CPUs-GPUs, distributed nodes).")
                      (delete "-DCHAMELEON_USE_MPI=ON"
                              ,flags))))))
     (inputs (modify-inputs (package-inputs chameleon)
-              (prepend simgrid)))
-    (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
-                         (delete "starpu")
-                         (prepend starpu+simgrid)))))
+              (prepend simgrid)
+              (delete "starpu")
+              (prepend starpu+simgrid)))))
 
 (define-public chameleon+simgrid
   (package
@@ -356,8 +360,10 @@ area (CPUs-GPUs, distributed nodes).")
         `(cons "-DCHAMELEON_SCHED=OPENMP"
                (delete "-DCHAMELEON_USE_MPI=ON"
                        ,flags)))))
+    (inputs (modify-inputs (package-inputs chameleon)
+              (delete "starpu")))
     (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
-                         (delete "starpu" "openmpi")))))
+                         (delete "openmpi")))))
 
 (define-public chameleon+quark
   (package
@@ -370,9 +376,11 @@ area (CPUs-GPUs, distributed nodes).")
         `(cons "-DCHAMELEON_SCHED=QUARK"
                (delete "-DCHAMELEON_USE_MPI=ON"
                        ,flags)))))
+    (inputs (modify-inputs (package-inputs chameleon)
+              (prepend quark)
+              (delete "starpu")))
     (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
-                         (prepend quark)
-                         (delete "starpu" "openmpi")))))
+                         (delete "openmpi")))))
 
 (define-public chameleon+parsec
   (package
@@ -385,9 +393,11 @@ area (CPUs-GPUs, distributed nodes).")
         `(cons "-DCHAMELEON_SCHED=PARSEC"
                (delete "-DCHAMELEON_USE_MPI=ON"
                        ,flags)))))
+    (inputs (modify-inputs (package-inputs chameleon)
+              (prepend parsec)
+              (delete "starpu")))
     (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
-                         (prepend parsec)
-                         (delete "starpu" "openmpi")))))
+                         (delete "openmpi")))))
 
 (define-public mini-chameleon
   (package
@@ -515,8 +525,8 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
                     (lambda _
                       (setenv "HOME"
                               (getcwd)) #t)))))
-    (inputs (list fmt openblas))
-    (propagated-inputs (list starpu openmpi))
+    (inputs (list fmt openblas starpu))
+    (propagated-inputs (list openmpi))
     (native-inputs (list pkg-config openssh))))
 
 (define-public maphys
@@ -579,7 +589,6 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
 
     (inputs (list `(,hwloc "lib")
                   openmpi
-                  openssh
                   scalapack
                   openblas
                   ;; ("lapack" ,lapack)
@@ -589,7 +598,7 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
                   fabulous
                   paddle
                   metis))
-    (native-inputs (list gfortran pkg-config))
+    (native-inputs (list gfortran pkg-config openssh))
     (synopsis "Sparse matrix hybrid solver")
     (description
      "MaPHyS (Massively Parallel Hybrid Solver) is a parallel linear solver
@@ -653,9 +662,8 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
                       ;; Allow tests with more MPI processes than available CPU cores,
                       ;; which is not allowed by default by OpenMPI
                       (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1"))))))
-    (inputs (list openmpi openssh ))
-    (propagated-inputs (list pt-scotch))
-    (native-inputs (list gfortran pkg-config))
+    (propagated-inputs (list openmpi pt-scotch))
+    (native-inputs (list gfortran pkg-config openssh))
     (synopsis "Parallel Algebraic Domain Decomposition for Linear systEms")
     (description
      "This  software’s goal is  to propose  a parallel
@@ -739,16 +747,16 @@ is implemented in MPI.")
                       ;; which is not allowed by default by OpenMPI
                       (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))))
     (build-system cmake-build-system)
-    (propagated-inputs (list blaspp
-                             lapackpp
-                             pastix
-                             mumps-openmpi
-                             arpack-ng-3.9
-                             paddle
-                             fabulous
-                             openmpi
-                             openssh))
-    (native-inputs (list gfortran pkg-config))
+    (inputs (list blaspp
+                  lapackpp
+                  openblas
+                  pastix
+                  mumps-openmpi
+                  arpack-ng-3.9
+                  paddle
+                  fabulous))
+    (propagated-inputs (list openmpi))
+    (native-inputs (list gfortran pkg-config openssh))
     (properties '((tunable? . #t)))))
 
 ;; Only mpi, blaspp & lapackpp dependencies
@@ -829,7 +837,7 @@ such as: namespaces, templates, exceptions, etc.")
     ;; tests would need testsweeper https://bitbucket.org/icl/testsweeper
     ;; '(#:configure-flags '("-DBLASPP_BUILD_TESTS=ON")))
     (build-system cmake-build-system)
-    (propagated-inputs (list openblas)) ;technically only blas
+    (inputs (list openblas)) ;technically only blas
     (license license:bsd-3)))
 
 (define-public lapackpp
@@ -859,7 +867,7 @@ etc.")
        #:tests? #f))
     ;; tests would need testsweeper https://bitbucket.org/icl/testsweeper
     (build-system cmake-build-system)
-    (inputs (list blaspp))
+    (inputs (list blaspp openblas))
     (license license:bsd-3)))
 
 (define-public pastix-6
@@ -918,26 +926,20 @@ etc.")
        ;; XXX: The 'python_simple' test fails with:
        ;; ValueError: Attempted relative import in non-package
        #:tests? #f))
-    (native-inputs (list pkg-config gfortran))
+    (native-inputs (list pkg-config gfortran openssh))
     (inputs (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
+                  `(,hwloc "lib")
+                  parsec+mpi
+                  starpu
+                  scotch
                   openblas
                   ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
-
                   ;; Python bindings and Python tests. Python3
                   python
-
                   python-numpy
                   ;; ("python-scipy" ,python-scipy)
                   ))
-    (propagated-inputs (list `(,hwloc "lib")
-                             scotch
-
-                             ;; The following are optional dependencies.
-                             ;; GM: somehow these two are needed in propagated-inputs
-                             ;; in order to compile maphys++ (otherwise cmake fails
-                             ;; to find them)
-                             parsec+mpi
-                             starpu))
+    (propagated-inputs (list openmpi))
     (synopsis "Sparse matrix direct solver")
     (description
      "PaStiX (Parallel Sparse matriX package) is a scientific library that
@@ -1007,8 +1009,13 @@ memory footprint and/or the time-to-solution.")
        ;; XXX: The 'python_simple' test fails with:
        ;; ValueError: Attempted relative import in non-package
        #:tests? #f))
-    (native-inputs (list pkg-config gfortran))
+    (native-inputs (list pkg-config gfortran openssh))
     (inputs (list `(,gfortran "lib") ;for 'gcc … -lgfortran'
+
+                  `(,hwloc "lib")
+
+                  scotch
+
                   openblas
                   ;; ("lapack" ,lapack)         ;must be built with '-DLAPACKE_WITH_TMG=ON'
 
@@ -1022,7 +1029,7 @@ memory footprint and/or the time-to-solution.")
                   python-numpy
                   ;; ("python-scipy" ,python-scipy)
                   ))
-    (propagated-inputs (list `(,hwloc "lib") scotch))
+    (propagated-inputs (list openmpi))
     (synopsis "Sparse matrix direct solver")
     (description
      "PaStiX (Parallel Sparse matriX package) is a scientific library that
@@ -1346,9 +1353,9 @@ CTAGS    = $(CTAGSPROG)
                       (invoke "make" "examples")
                       (invoke "./example/bin/simple" "-lap" "100"))))))
     (inputs (list `(,gfortran "lib") openblas))
-    (native-inputs (list pkg-config gfortran perl))
+    (native-inputs (list pkg-config gfortran perl openssh))
     (propagated-inputs (list openmpi-with-mpi1-compat
-                             `(,hwloc-1 "lib") openssh scotch32))
+                             `(,hwloc-1 "lib") scotch32))
     (outputs '("out" "debug"))
     (synopsis "Sparse matrix direct solver (version 5)")
     (description
@@ -1369,7 +1376,7 @@ and/or the time-to-solution.")
     (inherit pastix)
     (name "pastix-nopython-notest")
     (arguments
-     (substitute-keyword-arguments (package-arguments chameleon)
+     (substitute-keyword-arguments (package-arguments pastix)
        ((#:configure-flags flags
          '())
         `(cons "-DPASTIX_BUILD_TESTING=OFF"
@@ -1380,7 +1387,7 @@ and/or the time-to-solution.")
     (inherit pastix-6.2)
     (name "pastix-6.2-nopython-notest")
     (arguments
-     (substitute-keyword-arguments (package-arguments chameleon)
+     (substitute-keyword-arguments (package-arguments pastix-6.2)
        ((#:configure-flags flags
          '())
         `(cons "-DPASTIX_BUILD_TESTING=OFF"
@@ -1463,6 +1470,7 @@ this limitation.")
        ((#:tests? _ #t)
         #f))) ;disable tests
     (propagated-inputs (list openmpi))
+    (native-inputs (list openssh))
     (description
      "Modified python 2.7.13. Scalable Python performs the I/O operations used
 e.g. by import statements in a single process and uses MPI to transmit data
@@ -1505,7 +1513,7 @@ to/from all other processes.")))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DICB=ON")))
-    (inputs (list lapack gfortran))
+    (inputs (list openblas gfortran))
     (synopsis "Fortran subroutines for solving eigenvalue problems")
     (description
      "ARPACK-NG is a collection of Fortran77 subroutines designed to solve
@@ -1574,8 +1582,8 @@ for manual interpretation.")
                       (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))))
     (build-system cmake-build-system)
     (inputs (list openblas fftw fftwf))
-    (propagated-inputs (list openmpi openssh))
-    (native-inputs (list pkg-config))
+    (propagated-inputs (list openmpi))
+    (native-inputs (list pkg-config openssh))
     (properties '((tunable? . #t)))))
 
 (define-public ddmpy
@@ -1593,12 +1601,9 @@ for manual interpretation.")
        (sha256
         (base32 "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
     (build-system python-build-system)
-    (propagated-inputs (list openmpi
-                             openssh
-                             python
-                             python-numpy
-                             python-scipy
+    (propagated-inputs (list openmpi python python-numpy python-scipy
                              python-mpi4py))
+    (native-inputs (list openssh))
     (description
      "Linear algebra package implementing advanced parallel domain decomposition
 methods.")
