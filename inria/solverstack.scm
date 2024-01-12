@@ -1051,9 +1051,9 @@ memory footprint and/or the time-to-solution.")
          '())
         `(delete "-DPASTIX_WITH_MPI=ON"
                  ,flags))))
-    (inputs `(,@(delete `("parsec" ,parsec+mpi)
-                        (package-inputs pastix-6)) ("parsec" ,parsec)
-              ,@(package-inputs pastix-6)))))
+    (inputs (modify-inputs (package-inputs pastix-6)
+              (prepend parsec)
+              (delete "parsec+mpi")))))
 
 (define-public pastix-6.2
   (package
@@ -1470,7 +1470,6 @@ this limitation.")
        ((#:tests? _ #t)
         #f))) ;disable tests
     (propagated-inputs (list openmpi))
-    (native-inputs (list openssh))
     (description
      "Modified python 2.7.13. Scalable Python performs the I/O operations used
 e.g. by import statements in a single process and uses MPI to transmit data
