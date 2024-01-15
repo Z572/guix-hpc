@@ -56,14 +56,14 @@
   #:use-module (srfi srfi-1)
   )
 
-(define-public texlive-bedrock
+(define-public texlive-elementaryx
   (package
-    (name "texlive-bedrock")
+    (name "texlive-elementaryx")
     (version "1.4.0")
     (home-page "https://gitlab.inria.fr/compose/include/compose-styles")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Texlive add-on.")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Texlive add-on.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Texlive add-on.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Texlive add-on.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
@@ -118,12 +118,12 @@ a source code input file.")
   (package-input-rewriting `((,emacs-minimal . ,emacs))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ob-latex-macros publicly defined below instead
+;; Use emacs-ob-latex-macros publicly defined below instead
 (define emacs-ob-latexmacro-with-emacs-minimal
   (package
    (name "emacs-ob-latexmacro")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-ob-latexmacro")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-ob-latexmacro")
    (synopsis "Extension of ob-latex for supporting common macro definitions for ox-latex and ox-html backends.")
    (description
     "Extension of ob-latex for supporting common macro definitions for ox-latex and ox-html backends.")
@@ -152,7 +152,7 @@ a source code input file.")
   (package
    (name "emacs-ob-latexpicture")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-ob-latexpicture")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-ob-latexpicture")
    (synopsis "Extension of ob-latex for supporting vectorial output for both ox-latex (inlined) and ox-html (through svg generation) backends.")
    (description
     "Extension of ob-latex for supporting vectorial output for both ox-latex (inlined) and ox-html (through svg generation) backends. Note it also optionally support macros definition from emacs-ob-latexmacro through :usemacros t header argument.")
@@ -196,60 +196,60 @@ a source code input file.")
        '(("lob-ob-latexpicture.org" "share/emacs/site-lob/lob-ob-latexpicture.org"))))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-early-init publicly defined below instead
-(define emacs-bedrock-early-init-with-emacs-minimal
+;; Use emacs-elementaryx-early-init publicly defined below instead
+(define emacs-elementaryx-early-init-with-emacs-minimal
   (package
-    (name "emacs-bedrock-early-init")
+    (name "emacs-elementaryx-early-init")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-early-init")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-early-init")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Early init.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Early init.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Early init.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "961797e55adc26e0203dac7f936820fb41efebc7")))
+                    (commit "f6121c699eb5df9f03b909271fd1c60593762f19")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "10nixwa35zzirp0gr65xrpf38mqqk1k9fm6lnx1d2ymns5icl7wi"))))
+                "0yd80sm4m756zlsyj54m1p3q31ghv1xwxvn0sqj4wwby933m8xki"))))
     (build-system emacs-build-system)
     ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
     (propagated-inputs (list emacs))))
 
-;; emacs-bedrock-early-init with emacs instead of emacs-minimal
+;; emacs-elementaryx-early-init with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-early-init
-  (emacs-instead-of-emacs-minimal emacs-bedrock-early-init-with-emacs-minimal))
+(define-public emacs-elementaryx-early-init
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-early-init-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-minimal publicly defined below instead
-(define emacs-bedrock-minimal-with-emacs-minimal
+;; Use emacs-elementaryx-minimal publicly defined below instead
+(define emacs-elementaryx-minimal-with-emacs-minimal
   (package
-   (name "emacs-bedrock-minimal")
+   (name "emacs-elementaryx-minimal")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-minimal")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "90361bf6255a0ef89bc3fb04d371261dcbc3a5fd")))
+                    (commit "143c04e9b51ee298e0f4bf93d77b0c99b24e2493")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0iyzk2aw14p8z3gy4kqhb664ly1n3482kvs4ww7fcixm3bnbc8j7"))))
+                "1mdp7lyy3b75y8fs46iwqjgmaisfsapmnwlz7hrg6k25nnw2nsw0"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
            bzip2
            coreutils
-           emacs-bedrock-early-init
+           emacs-elementaryx-early-init
            emacs-evil
            emacs-which-key
            findutils
@@ -265,35 +265,35 @@ a source code input file.")
            tree
            which))))
 
-;; emacs-bedrock-minimal with emacs instead of emacs-minimal
+;; emacs-elementaryx-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-minimal
-  (emacs-instead-of-emacs-minimal emacs-bedrock-minimal-with-emacs-minimal))
+(define-public emacs-elementaryx-minimal
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-minimal-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-base publicly defined below instead
-(define emacs-bedrock-base-with-emacs-minimal
+;; Use emacs-elementaryx-base publicly defined below instead
+(define emacs-elementaryx-base-with-emacs-minimal
   (package
-   (name "emacs-bedrock-base")
+   (name "emacs-elementaryx-base")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-base")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-base")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Base setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Base setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "4b6c61108ae96f096142b12cf84c6bf486ac6a37")))
+                    (commit "0029f2289c33deb63f83aa2d6c7154a2096272e9")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "187vgfs9i14h3nh0y8dv4mfvnxrcwdv2shyrx142kswmlhllpp6v"))))
+                "19xyxjkw08wmcgy2yjn5111qvbn7v6ss1p78qazl4i0z75hxpzlv"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
-           emacs-bedrock-minimal
+           emacs-elementaryx-minimal
            emacs-cape
            emacs-consult
            emacs-consult-xdg-recent-files
@@ -315,100 +315,100 @@ a source code input file.")
            emacs-wgrep
            ripgrep))))
 
-;; emacs-bedrock-base with emacs instead of emacs-minimal
+;; emacs-elementaryx-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-base
-  (emacs-instead-of-emacs-minimal emacs-bedrock-base-with-emacs-minimal))
+(define-public emacs-elementaryx-base
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-base-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-org-minimal publicly defined below instead
-;; Note that this package is a common minimalist basis for both emacs-bedrock-org and emacs-bedrock-ox
-(define emacs-bedrock-org-minimal-with-emacs-minimal
+;; Use emacs-elementaryx-org-minimal publicly defined below instead
+;; Note that this package is a common minimalist basis for both emacs-elementaryx-org and emacs-elementaryx-ox
+(define emacs-elementaryx-org-minimal-with-emacs-minimal
   (package
-   (name "emacs-bedrock-org-minimal")
+   (name "emacs-elementaryx-org-minimal")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-org-minimal")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "39a5845274c5ac21ba17dfd1b52080d690890736")))
+                    (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "088vcyj26jl1v8q86l1xbqs2cfacwnj4rk5919dscf4cf9p4gmzv"))))
+                "1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
            graphviz))))
 
-;; emacs-bedrock-org-minimal with emacs instead of emacs-minimal
+;; emacs-elementaryx-org-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-org-minimal
-  (emacs-instead-of-emacs-minimal emacs-bedrock-org-minimal-with-emacs-minimal))
+(define-public emacs-elementaryx-org-minimal
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-org-minimal-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-org publicly defined below instead
-(define emacs-bedrock-org-with-emacs-minimal
+;; Use emacs-elementaryx-org publicly defined below instead
+(define emacs-elementaryx-org-with-emacs-minimal
   (package
-   (name "emacs-bedrock-org")
+   (name "emacs-elementaryx-org")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-org")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. org-mode setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. org-mode setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "098671ac62b24641e02fa8a4cc32dfd732fb6764")))
+                    (commit "1492c2d57513a6603ad892e4739aad00052f3f66")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1j87k8582qcj5ipf1grj73ps5wm15m7yyg0wkpsripin3z2mds4m"))))
+                "14yi7gdavlyf6w4nm2ghqaqdkcl9ny7s9cfrrhmwn54s48lcfxgy"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-base
-           emacs-bedrock-org-minimal
+     (list emacs-elementaryx-base
+           emacs-elementaryx-org-minimal
            emacs-consult-org-roam
            emacs-org-ql ;; for a better speed (to be investigated)
            emacs-org-roam
            ;; emacs-org-roam-ui
            ))))
 
-;; emacs-bedrock-org with emacs instead of emacs-minimal
+;; emacs-elementaryx-org with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-org
-  (emacs-instead-of-emacs-minimal emacs-bedrock-org-with-emacs-minimal))
+(define-public emacs-elementaryx-org
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-org-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-dev-minimal publicly defined below instead
-(define emacs-bedrock-dev-minimal-with-emacs-minimal
+;; Use emacs-elementaryx-dev-minimal publicly defined below instead
+(define emacs-elementaryx-dev-minimal-with-emacs-minimal
   (package
-   (name "emacs-bedrock-dev-minimal")
+   (name "emacs-elementaryx-dev-minimal")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev-minimal")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev minimal setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-minimal")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev minimal setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev minimal setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev minimal setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "8bea28393a423fdf370af31f6e43767d87e63123")))
+                    (commit "644bacef2bd29222d6c53f376ee370d91318b366")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0jm1y1ic8pfsrljqs4w08f5q6vkzycw6ladsa5iirxspl0s07w1l"))))
+                "07mb73xgalv618k4ja4d3wbnb889mj4hrnsx1byc9y58sfrphjdq"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-base
+     (list emacs-elementaryx-base
            emacs-editorconfig
            emacs-json-mode
            emacs-magit
@@ -416,34 +416,34 @@ a source code input file.")
            openssh
            ))))
 
-;; emacs-bedrock-dev-minimal with emacs instead of emacs-minimal
+;; emacs-elementaryx-dev-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-dev-minimal
-  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-minimal-with-emacs-minimal))
+(define-public emacs-elementaryx-dev-minimal
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-minimal-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-dev publicly defined below instead
-(define emacs-bedrock-dev-with-emacs-minimal
+;; Use emacs-elementaryx-dev publicly defined below instead
+(define emacs-elementaryx-dev-with-emacs-minimal
   (package
-   (name "emacs-bedrock-dev")
+   (name "emacs-elementaryx-dev")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev full setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev full setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Dev full setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev full setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "05127e1b07415411ff3e94107a07b34f38491991")))
+                    (commit "bcea7304efa02d9243ce9347d69cced8fc9f1d81")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "18jra9bpd7ddkbk3pxrln6cd2jg6krca4m575pygzfc7pw9hj5b3"))))
+                "00ali1vj2006kfm0q20jfncdx3xwr1f2463axd5x79xhf70wvfjy"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-dev-minimal
+     (list emacs-elementaryx-dev-minimal
            ;; emacs-crdt
            bash
            ccls ;; c / c++ language server
@@ -471,89 +471,87 @@ a source code input file.")
            tree-sitter-typescript
            ))))
 
-;; emacs-bedrock-dev with emacs instead of emacs-minimal
+;; emacs-elementaryx-dev with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-dev
-  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-with-emacs-minimal))
+(define-public emacs-elementaryx-dev
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-dev-parentheses publicly defined below instead
-(define emacs-bedrock-dev-parentheses-with-emacs-minimal
+;; Use emacs-elementaryx-dev-parentheses publicly defined below instead
+(define emacs-elementaryx-dev-parentheses-with-emacs-minimal
   (package
-   (name "emacs-bedrock-dev-parentheses")
+   (name "emacs-elementaryx-dev-parentheses")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-dev-parentheses")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Setup for languages with parentheses or alike: lisp, scheme.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-parentheses")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup for languages with parentheses or alike: lisp, scheme.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs
-experience. Setup for languages with parentheses or alike: lisp,
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup for languages with parentheses or alike: lisp,
 scheme.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "083614ad5884daae5888705532c42b685a08e780")))
+                    (commit "77918117de2f4a7de8fd72fa86c5371f5239092b")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0ma4ayvc048l1i407lr6bhk0wvv5y5sml2ximrimn3q7bb8d7qh2"))))
+                "0z0fhkrbjxfbkpl7f9fdb68qzax9liypml9c7b9vzxr9gcvcqj0h"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-geiser-guile
            emacs-paredit))))
 
-;; emacs-bedrock-dev-parentheses with emacs instead of emacs-minimal
+;; emacs-elementaryx-dev-parentheses with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-dev-parentheses
-  (emacs-instead-of-emacs-minimal emacs-bedrock-dev-parentheses-with-emacs-minimal))
+(define-public emacs-elementaryx-dev-parentheses
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-parentheses-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-write publicly defined below instead
-(define emacs-bedrock-write-with-emacs-minimal
+;; Use emacs-elementaryx-write publicly defined below instead
+(define emacs-elementaryx-write-with-emacs-minimal
   (package
-   (name "emacs-bedrock-write")
+   (name "emacs-elementaryx-write")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-write")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Write setup.")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-write")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Write setup.")
    (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Write setup.")
+    "ElementaryX: Elementary Emacs configuration coupled with Guix Write setup.")
    (license license:cecill-c)
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "b9bc33db6da1ac1b872740c478a1d9967c43a703")))
+                  (commit "038765987d9175c5337088ff8d6a8c853823ad82")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "0x6i6pw1zyxr8gbkr701if778yhgzga08hkhf2m2c9kg0ipisn3d"))))
+                "1zpxli3nlfrg3612653vprwrqphzs08vppcn36air6y8qqnl5wjn"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
           aspell-dict-en
           aspell-dict-fr
-          emacs-bedrock-base
+          emacs-elementaryx-base
           emacs-citar
           emacs-citar-org-roam
           emacs-jinx))))
 
-;; emacs-bedrock-write with emacs instead of emacs-minimal
+;; emacs-elementaryx-write with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-write
-  (emacs-instead-of-emacs-minimal emacs-bedrock-write-with-emacs-minimal))
+(define-public emacs-elementaryx-write
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-write-with-emacs-minimal))
 
-(define-public emacs-bedrock-ox-latex-minimal
+(define-public emacs-elementaryx-ox-latex-minimal
   (package
-    (name "emacs-bedrock-ox-latex-minimal")
+    (name "emacs-elementaryx-ox-latex-minimal")
     (version "1.4.0")
     (arguments
      `(#:builder (mkdir (assoc-ref %outputs "out"))))
     (source #f)
     (build-system trivial-build-system)
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal dependencies for org-mode latex export (ox-latex).")
-    (description "Emacs bedrock starter kit. Stepping stones to a better Emacs
-experience. Minimal dependencies for org-mode latex export (ox-latex). Provides both rubber and latexmk build systems." )
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal dependencies for org-mode latex export (ox-latex).")
+    (description "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal dependencies for org-mode latex export (ox-latex). Provides both rubber and latexmk build systems." )
     (home-page "dummy")
     (license #f)
     (propagated-inputs
@@ -578,87 +576,87 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            rubber))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox-beamer-minimal publicly defined below instead
-(define emacs-bedrock-ox-beamer-minimal-with-emacs-minimal
+;; Use emacs-elementaryx-ox-beamer-minimal publicly defined below instead
+(define emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox-beamer-minimal")
+    (name "emacs-elementaryx-ox-beamer-minimal")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-beamer-minimal")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode latex beamer (ox-beamer) setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-beamer-minimal")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal org-mode latex beamer (ox-beamer) setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode latex beamer (ox-beamer) setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal org-mode latex beamer (ox-beamer) setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "fb0a17ae31385cb070057065f0805ba14615b2b4")))
+                    (commit "7bd8db55fbe034aa0c3d96ee0557863b21a576b6")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "159sf04wsvf9wsdb21fr6jd4xfw3h96adpylrfvkvfb6ppwy4fj9"))))
+                "17b4a66mhppvmyr9plb0gy2xzc5v5aas7zpzbga7ab7db8g6pdfp"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-ox-latex-minimal
+     (list emacs-elementaryx-ox-latex-minimal
            texlive-beamer))))
 
-;; emacs-bedrock-ox-beamer-minimal with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox-beamer-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox-beamer-minimal
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-beamer-minimal-with-emacs-minimal))
+(define-public emacs-elementaryx-ox-beamer-minimal
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox-base publicly defined below instead
-(define emacs-bedrock-ox-base-with-emacs-minimal
+;; Use emacs-elementaryx-ox-base publicly defined below instead
+(define emacs-elementaryx-ox-base-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox-base")
+    (name "emacs-elementaryx-ox-base")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-base")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Base org export (ox) setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-base")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Base org export (ox) setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Minimal org-mode latex beamer (ox-beamer) setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal org-mode latex beamer (ox-beamer) setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "955846e1ccdaf02c949a2db0972a091a5b276b5b")))
+                    (commit "66e237d3ebc52b54d932bb74828ae284cad1b46a")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "07g5g11pprid1113nl6qv7hjbgh076d4i6ysl46yx1la1fkc0p9s"))))
+                "0a8fhx4y2dv841j3j6zqjvppwb3qw5lj234hr7l6vp5phpja7n8n"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-org-minimal
+     (list emacs-elementaryx-org-minimal
            emacs-lob-ob-latexpicture
            emacs-ob-latexmacro
            emacs-ob-latexpicture))))
 
-;; emacs-bedrock-ox-base with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox-base
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-base-with-emacs-minimal))
+(define-public emacs-elementaryx-ox-base
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-base-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox-latex-classes publicly defined below instead
-(define emacs-bedrock-ox-latex-classes-with-emacs-minimal
+;; Use emacs-elementaryx-ox-latex-classes publicly defined below instead
+(define emacs-elementaryx-ox-latex-classes-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox-latex-classes")
+    (name "emacs-elementaryx-ox-latex-classes")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-latex-classes")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Latex classes for org export (ox) setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-latex-classes")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Latex classes for org export (ox) setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Latex classes for org export (ox) setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix Latex classes for org export (ox) setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "58ecac7d123796f03f3be764f29d98a4520f1e96")))
+                    (commit "600a252561470394ef29f6de125cc3faf7f1e53c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0416f4m9rrvkakvrnlrs9z3n5648rw7zcrqmsvx12h0snb75f1dm"))))
+                "0d5a65whb98lkdcf16g4l54i2qrnrsgnb1ild4s9dij9dlq2c09d"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-org
@@ -666,21 +664,21 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            ;; small granularity; consider texlive-collection-publishers for a superset
            texlive-acmconf
            texlive-acmart
-           texlive-algorithms ;; for siamart220329 from texlive-bedrock
+           texlive-algorithms ;; for siamart220329 from texlive-elementaryx
            texlive-anonymous-acm
            texlive-biblatex-apa ;; typically nice in beamer presentations (#+cite_export: biblatex apa)
            ;; texlive-biblatex-apa6 ;; check apa vs apa6 vs apa7 vs apacite
-           texlive-beamerposter ;; for inriaposter in texlive-bedrock
-           texlive-bedrock ;; See above definition (!): guix, inria, siam
+           texlive-beamerposter ;; for inriaposter in texlive-elementaryx
+           texlive-elementaryx ;; See above definition (!): guix, inria, siam
            texlive-booktabs ;; for texlive-acmart
            texlive-caption ;; for texlive-acmart
-           texlive-cleveref ;; for siamart220329 from texlive-bedrock
+           texlive-cleveref ;; for siamart220329 from texlive-elementaryx
            texlive-cmap ;; for texlive-acmart
-           texlive-cm-super ;; for guix theme in texlive-bedrock
+           texlive-cm-super ;; for guix theme in texlive-elementaryx
            texlive-comment ;; for texlive-acmart
            texlive-environ ;; for texlive-acmart
-           texlive-euler ;; for compas from texlive-bedrock
-           texlive-helvetic ;; for beamerthemeguix from texlive-bedrock
+           texlive-euler ;; for compas from texlive-elementaryx
+           texlive-helvetic ;; for beamerthemeguix from texlive-elementaryx
            texlive-hyperxmp ;; for texlive-acmart
            texlive-ieeeconf
            texlive-ieeetran ;; https://ctan.tetaneutral.net/macros/latex/contrib/IEEEtran/IEEEtran_HOWTO.pdf
@@ -690,48 +688,48 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            texlive-llncsconf
            texlive-microtype ;; for texlive-acmart
            texlive-ncctools ;; for texlive-acmart (for manyfoot; TODO checkout bigfoot)
-           texlive-ntheorem ;; for siamart220329 from texlive-bedrock
-           texlive-palatino ;; for compas from texlive-bedrock
+           texlive-ntheorem ;; for siamart220329 from texlive-elementaryx
+           texlive-palatino ;; for compas from texlive-elementaryx
            texlive-setspace ;; for texlive-acmart
-           texlive-shadow ;; for compas from texlive-bedrock
+           texlive-shadow ;; for compas from texlive-elementaryx
            texlive-textcase ;; for texlive-acmart
-           texlive-type1cm ;; for beamerposter requested by inriaposter in texlive-bedrock
+           texlive-type1cm ;; for beamerposter requested by inriaposter in texlive-elementaryx
            texlive-times ;; for texlive-ieeetran
            texlive-totpages ;; for texlive-acmart
            ;; TODO SIAM
            ;;texlive-XXX
            ))))
 
-;; emacs-bedrock-ox-latex-classes with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox-latex-classes with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox-latex-classes
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-latex-classes-with-emacs-minimal))
+(define-public emacs-elementaryx-ox-latex-classes
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-latex-classes-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox-latex publicly defined below instead
-(define emacs-bedrock-ox-latex-with-emacs-minimal
+;; Use emacs-elementaryx-ox-latex publicly defined below instead
+(define emacs-elementaryx-ox-latex-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox-latex")
+    (name "emacs-elementaryx-ox-latex")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-latex")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode latex (ox-latex) setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-latex")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex (ox-latex) setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode latex (ox-latex) setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex (ox-latex) setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f8c26a64788b280518e9d7a1d4cf13ac44acaaaf")))
+                    (commit "8bc0166b90077dcc714d61fe3c79ce63f907f1f8")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0scw1lzli48cw450p9kbxrr7nxln89xlpxaljm3k52mr3hkr3532"))))
+                "19cjm93bsh8mghb29s5v1zhs9nn8wfb7iicncr1mgs7sjx5a1mm1"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-ox-base
-           emacs-bedrock-ox-latex-classes
-           emacs-bedrock-ox-latex-minimal
+     (list emacs-elementaryx-ox-base
+           emacs-elementaryx-ox-latex-classes
+           emacs-elementaryx-ox-latex-minimal
            python          ;; for minted
            python-pygments ;; for minted
            texlive-algorithm2e
@@ -749,21 +747,21 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
            texlive-pgf ;; pgd/tikz
            texlive-trimspaces))))
 
-;; emacs-bedrock-ox-latex with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox-latex with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox-latex
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-latex-with-emacs-minimal))
+(define-public emacs-elementaryx-ox-latex
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-latex-with-emacs-minimal))
 
 ;; ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; ;; Use emacs-bedrock-ox-beamer publicly defined below instead
-;; (define emacs-bedrock-ox-beamer-with-emacs-minimal
+;; ;; Use emacs-elementaryx-ox-beamer publicly defined below instead
+;; (define emacs-elementaryx-ox-beamer-with-emacs-minimal
 ;;   (package
-;;     (name "emacs-bedrock-ox-beamer")
+;;     (name "emacs-elementaryx-ox-beamer")
 ;;     (version "1.4.0")
-;;     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-beamer")
-;;     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode latex beamer (ox-beamer) setup.")
+;;     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-beamer")
+;;     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex beamer (ox-beamer) setup.")
 ;;     (description
-;;      "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode latex beamer (ox-beamer) setup.")
+;;      "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex beamer (ox-beamer) setup.")
 ;;     (license license:cecill-c)
 ;;     (source (origin
 ;;               (method git-fetch)
@@ -776,199 +774,199 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 ;;              "0i7ir3dmi053bzczv3fh37yxbmi02cf4hb2wlpddvzwns02ss1zs"))))
 ;;     (build-system emacs-build-system)
 ;;     (propagated-inputs
-;;      (list emacs-bedrock-ox-beamer-minimal
-;;            emacs-bedrock-ox-latex))))
+;;      (list emacs-elementaryx-ox-beamer-minimal
+;;            emacs-elementaryx-ox-latex))))
 
-;; ;; emacs-bedrock-ox-beamer with emacs instead of emacs-minimal
+;; ;; emacs-elementaryx-ox-beamer with emacs instead of emacs-minimal
 ;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-;; (define-public emacs-bedrock-ox-beamer
-;;   (emacs-instead-of-emacs-minimal emacs-bedrock-ox-beamer--with-emacs-minimal))
+;; (define-public emacs-elementaryx-ox-beamer
+;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-beamer--with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox-latex publicly defined below instead
-(define emacs-bedrock-ox-html-with-emacs-minimal
+;; Use emacs-elementaryx-ox-latex publicly defined below instead
+(define emacs-elementaryx-ox-html-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox-html")
+    (name "emacs-elementaryx-ox-html")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-html")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode html (ox-html) setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-html")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode html (ox-html) setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode html (ox-html) setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode html (ox-html) setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "5d7d15fd9b80cbf2a303c1543e9f57c63f2a6d4b")))
+                    (commit "a0a2892039759e83977b1bd9cb95323692287325")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0hsx95f1i9aipjvkr125fpyql43fyqz272k3kmzbp2bpi7c1agi9"))))
+                "0j0cdpx18j4q2x02inzbkw09h9b0xb22dpskc7shcz5fw17lznd7"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-ox-base
+     (list emacs-elementaryx-ox-base
            emacs-citeproc-el
            emacs-htmlize))))
 
-;; emacs-bedrock-ox-html with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox-html with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox-html
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-html-with-emacs-minimal))
+(define-public emacs-elementaryx-ox-html
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-html-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox publicly defined below instead
-(define emacs-bedrock-ox-with-emacs-minimal
+;; Use emacs-elementaryx-ox publicly defined below instead
+(define emacs-elementaryx-ox-with-emacs-minimal
   (package
-   (name "emacs-bedrock-ox")
+   (name "emacs-elementaryx-ox")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode export (ox) setup.")
    (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode export (ox) setup.")
+    "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode export (ox) setup.")
    (license license:cecill-c)
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "7a4f0e715679d282f571687f423f87f687cb0c6e")))
+                  (commit "ed014f91ca8617e351304110fabcfd88c6332537")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0rwl6g8lggrj705pvvpa6jgrrvrj38pcrsp48fgi98da6p27y1ar"))))
+              "1xy97zid5jsd40jyw7wf7919qfdf30sxy3myccargh4lnkg1fc7b"))))
    (build-system emacs-build-system)
    (propagated-inputs
-    (list emacs-bedrock-ox-beamer-minimal
-          emacs-bedrock-ox-html
-          emacs-bedrock-ox-latex
+    (list emacs-elementaryx-ox-beamer-minimal
+          emacs-elementaryx-ox-html
+          emacs-elementaryx-ox-latex
           emacs-org-re-reveal))))
 
-;; emacs-bedrock-ox with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-with-emacs-minimal))
+(define-public emacs-elementaryx-ox
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-ox-publish publicly defined below instead
-(define emacs-bedrock-ox-publish-with-emacs-minimal
+;; Use emacs-elementaryx-ox-publish publicly defined below instead
+(define emacs-elementaryx-ox-publish-with-emacs-minimal
   (package
-    (name "emacs-bedrock-ox-publish")
+    (name "emacs-elementaryx-ox-publish")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-publish")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode publish (ox-publish) setup.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-publish")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode publish (ox-publish) setup.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. org-mode publish (ox-publish) setup.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode publish (ox-publish) setup.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "80c2e58e809fc1654b9911fe72ccc04581eb1b7e")))
+                    (commit "317ea5f066ef195857676b0086631b0bdb772646")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1f28bcamcz00scah8q68yzsl3l1xx2wj5yb5cb5xamnlv7myd4fa"))))
+                "0f2a6rlps1pim19q1bqzaj71ldi2qb7w2ymk412xkrry9mg6a4wr"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock-ox))))
+     (list emacs-elementaryx-ox))))
 
-;; emacs-bedrock-ox-publish with emacs instead of emacs-minimal
+;; emacs-elementaryx-ox-publish with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-ox-publish
-  (emacs-instead-of-emacs-minimal emacs-bedrock-ox-publish-with-emacs-minimal))
+(define-public emacs-elementaryx-ox-publish
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-publish-with-emacs-minimal))
 
-(define-public emacs-bedrock-ox-publish-as-default
+(define-public emacs-elementaryx-ox-publish-as-default
   (package
-   (name "emacs-bedrock-ox-publish-as-default")
+   (name "emacs-elementaryx-ox-publish-as-default")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-ox-publish-default")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file for export-only + publish bedrock setup together with a vanilla emacs IDE.")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-publish-default")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el startup file for export-only + publish elementaryx setup together with a vanilla emacs IDE.")
    (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el startup file for export-only + publish bedrock setup together with a vanilla emacs IDE.")
+    "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el startup file for export-only + publish elementaryx setup together with a vanilla emacs IDE.")
    (license license:cecill-c)
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "2a4d63920087275d97707ede8272f662895e604c")))
+                  (commit "b5b8225bdec1c7bdbb79b2d0b1b45a114f6eb08e")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "00m1j74jfhk5a7znabpl7qag87j25jry2rkc387lk49kj1x0s8ap"))))
+              "0k7cz6xinq1p4qsh9f47v6spzhsz4naahq60xf1c3hcjsrkkgxc1"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs
-          emacs-bedrock-ox-publish))))
+          emacs-elementaryx-ox-publish))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-bedrock-full publicly defined below instead
-(define emacs-bedrock-full-with-emacs-minimal
+;; Use emacs-elementaryx-full publicly defined below instead
+(define emacs-elementaryx-full-with-emacs-minimal
   (package
-   (name "emacs-bedrock-full")
+   (name "emacs-elementaryx-full")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-full")
-   (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-full")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Full setup.")
    (description
-    "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Full setup.")
+    "ElementaryX: Elementary Emacs configuration coupled with Guix Full setup.")
    (license license:cecill-c)
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "f783ba0e257bd8d2d21b7199d57ebd4c279b1b1a")))
+                  (commit "2103c795a75e7b3c0d613713934c19b0974abfd4")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0phy92cdk2m4xmk35m66mdcm1zy07rpghxzn7yqhsxlvq6lmm5lq"))))
+              "1rxvvxsbya7dzn0cpjxkmb8mnkh7gyg9gqd579bg8szacvibh6bh"))))
    (build-system emacs-build-system)
    (propagated-inputs
-    (list emacs-bedrock-dev
-          emacs-bedrock-dev-parentheses
-          emacs-bedrock-org
-          emacs-bedrock-ox-publish
-          emacs-bedrock-write))))
+    (list emacs-elementaryx-dev
+          emacs-elementaryx-dev-parentheses
+          emacs-elementaryx-org
+          emacs-elementaryx-ox-publish
+          emacs-elementaryx-write))))
 
-;; emacs-bedrock-full with emacs instead of emacs-minimal
+;; emacs-elementaryx-full with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-bedrock-full
-  (emacs-instead-of-emacs-minimal emacs-bedrock-full-with-emacs-minimal))
+(define-public emacs-elementaryx-full
+  (emacs-instead-of-emacs-minimal emacs-elementaryx-full-with-emacs-minimal))
 
-(define-public emacs-bedrock
+(define-public emacs-elementaryx
   (package
-   (inherit emacs-bedrock-full)
-   (name "emacs-bedrock")))
+   (inherit emacs-elementaryx-full)
+   (name "emacs-elementaryx")))
 
-(define-public emacs-bedrock-as-default
+(define-public emacs-elementaryx-as-default
   (package
-   (name "emacs-bedrock-as-default")
+   (name "emacs-elementaryx-as-default")
     (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-default")
-    (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el starup file.")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-default")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el starup file.")
     (description
-     "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a default.el startup file.")
+     "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el startup file.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "44865d853840a1c68088152d19c94b11f2ad4c2c")))
+                    (commit "69ef643114f36ba4297f131d169a92736d2c6740")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1i8yg11cskrmscmjdg301q7j1ypss52nydymmykbaaiygilq2yzy"))))
+                "0mc3w4bzdgxj6cz9lz3g6d4jnfpflahj49x8c34qi9wq4srah42h"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-bedrock))))
+     (list emacs-elementaryx))))
 
 ;; site-start.el is already deployed by guix.
 ;; As a consequence the following package would have no effect.
-;; (define-public emacs-bedrock-as-site-start
+;; (define-public emacs-elementaryx-as-site-start
 ;;   (package
-;;    (name "emacs-bedrock-as-site-start")
+;;    (name "emacs-elementaryx-as-site-start")
 ;;     (version "1.4.0")
-;;     (home-page "https://gitlab.inria.fr/compose/include/emacs-bedrock/emacs-bedrock-site-start")
-;;     (synopsis "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a site-start.el starup file.")
+;;     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-site-start")
+;;     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a site-start.el starup file.")
 ;;     (description
-;;      "Emacs bedrock starter kit. Stepping stones to a better Emacs experience. Add a site-start.el startup file.")
+;;      "ElementaryX: Elementary Emacs configuration coupled with Guix Add a site-start.el startup file.")
 ;;     (license license:cecill-c)
 ;;     (source (origin
 ;;               (method git-fetch)
@@ -981,7 +979,7 @@ experience. Minimal dependencies for org-mode latex export (ox-latex). Provides 
 ;;              "0xk3jq6l2h1jb8ya8pmsgk5dfx7gwfwzsiczkfj7rkiqvzkin0mp"))))
 ;;     (build-system emacs-build-system)
 ;;     (propagated-inputs
-;;      (list emacs-bedrock))))
+;;      (list emacs-elementaryx))))
 
 (define-public emacs-ob-compose-latexpicture
   (package
