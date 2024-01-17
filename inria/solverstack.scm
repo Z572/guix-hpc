@@ -739,13 +739,23 @@ is implemented in MPI.")
     (arguments
      '(#:configure-flags '("-DMAPHYSPP_USE_EIGEN=OFF"
                            "-DMAPHYSPP_USE_FABULOUS=ON"
-                           "-DMAPHYSPP_USE_PADDLE=ON")
+                           "-DMAPHYSPP_USE_PADDLE=ON"
+                           "-DMAPHYSPP_USE_CHAMELEON=ON"
+                           "-DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON")
+
        #:phases (modify-phases %standard-phases
+                  ;; Allow tests with more MPI processes than available CPU cores,
+                  ;; which is not allowed by default by OpenMPI
                   (add-before 'check 'prepare-test-environment
                     (lambda _
-                      ;; Allow tests with more MPI processes than available CPU cores,
-                      ;; which is not allowed by default by OpenMPI
-                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))))
+                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t))
+                  ;; Some of the tests use StarPU, which expects $HOME
+                  ;; to be writable.
+                  (add-before 'check 'set-home
+                     (lambda _
+                       (setenv "HOME"
+                               (getcwd)) #t)))))
+
     (build-system cmake-build-system)
     (inputs (list blaspp
                   lapackpp
@@ -754,8 +764,9 @@ is implemented in MPI.")
                   mumps-openmpi
                   arpack-ng-3.9
                   paddle
-                  fabulous))
-    (propagated-inputs (list openmpi))
+                  fabulous
+                  chameleon+nompi))
+    (propagated-inputs (list `(,hwloc "lib") openmpi))
     (native-inputs (list gfortran pkg-config openssh))
     (properties '((tunable? . #t)))))
 
