@@ -822,7 +822,7 @@ is implemented in MPI.")
 (define-public blaspp
   (package
     (name "blaspp")
-    (version "2023.08.25")
+    (version "2023.11.05")
     (home-page "https://github.com/icl-utk-edu/blaspp")
     (synopsis "C++ API for the Basic Linear Algebra Subroutines")
     (description
@@ -838,10 +838,10 @@ such as: namespaces, templates, exceptions, etc.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "f8f983d5b45a8f366aae41fbe9888b14cbae20f8")))
+             (commit "3c47832f5162b5215b2164c21c4132544c65563d")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1kh76xic7k0k6yidlz6mm474r56mliys3blr7cb0nvlakyvs59p5"))))
+        (base32 "1k3d3v5yig42sksydwjz2dhj3jaslyr424kz76jcjfnvv2n94pi9"))))
     (arguments
      '(#:configure-flags '("-Dbuild_tests=OFF")
        #:tests? #f))
@@ -854,7 +854,7 @@ such as: namespaces, templates, exceptions, etc.")
 (define-public lapackpp
   (package
     (name "lapackpp")
-    (version "2023.08.25")
+    (version "2023.11.05")
     (home-page "https://github.com/icl-utk-edu/lapackpp")
     (synopsis "C++ API for the Linear Algebra PACKage")
     (description
@@ -869,10 +869,10 @@ etc.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "62680a16a9aba2a426e3d089dd13e18bfd140c74")))
+             (commit "e3aa0156b873d1e1349d083d7e5b66cfbdf9fb08")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "154ysqhp3mn44zw2qy800hz09f3v1h8ck11xqa9mzvxzn1j3rcy6"))))
+        (base32 "1nyvsz24xp3116pikml98dmxl8iajm2kqj4g14rfg9rryhk72cx8"))))
     (arguments
      '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF" "-Dbuild_tests=OFF")
        #:tests? #f))
@@ -1509,7 +1509,7 @@ to/from all other processes.")))
 (define-public arpack-ng-3.9
   (package
     (name "arpack-ng-3.9")
-    (version "3.9.0")
+    (version "3.9.1")
     (home-page "https://github.com/opencollab/arpack-ng")
     (source
      (origin
@@ -1519,7 +1519,7 @@ to/from all other processes.")))
              (commit version)))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "09smxilyn8v9xs3kpx3nlj2s7ql3v8z40mpc09kccbb6smyd35iv"))))
+        (base32 "0bbw6a48py9fjlif2n4x75skyjskq2hghffjqzm85wnsnsjdlaqw"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DICB=ON")))
