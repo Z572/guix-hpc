@@ -803,7 +803,7 @@ is implemented in MPI.")
                      "-DMAPHYSPP_COMPILE_EXAMPLES=OFF"
                      "-DMAPHYSPP_COMPILE_TESTS=ON"))))
 
-    (inputs (modify-inputs (package-inputs maphys)
+    (inputs (modify-inputs (package-inputs maphys++)
               (delete "mumps" "paddle" "fabulous")))))
 
 ;; maphys++ with librsb for sparse matrix operations
