@@ -713,7 +713,7 @@ and deflated restarting")
 (define-public maphys++
   (package
     (name "maphys++")
-    (version "1.1.8")
+    (version "1.1.9")
     (home-page "https://gitlab.inria.fr/solverstack/maphys/maphyspp.git")
     (synopsis "Sparse matrix hybrid solver")
     (description
@@ -730,12 +730,12 @@ is implemented in MPI.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "03558fbfa85b41582bfe30e37d5b3220c37f9863")
+             (commit "60cd08db32a2369212f494a2b81d8588cc78602f")
              ;; We need the submodule in 'cmake_modules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1gbb26v92bis487kg4pl47jzhrqls16x834yn9n4bd99yd7clb8b"))))
+        (base32 "0gvaxj39dvm8xqcz6n03rsnggzi7djmdh5xim0bfv0fpwrzbjx1i"))))
     (arguments
      '(#:configure-flags '("-DMAPHYSPP_USE_EIGEN=OFF"
                            "-DMAPHYSPP_USE_FABULOUS=ON"
