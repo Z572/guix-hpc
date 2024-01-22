@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017-2023 Inria
+;;; Copyright © 2017-2024 Inria
 
 (define-module (inria storm)
   #:use-module (guix)
@@ -26,6 +26,7 @@
   #:use-module (inria llvm)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
+  #:use-module (amd rocm-hip)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 match))
 
@@ -199,34 +200,58 @@ kernels are executed as efficiently as possible.")
     (name "starpu")
     (version "1.4.2")
     (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   (url %starpu-git)
-                   (commit (string-append "starpu-" version))))
-             (file-name (git-file-name name version))
-             (sha256
-              (base32 "0k8dq8hj03b2g28hcs6jgdp8afv40p8m9143af3z9m4hliad43ck"))
-             (patches (search-patches %patch-path))))
-   (arguments
-    (substitute-keyword-arguments (package-arguments starpu-1.3)
-      ((#:configure-flags _ '())
-       (starpu-configure-flags this-package))
-      ((#:phases phases '())
-       (append phases '((add-after 'patch-source-shebangs 'fix-hardcoded-paths
-                          (lambda _
-                            (substitute* "min-dgels/base/make.inc"
-                              (("/bin/sh")  (which "sh")))
-                            #t)))))))
-   (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.3)
-                         (delete "openmpi-mpi1-compat" "hwloc")
-                         (prepend openmpi
-                                  `(,hwloc "lib") ;hwloc 2.x
-                                  )))))
+              (method git-fetch)
+              (uri (git-reference
+                    (url %starpu-git)
+                    (commit (string-append "starpu-" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32 "0k8dq8hj03b2g28hcs6jgdp8afv40p8m9143af3z9m4hliad43ck"))
+              (patches (search-patches %patch-path))
+              (modules '((guix build utils)))
+              (snippet
+               #~(begin
+                   ;; Fix headers that mistakenly assume that STARPU_USE_HIP
+                   ;; implies STARPU_USE_HIPBLAS.
+                   (substitute* "include/starpu_hip.h"
+                     (("#include <hipblas.*" all)
+                      (string-append "#if STARPU_USE_HIPBLAS\n" all
+                                     "\n#endif\n")))
+                   (substitute* "include/starpu_hipblas.h"
+                     (("#ifndef STARPU_USE_HIP")
+                      "#ifndef STARPU_USE_HIPBLAS\n"))
+                   (substitute* "src/drivers/hip/starpu_hipblas.c"
+                     (("#ifdef STARPU_USE_HIP")
+                      "#if (defined STARPU_USE_HIP) && (defined STARPU_USE_HIPBLAS)\n"))))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments starpu-1.3)
+       ((#:configure-flags _ '())
+        (starpu-configure-flags this-package))
+       ((#:phases phases '())
+        (append phases '((add-after 'patch-source-shebangs 'fix-hardcoded-paths
+                           (lambda _
+                             (substitute* "min-dgels/base/make.inc"
+                               (("/bin/sh")  (which "sh")))
+                             #t)))))))
+    (propagated-inputs  (modify-inputs (package-propagated-inputs starpu-1.3)
+                          (delete "openmpi-mpi1-compat" "hwloc")
+                          (prepend openmpi
+                                   `(,hwloc "lib") ;hwloc 2.x
+                                   )))))
 
 ; next release of StarPU will have an optional dependency on tadaam/mpi_sync_clocks: don't forget to add it !
 
 (define-public starpu
   starpu-1.4)
+
+(define-public starpu-hip
+  (package
+    (inherit starpu)
+    (name "starpu-hip")
+    (inputs (modify-inputs (package-inputs starpu)
+              (append hipamd-5.7)))
+    (synopsis
+     "Run-time system for heterogeneous computing (with AMD HIP support)")))
 
 (define-public starpu+fxt
   ;; When FxT support is enabled, performance is degraded, hence the separate
