@@ -83,3 +83,31 @@ the simulation code is annotated in a library-agnostic way,
 libraries are used from the specification tree.")
     (home-page "https://pdi.dev")
     (license license:bsd-3)))
+
+(define-public paraconf
+  (package
+    (name "paraconf")
+    (version "1.0.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/pdidev/paraconf")
+             (commit version)))
+       (sha256
+        (base32 "062jqhx0fpf4sspnz131408272brpqdcimcwmrv8ynykchgma44m"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+				;; don't use vendored dependencies
+                                "-DUSE_DEFAULT=SYSTEM")))
+    (native-inputs (list pkg-config gfortran))
+    (inputs (list libyaml))
+    (synopsis
+     "Library providing a simple query language to access a Yaml tree")
+    (description
+     "Paraconf is a library that provides a simple query language to access
+a Yaml tree on top of libyaml.")
+    (home-page "https://github.com/pdidev/paraconf")
+    (license license:bsd-3)))
