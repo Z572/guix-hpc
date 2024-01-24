@@ -51,6 +51,7 @@
                                 "-DUSE_GTest=SYSTEM"
                                 "-DUSE_HDF5=SYSTEM"
                                 "-DUSE_pybind11=SYSTEM"
+                                "-DUSE_paraconf=SYSTEM"
                                 "-DUSE_spdlog=SYSTEM"
                                 "-DUSE_yaml=SYSTEM")
       #:phases #~(modify-phases %standard-phases
@@ -74,8 +75,9 @@
                   hdf5-parallel-openmpi
                   pybind11
                   libyaml
-                  pkg-config))
-    (native-inputs (list openssh)) ;; for tests
+                  pkg-config
+                  paraconf))
+    (native-inputs (list openssh)) ;for tests
     (synopsis "A library allowing loose coupling between components.")
     (description
      "PDI supports loose coupling of simulation codes with data handling
