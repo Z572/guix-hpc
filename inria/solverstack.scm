@@ -675,28 +675,27 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
 (define-public fabulous
   (package
     (name "fabulous")
-    (version "1.1.2")
+    (version "1.1.3")
     (home-page "https://gitlab.inria.fr/solverstack/fabulous")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             ;; release-1.1.2 branch
-             (commit "5c737d31291ae8dc72983e00d4c05929756e2121")
+             (commit "0cdaf28fef3f5ab6f3177ef76099f7dc831edf4e")
              ;; We need the submodule in 'cmake_modules/morse'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1w7gnj9skz8ls9nwy8fn08iw73z95gk8ialblsskfyax801n1j1x"))))
+        (base32 "18lqas3015n0pblp6pmjcpagpfh2b4z8kxlzyz67h9kadnifm4mq"))))
     (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags '("-DFABULOUS_BUILD_C_API=ON"
+     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
+			   "-DFABULOUS_BUILD_C_API=ON"
                            "-DFABULOUS_BUILD_Fortran_API=ON"
-                           "-DCMAKE_EXE_LINKER_FLAGS=-lstdc++"
+                           ;; "-DCMAKE_EXE_LINKER_FLAGS=-lstdc++"
                            "-DFABULOUS_LAPACKE_NANCHECK=OFF"
                            "-DFABULOUS_USE_CHAMELEON=OFF"
-                           "-DBUILD_SHARED_LIBS=ON"
                            "-DFABULOUS_BUILD_EXAMPLES=ON"
                            "-DFABULOUS_BUILD_TESTS=OFF")
        #:tests? #f))
