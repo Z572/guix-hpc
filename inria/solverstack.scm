@@ -420,12 +420,12 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "c74bf0733a680c1e9f810d3f93ab09f49f181fb7")
+             (commit "d77e13e29c97f7b457c1c2302e7be4a60a2f4b43")
              ;; We need the submodule in 'CMakeModules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "0zy5sycyp9cz58749cm5sm625q84m2axwbsiq0ca46mz3jqxiny8"))))
+        (base32 "025ykrkjy9h364i8hnnm9j8686nr75hkmfyvgx9idk4r1bmlrrbr"))))
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon)
        ((#:configure-flags flags
