@@ -69,6 +69,15 @@
     (home-page "https://github.com/ROCmSoftwarePlatform/rocHPCG.git")
     (license bsd-3)))
 
+(define-public hpcg-sans-mpi
+  (package/inherit hpcg
+    (name "hpcg-sans-mpi")
+    (propagated-inputs
+     (modify-inputs (package-propagated-inputs hpcg)
+       (delete "openmpi")))
+    (synopsis
+     "ROCm version of the synthetic HPCG benchmark (without MPI support)")))
+
 (define-public babelstream-hip
   (package
     (name "babelstream-hip")
