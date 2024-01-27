@@ -860,11 +860,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "e2d1edee724ed2ecb32d36469e9678ac197c7c60")))
+                    (commit "de23a7b4f4ac29252a23b03c215c080693b9352e")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1gvfc351kaab6vyq84d3wly9k4bkda2zcjk22gagfj3iwpnhxy2x"))))
+                "1cb6lv3bw1zkwb3y6a5j5l441clm7219arjr8xc4w8pvnrwwjgh0"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox))))
