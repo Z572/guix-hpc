@@ -198,7 +198,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.3)
     (name "starpu")
-    (version "1.4.2")
+    (version "1.4.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -206,7 +206,7 @@ kernels are executed as efficiently as possible.")
                     (commit (string-append "starpu-" version))))
               (file-name (git-file-name name version))
               (sha256
-               (base32 "0k8dq8hj03b2g28hcs6jgdp8afv40p8m9143af3z9m4hliad43ck"))
+               (base32 "0c4rg6w29lgs5150p6r6f35g4va6milys0vc8f7w2kj9aygd56a2"))
               (patches (search-patches %patch-path))
               (modules '((guix build utils)))
               (snippet
