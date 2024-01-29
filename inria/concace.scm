@@ -247,6 +247,7 @@ a source code input file.")
     (build-system emacs-build-system)
     (propagated-inputs
      (list bash
+	   ;; bash-completion
            bzip2
            coreutils
            emacs-elementaryx-early-init
@@ -260,6 +261,7 @@ a source code input file.")
            gzip
            man-db
            man-pages
+	   nss-certs
            sed
            tar
            tree
@@ -620,11 +622,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "66e237d3ebc52b54d932bb74828ae284cad1b46a")))
+                    (commit "138c3ac29c6dd941f4cc4c31a796a7dbe6db39d2")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0a8fhx4y2dv841j3j6zqjvppwb3qw5lj234hr7l6vp5phpja7n8n"))))
+                "026w4c2c1369b86snlq1ky2kydl2p6b36wq2i19w9znbprdb11sm"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-org-minimal
