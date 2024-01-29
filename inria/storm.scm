@@ -206,7 +206,7 @@ kernels are executed as efficiently as possible.")
                     (commit (string-append "starpu-" version))))
               (file-name (git-file-name name version))
               (sha256
-               (base32 "0c4rg6w29lgs5150p6r6f35g4va6milys0vc8f7w2kj9aygd56a2"))
+               (base32 "1sbmj7pggn5sawgwwciy7b9djaapnzfc0h5dfs6y56dm9m60n88l"))
               (patches (search-patches %patch-path))
               (modules '((guix build utils)))
               (snippet
