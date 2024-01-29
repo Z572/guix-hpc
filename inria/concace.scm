@@ -224,48 +224,64 @@ a source code input file.")
 (define-public emacs-elementaryx-early-init
   (emacs-instead-of-emacs-minimal emacs-elementaryx-early-init-with-emacs-minimal))
 
+(define-public elementaryx-core
+  (package
+   (name "elementaryx-core")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Core packages for non interactive usage.")
+   (description
+    "ElementaryX: Elementary Emacs configuration coupled with Guix. Core packages for non interactive usage.")
+   (arguments
+    `(#:builder (mkdir (assoc-ref %outputs "out"))))
+   (source #f)
+   (build-system trivial-build-system)
+   (license #f)
+   (propagated-inputs
+    (list bash
+          bzip2
+          coreutils
+          findutils
+          gawk
+          git
+          graphviz
+          grep
+          gzip
+	  nss-certs
+          sed
+          tar
+          tree
+          which))))
+
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-elementaryx-minimal publicly defined below instead
 (define emacs-elementaryx-minimal-with-emacs-minimal
   (package
    (name "emacs-elementaryx-minimal")
-    (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
-    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
-    (description
-     "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "143c04e9b51ee298e0f4bf93d77b0c99b24e2493")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1mdp7lyy3b75y8fs46iwqjgmaisfsapmnwlz7hrg6k25nnw2nsw0"))))
-    (build-system emacs-build-system)
-    (propagated-inputs
-     (list bash
-	   ;; bash-completion
-           bzip2
-           coreutils
-           emacs-elementaryx-early-init
-           emacs-evil
-           emacs-which-key
-           findutils
-           gawk
-           git
-           graphviz
-           grep
-           gzip
-           man-db
-           man-pages
-	   nss-certs
-           sed
-           tar
-           tree
-           which))))
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
+   (description
+    "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "143c04e9b51ee298e0f4bf93d77b0c99b24e2493")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "1mdp7lyy3b75y8fs46iwqjgmaisfsapmnwlz7hrg6k25nnw2nsw0"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list bash-completion
+          elementaryx-core
+          emacs-elementaryx-early-init
+          emacs-evil
+          emacs-which-key
+          man-db
+          man-pages))))
 
 ;; emacs-elementaryx-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -546,36 +562,36 @@ scheme.")
 
 (define-public emacs-elementaryx-ox-latex-minimal
   (package
-    (name "emacs-elementaryx-ox-latex-minimal")
-    (version "1.4.0")
-    (arguments
-     `(#:builder (mkdir (assoc-ref %outputs "out"))))
-    (source #f)
-    (build-system trivial-build-system)
-    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal dependencies for org-mode latex export (ox-latex).")
-    (description "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal dependencies for org-mode latex export (ox-latex). Provides both rubber and latexmk build systems." )
-    (home-page "dummy")
-    (license #f)
-    (propagated-inputs
-     (list texlive-scheme-basic
-           texlive-amsfonts
-           texlive-babel
-           texlive-babel-french
-           texlive-bibtex
-           texlive-capt-of
-           texlive-carlisle
-           texlive-fontaxes
-           texlive-hyperref
-           texlive-inconsolata
-           texlive-jknapltx
-           texlive-latexmk
-           texlive-libertine
-           texlive-ulem
-           texlive-upquote
-           texlive-wrapfig
-           texlive-xcolor
-           texlive-xkeyval
-           rubber))))
+   (name "emacs-elementaryx-ox-latex-minimal")
+   (version "1.4.0")
+   (arguments
+    `(#:builder (mkdir (assoc-ref %outputs "out"))))
+   (source #f)
+   (build-system trivial-build-system)
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal dependencies for org-mode latex export (ox-latex).")
+   (description "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal dependencies for org-mode latex export (ox-latex). Provides both rubber and latexmk build systems." )
+   (home-page "dummy")
+   (license #f)
+   (propagated-inputs
+    (list texlive-scheme-basic
+          texlive-amsfonts
+          texlive-babel
+          texlive-babel-french
+          texlive-bibtex
+          texlive-capt-of
+          texlive-carlisle
+          texlive-fontaxes
+          texlive-hyperref
+          texlive-inconsolata
+          texlive-jknapltx
+          texlive-latexmk
+          texlive-libertine
+          texlive-ulem
+          texlive-upquote
+          texlive-wrapfig
+          texlive-xcolor
+          texlive-xkeyval
+          rubber))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-elementaryx-ox-beamer-minimal publicly defined below instead
@@ -629,7 +645,8 @@ scheme.")
                 "026w4c2c1369b86snlq1ky2kydl2p6b36wq2i19w9znbprdb11sm"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-elementaryx-org-minimal
+     (list elementaryx-core
+	   emacs-elementaryx-org-minimal
            emacs-lob-ob-latexpicture
            emacs-ob-latexmacro
            emacs-ob-latexpicture))))
