@@ -49,8 +49,8 @@
      (license license:gpl2))))
 
 (define-public test_FEMBEM
-  (let ((commit "59d1983493a95ec483b4d931afcc70b687474aa5")
-        (revision "64"))
+  (let ((commit "5bfc9b0c5db8f1dc26ca1d100308ca087c7f662e")
+        (revision "65"))
     (package
       (name "test_FEMBEM")
       (version (git-version "0.1" revision commit))
@@ -63,7 +63,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0ahwzappkfbazni5sf3313diipjb927z3kjmxsykczdpzvk8bny6"))))
+                  "08iz7r5101kcyaj19j208v2gcmfpdb2zjrdl570l7z9hyw4pnama"))))
       (build-system cmake-build-system)
       (arguments
        ;; The package checkout is not a Git directory anymore even if its
@@ -85,13 +85,11 @@
                         ;; set HOME to the current build directory
                         ;; to satisfy StarPU.
                         (setenv "HOME" (getcwd)))))))
-      (native-inputs (list pkg-config))
-      (inputs (list openmpi
-                    openblas
-                    openssh
-                    starpu-1.3
-                    chameleon
-                    hmat-oss))
+
+      (inputs (list openblas starpu chameleon hmat-oss))
+      (propagated-inputs (list openmpi))
+      (native-inputs (list pkg-config openssh))
+
       (synopsis
        "Testing dense and sparse solvers with pseudo-FEM or pseudo-BEM matrices")
       (description
