@@ -198,7 +198,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.3)
     (name "starpu")
-    (version "1.4.3")
+    (version "1.4.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -206,8 +206,23 @@ kernels are executed as efficiently as possible.")
                     (commit (string-append "starpu-" version))))
               (file-name (git-file-name name version))
               (sha256
-               (base32 "1sbmj7pggn5sawgwwciy7b9djaapnzfc0h5dfs6y56dm9m60n88l"))
+               (base32 "0k8dq8hj03b2g28hcs6jgdp8afv40p8m9143af3z9m4hliad43ck"))
               (patches (search-patches %patch-path))))
+              (modules '((guix build utils)))
+              (snippet
+               #~(begin
+                   ;; Fix headers that mistakenly assume that STARPU_USE_HIP
+                   ;; implies STARPU_USE_HIPBLAS.
+                   (substitute* "include/starpu_hip.h"
+                     (("#include <hipblas.*" all)
+                      (string-append "#if STARPU_USE_HIPBLAS\n" all
+                                     "\n#endif\n")))
+                   (substitute* "include/starpu_hipblas.h"
+                     (("#ifndef STARPU_USE_HIP")
+                      "#ifndef STARPU_USE_HIPBLAS\n"))
+                   (substitute* "src/drivers/hip/starpu_hipblas.c"
+                     (("#ifdef STARPU_USE_HIP")
+                      "#if (defined STARPU_USE_HIP) && (defined STARPU_USE_HIPBLAS)\n"))))))
     (arguments
      (substitute-keyword-arguments (package-arguments starpu-1.3)
        ((#:configure-flags _ '())
