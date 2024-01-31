@@ -22,6 +22,7 @@
   #:use-module (gnu packages certs)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
+  ;; #:use-module (gnu packages crates-io) ;; TODO for rust-lsp-server (from rust-analyzer)
   #:use-module (gnu packages emacs)
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
@@ -41,6 +42,7 @@
   #:use-module (gnu packages rust-apps) ;; for ripgrep
   #:use-module (gnu packages shellutils) ;; for direnv
   #:use-module (gnu packages ssh)
+  #:use-module (gnu packages statistics) ;; for emacs-ess
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texlive)
   #:use-module (gnu packages tree-sitter)
@@ -303,11 +305,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "0029f2289c33deb63f83aa2d6c7154a2096272e9")))
+                    (commit "1c1f27ac4be68a5ff9fe73c6a022635f0ff55708")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "19xyxjkw08wmcgy2yjn5111qvbn7v6ss1p78qazl4i0z75hxpzlv"))))
+                "11c518wgv1k8ifb90jwy8hnyllqr1bfalpr70id6ghzqha9b98sf"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -419,11 +421,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "644bacef2bd29222d6c53f376ee370d91318b366")))
+                    (commit "06fa7ccc1a0fb0ddb3afb2fbf9636bf205e69a44")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "07mb73xgalv618k4ja4d3wbnb889mj4hrnsx1byc9y58sfrphjdq"))))
+                "0s379man8frhbkzdlf46kgzg9bbipp40cp4nlzkfn188jq40w9m1"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-base
@@ -431,6 +433,7 @@ a source code input file.")
            emacs-json-mode
            emacs-magit
            emacs-yaml-mode
+	   ;; TODO: investigate: emacs-consult-eglot https://stable.melpa.org/#/consult-eglot
            openssh
            ))))
 
@@ -454,11 +457,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "bcea7304efa02d9243ce9347d69cced8fc9f1d81")))
+                    (commit "d893cab9f87410e005533cdd18f995321a236892")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "00ali1vj2006kfm0q20jfncdx3xwr1f2463axd5x79xhf70wvfjy"))))
+                "16mlpyma56azd9fz47c6r875v3c3bc5v9df1p97lcbidrsli231c"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-dev-minimal
@@ -467,26 +470,39 @@ a source code input file.")
            ccls ;; c / c++ language server
            direnv ;; not necessary for emacs-envrc (already a dependency of it) but so that we have it in a terminal
            emacs-envrc
+           ;; emacs-ess ;; TODO: follow guix issue with emacs-ess https://issues.guix.gnu.org/66762
            emacs-rmsbolt-ts
            gdb
            python-lsp-server ;; pyton language server
+	   r-languageserver ;; r language server; TODO: enable emacs-ess otherwise there is no r mode
+	   ;; rust-lsp-server ;; TODO rust language server
+	   texlive-digestif ;; language server (and code analyzer) for: LaTeX, plain TeX, ConTeXt and Texinfo
            tree-sitter
            tree-sitter-bash
            tree-sitter-bibtex
-           tree-sitter-c ;; see also ccls language server
+           tree-sitter-c
            tree-sitter-cmake
-           tree-sitter-cpp ;; see also ccls language server
+           tree-sitter-cpp
            tree-sitter-css
+	   tree-sitter-dockerfile
+	   tree-sitter-haskell
+	   tree-sitter-html
+           tree-sitter-java
            tree-sitter-javascript
            tree-sitter-json
            tree-sitter-julia
+	   tree-sitter-lua
            tree-sitter-markdown
+	   tree-sitter-markdown-gfm ;; github flavored markddown
+	   tree-sitter-ocaml ;; TODO: not sure how to use it
            tree-sitter-org
+	   tree-sitter-php
            tree-sitter-python ;; see also python-lsp-server language server
-           tree-sitter-scheme
-           tree-sitter-r
+           tree-sitter-r ;; TODO: not sure how to use it with ess
            tree-sitter-rust
+           tree-sitter-scheme ;; TODO: not sure how to use it with guile et al.
            tree-sitter-typescript
+	   ;; tree-sitter-yaml ;; https://issues.guix.gnu.org/66836
            ))))
 
 ;; emacs-elementaryx-dev with emacs instead of emacs-minimal
@@ -540,16 +556,17 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "038765987d9175c5337088ff8d6a8c853823ad82")))
+                  (commit "95c6102ecae3fb6d49f784465bace1527ced1a06")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "1zpxli3nlfrg3612653vprwrqphzs08vppcn36air6y8qqnl5wjn"))))
+                "11mygsah5k4a1b7vhlayg418kgnvm2wwgnvfci2kj3q6bd9r0z4z"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
           aspell-dict-en
           aspell-dict-fr
+	  emacs-biblio
           emacs-elementaryx-base
           emacs-citar
           emacs-citar-org-roam
