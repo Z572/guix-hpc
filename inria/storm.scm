@@ -207,10 +207,10 @@ kernels are executed as efficiently as possible.")
               (file-name (git-file-name name version))
               (sha256
                (base32 "0k8dq8hj03b2g28hcs6jgdp8afv40p8m9143af3z9m4hliad43ck"))
-              (patches (search-patches %patch-path))))
+              (patches (search-patches %patch-path))
               (modules '((guix build utils)))
               (snippet
-               #~(begin
+               `(begin
                    ;; Fix headers that mistakenly assume that STARPU_USE_HIP
                    ;; implies STARPU_USE_HIPBLAS.
                    (substitute* "include/starpu_hip.h"
@@ -222,7 +222,8 @@ kernels are executed as efficiently as possible.")
                       "#ifndef STARPU_USE_HIPBLAS\n"))
                    (substitute* "src/drivers/hip/starpu_hipblas.c"
                      (("#ifdef STARPU_USE_HIP")
-                      "#if (defined STARPU_USE_HIP) && (defined STARPU_USE_HIPBLAS)\n"))))))
+                      "#if (defined STARPU_USE_HIP) && (defined STARPU_USE_HIPBLAS)\n"))
+                   #t))))
     (arguments
      (substitute-keyword-arguments (package-arguments starpu-1.3)
        ((#:configure-flags _ '())
