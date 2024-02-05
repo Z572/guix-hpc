@@ -405,7 +405,7 @@ Mechanics, and Computer Graphics.")
    (native-inputs
     `(("python-wheel", python-wheel)
       ("python-pip", python-pip)
-      ,@(package-native-inputs siconos-4.4-rc3)))
+      ("c-toolchain" ,gcc-toolchain) ,@(alist-delete "gcc" (package-native-inputs siconos-4.4-rc3))))
    (propagated-inputs
     `(("vtk", vtk)
       ("python-pyhull", python-pyhull)
