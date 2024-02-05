@@ -429,6 +429,8 @@ Mechanics, and Computer Graphics.")
              #t))
         (add-after 'unpack 'some-quick-patches
                    (lambda _
+                     (substitute* "externals/numeric_bindings/boost/numeric/bindings/blas/detail/cblas.h"
+                                  (("#ifdef HAS_OpenBLAS") "#ifdef REMOVED_HAS_OpenBLAS"))
                      (substitute* "cmake/SiconosSetup.cmake"
                                   (("FATAL_ERROR") "WARNING"))
                      (substitute* "cmake/fclib_setup.cmake"
