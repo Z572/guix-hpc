@@ -457,11 +457,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "d893cab9f87410e005533cdd18f995321a236892")))
+                    (commit "f953c49f9ce6d6fb6c42d049a2f7336235b43bfb")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "16mlpyma56azd9fz47c6r875v3c3bc5v9df1p97lcbidrsli231c"))))
+                "1hx2aab6zs06xp5amzl2k52zksnwmp7qlqfwzmibfiy38sjsswz9"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-dev-minimal
@@ -556,16 +556,17 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "95c6102ecae3fb6d49f784465bace1527ced1a06")))
+                  (commit "fb107ec848ec3832c38ad25c5ac5009bbcab569a")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "11mygsah5k4a1b7vhlayg418kgnvm2wwgnvfci2kj3q6bd9r0z4z"))))
+                "11qqbbbn73baiqykkak53109qc206i3sj9r77f2pghri83wr155g"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
           aspell-dict-en
           aspell-dict-fr
+	  bibtool
 	  emacs-biblio
           emacs-elementaryx-base
           emacs-citar
@@ -1070,7 +1071,8 @@ scheme.")
            emacs-org-re-reveal
            emacs-org-ref
            gawk
-           git
+	   git
+	   git-annex
            ;; gitlab-runner
            grep
            gzip
