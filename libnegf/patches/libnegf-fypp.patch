@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 46b75d2..b5c08f5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -13,7 +13,7 @@ message(STATUS "libNEGF WITH_INELASTIC: " ${WITH_INELASTIC})
+ include(externalMpifx)
+ include(CMakePackageConfigHelpers)
+ 
+-set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ext_fypp/;${CMAKE_PREFIX_PATH}")
++#set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ext_fypp/;${CMAKE_PREFIX_PATH}")
+ find_program(FYPP "fypp")
+ 
+ include(GNUInstallDirs)
