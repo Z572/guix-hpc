@@ -1072,7 +1072,7 @@ scheme.")
            emacs-org-ref
            gawk
 	   git
-	   git-annex
+	   ;; git-annex
            ;; gitlab-runner
            grep
            gzip
