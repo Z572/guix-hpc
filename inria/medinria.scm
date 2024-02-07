@@ -122,7 +122,7 @@
 (define-public ttk
   (package
     (name "ttk")
-    (version "4.0")
+    (version "4.0.1")
     (synopsis "TTK")                              ;FIXME: What's this about?
     (description "TTK")
     (home-page "https://github.com/medInria/TTK")
@@ -134,7 +134,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1qlr2y0s9aplaacf19gdvlr1097l2maw7mivccykl9nb4c6yhvaz"))))
+        (base32 "18jcw9xmjrsvnv6d1fsjn3shzks17izr4qlbazc7lgvjs07kdgfl"))))
     (inputs (list vtk-8
                   insight-toolkit-5.1.1
                   hdf5-1.8
@@ -150,9 +150,7 @@
                             "-DTTK_USE_GMM=OFF" "-DTTK_USE_MIPS=OFF"
                             "-DTTK_USE_MKL=OFF" "-DTTK_USE_VTKINRIA3D=OFF")))
 
-    ;; FIXME: This is released under a non-free license (being discussed with
-    ;; upstream; move elsewhere if license cannot be changed).
-    (license #f)))
+    (license license:bsd-2)))
 
 (define-public qtdcm
   (package
