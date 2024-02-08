@@ -386,11 +386,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "1492c2d57513a6603ad892e4739aad00052f3f66")))
+                    (commit "37b96ccdae9f4fae6f3aacbd8322f9d04915664c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "14yi7gdavlyf6w4nm2ghqaqdkcl9ny7s9cfrrhmwn54s48lcfxgy"))))
+                "1kvgjn8mbs50zwr8qld70978fispg7ddqrxjzxc33z2jzylpn63d"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-base
@@ -556,11 +556,11 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "fb107ec848ec3832c38ad25c5ac5009bbcab569a")))
+                  (commit "12c8ae6231fc0de483afa8490c87c43ee253720d")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "11qqbbbn73baiqykkak53109qc206i3sj9r77f2pghri83wr155g"))))
+                "0rgm9dzs0437hkppnir4imnn20ih5ndvj7xhlgripdyx9qx0a8m7"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
@@ -757,11 +757,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "8bc0166b90077dcc714d61fe3c79ce63f907f1f8")))
+                    (commit "471774e42f28c87995844494f28477e2c87fdc43")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "19cjm93bsh8mghb29s5v1zhs9nn8wfb7iicncr1mgs7sjx5a1mm1"))))
+                "13fpyp2fn4jqx21m4828ig1fl3y1xafbnb6rw8iizcdj5wz782x5"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox-base
@@ -834,11 +834,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "a0a2892039759e83977b1bd9cb95323692287325")))
+                    (commit "f22d3f0945891010815e556fd048a90e07b389cc")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0j0cdpx18j4q2x02inzbkw09h9b0xb22dpskc7shcz5fw17lznd7"))))
+                "00frnyqszmy7djh24dgnm306ljmxxgh8g2fp75rj0wjlxa51wdxg"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox-base
