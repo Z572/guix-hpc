@@ -11,6 +11,7 @@
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system r)
   #:use-module (gnu packages)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
@@ -19,6 +20,7 @@
   #:use-module (gnu packages documentation)
   #:use-module (gnu packages libevent)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages mpi)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages xml)
   #:use-module (guix utils)
@@ -144,3 +146,52 @@ docopt is based on conventions that have been used for decades in help messages
 and man pages for describing a program's interface. An interface description in
 docopt is such a help message, but formalized.")
     (license (list license:expat license:boost1.0))))
+
+(define-public sionlib
+  (package
+    (name "sionlib")
+    (version "1.7.6")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://apps.fz-juelich.de/jsc/sionlib/download.php?version="
+             version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "1486lvsi9jsi136akk5z18h3rbd3mr671kac28f3nyni7knm6lp8"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:phases #~(modify-phases %standard-phases
+                   ;; configure doesn't support "--enable-fast-install"
+                   (replace 'configure
+                     (lambda* (#:key outputs configure-flags
+                               #:allow-other-keys)
+                       (let ((out (assoc-ref outputs "out")))
+                         (setenv "CONFIG_SHELL"
+                                 (which "sh"))
+                         (setenv "SHELL"
+                                 (which "sh"))
+                         (apply invoke "./configure"
+                                (string-append "--prefix=" out)
+                                configure-flags))))
+                   (add-after 'patch-source-shebangs 'patch-realmakefile
+                     (lambda _
+                       (substitute* "mf/RealMakefile"
+                         (("^SHELL *= */bin/sh")
+                          (string-append "SHELL = "
+                                         #$bash-minimal "/bin/sh")))))
+                   (add-before 'check 'mpi-setup
+                     #$%openmpi-setup))
+      #:configure-flags #~(list "--compiler=gnu" "--disable-fortran" ;FIXME build error with gfortran
+                                "--mpi=openmpi")
+      #:test-target "test"))
+    (inputs (list openmpi))
+    (home-page "https://www.fz-juelich.de/jsc/sionlib")
+    (synopsis "Scalable I/O library for parallel access to task-local files")
+    (description
+     "SIONlib is a library for writing and reading data from several
+thousands of parallel tasks into/from one or a small number of
+physical files.")
+    (license (license:non-copyleft "file:///COPYRIGHT"))))
