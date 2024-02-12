@@ -11,6 +11,8 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
+  #:use-module (utils utils)
+  #:use-module (cea utils)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages benchmark)
@@ -38,22 +40,20 @@
              (url "https://gitlab.maisondelasimulation.fr/pdidev/pdi/")
              (commit version)))
        (sha256
-        (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))))
+        (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
+       (snippet #~(begin
+                    (use-modules (guix build utils))
+                    (delete-file-recursively "vendor")))))
     (build-system cmake-build-system)
     (arguments
      (list
       #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
                                 ;; force usage of system packages
-                                ;; TODO: package the remaining vendored dependencies?
-                                "-DUSE_Astyle=SYSTEM"
-                                "-DUSE_benchmark=SYSTEM"
-                                "-DUSE_Doxygen=SYSTEM"
+                                "-DUSE_DEFAULT=SYSTEM"
+                                ;; these are not honoured by USE_DEFAULT
                                 "-DUSE_GTest=SYSTEM"
-                                "-DUSE_HDF5=SYSTEM"
-                                "-DUSE_pybind11=SYSTEM"
-                                "-DUSE_paraconf=SYSTEM"
-                                "-DUSE_spdlog=SYSTEM"
-                                "-DUSE_yaml=SYSTEM")
+                                "-DUSE_benchmark=SYSTEM"
+                                "-DUSE_Zpp=SYSTEM")
       #:phases #~(modify-phases %standard-phases
                    (add-before 'check 'fix-tests
                      (lambda* _
@@ -71,13 +71,16 @@
                   spdlog
                   benchmark
                   doxygen
+                  fti
                   googletest
                   hdf5-parallel-openmpi
                   pybind11
                   libyaml
                   pkg-config
-                  paraconf))
-    (native-inputs (list openssh)) ;for tests
+                  paraconf
+                  sionlib
+                  zpp))
+    (native-inputs (list openssh))      ;for tests
     (synopsis "A library allowing loose coupling between components.")
     (description
      "PDI supports loose coupling of simulation codes with data handling
