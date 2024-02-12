@@ -22,6 +22,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages statistics)
+  #:use-module (gnu packages tls)
   #:use-module (gnu packages xml)
   #:use-module (guix utils)
   #:use-module (srfi srfi-1)
@@ -195,3 +196,34 @@ docopt is such a help message, but formalized.")
 thousands of parallel tasks into/from one or a small number of
 physical files.")
     (license (license:non-copyleft "file:///COPYRIGHT"))))
+
+(define-public fti
+  (package
+    (name "fti")
+    (version "1.6")
+    (home-page "https://github.com/leobago/fti")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0lmclyby77kb4mph25adh1lfbjd7x9lm1qb53xdhnxmdmqjb8zna"))))
+    (build-system cmake-build-system)
+    (inputs (list openmpi openssl zlib))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DENABLE_TESTS=ON")
+      #:phases #~(modify-phases %standard-phases
+                   (add-before 'check 'mpi-setup
+                     #$%openmpi-setup))
+      ;; FIXME: tests fail because their definition is not found in the build folder
+      #:tests? #f))
+    (synopsis "Fault Tolerance Interface")
+    (description
+     "FTI stands for Fault Tolerance Interface and is a library that aims to
+give computational scientists the means to perform fast and efficient
+multilevel checkpointing in large scale supercomputers.")
+    (license license:bsd-3)))
