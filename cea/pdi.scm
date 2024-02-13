@@ -100,7 +100,10 @@ libraries are used from the specification tree.")
              (url "https://github.com/pdidev/paraconf")
              (commit version)))
        (sha256
-        (base32 "062jqhx0fpf4sspnz131408272brpqdcimcwmrv8ynykchgma44m"))))
+        (base32 "062jqhx0fpf4sspnz131408272brpqdcimcwmrv8ynykchgma44m"))
+       (snippet #~(begin
+                    (use-modules (guix build utils))
+                    (delete-file-recursively "vendor")))))
     (build-system cmake-build-system)
     (arguments
      (list
