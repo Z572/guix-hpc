@@ -41,7 +41,14 @@
              (commit "release/rocm-rel-5.7")))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1dz32xsiccpb7099jvp2hkbabqnmsdjfn0p0h1x2z745c7a6p2ac"))))
+        (base32 "1dz32xsiccpb7099jvp2hkbabqnmsdjfn0p0h1x2z745c7a6p2ac"))
+       (modules '((guix build utils)))
+       (snippet
+        ;; Build without '-march=native' so that the binaries can be used on
+        ;; all the CPUs.
+        #~(substitute* "src/CMakeLists.txt"
+            (("[ ;]-march=native")
+             "")))))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -63,7 +70,8 @@
     (native-inputs (list git hipamd-5.7 rocm-cmake-5.7))
     (inputs (list numactl rocprim-5.7))
     (propagated-inputs (list openmpi-rocm-5.7))
-    (synopsis "ROCm version of the synthetic HPCG benchmark.")
+    (properties '((tunable? . #t)))
+    (synopsis "ROCm version of the synthetic HPCG benchmark")
     (description
      "rocHPCG is implemented on top of ROCm runtime and toolchains using the HIP programming language, and optimized for AMD's discrete GPUs.")
     (home-page "https://github.com/ROCmSoftwarePlatform/rocHPCG.git")
