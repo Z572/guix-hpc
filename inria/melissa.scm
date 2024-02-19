@@ -13,7 +13,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-science)
-  #:use-module (utils python-science)
+  #:use-module (guix-hpc packages python-science)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages commencement)

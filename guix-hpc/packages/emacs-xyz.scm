@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2020 Inria
 
-(define-module (utils emacs-xyz)
+(define-module (guix-hpc packages emacs-xyz)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix git-download)

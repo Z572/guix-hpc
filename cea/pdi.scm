@@ -11,7 +11,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
-  #:use-module (utils utils)
+  #:use-module (guix-hpc packages utils)
   #:use-module (cea utils)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages bash)

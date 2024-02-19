@@ -56,7 +56,7 @@
   #:use-module (inria storm)
   #:use-module (inria tadaam)
   #:use-module (guix utils)
-  #:use-module (utils lsp) ;; for fortls in guix-hpc
+  #:use-module (guix-hpc packages lsp) ;; for fortls in guix-hpc
   #:use-module (srfi srfi-1)
   )
 

@@ -15,7 +15,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (inria simgrid)
-  #:use-module (utils utils))
+  #:use-module (guix-hpc packages utils))
 
 (define-public intervalset
   (package

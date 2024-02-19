@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2022 Inria
 
-(define-module (utils mumps-variants)
+(define-module (guix-hpc packages mumps-variants)
   #:use-module (guix packages)
   #:use-module (gnu packages maths)
   #:use-module (srfi srfi-1))

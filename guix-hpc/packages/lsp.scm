@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2024 Inria
 
-(define-module (utils lsp)
+(define-module (guix-hpc packages lsp)
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module ((guix licenses)

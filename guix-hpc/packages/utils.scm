@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2017, 2019, 2020, 2022 Inria
 
-(define-module (utils utils)
+(define-module (guix-hpc packages utils)
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
