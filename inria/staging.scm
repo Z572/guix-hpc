@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2019, 2020, 2021, 2022 Inria
+;;; Copyright © 2019-2022, 2024 Inria
 
 (define-module (inria staging)
   #:use-module (guix)
@@ -11,6 +11,8 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages lua)
+  #:use-module (gnu packages parallel)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages maths))
@@ -94,3 +96,11 @@
 is designed to be easy to learn and use, highly flexible and easily
 extensible.")
     (license license:cecill)))
+
+(define-public slurm-with-lua
+  (package/inherit slurm
+    ;; Variant of SLURM extensible in Lua.
+    (name "slurm-with-lua")
+    (inputs (modify-inputs (package-inputs slurm)
+              (append lua)))
+    (synopsis "Workload manager for cluster computing (with Lua support)")))
