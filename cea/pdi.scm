@@ -39,6 +39,7 @@
        (uri (git-reference
              (url "https://gitlab.maisondelasimulation.fr/pdidev/pdi/")
              (commit version)))
+       (file-name (git-file-name name version))
        (sha256
         (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
        (snippet #~(begin
