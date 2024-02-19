@@ -42,7 +42,7 @@
 (define-public python-ttpy
   ;; This commit contains a fix for
   ;; <https://github.com/oseledets/ttpy/issues/80> among other things.
-  (let ((commit "a50d5e0ce2a033a4b1aa703715cb85d715b9b34a")
+  (let ((commit "22dff3d2cf52b4b23aae40119f1eec39675db9ef")
         (revision "0"))
     (package
       (name "python-ttpy")
@@ -57,7 +57,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1b8rhkkivkmswahhx15x80r3cz8hp666b9z0ax4g6dr16j9788wb"))))
+                  "07kl2099rqnd32z2nkmgn1z0chrxwz1x0p5qy5hpmn4gyss4qbgq"))))
       (build-system python-build-system)
       (arguments
        (list #:phases
@@ -73,6 +73,7 @@
                         (search-input-file inputs
                                            "lib/libopenblas.so"))))))
              #:tests? #f))
+      ;; WARNING: the 'python-ttpy' package must be built with a numpy version lower than 1.23.2.
       (native-inputs (list python-pytest python-cython gfortran))
       (inputs (list gmp mpfr openblas))
       (propagated-inputs (list python-numpy python-scipy python-six))
