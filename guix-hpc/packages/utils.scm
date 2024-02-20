@@ -13,6 +13,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages boost)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cran)
@@ -284,3 +285,28 @@ It offers a set of functions specifically tailored to build clean
 Fortran90 interfaces by generating code for all types, kinds, and
 array ranks supported by a given compiler.")
     (license (license:non-copyleft "file:///LICENSE.txt"))))
+
+(define-public mdspan
+  (package
+    (name "mdspan")
+    (version "0.6.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/kokkos/mdspan")
+             (commit (string-append name "-" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "17zmjid1vjvpmvgd1k023ljk8yygqw18xilx78b7pxg7xws3w0bg"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list #:configure-flags #~(list "-DMDSPAN_ENABLE_TESTS=ON"
+                                     "-DMDSPAN_USE_SYSTEM_GTEST=ON")))
+    (native-inputs (list googletest))
+    (synopsis "Reference implementation of mdspan targeting C++23")
+    (description "This package aims to provide a production-quality implementation of
+the ISO-C++ proposal P0009, which will add support for non-owning
+multi-dimensional array references to the C++ standard library.")
+    (home-page "https://github.com/kokkos/mdspan")
+    (license license:asl2.0)))
