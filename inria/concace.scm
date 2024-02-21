@@ -22,7 +22,7 @@
   #:use-module (gnu packages certs)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
-  ;; #:use-module (gnu packages crates-io) ;; TODO for rust-lsp-server (from rust-analyzer)
+  #:use-module (gnu packages crates-io) ;; for rust-lsp-server (from rust-analyzer)
   #:use-module (gnu packages emacs)
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
@@ -55,6 +55,7 @@
   #:use-module (inria storm)
   #:use-module (inria tadaam)
   #:use-module (guix utils)
+  #:use-module (utils lsp) ;; for fortls in guix-hpc
   #:use-module (srfi srfi-1)
   )
 
@@ -212,11 +213,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f6121c699eb5df9f03b909271fd1c60593762f19")))
+                    (commit "7520afe41a21a52f5fc39c293397fda2b41f063c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0yd80sm4m756zlsyj54m1p3q31ghv1xwxvn0sqj4wwby933m8xki"))))
+                "0s4fdkrzjha4w7g9byi9j1qsygi48rq0qqcznpqw4majhbhvija6"))))
     (build-system emacs-build-system)
     ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
     (propagated-inputs (list emacs))))
@@ -270,11 +271,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "143c04e9b51ee298e0f4bf93d77b0c99b24e2493")))
+                  (commit "8ddc8edaac6a882ee56a1f897de2fd26f36acb02")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1mdp7lyy3b75y8fs46iwqjgmaisfsapmnwlz7hrg6k25nnw2nsw0"))))
+              "0m780wqs7ibz3ab4vjdbd27q2cywry6bwph6g97jz6q1xw8wfs0z"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list bash-completion
@@ -305,11 +306,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "1c1f27ac4be68a5ff9fe73c6a022635f0ff55708")))
+                    (commit "1cd9dbbed64a09329f2e0d006de5984de4e45753")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "11c518wgv1k8ifb90jwy8hnyllqr1bfalpr70id6ghzqha9b98sf"))))
+                "1wqp2415kl65ad4y3sl0v3ys67pk6wf3z57dbr3lzkbf6s3b0wlh"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -321,6 +322,7 @@ a source code input file.")
            ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
            emacs-corfu-terminal
            emacs-embark
+	   emacs-guix
            ;; emacs-embark-consult: library provided within emacs-embark package
            ;; emacs-eshell
            emacs-kind-icon
@@ -386,11 +388,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "37b96ccdae9f4fae6f3aacbd8322f9d04915664c")))
+                    (commit "9fff2f7390519a3851187acb9c0c9c14a434ff11")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1kvgjn8mbs50zwr8qld70978fispg7ddqrxjzxc33z2jzylpn63d"))))
+                "12chpawri045ml8p0rsaqgb1viisxq0wdwmbi2nl6l8w53gkmg21"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-base
@@ -472,10 +474,11 @@ a source code input file.")
            emacs-envrc
            ;; emacs-ess ;; TODO: follow guix issue with emacs-ess https://issues.guix.gnu.org/66762
            emacs-rmsbolt-ts
+	   fortls ;; fortran language server
            gdb
            python-lsp-server ;; pyton language server
 	   r-languageserver ;; r language server; TODO: enable emacs-ess otherwise there is no r mode
-	   ;; rust-lsp-server ;; TODO rust language server
+	   rust-lsp-server-0.5 ;; rust language server
 	   texlive-digestif ;; language server (and code analyzer) for: LaTeX, plain TeX, ConTeXt and Texinfo
            tree-sitter
            tree-sitter-bash
