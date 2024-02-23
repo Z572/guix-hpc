@@ -35,6 +35,7 @@
 
   #:use-module (amd rocm-base)
   #:use-module (amd rocm-hip)
+  #:use-module (amd python-cppheaderparser)
 
   #:use-module (gnu packages mpi)
 
@@ -179,7 +180,7 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
 (define-public ucx-rocm-5.3
   (make-ucx-rocm roct-thunk-5.3 rocr-runtime-5.3 hipamd-5.3))
 
-; openmpi built with ucx-rocm
+; openmpi built with ucx-rocm and libfabric-rocm
 (define (make-openmpi-rocm ucx ofi hipamd)
   (package
     (inherit openmpi)
@@ -234,3 +235,63 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
   (make-openmpi-rocm ucx-rocm-5.4 ofi-rocm-5.4 hipamd-5.4))
 (define-public openmpi-rocm-5.3
   (make-openmpi-rocm ucx-rocm-5.3 ofi-rocm-5.3 hipamd-5.3))
+
+; roctracer
+(define %roctracer-hashes
+  `(("5.7.1" . ,(base32 "11bd53vylassbg0xcpa9hncvwrv0xcb04z51b12h2iyc1341i91z"))
+    ("5.6.1" . ,(base32 "1hsgmgil0k675y5arnhm1338r9b3ikiivfxifghwlisqjw3zy51g"))
+    ("5.5.1" . ,(base32 "0gvfawcnc5hr8cxg9c443hqzmjz88rdc9iins2lh5j2gdw8macfw"))
+    ("5.4.4" . ,(base32 "1dpc2jmsq2mcilz63fr4vxg99hhzpxdspqavhsg1v57jrhsi9xp6"))
+    ("5.3.3" . ,(base32 "0i0qy3mlq0yynrw0s3jh1x9wlpwimjjcn9xavrixf5l00xkljr18"))))
+
+(define (roctracer-origin version)
+  (origin
+    (method git-fetch)
+    (uri (git-reference (url
+                         "https://github.com/ROCm-Developer-Tools/roctracer.git")
+                        (commit (string-append "rocm-" version))))
+    (file-name (git-file-name "roctracer" version))
+    (sha256 (assoc-ref %roctracer-hashes version))))
+
+(define (make-roctracer hipamd)
+  (package
+    (name "roctracer")
+    (version (package-version hipamd))
+    (source
+     (roctracer-origin version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:tests? #f ;No tests.
+      #:build-type "Release"
+      #:configure-flags #~(list (string-append "-DROCM_PATH="
+                                               #$hipamd)
+                                #$(if (version>=? version "5.5.0") ""
+                                      "-DCMAKE_CXX_COMPILER=g++"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'update-filesystem
+                      ;only needed from 5.5 onwards
+                     (lambda _
+                       (substitute* (append (find-files "." ".cpp$")
+                                            (find-files "." ".h$"))
+                         (("std::experimental::filesystem")
+                          "std::filesystem")
+                         (("<experimental/filesystem>")
+                          "<filesystem>")))))))
+    (inputs (list numactl hipamd python python-cppheaderparser))
+    (synopsis "A callback/activity library for performance tracing AMD GPUs.")
+    (description "ROCm tracer provides an API to provide functionality for registering
+the runtimes API callbacks and asynchronous activity records pool support.")
+    (home-page "https://github.com/ROCm-Developer-Tools/roctracer.git")
+    (license #f)))
+
+(define-public roctracer-5.7
+  (make-roctracer hipamd-5.7))
+(define-public roctracer-5.6
+  (make-roctracer hipamd-5.6))
+(define-public roctracer-5.5
+  (make-roctracer hipamd-5.5))
+(define-public roctracer-5.4
+  (make-roctracer hipamd-5.4))
+(define-public roctracer-5.3
+  (make-roctracer hipamd-5.3))
