@@ -35,6 +35,7 @@
 
   #:use-module (amd rocm-base)
   #:use-module (amd rocm-hip)
+  #:use-module (amd rocm-tools)
   #:use-module (amd python-cppheaderparser)
 
   #:use-module (gnu packages mpi)
@@ -270,7 +271,7 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
                                       "-DCMAKE_CXX_COMPILER=g++"))
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'update-filesystem
-                      ;only needed from 5.5 onwards
+                     ;; only needed from 5.5 onwards
                      (lambda _
                        (substitute* (append (find-files "." ".cpp$")
                                             (find-files "." ".h$"))
@@ -295,3 +296,85 @@ the runtimes API callbacks and asynchronous activity records pool support.")
   (make-roctracer hipamd-5.4))
 (define-public roctracer-5.3
   (make-roctracer hipamd-5.3))
+
+; rocblas
+(define %rocblas-hashes
+  `(("5.7.1" . ,(base32 "1ffwdyn5f237ad2m4k8b2ah15s0g2jfd6hm9qsywnsrby31af0nz"))
+    ("5.6.1" . ,(base32 "1vi927lzym8q063xllqlbay8v0yaqy5wvf687gdvc62vp2i22x73"))
+    ("5.5.1" . ,(base32 "1x1mp8fb05qrfd5sh6hyas2rfzr462xl9hixrhryi7ph8pi8r2aq"))
+    ("5.4.4" . ,(base32 "08qy5rrj6jwwqi1vnn3km92c0hl3pnc9aymifpack27g2p62j5jy"))
+    ("5.3.3" . ,(base32 "16iq2rjc4pljdycvflc55p8zc8jvs69mhh98cs4cgf5cbz21d3fg"))))
+
+(define %rocblas-patches
+  '(("5.7.1")
+    ("5.6.1" "amd/patches/rocblas-5.6.1.patch")
+    ("5.5.1" "amd/patches/rocblas-5.5.1.patch")
+    ("5.4.4" "amd/patches/rocblas-5.4.4.patch")
+    ("5.3.3" "amd/patches/rocblas-5.3.3.patch")))
+
+(define (rocblas-origin version)
+  (origin
+    (method git-fetch)
+    (uri (git-reference (url
+                         "https://github.com/ROCmSoftwarePlatform/rocBLAS.git")
+                        (commit (string-append "rocm-" version))))
+    (file-name (git-file-name "rocblas" version))
+    (sha256 (assoc-ref %rocblas-hashes version))
+    (patches (map search-patch
+                  (assoc-ref %rocblas-patches version)))))
+
+(define (make-rocblas tensile rocm-cmake hipamd)
+  (package
+    (name "rocblas")
+    (version (package-version hipamd))
+    (source
+     (rocblas-origin version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:build-type "Release"
+      #:tests? #f
+      #:validate-runpath? #f
+      #:configure-flags #~(list (string-append "-DCMAKE_CXX_COMPILER="
+                                               #$hipamd "/bin/hipcc")
+                                (string-append "-DTensile_CPU_THREADS="
+                                               (number->string (parallel-job-count)))
+                                "-DBUILD_WITH_PIP=OFF"
+                                (if (string=? #$version "5.3.3")
+                                 "-DCMAKE_TOOLCHAIN_FILE=toolchain-linux.cmake"
+                                 "") "-DAMDGPU_TARGETS=gfx1030;gfx90a")
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'set-paths 'adjust-CPLUS_INCLUDE_PATH
+                     ;; only needed for version<=5.4
+                     (lambda* (#:key inputs #:allow-other-keys)
+                       (define cplus-include-path
+                         ;; Delete glibc/include and gcc/include/c++ from CPLUS_INCLUDE_PATH
+                         ;; to allow clang to include the cuda_wrappers first.
+                         (delete (string-append (assoc-ref inputs "libc")
+                                                "/include")
+                                 (delete (string-append (assoc-ref inputs
+                                                                   "gcc")
+                                                        "/include/c++")
+                                         (string-split (getenv
+                                                        "CPLUS_INCLUDE_PATH")
+                                                       #\:))))
+                       (setenv "CPLUS_INCLUDE_PATH"
+                               (string-join cplus-include-path ":")))))))
+    (native-inputs (list python-wrapper tensile hipamd rocm-cmake))
+    (synopsis "Next generation BLAS implementation for ROCm platform.")
+    (description
+     "rocBLAS is the ROCm Basic Linear Algebra Subprograms (BLAS) library.
+rocBLAS is implemented in the HIP programming language and optimized for AMD GPUs.")
+    (home-page "https://github.com/ROCmSoftwarePlatform/rocBLAS.git")
+    (license #f)))
+
+(define-public rocblas-5.7
+  (make-rocblas tensile-5.7 rocm-cmake-5.7 hipamd-5.7))
+(define-public rocblas-5.6
+  (make-rocblas tensile-5.6 rocm-cmake-5.6 hipamd-5.6))
+(define-public rocblas-5.5
+  (make-rocblas tensile-5.5 rocm-cmake-5.5 hipamd-5.5))
+(define-public rocblas-5.4
+  (make-rocblas tensile-5.4 rocm-cmake-5.4 hipamd-5.4))
+(define-public rocblas-5.3
+  (make-rocblas tensile-5.3 rocm-cmake-5.3 hipamd-5.3))
