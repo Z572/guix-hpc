@@ -23,6 +23,7 @@
   #:use-module (guix licenses)
 
   #:use-module (gnu packages)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages version-control)
 
@@ -219,3 +220,47 @@ language and optimized for AMD's latest discrete GPUs.")
                rocblas-5.3
                aocl-blis
                roctracer-5.3))
+
+; osu benchmarks
+(define (make-osubench-rocm openmpi-rocm hipamd)
+  (package
+    (name "osu-bench")
+    (version (string-append "7.0.1-rocm-"
+                            (package-version hipamd)))
+    (source
+     (origin
+       (method url-fetch)
+       (uri
+        "https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.0.1.tar.gz")
+       (sha256
+        (base32 "0rlcvb3mln5lbjgxkzk0b8nzwhzf7hmbiyhz8q5bk89b13m4m584"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:configure-flags #~(list "CC=mpicc" "CXX=mpicxx" "--enable-rocm"
+                                (string-append "--with-rocm="
+                                               #$hipamd))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'patch-configure
+                     (lambda _
+                       (substitute* (list "configure" "configure.ac")
+                         (("__HIP_PLATFORM_HCC__")
+                          "__HIP_PLATFORM_AMD__")))))))
+    (native-inputs (list automake autoconf))
+    (inputs (list hipamd openmpi-rocm))
+    (synopsis "MPI microbenchmarks with ROCm support.")
+    (description "A collection of host-based and device-based microbenchmarks for MPI
+communication with ROCm support.")
+    (home-page "https://mvapich.cse.ohio-state.edu/benchmarks/")
+    (license bsd-3)))
+
+(define-public osubench-rocm-5.7
+  (make-osubench-rocm openmpi-rocm-5.7 hipamd-5.7))
+(define-public osubench-rocm-5.6
+  (make-osubench-rocm openmpi-rocm-5.6 hipamd-5.6))
+(define-public osubench-rocm-5.5
+  (make-osubench-rocm openmpi-rocm-5.5 hipamd-5.5))
+(define-public osubench-rocm-5.4
+  (make-osubench-rocm openmpi-rocm-5.4 hipamd-5.4))
+(define-public osubench-rocm-5.3
+  (make-osubench-rocm openmpi-rocm-5.3 hipamd-5.3))
