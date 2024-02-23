@@ -27,6 +27,7 @@
   #:use-module (gnu packages version-control)
 
   #:use-module (amd rocm-libs)
+  #:use-module (amd aocl-libs)
   #:use-module (amd rocm-hip))
 
 (define-public hpcg
@@ -128,3 +129,93 @@ The version of BabelStream is built targeting AMD GPUs using HIP.")
      (fsf-free "https://github.com/UoB-HPC/BabelStream/blob/main/LICENSE"
                "Custom permissive license based on John D. McCalpin’s original STREAM
 benchmark."))))
+
+; rochpl
+(define (make-rochpl rocm-cmake
+                     hipamd
+                     openmpi-rocm
+                     rocblas
+                     blis
+                     roctracer)
+  (package
+    (name "rochpl")
+    (version (package-version hipamd))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/ROCmSoftwarePlatform/rocHPL.git")
+             (commit "30d80ede0189b0aa594658c47ddc13dad1534d02")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1m7cvynkk785iyk1yldslqx3221h9vg035ddc5z4rr67w79j3a1m"))
+       (patches (search-patches
+                 "amd/packages/patches/rochpl-6.0.0-cmake.patch"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:build-type "Release"
+      #:tests? #f ;No tests.
+      #:configure-flags #~(list (string-append "-DROCM_PATH="
+                                               #$hipamd)
+                                (string-append "-DHPL_BLAS_DIR="
+                                               #$aocl-blis "/lib")
+                                (string-append "-DHPL_MPI_DIR="
+                                               #$openmpi-rocm)
+                                (string-append "-DROCTRACER_PATH="
+                                               #$roctracer))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'rocblas-header-includes
+                     (lambda _
+                       (substitute* "include/hpl_blas.hpp"
+                         (("<rocblas.h>")
+                          "<rocblas/rocblas.h>")
+                         (("<roctracer.h>")
+                          "<roctracer/roctracer.h>")
+                         (("<roctx.h>")
+                          "<roctracer/roctx.h>")))))))
+    (native-inputs (list rocm-cmake git))
+    (inputs (list hipamd openmpi-rocm rocblas blis roctracer))
+    (synopsis "HPL benchmark for ROCm")
+    (description
+     "rocHPL is a benchmark based on the HPL benchmark application, implemented on top of
+AMD's Radeon Open Compute ROCm Platform, runtime, and toolchains. rocHPL is created using the HIP programming
+language and optimized for AMD's latest discrete GPUs.")
+    (home-page "https://github.com/ROCmSoftwarePlatform/rocHPL.git")
+    (license (list bsd-4 bsd-3))))
+
+(define-public rochpl-5.7
+  (make-rochpl rocm-cmake-5.7
+               hipamd-5.7
+               openmpi-rocm-5.7
+               rocblas-5.7
+               aocl-blis
+               roctracer-5.7))
+(define-public rochpl-5.6
+  (make-rochpl rocm-cmake-5.6
+               hipamd-5.6
+               openmpi-rocm-5.6
+               rocblas-5.6
+               aocl-blis
+               roctracer-5.6))
+(define-public rochpl-5.5
+  (make-rochpl rocm-cmake-5.5
+               hipamd-5.5
+               openmpi-rocm-5.5
+               rocblas-5.5
+               aocl-blis
+               roctracer-5.5))
+(define-public rochpl-5.4
+  (make-rochpl rocm-cmake-5.4
+               hipamd-5.4
+               openmpi-rocm-5.4
+               rocblas-5.4
+               aocl-blis
+               roctracer-5.4))
+(define-public rochpl-5.3
+  (make-rochpl rocm-cmake-5.3
+               hipamd-5.3
+               openmpi-rocm-5.3
+               rocblas-5.3
+               aocl-blis
+               roctracer-5.3))
