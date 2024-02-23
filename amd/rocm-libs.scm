@@ -92,6 +92,41 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
 (define-public rocprim-5.3
   (make-rocprim rocm-cmake-5.3 hipamd-5.3))
 
+; libfabric built with rocm
+(define (make-ofi-rocm rocr-runtime)
+  (package
+    (inherit libfabric)
+    (name "libfabric")
+    (version (string-append "1.20.x-rocm-"
+                            (package-version rocr-runtime)))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/ofiwg/libfabric")
+             (commit "3a3f35fc6")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "01bkmh57gjgzamybm143zhvylcsvf6dbb7bai19bi0qzzfyp6hnr"))))
+    (arguments
+     (list
+      #:configure-flags #~(list (string-append "--with-rocr="
+                                               #$rocr-runtime))))
+    (native-inputs (list autoconf automake libtool))
+    (inputs (modify-inputs (package-inputs libfabric)
+              (append rocr-runtime)))))
+
+(define-public ofi-rocm-5.7
+  (make-ofi-rocm rocr-runtime-5.7))
+(define-public ofi-rocm-5.6
+  (make-ofi-rocm rocr-runtime-5.6))
+(define-public ofi-rocm-5.5
+  (make-ofi-rocm rocr-runtime-5.5))
+(define-public ofi-rocm-5.4
+  (make-ofi-rocm rocr-runtime-5.4))
+(define-public ofi-rocm-5.3
+  (make-ofi-rocm rocr-runtime-5.3))
+
 ; ucx built with rocm
 (define (make-ucx-rocm roct-thunk rocr-runtime hipamd)
   (package
@@ -145,25 +180,30 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
   (make-ucx-rocm roct-thunk-5.3 rocr-runtime-5.3 hipamd-5.3))
 
 ; openmpi built with ucx-rocm
-(define (make-openmpi-rocm ucx)
+(define (make-openmpi-rocm ucx ofi hipamd)
   (package
     (inherit openmpi)
-    (version (string-append "5.0.0-ucx-"
-                            (package-version ucx)))
+    (version (string-append "5.0.2-rocm-"
+                            (package-version hipamd)))
     (source
      (origin
        (method url-fetch)
        (uri
-        "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.0.tar.bz2")
+        "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.2.tar.bz2")
        (sha256
-        (base32 "04ynmkyxns0nxiwhyfzps1xfrxh8rlwd561xz12v9bn19flmr14x"))))
+        (base32 "13v9jqrqnr0ir3fv7hqb18rqrwybfzwbyq11fxqgzhz2xs7asipf"))))
     (arguments
      (list
       #:configure-flags #~(list
                            ;; "--enable-mca-no-build=btl-uct"
                            ;; "--enable-mpi1-compatibility"
+                           "--with-pmix=internal"
+                           (string-append "--with-rocm="
+                                          #$(this-package-input "hipamd"))
                            (string-append "--with-ucx="
-                                          #$(this-package-input "ucx")))
+                                          #$(this-package-input "ucx"))
+                           (string-append "--with-ofi="
+                                          #$(this-package-input "libfabric")))
       #:phases #~(modify-phases %standard-phases
                    ;; opensm is needed for InfiniBand support.
                    (add-after 'unpack 'find-opensm-headers
@@ -176,20 +216,21 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
                                                        "/include/infiniband")))))))
     (native-inputs (list perl python-wrapper pkg-config))
     (inputs (list hwloc-2
-                  libfabric
                   libevent
                   opensm
                   rdma-core
                   gfortran
-                  ucx))))
+                  ucx
+                  ofi
+                  hipamd))))
 
 (define-public openmpi-rocm-5.7
-  (make-openmpi-rocm ucx-rocm-5.7))
+  (make-openmpi-rocm ucx-rocm-5.7 ofi-rocm-5.7 hipamd-5.7))
 (define-public openmpi-rocm-5.6
-  (make-openmpi-rocm ucx-rocm-5.6))
+  (make-openmpi-rocm ucx-rocm-5.6 ofi-rocm-5.6 hipamd-5.6))
 (define-public openmpi-rocm-5.5
-  (make-openmpi-rocm ucx-rocm-5.5))
+  (make-openmpi-rocm ucx-rocm-5.5 ofi-rocm-5.5 hipamd-5.5))
 (define-public openmpi-rocm-5.4
-  (make-openmpi-rocm ucx-rocm-5.4))
+  (make-openmpi-rocm ucx-rocm-5.4 ofi-rocm-5.4 hipamd-5.4))
 (define-public openmpi-rocm-5.3
-  (make-openmpi-rocm ucx-rocm-5.3))
+  (make-openmpi-rocm ucx-rocm-5.3 ofi-rocm-5.3 hipamd-5.3))
