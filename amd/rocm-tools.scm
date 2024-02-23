@@ -21,9 +21,12 @@
   #:use-module (guix git-download)
   #:use-module (guix licenses)
 
+  #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages serialization)
 
   #:use-module (amd rocm-base))
 
@@ -120,3 +123,59 @@ provides a user space interface for applications to monitor and control GPU appl
   (make-rocm-smi "5.4.4"))
 (define-public rocm-smi-5.3
   (make-rocm-smi "5.3.3"))
+
+; tensile
+(define %tensile-hashes
+  `(("5.7.1" . ,(base32 "0visjmv63fmk8ywqjfcfvfbsr5784pmv83gsff4xppgrry4cc8qb"))
+    ("5.6.1" . ,(base32 "1s2fmq5p0yd2s3r92sz8kzrmmgjkqv9pz4rjy25i8xvaips9wl3s"))
+    ("5.5.1" . ,(base32 "0fs3cz6yaymawnzhm3szy9g3yg4r11gc9zni0k3m7gmycympbsg9"))
+    ("5.4.4" . ,(base32 "1a4d1sds391s99ymzyigqnd493d8l24hikrc964whzkddbmapb2v"))
+    ("5.3.3" . ,(base32 "1l3jxp9j4las9hwgsvbqx2alqxh9n0gyqqdjirkgdhs8hw8x23p8"))))
+
+(define %tensile-patches
+  '(("5.7.1" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.6.1" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.5.1" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.4.4" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.3.3" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")))
+
+(define (tensile-origin version)
+  (origin
+    (method git-fetch)
+    (uri (git-reference (url
+                         "https://github.com/ROCmSoftwarePlatform/Tensile.git")
+                        (commit (string-append "rocm-" version))))
+    (file-name (git-file-name "tensile" version))
+    (sha256 (assoc-ref %tensile-hashes version))
+    (patches (map search-patch
+                  (assoc-ref %tensile-patches version)))))
+
+(define (make-tensile version)
+  (package
+    (name "tensile")
+    (version version)
+    (source
+     (tensile-origin version))
+    (build-system python-build-system)
+    (native-inputs (list python-pandas))
+    (propagated-inputs (list msgpack-3 python-msgpack python-pyyaml
+                             python-joblib python-psutil))
+    (synopsis "A GEMM kernel generator for AMD GPUs.")
+    (description
+     "Tensile is a tool for creating benchmark-driven backend libraries for GEMMs, GEMM-like problems
+(such as batched GEMM), and general N-dimensional tensor contractions on a GPU. The Tensile library
+is mainly used as backend library to rocBLAS. Tensile acts as the performance backbone for a wide
+variety of 'compute' applications running on AMD GPUs.")
+    (home-page "https://github.com/ROCmSoftwarePlatform/Tensile.git")
+    (license #f)))
+
+(define-public tensile-5.7
+  (make-tensile "5.7.1"))
+(define-public tensile-5.6
+  (make-tensile "5.6.1"))
+(define-public tensile-5.5
+  (make-tensile "5.5.1"))
+(define-public tensile-5.4
+  (make-tensile "5.4.4"))
+(define-public tensile-5.3
+  (make-tensile "5.3.3"))
