@@ -271,11 +271,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "8ddc8edaac6a882ee56a1f897de2fd26f36acb02")))
+                  (commit "96fc0818e5ac08f7fe112e4a8e92df71d9217942")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0m780wqs7ibz3ab4vjdbd27q2cywry6bwph6g97jz6q1xw8wfs0z"))))
+              "02ygdkf3646r9rdfrlsyy13fxac52ch386lq9swg5snixhnlvjgm"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list bash-completion
@@ -306,11 +306,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "1cd9dbbed64a09329f2e0d006de5984de4e45753")))
+                    (commit "a7b7d1fe428f09794d1e209cbd19f244ef6f2aa4")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1wqp2415kl65ad4y3sl0v3ys67pk6wf3z57dbr3lzkbf6s3b0wlh"))))
+                "19fak910iqhqknkkk4lkh3x99zc3y0q9b2jkhkw262dxw87bhqgf"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -321,6 +321,7 @@ a source code input file.")
            emacs-corfu
            ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
            emacs-corfu-terminal
+	   ;;  emacs-dirvish TODO
            emacs-embark
 	   emacs-guix
            ;; emacs-embark-consult: library provided within emacs-embark package
@@ -331,10 +332,13 @@ a source code input file.")
            emacs-orderless
            emacs-pdf-tools
            emacs-ripgrep
+	   emacs-treemacs ;; TODO move it to a higher level (either within an existing or a new package)
            emacs-vertico
            ;; emacs-vertico-directory: library provided within emacs-vertico package
            emacs-vterm-toggle
            emacs-wgrep
+	   inetutils ;; for `hostname`, requested by liquidprompt
+	   liquidprompt ;; for nice PS1 prompt
            ripgrep))))
 
 ;; emacs-elementaryx-base with emacs instead of emacs-minimal
@@ -343,30 +347,111 @@ a source code input file.")
   (emacs-instead-of-emacs-minimal emacs-elementaryx-base-with-emacs-minimal))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-elementaryx-all-the-icons publicly defined below instead
+;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-all-the-icons`
+(define-public emacs-elementaryx-all-the-icons ;; -with-emacs-minimal
+  (package
+   (name "emacs-elementaryx-all-the-icons")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-all-the-icons")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for all-the-icons.")
+   (description
+    "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for all-the-icons, a utility package to collect various Icon Fonts and
+propertize them within Emacs.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "53fd2176d9e9c0c4ef73882cf969cd752f529b63")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "0mi0s2z85kybvkrmdq7bgyhxpk0r9yr8qqr9rqkv54189iwi7jxw"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-all-the-icons
+	  emacs-all-the-icons-completion
+	  emacs-all-the-icons-dired
+	  emacs-all-the-icons-ibuffer
+	  ;; emacs-spaceline-all-the-icons ;; TODO: powerline does not currently compile with emacs-minimal
+	  ;; emacs-treemacs-extra ;; for all-the-icons support ;; TODO
+	  ))))
+
+;; ;; emacs-elementaryx-all-the-icons with emacs instead of emacs-minimal
+;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+;; (define-public emacs-elementaryx-all-the-icons
+;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-all-the-icons-with-emacs-minimal))
+
+;; ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; ;; Use emacs-elementaryx-all-the-icons publicly defined below instead
+;; (define emacs-elementaryx-nerd-fonts-with-emacs-minimal
+;;   (package
+;;    (name "emacs-elementaryx-nerd-fonts")
+;;    (version "1.4.0")
+;;    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-nerd-fonts")
+;;    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+;; for emacs nerd fonts.")
+;;    (description
+;;     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+;; for emacs nerd fonts, a Library for Nerd Font icons")
+;;    (license license:cecill-c)
+;;    (source (origin
+;;             (method git-fetch)
+;;             (uri (git-reference
+;;                   (url home-page)
+;;                   (commit "TODO")))
+;;             (file-name (string-append name "-" version "-checkout"))
+;;             (sha256
+;;              (base32
+;;               "TODO"))))
+;;    (build-system emacs-build-system)
+;;    (propagated-inputs
+;;     (list emacs--dirvish
+;;           emacs-nerd-icons
+;; 	  emacs-nerd-icons-completion
+;; 	  emacs-nerd-icons-corfu
+;; 	  emacs-nerd-icons-dired
+;; 	  emacs-nerd-icons-ibuffer
+;; 	  emacs-doom-modeline
+;; 	  emacs-treemacs-nerd-icons
+;; 	  ))))
+
+;; ;; emacs-elementaryx-nerd with emacs instead of emacs-minimal
+;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
+;; (define-public emacs-elementaryx-nerd
+;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-nerd-with-emacs-minimal))
+
+;; TODO emacs-vscode-dark-plus
+;; TODO emacs-vscode-icons
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-elementaryx-org-minimal publicly defined below instead
 ;; Note that this package is a common minimalist basis for both emacs-elementaryx-org and emacs-elementaryx-ox
 (define emacs-elementaryx-org-minimal-with-emacs-minimal
   (package
    (name "emacs-elementaryx-org-minimal")
-    (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
-    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
-    (description
-     "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
-    (build-system emacs-build-system)
-    (propagated-inputs
-     (list emacs-org
-           graphviz))))
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
+   (description
+    "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-org
+          graphviz))))
 
 ;; emacs-elementaryx-org-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -472,7 +557,7 @@ a source code input file.")
            ccls ;; c / c++ language server
            direnv ;; not necessary for emacs-envrc (already a dependency of it) but so that we have it in a terminal
            emacs-envrc
-           ;; emacs-ess ;; TODO: follow guix issue with emacs-ess https://issues.guix.gnu.org/66762
+           ;; emacs-ess ;; Waiting for its stalibilization: `guix build --check --no-grafts emacs-ess` seems to possibly fail.
            emacs-rmsbolt-ts
 	   fortls ;; fortran language server
            gdb
@@ -952,18 +1037,20 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "2103c795a75e7b3c0d613713934c19b0974abfd4")))
+                  (commit "4508cc8b3187b013ac6bd28186e57402b0ba00ef")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1rxvvxsbya7dzn0cpjxkmb8mnkh7gyg9gqd579bg8szacvibh6bh"))))
+              "0jwpilqyxknd0zl94ca91xax4qqbg02j0qba0d344i9q8siqy8hf"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-elementaryx-dev
           emacs-elementaryx-dev-parentheses
           emacs-elementaryx-org
           emacs-elementaryx-ox-publish
-          emacs-elementaryx-write))))
+          emacs-elementaryx-write
+	  emacs-elementaryx-all-the-icons
+	  ))))
 
 ;; emacs-elementaryx-full with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
