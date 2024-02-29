@@ -200,6 +200,23 @@ a source code input file.")
        #:install-plan
        '(("lob-ob-latexpicture.org" "share/emacs/site-lob/lob-ob-latexpicture.org"))))))
 
+;; ;; Contrary to emacs-treemacs-extra, we do not embed projectile,
+;; ;; persp-mode, perspective and mu as propagated inputs
+;; (define-public emacs-treemacs-extra-light
+;;   (package
+;;     (inherit emacs-treemacs-extra)
+;;     (name "emacs-treemacs-extra-light")
+;;     (propagated-inputs
+;;      (modify-inputs (package-propagated-inputs emacs-treemacs)
+;;        (append emacs-all-the-icons
+;;                emacs-evil
+;;                emacs-magit
+;;                ;; emacs-projectile
+;;                ;; emacs-persp-mode
+;;                ;; emacs-perspective
+;;                ;; mu
+;; 	       )))))
+
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-elementaryx-early-init publicly defined below instead
 (define emacs-elementaryx-early-init-with-emacs-minimal
@@ -273,11 +290,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "96fc0818e5ac08f7fe112e4a8e92df71d9217942")))
+                  (commit "67f7ff668737eeac7930c0723b1b70159023a986")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "02ygdkf3646r9rdfrlsyy13fxac52ch386lq9swg5snixhnlvjgm"))))
+              "0vzn2rf0g2jpql66ccydgxa7pvq1d8v72ryr2a74y9frmkin23rn"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list bash-completion
@@ -348,39 +365,65 @@ a source code input file.")
 (define-public emacs-elementaryx-base
   (emacs-instead-of-emacs-minimal emacs-elementaryx-base-with-emacs-minimal))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-all-the-icons publicly defined below instead
-;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-all-the-icons`
-(define-public emacs-elementaryx-all-the-icons ;; -with-emacs-minimal
+(define-public emacs-elementaryx-treemacs
   (package
-   (name "emacs-elementaryx-all-the-icons")
+   (name "emacs-elementaryx-treemacs")
    (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-all-the-icons")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-treemacs")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
-for all-the-icons.")
+for treemacs.")
    (description
     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
-for all-the-icons, a utility package to collect various Icon Fonts and
-propertize them within Emacs.")
+for treemacs.")
    (license license:cecill-c)
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "53fd2176d9e9c0c4ef73882cf969cd752f529b63")))
+                  (commit "dd1eb529d4a561174280bc5110704958cb53622a")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0mi0s2z85kybvkrmdq7bgyhxpk0r9yr8qqr9rqkv54189iwi7jxw"))))
+              "1ymzsdn76h3bpjklv3mawg3cbvl1ynvawfjlkybiv6k4iql1qs26"))))
    (build-system emacs-build-system)
    (propagated-inputs
-    (list emacs-all-the-icons
-	  emacs-all-the-icons-completion
-	  emacs-all-the-icons-dired
-	  emacs-all-the-icons-ibuffer
-	  ;; emacs-spaceline-all-the-icons ;; TODO: powerline does not currently compile with emacs-minimal
-	  ;; emacs-treemacs-extra ;; for all-the-icons support ;; TODO
-	  ))))
+    ;; (list emacs-treemacs-extra-light)
+    (list emacs-treemacs-extra)
+    )))
+
+;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
+;; Use emacs-elementaryx-all-the-icons publicly defined below instead
+;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-all-the-icons`
+(define-public emacs-elementaryx-all-the-icons ;; -with-emacs-minimal
+  (package
+    (name "emacs-elementaryx-all-the-icons")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-all-the-icons")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for all-the-icons.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for all-the-icons, a utility package to collect various Icon Fonts and
+propertize them within Emacs.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "7d5f9736d90a73f7c0990d9c4280e647f571eb8b")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0b1g86kq16l3lxn1p91pnf75zadrqlk59l1zx6k8cld048m99kxz"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-all-the-icons
+	   emacs-all-the-icons-completion
+	   emacs-all-the-icons-dired
+	   emacs-all-the-icons-ibuffer
+	   emacs-spaceline-all-the-icons ;; Note: powerline does not currently compile with emacs-minimal
+	   ;; Note that emacs-treemacs-extra-light in emacs-elementaryx-treemacs includes support for all the icons
+	   ))))
 
 ;; ;; emacs-elementaryx-all-the-icons with emacs instead of emacs-minimal
 ;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -434,26 +477,26 @@ propertize them within Emacs.")
 ;; Note that this package is a common minimalist basis for both emacs-elementaryx-org and emacs-elementaryx-ox
 (define emacs-elementaryx-org-minimal-with-emacs-minimal
   (package
-   (name "emacs-elementaryx-org-minimal")
-   (version "1.4.0")
-   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
-   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
-   (description
-    "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
-   (license license:cecill-c)
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
-            (file-name (string-append name "-" version "-checkout"))
-            (sha256
-             (base32
-              "1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
-   (build-system emacs-build-system)
-   (propagated-inputs
-    (list emacs-org
-          graphviz))))
+    (name "emacs-elementaryx-org-minimal")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-org
+           graphviz))))
 
 ;; emacs-elementaryx-org-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -1039,11 +1082,11 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "4508cc8b3187b013ac6bd28186e57402b0ba00ef")))
+                  (commit "c95c9a638845373a84354deab914b250bc2eecb2")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0jwpilqyxknd0zl94ca91xax4qqbg02j0qba0d344i9q8siqy8hf"))))
+              "1fs433hfbfnhqi76x60hrm04rn6fn53df4q7lhy516np3y8vhk3j"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-elementaryx-dev
@@ -1051,6 +1094,7 @@ scheme.")
           emacs-elementaryx-org
           emacs-elementaryx-ox-publish
           emacs-elementaryx-write
+	  emacs-elementaryx-treemacs
 	  emacs-elementaryx-all-the-icons
 	  ))))
 
