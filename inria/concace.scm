@@ -118,7 +118,9 @@ a source code input file.")
       (license license:agpl3+))))
 
 (define emacs-instead-of-emacs-minimal
-  (package-input-rewriting `((,emacs-minimal . ,emacs))))
+  ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
+  ;; Try to do nothing (before deciding completely purging it):
+  (package-input-rewriting `((,emacs-minimal . ,emacs-minimal))))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-ob-latex-macros publicly defined below instead
