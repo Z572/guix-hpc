@@ -563,7 +563,7 @@ propertize them within Emacs.")
            gdb
            python-lsp-server ;; pyton language server
 	   r-languageserver ;; r language server; TODO: enable emacs-ess otherwise there is no r mode
-	   rust-lsp-server-0.5 ;; rust language server
+	   ;; rust-lsp-server-0.5 ;; rust language server
 	   texlive-digestif ;; language server (and code analyzer) for: LaTeX, plain TeX, ConTeXt and Texinfo
            tree-sitter
            tree-sitter-bash
