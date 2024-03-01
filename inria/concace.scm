@@ -26,6 +26,7 @@
   #:use-module (gnu packages emacs)
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages fontutils) ;; for fontconfig, e.g. used by emacs-all-the-icons
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gdb)
   #:use-module (gnu packages gcc)
@@ -440,7 +441,8 @@ propertize them within Emacs.")
 	   emacs-all-the-icons-dired
 	   emacs-all-the-icons-ibuffer
 	   emacs-spaceline-all-the-icons ;; Note: powerline does not currently compile with emacs-minimal
-	   ;; Note that emacs-treemacs-extra-light in emacs-elementaryx-treemacs includes support for all the icons
+	   fontconfig
+	   ;; Note that emacs-treemacs-extra in emacs-elementaryx-treemacs includes support for all the icons
 	   ))))
 
 ;; ;; emacs-elementaryx-all-the-icons with emacs instead of emacs-minimal
