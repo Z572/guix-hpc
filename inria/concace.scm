@@ -117,6 +117,25 @@
 a source code input file.")
       (license license:agpl3+))))
 
+;; Better compatibility support with context-menu-mode (right-click)
+;; TODO: remove it and use emacs-treemacs-extra 3.2 as soon as it is released and integrated in guix
+(define-public emacs-treemacs-extra-2024
+  (package
+   (inherit emacs-treemacs-extra)
+   (home-page "https://github.com/Alexander-Miller/treemacs")
+   (name "emacs-treemacs-extra-2024")
+   (version "3.1-2024")
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "8c6df39f01a4d47fda2cc943645fa067f771b748")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))
+   ))
+
 (define emacs-instead-of-emacs-minimal
   ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
   ;; Try to do nothing (before deciding completely purging it):
@@ -351,7 +370,6 @@ a source code input file.")
            emacs-orderless
            emacs-pdf-tools
            emacs-ripgrep
-	   emacs-treemacs ;; TODO move it to a higher level (either within an existing or a new package)
            emacs-vertico
            ;; emacs-vertico-directory: library provided within emacs-vertico package
            emacs-vterm-toggle
@@ -388,7 +406,7 @@ for treemacs.")
    (build-system emacs-build-system)
    (propagated-inputs
     ;; (list emacs-treemacs-extra-light)
-    (list emacs-treemacs-extra)
+    (list emacs-treemacs-extra-2024)
     )))
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
@@ -410,11 +428,11 @@ propertize them within Emacs.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "7d5f9736d90a73f7c0990d9c4280e647f571eb8b")))
+                    (commit "1a8339145b4b3ef3382856fd85ba88048ba39dd3")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"0b1g86kq16l3lxn1p91pnf75zadrqlk59l1zx6k8cld048m99kxz"))))
+		"18p016rhgvvnxpnh4fi05xvzn59wkccny30f072a4manjdx5lpqk"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-all-the-icons
