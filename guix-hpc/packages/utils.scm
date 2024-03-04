@@ -310,3 +310,27 @@ the ISO-C++ proposal P0009, which will add support for non-owning
 multi-dimensional array references to the C++ standard library.")
     (home-page "https://github.com/kokkos/mdspan")
     (license license:asl2.0)))
+
+(define-public ginkgo
+  (package
+    (name "ginkgo")
+    (version "1.7.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/ginkgo-project/ginkgo")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0mjrwvy1lbys8ymdxh00zw4p3qhpk3f5400yj4864m99fs72f01g"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:configure-flags #~(list "-DGINKGO_BUILD_BENCHMARKS=OFF")))
+    (native-inputs (list googletest))
+    (synopsis "Numerical linear algebra software package")
+    (description "Ginkgo is a high-performance numerical linear algebra library for
+many-core systems, with a focus on solution of sparse linear systems.")
+    (home-page "https://ginkgo-project.github.io/")
+    (license license:bsd-2)))
