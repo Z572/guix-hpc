@@ -23,7 +23,7 @@
 (define-public eztrace
   (package
     (name "eztrace")
-    (version "2.0")
+    (version "2.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -32,7 +32,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0vqyrifpwc1hgph2i5gn02b3ckjj59h93xkrgp548s11kqsfgd4j"))
+                "1h0pgppgsvhjfpcc4p2dsn8dhp5c09pl8fhs4khwpj1cwq5rp2gz"))
               ;; (modules '((guix build utils)))
 
               ;; Remove bundled libraries.
