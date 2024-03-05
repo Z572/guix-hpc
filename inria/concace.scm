@@ -118,6 +118,25 @@
 a source code input file.")
       (license license:agpl3+))))
 
+
+;; The 2.0.1 is the last release but dates back to 2016 (8 years old)
+;; TODO: remove it and use emacs-spaceline 2.0.2 or 2.1 or 3 as soon as it is released and integrated in guix
+(define-public emacs-spaceline-2024
+  (package
+   (inherit emacs-spaceline)
+   (home-page "https://github.com/TheBB/spaceline/")
+   (name "emacs-spaceline-2024")
+   (version "2.0.1-2024")
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "086420d16e526c79b67fc1edec4c2ae1e699f372")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "1qld1rsvi9a2kq8w128sp0gv7dppp7cxmgrlyg5zdvvp9av3d90i"))))))
+
 ;; Better compatibility support with context-menu-mode (right-click)
 ;; TODO: remove it and use emacs-treemacs-extra 3.2 as soon as it is released and integrated in guix
 (define-public emacs-treemacs-extra-2024
@@ -134,8 +153,7 @@ a source code input file.")
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))
-   ))
+              "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))))
 
 (define emacs-instead-of-emacs-minimal
   ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
@@ -310,11 +328,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "67f7ff668737eeac7930c0723b1b70159023a986")))
+                  (commit "8f46c205f27e4237395490c691376348c43fcd87")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0vzn2rf0g2jpql66ccydgxa7pvq1d8v72ryr2a74y9frmkin23rn"))))
+              "1h49lj0d7pqfhqpsksylzks224lyibc86bffgyrkbapci3m266sl"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list bash-completion
@@ -410,10 +428,8 @@ for treemacs.")
     (list emacs-treemacs-extra-2024)
     )))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-all-the-icons publicly defined below instead
 ;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-all-the-icons`
-(define-public emacs-elementaryx-all-the-icons ;; -with-emacs-minimal
+(define-public emacs-elementaryx-all-the-icons
   (package
     (name "emacs-elementaryx-all-the-icons")
     (version "1.4.0")
@@ -423,71 +439,65 @@ for all-the-icons.")
     (description
      "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for all-the-icons, a utility package to collect various Icon Fonts and
-propertize them within Emacs.")
+propertize them within Emacs. See also emacs-elementaryx-nerd-icons
+alternative.")
     (license license:cecill-c)
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "1a8339145b4b3ef3382856fd85ba88048ba39dd3")))
+                    (commit "857b985f3e184e49f716b51ceaa973b8efe5641d")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"18p016rhgvvnxpnh4fi05xvzn59wkccny30f072a4manjdx5lpqk"))))
+		"1pzx2pa8kgsd33z041p2qayvkbpd9gih2xx4hxvxgl1sjvf7sp18"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-all-the-icons
+     (list emacs-doom-themes
+	   emacs-all-the-icons
 	   emacs-all-the-icons-completion
 	   emacs-all-the-icons-dired
 	   emacs-all-the-icons-ibuffer
-	   emacs-spaceline-all-the-icons ;; Note: powerline does not currently compile with emacs-minimal
+	   emacs-spaceline-2024
+	   emacs-diminish
+	   ;; emacs-spaceline-all-the-icons
 	   fontconfig
 	   ;; Note that emacs-treemacs-extra in emacs-elementaryx-treemacs includes support for all the icons
 	   ))))
 
-;; ;; emacs-elementaryx-all-the-icons with emacs instead of emacs-minimal
-;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-;; (define-public emacs-elementaryx-all-the-icons
-;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-all-the-icons-with-emacs-minimal))
-
-;; ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; ;; Use emacs-elementaryx-all-the-icons publicly defined below instead
-;; (define emacs-elementaryx-nerd-fonts-with-emacs-minimal
-;;   (package
-;;    (name "emacs-elementaryx-nerd-fonts")
-;;    (version "1.4.0")
-;;    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-nerd-fonts")
-;;    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
-;; for emacs nerd fonts.")
-;;    (description
-;;     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
-;; for emacs nerd fonts, a Library for Nerd Font icons")
-;;    (license license:cecill-c)
-;;    (source (origin
-;;             (method git-fetch)
-;;             (uri (git-reference
-;;                   (url home-page)
-;;                   (commit "TODO")))
-;;             (file-name (string-append name "-" version "-checkout"))
-;;             (sha256
-;;              (base32
-;;               "TODO"))))
-;;    (build-system emacs-build-system)
-;;    (propagated-inputs
-;;     (list emacs--dirvish
-;;           emacs-nerd-icons
-;; 	  emacs-nerd-icons-completion
-;; 	  emacs-nerd-icons-corfu
-;; 	  emacs-nerd-icons-dired
-;; 	  emacs-nerd-icons-ibuffer
-;; 	  emacs-doom-modeline
-;; 	  emacs-treemacs-nerd-icons
-;; 	  ))))
-
-;; ;; emacs-elementaryx-nerd with emacs instead of emacs-minimal
-;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-;; (define-public emacs-elementaryx-nerd
-;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-nerd-with-emacs-minimal))
+;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-nerd-icons`
+(define-public emacs-elementaryx-nerd-icons
+  (package
+    (name "emacs-elementaryx-nerd-icons")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-nerd-icons")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for nerd-icons.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "6254e785c908ca5b59be78494bdc412aa100ca9c")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1237hv8cpli7k6yj4fbkq2aasvr8jg5yflfv334nsqq6k2di6yby"))))
+    (build-system emacs-build-system)
+    (propagated-inputs
+     (list emacs-nerd-icons
+	   ;; emacs-nerd-icons-completion
+	   ;; + emacs-nerd-icons-corfu
+	   ;; emacs-nerd-icons-dired
+	   ;; emacs-nerd-icons-ibuffer
+	   emacs-doom-themes
+	   emacs-doom-modeline
+	   ;; Note: out-of-the-box emacs-treemacs nerd support?
+	   fontconfig
+	   ))))
 
 ;; TODO emacs-vscode-dark-plus
 ;; TODO emacs-vscode-icons
@@ -497,26 +507,26 @@ propertize them within Emacs.")
 ;; Note that this package is a common minimalist basis for both emacs-elementaryx-org and emacs-elementaryx-ox
 (define emacs-elementaryx-org-minimal-with-emacs-minimal
   (package
-    (name "emacs-elementaryx-org-minimal")
-    (version "1.4.0")
-    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
-    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
-    (description
-     "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-		"1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
-    (build-system emacs-build-system)
-    (propagated-inputs
-     (list emacs-org
-           graphviz))))
+   (name "emacs-elementaryx-org-minimal")
+   (version "1.4.0")
+   (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
+   (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
+   (description
+    "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+	      "1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
+   (build-system emacs-build-system)
+   (propagated-inputs
+    (list emacs-org
+          graphviz))))
 
 ;; emacs-elementaryx-org-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -1116,6 +1126,7 @@ scheme.")
           emacs-elementaryx-write
 	  emacs-elementaryx-treemacs
 	  emacs-elementaryx-all-the-icons
+	  ;; emacs-elementaryx-nerd-icons ;; Waiting for nerd icons integration https://issues.guix.gnu.org/67983
 	  ))))
 
 ;; emacs-elementaryx-full with emacs instead of emacs-minimal
