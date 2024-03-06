@@ -167,3 +167,18 @@ of it for the PDI library.")))
                    (add-after 'fix-tests 'mpi-setup
                               #$%openmpi-setup))))
     (synopsis "Parallel verson of the HDF5 plugin for PDI")))
+
+(define-public pdiplugin-set-value
+  (package/inherit pdi-common
+    (name "pdiplugin-set-value")
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+                                ;; force usage of system packages
+                                "-DUSE_DEFAULT=SYSTEM"
+                                (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/set_value"))))))
+    (synopsis "\"set value\" plugin for PDI")))
