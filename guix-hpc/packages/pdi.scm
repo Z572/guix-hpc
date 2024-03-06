@@ -80,3 +80,26 @@ libraries are used from the specification tree.")
            googletest
            ;; needed for building documentation
            doxygen))))
+
+(define-public pdiplugin-mpi
+  (package/inherit pdi-common
+    (name "pdiplugin-mpi")
+    (inputs
+     (modify-inputs (package-inputs pdi-common)
+       (append openmpi)))
+    (native-inputs (list gfortran
+                         googletest
+                         benchmark))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+                                ;; force usage of system packages
+                                "-DUSE_DEFAULT=SYSTEM"
+                                (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/mpi")))
+                   (add-before 'check 'mpi-setup
+                               #$%openmpi-setup))))
+    (synopsis "MPI plugin for PDI")))
