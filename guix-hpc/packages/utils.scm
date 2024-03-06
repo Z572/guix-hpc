@@ -18,10 +18,13 @@
   #:use-module (gnu packages cran)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages documentation)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages libevent)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
+  #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages statistics)
+  #:use-module (gnu packages serialization)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages xml)
   #:use-module (guix utils)
@@ -226,4 +229,35 @@ physical files.")
      "FTI stands for Fault Tolerance Interface and is a library that aims to
 give computational scientists the means to perform fast and efficient
 multilevel checkpointing in large scale supercomputers.")
+    (license license:bsd-3)))
+
+(define-public paraconf
+  (package
+    (name "paraconf")
+    (version "1.0.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/pdidev/paraconf")
+             (commit version)))
+       (sha256
+        (base32 "062jqhx0fpf4sspnz131408272brpqdcimcwmrv8ynykchgma44m"))
+       (snippet #~(begin
+                    (use-modules (guix build utils))
+                    (delete-file-recursively "vendor")))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+				;; don't use vendored dependencies
+                                "-DUSE_DEFAULT=SYSTEM")))
+    (native-inputs (list pkg-config gfortran))
+    (inputs (list libyaml))
+    (synopsis
+     "Library providing a simple query language to access a Yaml tree")
+    (description
+     "Paraconf is a library that provides a simple query language to access
+a Yaml tree on top of libyaml.")
+    (home-page "https://github.com/pdidev/paraconf")
     (license license:bsd-3)))
