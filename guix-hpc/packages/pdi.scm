@@ -103,3 +103,67 @@ libraries are used from the specification tree.")
                    (add-before 'check 'mpi-setup
                                #$%openmpi-setup))))
     (synopsis "MPI plugin for PDI")))
+
+(define-public pdiplugin-decl-hdf5
+  (package/inherit pdi-common
+    (name "pdiplugin-decl-hdf5")
+    (inputs
+     (modify-inputs (package-inputs pdi-common)
+       (append hdf5)))
+    (native-inputs (list gfortran
+                         googletest
+                         benchmark))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+                                ;; force usage of system packages
+                                "-DUSE_DEFAULT=SYSTEM"
+                                "-DBUILD_HDF5_PARALLEL=OFF"
+                                (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/decl_hdf5")))
+                   (add-before 'check 'fix-tests
+                     (lambda* _
+                       (substitute* "../build/tests/compatibility_tests/CTestTestfile.cmake"
+                         (("/bin/bash")
+                          (which "bash"))))))))
+    (synopsis "Serial verson of the HDF5 plugin for PDI")
+    (description "Decl'HDF5 plugin enables one to read and write data from HDF5 files in
+a declarative way. Decl'HDF5 does not support the full HDF5 feature
+set but offers a simple declarative interface to access a large subset
+of it for the PDI library.")))
+
+(define-public pdiplugin-decl-hdf5-parallel
+  (package/inherit pdi-common
+    (name "pdiplugin-decl-hdf5-parallel")
+    (inputs
+     (modify-inputs (package-inputs pdi-common)
+       (append hdf5-parallel-openmpi
+               openmpi)))
+    (native-inputs (list gfortran
+                         googletest
+                         benchmark))
+    (propagated-inputs (list pdiplugin-mpi))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+                                ;; force usage of system packages
+                                "-DUSE_DEFAULT=SYSTEM"
+                                (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/decl_hdf5")))
+                   (add-before 'check 'setup-pdi-plugin-path
+                     (lambda _
+                       (setenv "PDI_PLUGIN_PATH" (string-append #$pdiplugin-mpi "/lib/pdi/plugins_" #$(package-version pdi-common)))))
+                   (add-before 'check 'fix-tests
+                     (lambda* _
+                       (substitute* "../build/tests/compatibility_tests/CTestTestfile.cmake"
+                         (("/bin/bash")
+                          (which "bash")))))
+                   (add-after 'fix-tests 'mpi-setup
+                              #$%openmpi-setup))))
+    (synopsis "Parallel verson of the HDF5 plugin for PDI")))
