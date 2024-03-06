@@ -28,63 +28,55 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages serialization))
 
-(define-public pdi
+;; This is a private package that is inherited by the main lib and the plugins
+(define pdi-common
   (package
-    (name "pdi")
-    (version "1.6.0")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://gitlab.maisondelasimulation.fr/pdidev/pdi/")
-             (commit version)))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
-       (snippet #~(begin
-                    (use-modules (guix build utils))
-                    (delete-file-recursively "vendor")))))
-    (build-system cmake-build-system)
+   (name "pdi")
+   (version "1.6.0")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://gitlab.maisondelasimulation.fr/pdidev/pdi/")
+           (commit version)))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
+     (snippet #~(begin
+                  (use-modules (guix build utils))
+                  (delete-file-recursively "vendor")))))
+   (build-system cmake-build-system)
+   (inputs (list spdlog
+                 libyaml
+                 pkg-config
+                 paraconf))
+   (synopsis "A library allowing loose coupling between components.")
+   (description
+    "PDI supports loose coupling of simulation codes with data handling
+the simulation code is annotated in a library-agnostic way,
+libraries are used from the specification tree.")
+   (home-page "https://pdi.dev")
+   (license license:bsd-3)))
+
+(define-public pdi
+  (package/inherit pdi-common
     (arguments
      (list
       #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
-                                ;; force usage of system packages
-                                "-DUSE_DEFAULT=SYSTEM"
-                                ;; these are not honoured by USE_DEFAULT
-                                "-DUSE_GTest=SYSTEM"
-                                "-DUSE_benchmark=SYSTEM"
-                                "-DUSE_Zpp=SYSTEM")
+                                "-DBUILD_BENCHMARKING=OFF")
       #:phases #~(modify-phases %standard-phases
-                   (add-before 'check 'fix-tests
-                     (lambda* _
-                       (substitute* "../build/DECL_HDF5_PLUGIN/src/DECL_HDF5_PLUGIN_pkg-build/tests/compatibility_tests/CTestTestfile.cmake"
-                         (("/bin/bash")
-                          (which "bash")))))
-                   (add-after 'fix-tests 'mpi-setup
-                     #$%openmpi-setup))))
-    (inputs (list gfortran
-                  python
-                  openmpi
-                  ;; the following packages are provided by PDI but
-                  ;; we use the version present in Guix
-                  astyle
-                  spdlog
-                  benchmark
-                  doxygen
-                  fti
-                  googletest
-                  hdf5-parallel-openmpi
-                  pybind11
-                  libyaml
-                  pkg-config
-                  paraconf
-                  sionlib
-                  zpp))
-    (native-inputs (list openssh))      ;for tests
-    (synopsis "A library allowing loose coupling between components.")
-    (description
-     "PDI supports loose coupling of simulation codes with data handling
-the simulation code is annotated in a library-agnostic way,
-libraries are used from the specification tree.")
-    (home-page "https://pdi.dev")
-    (license license:bsd-3)))
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "pdi"))))))
+    (native-inputs
+     (list pkg-config
+           ;; needed for the Fortran API support
+           gfortran
+           python
+           zpp
+           ;; needed for tests
+           benchmark
+           openssh
+           googletest
+           ;; needed for building documentation
+           doxygen))))
