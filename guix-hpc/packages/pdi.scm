@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2024 Inria
 
-(define-module (cea pdi)
+(define-module (guix-hpc packages pdi)
   #:use-module ((guix licenses)
                 #:prefix license:)
   #:use-module (guix gexp)
