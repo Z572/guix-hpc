@@ -182,3 +182,17 @@ of it for the PDI library.")))
                      (lambda _
                        (chdir "plugins/set_value"))))))
     (synopsis "\"set value\" plugin for PDI")))
+
+(define-public pdiplugin-trace
+  (package/inherit pdi-common
+    (name "pdiplugin-trace")
+    (arguments
+     (list
+      #:configure-flags #~(list (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:tests? #f ;; no tests in package
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/trace"))))))
+    (synopsis "The trace plugin generates a trace of what happens in
+PDI \"data store\"")))
