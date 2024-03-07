@@ -105,14 +105,20 @@
      (list
       #:build-type "Release"
       #:tests? #f ;No tests.
-      #:substitutable? #f
       #:configure-flags #~(list (string-append "-DMODEL=hip")
                                 (string-append "-DCMAKE_CXX_COMPILER="
                                                #$(this-package-input "hipamd")
                                                "/bin/hipcc")
                                 (string-append
-                                 "-DCXX_EXTRA_FLAGS=--offload-arch=gfx1030,gfx908,gfx90a"))))
+                                 "-DCXX_EXTRA_FLAGS=--offload-arch=gfx1030,gfx908,gfx90a"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'remove-march=native
+                     (lambda _
+                       ;; Do not attempt to build with '-march=native'.
+                       (substitute* "CMakeLists.txt"
+                         (("-march=native") "")))))))
     (inputs (list hipamd-5.7))
+    (properties `((tunable? . #t)))
     (synopsis "BabelStream: Stream benchmark for GPUs using HIP")
     (description
      "Measure memory transfer rates to/from global device memory on GPUs.
