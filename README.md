@@ -12,7 +12,8 @@ The goal is for most contributions to go upstream.  This repo acts as a
 staging area or a place to store things not meant for public consumption
 yet.
 
-Please send inquiries to
+Please send inquiries to the [Guix-Science mailing
+list](https://lists.gnu.org/mailman/listinfo/guix-science) or to
 [Ludovic Courtès](mailto:ludovic.courtes@inria.fr).
 
 ## Getting started
