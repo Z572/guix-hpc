@@ -90,12 +90,13 @@
   (package
     (name "babelstream-hip")
     (version "5.0")
+    (home-page "https://github.com/UoB-HPC/BabelStream")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
-             (url "https://github.com/UoB-HPC/BabelStream.git")
-             (commit "v5.0")))
+             (url home-page)
+             (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
         (base32 "0xkkxkmyi99qly427gkdijm9vwvmhwkgfm283ay6f83r66f712g4"))))
@@ -117,7 +118,6 @@
      "Measure memory transfer rates to/from global device memory on GPUs.
 This benchmark is similar in spirit, and based on, John D McCalpin's STREAM benchmark for CPUs.
 The version of BabelStream is built targeting AMD GPUs using HIP.")
-    (home-page "https://github.com/UoB-HPC/BabelStream.git")
     (license
      (fsf-free "https://github.com/UoB-HPC/BabelStream/blob/main/LICENSE"
                "Custom permissive license based on John D. McCalpin’s original STREAM
