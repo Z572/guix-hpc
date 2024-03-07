@@ -118,5 +118,7 @@
 This benchmark is similar in spirit, and based on, John D McCalpin's STREAM benchmark for CPUs.
 The version of BabelStream is built targeting AMD GPUs using HIP.")
     (home-page "https://github.com/UoB-HPC/BabelStream.git")
-    (license #f)))
- ; Uses a custom permissive license based on John D. McCalpin’s original STREAM benchmark
+    (license
+     (fsf-free "https://github.com/UoB-HPC/BabelStream/blob/main/LICENSE"
+               "Custom permissive license based on John D. McCalpin’s original STREAM
+benchmark."))))
