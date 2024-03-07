@@ -9,7 +9,9 @@
   #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-science)
+  #:use-module (gnu packages python-build)
   #:use-module (gnu packages machine-learning)
+  #:use-module (gnu packages statistics)
   #:use-module (guix build-system python)
   #:use-module (guix build-system pyproject)
   #:use-module (guix licenses))
@@ -229,35 +231,27 @@ fully supported to run on the GPU.")
     (description "Export data as binary VTK files")
     (license bsd-2)))
 
-(define-public python-iterative-statistics
-  (let ((commit "66cacec5756c855f8efcf260a6fb5d7217b9d434")
-        (version "0.1.0")
-	(revision "1"))
-    (package
-      (name "python-iterative-statistics")
-      (version (git-version version revision commit))
-      (source
-       (origin
-	 (method git-fetch)
-	 (uri (git-reference
-               (url
-		"https://github.com/IterativeStatistics/BasicIterativeStatistics")
-               (commit commit)))
-	 (sha256
-          (base32 "02abpqgyhj9wmf7ycafmpax7yx6rckildswxfa4hr6b95jw91352"))))
-      (build-system python-build-system)
-      (inputs (list python-numpy))
-      (arguments
-       ;; For this package, running tests through python setup.py is deprecated
-       ;; and should be carried out using tox
-       '(#:tests? #f
-         #:phases (modify-phases %standard-phases
-		    (delete 'sanity-check))))
-      (home-page
-       "https://github.com/IterativeStatistics/BasicIterativeStatistics")
-      (synopsis "Iterative Statistics Python Library")
-      (description
-       "Implements iterative statistics operators for mean, variance, high-order
+(define-public python-iterative-stats
+  (package
+    (name "python-iterative-stats")
+    (version "0.1.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url
+              "https://github.com/IterativeStatistics/BasicIterativeStatistics")
+             (commit (string-append "v" version))))
+       (sha256
+        (base32 "1hjqi4zrvrcidjryq65nf1046pw04ya3w1xmsapldjbqmxd259n2"))))
+    (build-system pyproject-build-system)
+    (native-inputs (list python-poetry-core python-pytest python-openturns))
+    (propagated-inputs (list python-numpy python-pyyaml))
+    (home-page
+     "https://github.com/IterativeStatistics/BasicIterativeStatistics")
+    (synopsis "Iterative Statistics Python Library")
+    (description
+     "Implements iterative statistics operators for mean, variance, high-order
  moments, extrema, covariance, threshold, quantile (experimental) and Sobol'
  indices")
-      (license bsd-3))))
+    (license bsd-3)))
