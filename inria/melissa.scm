@@ -22,21 +22,20 @@
   #:use-module (guix licenses))
 
 (define commit
-  "090b0b61df0ca2f0ae0453bea75749cd3d5f9198")
+  "d8de4d5724cbe35e67734a95002acd6fb5d7af71")
 
 (define version
   "1.0.0")
-; according to the version number in the source code
 
 (define revision
-  "1")
+  "2")
 
 (define melissa-source
   (origin
     (method git-fetch)
     (uri (git-reference (url "https://gitlab.inria.fr/melissa/melissa.git")
                         (commit commit)))
-    (sha256 (base32 "1zv36r8gbb92v9s6vvzgdvv8ryli6a51b0i3g61k1rr6l3bvh6g3"))))
+    (sha256 (base32 "1ndylxb8c7xb9pajli8z6xmjfv3rdlcnpdwmja21wy1m9k9vj3mm"))))
 
 (define melissa-version
   (git-version version revision commit))
@@ -61,9 +60,9 @@
     (synopsis "Melissa API for client instrumentation")
     (description
      "Melissa is a file-avoiding, adaptive, fault-tolerant and elastic
-      framework, to run large-scale sensitivity analysis or deep-surrogate
-      training on supercomputers.
-      This package builds the API used when instrumenting the clients.")
+framework, to run large-scale sensitivity analysis or deep-surrogate
+training on supercomputers.
+This package builds the API used when instrumenting the clients.")
     (license melissa-license)))
 
 (define-public heat-pde
@@ -95,17 +94,15 @@
                                         (("executable_command(.*)heatc")
                                          (string-append
                                           "executable_command\": \"" out
-                                          "/bin/heatc"))
-                                        (("output_dir\": \"")
-                                         (string-append
-                                                        "output_dir\": \"/tmp/"))))
+                                          "/bin/heatc"))))
                                     (find-files "." "\\.json$"))))))
                   (add-after 'copy-resources 'change-dir
                     (lambda _
                       (chdir "./examples/heat-pde/executables"))))))
     (home-page melissa-homepage)
     (synopsis "Instrumented heat-pde use case for Melissa")
-    (description "This package is a demonstration of a core use-case of Melissa:
+    (description
+     "This package is a demonstration of a core use-case of Melissa:
 a sensitivity analysis which yields iteratively computed statistics based on
 parallel clients and server. Each individual client is simply a data-generator based
 on a heat diffusion equation characterized by a parallelized solver.")
@@ -118,22 +115,23 @@ on a heat diffusion equation characterized by a parallelized solver.")
     (source
      melissa-source)
     (build-system python-build-system)
-    (inputs (list python
-                  python-mpi4py
-                  python-pyzmq
-                  python-numpy
-                  python-jsonschema
-                  python-rapidjson
-                  python-scipy
-                  python-cloudpickle
-                  python-iterative-statistics))
+    (propagated-inputs (list python-mpi4py
+                             python-pyzmq
+                             python-numpy
+                             python-jsonschema
+                             python-rapidjson
+                             python-scipy
+                             python-cloudpickle
+                             python-iterative-stats
+                             python-plotext))
     (arguments
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'sanity-check))))
     (home-page melissa-homepage)
     (synopsis "Melissa Python server and launcher")
-    (description "This is the front-end Python script in charge of orchestrating the
+    (description
+     "This is the front-end Python script in charge of orchestrating the
 execution a Melissa based study. It automatically handles large-scale scheduler
 interactions in OpenMPI and with common cluster schedulers (e.g. slurm or OAR).")
     (license melissa-license)))
