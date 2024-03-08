@@ -328,11 +328,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "8f46c205f27e4237395490c691376348c43fcd87")))
+                  (commit "afb77b16a2d3602ef3458e46ec9a8b31b29fee47")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1h49lj0d7pqfhqpsksylzks224lyibc86bffgyrkbapci3m266sl"))))
+              "1mg3rpj1hx90bp5r1rkxvynhq0ycxf68z8sba2i8q6a0ws6wkf6d"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list bash-completion
@@ -363,11 +363,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "a7b7d1fe428f09794d1e209cbd19f244ef6f2aa4")))
+                    (commit "d2192bbd3ff021de769fb35733823fd2212bd544")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "19fak910iqhqknkkk4lkh3x99zc3y0q9b2jkhkw262dxw87bhqgf"))))
+                "1qk33n3zyr7gi72385rawavyqrdl4hixjvab0kxp1q2n3zxyijqf"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -446,11 +446,11 @@ alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "857b985f3e184e49f716b51ceaa973b8efe5641d")))
+                    (commit "c9e621bbe438ad60f1cd747b6d9d3df5a92c6384")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"1pzx2pa8kgsd33z041p2qayvkbpd9gih2xx4hxvxgl1sjvf7sp18"))))
+		"06wk492ay5jk47hw4awcsy1gw6id5zq6sr3gkyw9mgc5fj4dl1sh"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-doom-themes
@@ -548,11 +548,11 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "9fff2f7390519a3851187acb9c0c9c14a434ff11")))
+                    (commit "9cc230a944ed060a2272d1a2d0bc13f233eaae7c")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "12chpawri045ml8p0rsaqgb1viisxq0wdwmbi2nl6l8w53gkmg21"))))
+                "16a4c3wn8l5r5n9haxn9apcx7l219xdnvgzr1q9g917wphk2pqmz"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-base
