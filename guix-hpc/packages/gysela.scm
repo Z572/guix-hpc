@@ -47,11 +47,10 @@
          (method git-fetch)
          (uri (git-reference
                (url "https://github.com/gyselax/gyselalibxx")
-               (commit commit)
-               (recursive? #t))) ;TODO: unvendor dependencies in the CMakeList.txt file
+               (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "15v5fhj3d3vj43lb485mqaxf2knh80pmxxc341c1d0la89mljy88"))))
+          (base32 "179dm3sldkqxg0zq3lp140q3kdk0wpiiy2fqsrqjzwdkgrpyi0vq"))))
       (build-system cmake-build-system)
       (inputs (list eigen
                     fftw
@@ -86,7 +85,12 @@
                              "-DGYSELALIBXX_DEPENDENCY_POLICIES=INSTALLED")
         #:phases #~(modify-phases %standard-phases
                      (add-before 'check 'mpi-setup
-                       #$%openmpi-setup))))
+                       #$%openmpi-setup)
+                     (add-after 'unpack 'fix-kokkos-dep
+                       (lambda _
+                         (substitute* "CMakeLists.txt"
+                           (("add_subdirectory.*kokkos.*")
+                            "find_package(Kokkos REQUIRED)")))))))
       (synopsis
        "Collection of C++ components for writing gyrokinetic semi-lagrangian codes")
       (description
