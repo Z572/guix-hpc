@@ -79,7 +79,13 @@ libraries are used from the specification tree.")
            openssh
            googletest
            ;; needed for building documentation
-           doxygen))))
+           doxygen))
+    (native-search-paths
+      (list (search-path-specification
+              (variable "PDI_PLUGIN_PATH")
+              (files
+               (list
+                (string-append "lib/" (package-name pdi-common) "/plugins_" (package-version pdi-common)))))))))
 
 (define-public pdiplugin-mpi
   (package/inherit pdi-common
