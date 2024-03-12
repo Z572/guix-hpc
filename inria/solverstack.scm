@@ -1563,21 +1563,21 @@ for manual interpretation.")
     (name "scalfmm")
     (version "3.0")
     (home-page "https://gitlab.inria.fr/solverstack/ScalFMM.git")
-    (synopsis "Fast Multipole Methos Framework")
+    (synopsis "Fast Multipole Method Framework")
     (description
-     "ScalFMM is a C++ library that implements a kernel independent Fast Multipole Method.")
+     "ScalFMM is a C++ library that implements a kernel-independent Fast Multipole Method.")
     (license license:cecill-c)
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "12c1993872030de31aa0048eeb19001c35c909e4")
+             (commit "cf6ae4dbd711db5d9448259d32e0d66a537e8a7b")
              ;; We need the submodule in 'cmake_modules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version))
        (sha256
-        (base32 "1pyzd24556j9garrmkn0wvj05ayisyaly7yww0rcdf9mrvxflwvi"))))
+        (base32 "01warwp5h814d1hvcpia53zxirhxw07ai34x34vax3s0q58lji56"))))
     (arguments
      '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
                            "-Dscalfmm_BUILD_TOOLS=ON"
