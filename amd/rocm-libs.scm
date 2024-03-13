@@ -23,6 +23,7 @@
   #:use-module (guix git-download)
   #:use-module (guix download)
   #:use-module (guix licenses)
+  #:use-module (guix utils)
 
   #:use-module (gnu packages)
   #:use-module (gnu packages python)
