@@ -1536,7 +1536,7 @@ large scale eigenvalue problems.")
   (package
     ;; This is a command-line tool, so no "python-" prefix.
     (name "jube-with-yaml")
-    (version "2.4.1")
+    (version "2.6.1")
     (source
      (origin
        (method url-fetch)
@@ -1544,7 +1544,7 @@ large scale eigenvalue problems.")
              "http://apps.fz-juelich.de/jsc/jube/jube2/download.php?version="
              version))
        (sha256
-        (base32 "05lhpq3mxm3z9k35bxvvbi2r5r5r0n39jdi839rcvirrsczs7m6m"))
+        (base32 "0r5d2gdqa0f4c468q3k25ycw1k2g76gg8fyiln4ni98fvfsbx3il"))
        (file-name (string-append "jube-" version ".tar.gz"))))
     (build-system python-build-system)
     (home-page "https://apps.fz-juelich.de/jsc/jube/jube2/docu/index.html")
