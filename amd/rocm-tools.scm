@@ -18,6 +18,7 @@
 (define-module (amd rocm-tools)
   #:use-module (guix packages)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system python)
   #:use-module (guix git-download)
   #:use-module (guix licenses)
 
@@ -26,6 +27,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages python-science)
   #:use-module (gnu packages serialization)
 
   #:use-module (amd rocm-base))
@@ -167,7 +169,7 @@ provides a user space interface for applications to monitor and control GPU appl
 is mainly used as backend library to rocBLAS. Tensile acts as the performance backbone for a wide
 variety of 'compute' applications running on AMD GPUs.")
     (home-page "https://github.com/ROCmSoftwarePlatform/Tensile.git")
-    (license #f)))
+    (license expat)))
 
 (define-public tensile-5.7
   (make-tensile "5.7.1"))

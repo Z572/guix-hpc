@@ -284,7 +284,7 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
     (description "ROCm tracer provides an API to provide functionality for registering
 the runtimes API callbacks and asynchronous activity records pool support.")
     (home-page "https://github.com/ROCm-Developer-Tools/roctracer.git")
-    (license #f)))
+    (license expat)))
 
 (define-public roctracer-5.7
   (make-roctracer hipamd-5.7))
@@ -366,7 +366,7 @@ the runtimes API callbacks and asynchronous activity records pool support.")
      "rocBLAS is the ROCm Basic Linear Algebra Subprograms (BLAS) library.
 rocBLAS is implemented in the HIP programming language and optimized for AMD GPUs.")
     (home-page "https://github.com/ROCmSoftwarePlatform/rocBLAS.git")
-    (license #f)))
+    (license (list expat bsd-3))))
 
 (define-public rocblas-5.7
   (make-rocblas tensile-5.7 rocm-cmake-5.7 hipamd-5.7))

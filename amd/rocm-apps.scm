@@ -18,9 +18,11 @@
 (define-module (amd rocm-apps)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system gnu)
   #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (guix licenses)
+  #:use-module (guix download)
 
   #:use-module (gnu packages)
   #:use-module (gnu packages autotools)
