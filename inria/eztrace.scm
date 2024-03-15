@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2020, 2023 Inria
+;;; Copyright © 2017, 2019, 2020, 2023, 2024 Inria
 
 (define-module (inria eztrace)
   #:use-module (guix)
@@ -67,6 +67,7 @@
                           (assoc-ref %standard-phases 'check)))))
     (inputs (list otf2
                   gfortran
+                  perl
                   opari2                          ;for OpenMP support
 
                   ;; XXX: The dependencies below are needed for pptrace, but
@@ -81,6 +82,7 @@
                   ;; binutils-2.33
 
                   openmpi))
+    (propagated-inputs (list grep coreutils)) ;eztrace is executing 'grep "$(basename ...)$" ...  |grep " r-xp "|tr '-' ' '|cut  -d' ' -f1,5)' with a popen() call
     (synopsis "Collect program execution traces")
     (description
      "EZTrace is a tool that aims at generating automatically execution trace
