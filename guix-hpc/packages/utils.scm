@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2020, 2022 Inria
+;;; Copyright © 2017, 2019, 2020, 2022, 2024 Inria
 
 (define-module (guix-hpc packages utils)
   #:use-module (guix)
@@ -80,6 +80,50 @@
    (synopsis "GUIX package for the SZ compressor.")
    (description "GUIX package for the SZ compressor.")
    (license license:gpl3+)))
+
+(define-public sz3-compressor
+  (package
+   (name "sz3-compressor")
+   (version "3.1.8")
+   (home-page "https://github.com/szcompressor/SZ3")
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit (string-append "v" version))))
+            (file-name (git-file-name name version))
+            (sha256 (base32 "08hjcqmw49wika5crmqi74vi7lpb79krr7rkn54bp5hsh7ycsqx7"))))
+   (build-system cmake-build-system)
+   (arguments
+    '(#:build-type "Release"))
+   (native-inputs (list pkg-config))
+   (propagated-inputs (list `(,zstd "lib")))
+   (synopsis "GUIX package for the SZ3 compressor.")
+   (description "GUIX package for the SZ3 compressor.")
+   (license license:gpl3+)))
+
+(define-public zfp
+  (package
+    (name "zfp")
+    (version "1.0.1")
+    (home-page "https://zfp.io/")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/LLNL/zfp")
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1agn3clm7bw5gwr9b0hzhwm54hfc238ymqz1d4h9929gabi41749"))))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:build-type "Release"))
+    (native-inputs (list python-wrapper))
+    (synopsis "A compressed format for multi-dimensional arrays")
+    (description
+     "zfp is a compressed number format for multi-dimensional arrays. zfp provides compressed-array classes (e.g., for in-memory storage) and high-speed, parallel data compression (e.g., for offline storage). zfp supports both lossy and lossless compression and fine-grained user control over accuracy and storage size.")
+    (license license:bsd-3)))
 
 (define-public python-expecttest
   (package

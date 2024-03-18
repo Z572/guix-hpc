@@ -10,6 +10,7 @@
   #:use-module (guix build-system gnu)
   #:use-module (guix packages) ; for guix style
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix-hpc packages utils)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages gcc)
@@ -18,7 +19,8 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages profiling)
   #:use-module (gnu packages man)
-  #:use-module (gnu packages mpi))
+  #:use-module (gnu packages mpi)
+  #:use-module (gnu packages serialization))
 
 (define-public eztrace
   (package
@@ -204,3 +206,31 @@ kernel land, or both.  It can record developer-specified events in compact
      '(#:configure-flags '("CFLAGS=-fPIC"
                            "--enable-static=yes"
                            "--enable-shared=no")))))
+
+(define-public pallas
+  (package
+    (name "pallas")
+    (version "0.0.1") ;keep a minimal version as long as there is no first official release
+    (home-page "https://gitlab.inria.fr/pallas/pallas")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "d0b3c7027f1979827bc939b815aead8f17c96d09")))
+       (sha256
+        (base32 "1f5dd08ac9pn3v7d8jcjj19nc1hc7zb8xdmcwgfjkwij8sbxrgam"))))
+    (build-system cmake-build-system)
+    (native-inputs (list pkg-config perl))
+    (propagated-inputs (list sz-compressor jsoncpp `(,zstd "lib") zfp))
+    (synopsis "Interface to write and read trace data")
+    (description
+     "OTF2-compatible interface to write and read trace data from HPC applications.")
+    (license license:bsd-3)))
+
+(define-public eztrace+pallas
+  (package
+    (inherit eztrace)
+    (name "eztrace-pallas")
+    (inputs (modify-inputs (package-inputs eztrace)
+              (replace "otf2" pallas)))))
