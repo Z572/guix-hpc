@@ -1,14 +1,15 @@
+Help clang find relevant device libraries
 diff --git a/src/image/blit_src/CMakeLists.txt b/src/image/blit_src/CMakeLists.txt
 index b5bd2b3..1cb0598 100644
 --- a/src/image/blit_src/CMakeLists.txt
 +++ b/src/image/blit_src/CMakeLists.txt
 @@ -67,7 +67,8 @@ function(gen_kernel_bc TARGET_ID INPUT_FILE OUTPUT_FILE)
- 
+
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
      "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
 -    -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
 +    -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}
 +    --hip-device-lib-path=${BITCODE_DIR}")
- 
+
    ## Add custom command to produce a code object file.
    ## This depends on the kernel source file & compiler.

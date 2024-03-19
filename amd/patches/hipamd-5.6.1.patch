@@ -1,3 +1,4 @@
+Remove windows specific versions of hipcc and hipconfig
 diff --git a/hipamd/CMakeLists.txt b/hipamd/CMakeLists.txt
 index c14a9ad32..f882e890b 100755
 --- a/hipamd/CMakeLists.txt
@@ -11,5 +12,5 @@ index c14a9ad32..f882e890b 100755
 +  # install(PROGRAMS ${HIPCC_BIN_DIR}/hipcc.bat DESTINATION bin)
 +  # install(PROGRAMS ${HIPCC_BIN_DIR}/hipconfig.bat DESTINATION bin)
  endif()
- 
+
  #############################

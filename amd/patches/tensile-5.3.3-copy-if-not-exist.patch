@@ -1,9 +1,10 @@
+Only copy static files if they do not already exist at the destination
 diff --git a/Tensile/TensileCreateLibrary.py b/Tensile/TensileCreateLibrary.py
 index 2d63160b..a7ccf268 100644
 --- a/Tensile/TensileCreateLibrary.py
 +++ b/Tensile/TensileCreateLibrary.py
 @@ -738,8 +738,11 @@ def copyStaticFiles(outputPath=None):
- 
+
    for fileName in libraryStaticFiles:
      # copy file
 -    shutil.copy( os.path.join(globalParameters["SourcePath"], fileName), \
@@ -13,6 +14,6 @@ index 2d63160b..a7ccf268 100644
 +    if not os.path.isfile(path):
 +        shutil.copy( os.path.join(globalParameters["SourcePath"], fileName), \
 +            outputPath )
- 
+
    return libraryStaticFiles
- 
+

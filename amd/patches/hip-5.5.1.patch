@@ -1,3 +1,5 @@
+Make the hipcc compiler wrapper compatible with the modified hipvars perl module
+and the more modular pacakging approach compared to upstream ROCm
 diff --git a/bin/hipcc.pl b/bin/hipcc.pl
 index 2cd37529..85805a69 100644
 --- a/bin/hipcc.pl
@@ -11,7 +13,7 @@ index 2cd37529..85805a69 100644
 -$HIP_ROCCLR_HOME =   $hipvars::HIP_ROCCLR_HOME;
 +$HIP_ROCCLR_HOME =  $hipvars::HIP_ROCCLR_HOME;
 +$DEVICE_LIB_PATH =  $hipvars::DEVICE_LIB_PATH;
- 
+
  if ($HIP_PLATFORM eq "amd") {
    # If using ROCclr runtime, need to find HIP_ROCCLR_HOME
 @@ -493,7 +495,7 @@ if($HIP_PLATFORM eq "amd"){
@@ -25,20 +27,20 @@ index 2cd37529..85805a69 100644
          }
 @@ -583,9 +585,7 @@ if ($HIP_PLATFORM eq "amd") {
      }
- 
+
      if ($hasHIP) {
 -        if ($DEVICE_LIB_PATH ne "$ROCM_PATH/amdgcn/bitcode") {
 -            $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
 -        }
 +        $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
      }
- 
+
      if (!$compileOnly) {
 @@ -623,6 +623,7 @@ if ($needLDFLAGS and not $compileOnly) {
      $CMD .= " $HIPLDFLAGS";
  }
  $CMD .= " $toolArgs";
 +$CMD .= " --hip-path=${HIP_PATH}";
- 
+
  if ($verbose & 0x1) {
      print "hipcc-cmd: ", $CMD, "\n";

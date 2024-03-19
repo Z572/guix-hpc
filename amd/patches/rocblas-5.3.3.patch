@@ -1,3 +1,4 @@
+Add option to choose whether or not to use pip to install Tensile
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 309a0528..6c403a12 100644
 --- a/CMakeLists.txt
@@ -61,4 +62,4 @@ index 309a0528..6c403a12 100644
 +    #find_package(Tensile ${TENSILE_VERSION} EXACT REQUIRED HIP LLVM OpenMP PATHS "${INSTALLED_TENSILE_PATH}")
    endif()
  endif()
- 
+

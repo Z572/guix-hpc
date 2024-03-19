@@ -1,3 +1,4 @@
+Add option to choose whether or not to use pip to install Tensile
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 3db3ed34..d0945104 100644
 --- a/CMakeLists.txt
@@ -5,7 +6,7 @@ index 3db3ed34..d0945104 100644
 @@ -132,32 +132,31 @@ if(NOT SKIP_LIBRARY)
      # we will have expanded "all" for tensile to ensure consistency as we have local rules
      set( Tensile_ARCHITECTURE "${AMDGPU_TARGETS}" CACHE STRING "Tensile to use which architecture?" FORCE)
- 
+
 -    if (WIN32)
 -      set( Tensile_ROOT "${CMAKE_BINARY_DIR}/virtualenv/Lib/site-packages/Tensile" )
 -    endif()
@@ -58,7 +59,7 @@ index 3db3ed34..d0945104 100644
 +    #find_package(Tensile ${TENSILE_VERSION} EXACT REQUIRED HIP LLVM OpenMP PATHS "${INSTALLED_TENSILE_PATH}")
    endif()
  endif()
- 
+
 @@ -377,4 +376,4 @@ endif()
  add_custom_target(docs DEPENDS sphinx_docs)
  if (DOXYGEN_FOUND)

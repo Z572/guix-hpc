@@ -1,3 +1,5 @@
+Make the hipcc compiler wrapper compatible with the modified hipvars perl module
+and the more modular pacakging approach compared to upstream ROCm
 diff --git a/bin/hipcc.pl b/bin/hipcc.pl
 index 645ae62d..a4b7fdbb 100755
 --- a/bin/hipcc.pl
@@ -16,12 +18,12 @@ index 645ae62d..a4b7fdbb 100755
  $HIP_ROCCLR_HOME =   $hipvars::HIP_ROCCLR_HOME;
 +$DEVICE_LIB_PATH =   $hipvars::DEVICE_LIB_PATH;
 +$HSA_PATH       =   "$ROCM_PATH/hsa";
- 
+
  if ($HIP_PLATFORM eq "amd") {
    # If using ROCclr runtime, need to find HIP_ROCCLR_HOME
 @@ -204,7 +207,6 @@ if ($HIP_PLATFORM eq "amd") {
      }
- 
+
      if (not $isWindows) {
 -        $HSA_PATH=$ENV{'HSA_PATH'} // "$ROCM_PATH/hsa";
          $HIPCXXFLAGS .= " -isystem $HSA_PATH/include";
@@ -54,7 +56,7 @@ index 645ae62d..a4b7fdbb 100755
 @@ -749,6 +751,8 @@ if ($needLDFLAGS and not $compileOnly) {
  }
  $CMD .= " $toolArgs";
- 
+
 +$CMD .= " --hip-path=${HIP_PATH}";
 +
  if ($verbose & 0x1) {
