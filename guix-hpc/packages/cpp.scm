@@ -13,7 +13,8 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
-  #:use-module (gnu packages cpp))
+  #:use-module (gnu packages cpp)
+  #:use-module (amd rocm-hip))
 
 (define-public kokkos-openmp
   (package/inherit kokkos
@@ -46,3 +47,37 @@ OpenMP support)")))
             (delete 'remove-cruft)))))
     (synopsis "C++ abstractions for parallel execution and data management (with
 threads support)")))
+
+(define-public kokkos-hip
+  (package/inherit kokkos
+    (name "kokkos-hip")
+    (arguments
+     (substitute-keyword-arguments
+         (package-arguments kokkos)
+       ((#:configure-flags flags)
+        #~(list "-DKokkos_ENABLE_SERIAL=ON"
+                ;; Shared libs are not compatible with relocatable code.
+                "-DBUILD_SHARED_LIBS=OFF"
+                "-DKokkos_ENABLE_TESTS=OFF" ; See below.
+                ;; Some examples don't compile with HIPCC.
+                "-DKokkos_ENABLE_EXAMPLES=OFF"
+                "-DKokkos_ENABLE_HWLOC=ON"
+                "-DKokkos_ENABLE_MEMKIND=ON"
+                "-DKokkos_ENABLE_HIP=ON"
+                "-DKokkos_ARCH_VEGA90A=ON"
+                "-DKokkos_ENABLE_HIP_RELOCATABLE_DEVICE_CODE=ON"
+                (string-append "-DCMAKE_CXX_COMPILER="
+                               #$(this-package-input "hipamd")
+                               "/bin/hipcc")))
+       ;; Cannot run tests due to lack of specific hardware
+       ((#:tests? _ #t)
+        #f)
+       ((#:phases phases '%standard-phases)
+        #~(modify-phases #$phases
+            ;; File is not present in build
+            (delete 'remove-cruft)))))
+    (inputs
+     (modify-inputs (package-inputs kokkos)
+       (prepend hipamd-5.7)))
+    (synopsis "C++ abstractions for parallel execution and data management (with HIP
+support)")))
