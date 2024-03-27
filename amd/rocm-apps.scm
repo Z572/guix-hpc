@@ -152,8 +152,7 @@ benchmark."))))
        (file-name (git-file-name name version))
        (sha256
         (base32 "1m7cvynkk785iyk1yldslqx3221h9vg035ddc5z4rr67w79j3a1m"))
-       (patches (search-patches
-                 "amd/packages/patches/rochpl-6.0.0-cmake.patch"))))
+       (patches (search-patches "amd/patches/rochpl-6.0.0-cmake.patch"))))
     (build-system cmake-build-system)
     (arguments
      (list
