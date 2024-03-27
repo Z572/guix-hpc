@@ -19,6 +19,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages profiling)
   #:use-module (gnu packages man)
+  #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages serialization))
 
@@ -217,12 +218,12 @@ kernel land, or both.  It can record developer-specified events in compact
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "d0b3c7027f1979827bc939b815aead8f17c96d09")))
+             (commit "779337f90045d368e144f2bf060d40ce52bec51f")))
        (sha256
-        (base32 "1f5dd08ac9pn3v7d8jcjj19nc1hc7zb8xdmcwgfjkwij8sbxrgam"))))
+        (base32 "164k6fidj10b7krnlpdi9crynac5a3q7faxc6bqzkk7d1nimafm0"))))
     (build-system cmake-build-system)
     (native-inputs (list pkg-config perl))
-    (propagated-inputs (list sz-compressor jsoncpp `(,zstd "lib") zfp))
+    (propagated-inputs (list sz-compressor jsoncpp `(,zstd "lib") zfp hdf5))
     (synopsis "Interface to write and read trace data")
     (description
      "OTF2-compatible interface to write and read trace data from HPC applications.")
