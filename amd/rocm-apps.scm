@@ -153,7 +153,7 @@ benchmark."))))
        (sha256
         (base32 "1m7cvynkk785iyk1yldslqx3221h9vg035ddc5z4rr67w79j3a1m"))
        (patches (search-patches
-                 "amd/packages/patches/rochpl-6.0.0-cmake.patch"))))
+                 "amd/packages/rochpl-6.0.0-cmake.patch"))))
     (build-system cmake-build-system)
     (arguments
      (list
