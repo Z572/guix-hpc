@@ -99,6 +99,10 @@
   `(("5.7.1" . ,(base32 "0p7w17mv14xrn1dg98mss43haa1k5qz1bnn9ap10l2wrvavy41nl"))
     ("5.6.1" . ,(base32 "0vkx3ncjz80xdyi37f80lb2mma4ygqs5rvkvidqqfvamc96v75j1"))))
 
+(define %hip-patches
+  '(("5.7.1" "amd/patches/hip-headers-5.6.1.patch")
+    ("5.6.1" "amd/patches/hip-headers-5.6.1.patch"))
+
 (define (make-hip version)
   (hidden-package (package
                     (name "hip")
@@ -111,7 +115,9 @@
                               "https://github.com/ROCm-Developer-Tools/HIP.git")
                              (commit (string-append "rocm-" version))))
                        (sha256
-                        (assoc-ref %hip-hashes version))))
+                        (assoc-ref %hip-hashes version))
+                       (patches (search-patches (assoc-ref %hip-patches
+                                                           version)))))
                     (build-system copy-build-system)
                     (arguments
                      (list

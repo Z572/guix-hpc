@@ -1,0 +1,15 @@
+FindHIP: Improved search logic for HIP_ROOT_DIR
+diff --git a/cmake/FindHIP.cmake b/cmake/FindHIP.cmake
+index 24e475d3..43f4ce28 100644
+--- a/cmake/FindHIP.cmake
++++ b/cmake/FindHIP.cmake
+@@ -89,6 +89,9 @@ if(NOT APPLE)
+             DOC "HIP installed location"
+             NO_DEFAULT_PATH
+             )
++        if(NOT HIP_ROOT_DIR)
++            find_path(HIP_ROOT_DIR NAMES bin/hipconfig)
++        endif()
+         if(NOT EXISTS ${HIP_ROOT_DIR})
+             if(HIP_FIND_REQUIRED)
+                 message(FATAL_ERROR "Specify HIP_ROOT_DIR")
