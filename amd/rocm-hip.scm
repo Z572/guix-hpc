@@ -100,8 +100,8 @@
     ("5.6.1" . ,(base32 "0vkx3ncjz80xdyi37f80lb2mma4ygqs5rvkvidqqfvamc96v75j1"))))
 
 (define %hip-patches
-  '(("5.7.1" "amd/patches/hip-headers-5.6.1.patch")
-    ("5.6.1" "amd/patches/hip-headers-5.6.1.patch")))
+  '(("5.7.1" . "amd/patches/hip-headers-5.6.1.patch")
+    ("5.6.1" . "amd/patches/hip-headers-5.6.1.patch")))
 
 (define (make-hip version)
   (hidden-package (package
