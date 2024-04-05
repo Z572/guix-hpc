@@ -101,7 +101,7 @@
 
 (define %hip-patches
   '(("5.7.1" "amd/patches/hip-headers-5.6.1.patch")
-    ("5.6.1" "amd/patches/hip-headers-5.6.1.patch"))
+    ("5.6.1" "amd/patches/hip-headers-5.6.1.patch")))
 
 (define (make-hip version)
   (hidden-package (package
