@@ -86,6 +86,27 @@ index 6bb54f4e55a1..56b4d89933e9 100644
  }
 
  ToolChain::RuntimeLibType Linux::GetDefaultRuntimeLibType() const {
+diff --git a/clang/lib/Driver/ToolChains/AMDGPU.cpp b/clang/lib/Driver/ToolChains/AMDGPU.cpp
+index 88d22f7149d2..f0ac8658becc 100644
+--- a/clang/lib/Driver/ToolChains/AMDGPU.cpp
++++ b/clang/lib/Driver/ToolChains/AMDGPU.cpp
+@@ -269,7 +269,7 @@ RocmInstallationDetector::getInstallationPathCandidates() {
+     ROCmSearchDirs.emplace_back(RealClangRoot.str(), /*StrictChecking=*/true);
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+-
++  #if 0
+   ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
+                               /*StrictChecking=*/true);
+
+@@ -308,6 +308,7 @@ RocmInstallationDetector::getInstallationPathCandidates() {
+   if (!LatestROCm.empty())
+     ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/" + LatestROCm,
+                                 /*StrictChecking=*/true);
++   #endif
+
+   DoPrintROCmSearchDirs();
+   return ROCmSearchDirs;
 diff --git a/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp b/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp
 index d9cf0a88ddbc..f081b8ab4298 100644
 --- a/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp
