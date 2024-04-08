@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd python-cppheaderparser)
+(define-module (amd packages python-cppheaderparser)
   #:use-module (guix packages)
   #:use-module (guix build-system python)
   #:use-module (guix download)

@@ -26,7 +26,7 @@
   #:use-module (inria llvm)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
-  #:use-module (amd rocm-hip)
+  #:use-module (amd packages rocm-hip)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 match))
 

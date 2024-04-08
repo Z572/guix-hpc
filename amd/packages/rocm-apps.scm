@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd rocm-apps)
+(define-module (amd packages rocm-apps)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
@@ -29,9 +29,9 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages version-control)
 
-  #:use-module (amd rocm-libs)
-  #:use-module (amd aocl-libs)
-  #:use-module (amd rocm-hip))
+  #:use-module (amd packages rocm-libs)
+  #:use-module (amd packages aocl-libs)
+  #:use-module (amd packages rocm-hip))
 
 (define-public hpcg
   (package
@@ -152,7 +152,7 @@ benchmark."))))
        (file-name (git-file-name name version))
        (sha256
         (base32 "1m7cvynkk785iyk1yldslqx3221h9vg035ddc5z4rr67w79j3a1m"))
-       (patches (search-patches "amd/patches/rochpl-6.0.0-cmake.patch"))))
+       (patches (search-patches "amd/packages/patches/rochpl-6.0.0-cmake.patch"))))
     (build-system cmake-build-system)
     (arguments
      (list

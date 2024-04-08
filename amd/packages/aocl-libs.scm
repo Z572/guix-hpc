@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd aocl-libs)
+(define-module (amd packages aocl-libs)
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)

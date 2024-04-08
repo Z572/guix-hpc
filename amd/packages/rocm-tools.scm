@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd rocm-tools)
+(define-module (amd packages rocm-tools)
   #:use-module (guix packages)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system python)
@@ -30,7 +30,7 @@
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages serialization)
 
-  #:use-module (amd rocm-base))
+  #:use-module (amd packages rocm-base))
 
 ; rocminfo
 (define %rocminfo-hashes
@@ -135,11 +135,11 @@ provides a user space interface for applications to monitor and control GPU appl
     ("5.3.3" . ,(base32 "1l3jxp9j4las9hwgsvbqx2alqxh9n0gyqqdjirkgdhs8hw8x23p8"))))
 
 (define %tensile-patches
-  '(("5.7.1" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.6.1" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.5.1" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.4.4" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.3.3" "amd/patches/tensile-5.3.3-copy-if-not-exist.patch")))
+  '(("5.7.1" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.6.1" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.5.1" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.4.4" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
+    ("5.3.3" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")))
 
 (define (tensile-origin version)
   (origin
