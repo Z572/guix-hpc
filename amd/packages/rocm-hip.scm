@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd rocm-hip)
+(define-module (amd packages rocm-hip)
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix build-system cmake)
@@ -34,9 +34,9 @@
   #:use-module (gnu packages gl)
   #:use-module (gnu packages version-control)
 
-  #:use-module (amd python-cppheaderparser)
-  #:use-module (amd rocm-tools)
-  #:use-module (amd rocm-base))
+  #:use-module (amd packages python-cppheaderparser)
+  #:use-module (amd packages rocm-tools)
+  #:use-module (amd packages rocm-base))
 
 (define %rocm-comgr-hashes
   `(("5.7.1" . ,(base32 "0p28jsbwjk19c4i6vwqkwgwpa4qkmqsgpyhhxsx3albnbz8wc7a0"))
@@ -100,8 +100,8 @@
     ("5.6.1" . ,(base32 "0vkx3ncjz80xdyi37f80lb2mma4ygqs5rvkvidqqfvamc96v75j1"))))
 
 (define %hip-patches
-  '(("5.7.1" . "amd/patches/hip-headers-5.6.1.patch")
-    ("5.6.1" . "amd/patches/hip-headers-5.6.1.patch")))
+  '(("5.7.1" . "amd/packages/patches/hip-headers-5.6.1.patch")
+    ("5.6.1" . "amd/packages/patches/hip-headers-5.6.1.patch")))
 
 (define (make-hip version)
   (hidden-package (package
@@ -142,8 +142,8 @@ for AMD and NVIDIA GPUs from single source code.")
     ("5.6.1" . ,(base32 "1mrpgpvrya2vb21crar5rskdcvlrannv5mvnqgadw559yax4jm9f"))))
 
 (define %hipcc-patches
-  '(("5.7.1" . "amd/patches/hipcc-5.6.1.patch")
-    ("5.6.1" . "amd/patches/hipcc-5.6.1.patch")))
+  '(("5.7.1" . "amd/packages/patches/hipcc-5.6.1.patch")
+    ("5.6.1" . "amd/packages/patches/hipcc-5.6.1.patch")))
 
 (define (make-hipcc rocminfo rocm-toolchain)
   (hidden-package (package
@@ -185,8 +185,8 @@ clang and pass the appropriate include and library options for the target compil
     ("5.6.1" . ,(base32 "1i1zj47x473qh94y27ly14cfhwqdc4qw54j02zl7l82dglvz65sx"))))
 
 (define %clr-hipamd-patches
-  '(("5.7.1" . "amd/patches/hipamd-5.6.1.patch")
-    ("5.6.1" . "amd/patches/hipamd-5.6.1.patch")))
+  '(("5.7.1" . "amd/packages/patches/hipamd-5.6.1.patch")
+    ("5.6.1" . "amd/packages/patches/hipamd-5.6.1.patch")))
 
 (define (make-clr-hipamd hip hipcc rocm-comgr)
   (package
@@ -330,9 +330,9 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
     ("5.3.3" . ,(base32 "1lfr2niqa646bfm3y14377frcrxyfpbiygn20jfivlnk16pnyr4j"))))
 
 (define %hip-headers-repo-patches
-  '(("5.5.1" "amd/patches/hip-5.5.1.patch")
-    ("5.4.4" "amd/patches/hip-5.4.4.patch")
-    ("5.3.3" "amd/patches/hip-5.3.3.patch")))
+  '(("5.5.1" "amd/packages/patches/hip-5.5.1.patch")
+    ("5.4.4" "amd/packages/patches/hip-5.4.4.patch")
+    ("5.3.3" "amd/packages/patches/hip-5.3.3.patch")))
 
 (define (hip-headers-origin version)
   (origin
@@ -379,7 +379,7 @@ for AMD and NVIDIA GPUs from single source code.")
 
 (define %hipamd-repo-patches
   '(("5.5.1")
-    ("5.4.4" "amd/patches/hipamd-5.4.4.patch")
+    ("5.4.4" "amd/packages/patches/hipamd-5.4.4.patch")
     ("5.3.3")))
 
 (define (hipamd-origin version)

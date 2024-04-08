@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd rocm-libs)
+(define-module (amd packages rocm-libs)
   #:use-module (guix packages)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
@@ -34,10 +34,10 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages autotools)
 
-  #:use-module (amd rocm-base)
-  #:use-module (amd rocm-hip)
-  #:use-module (amd rocm-tools)
-  #:use-module (amd python-cppheaderparser)
+  #:use-module (amd packages rocm-base)
+  #:use-module (amd packages rocm-hip)
+  #:use-module (amd packages rocm-tools)
+  #:use-module (amd packages python-cppheaderparser)
 
   #:use-module (gnu packages mpi)
 
@@ -308,10 +308,10 @@ the runtimes API callbacks and asynchronous activity records pool support.")
 
 (define %rocblas-patches
   '(("5.7.1")
-    ("5.6.1" "amd/patches/rocblas-5.6.1.patch")
-    ("5.5.1" "amd/patches/rocblas-5.5.1.patch")
-    ("5.4.4" "amd/patches/rocblas-5.4.4.patch")
-    ("5.3.3" "amd/patches/rocblas-5.3.3.patch")))
+    ("5.6.1" "amd/packages/patches/rocblas-5.6.1.patch")
+    ("5.5.1" "amd/packages/patches/rocblas-5.5.1.patch")
+    ("5.4.4" "amd/packages/patches/rocblas-5.4.4.patch")
+    ("5.3.3" "amd/packages/patches/rocblas-5.3.3.patch")))
 
 (define (rocblas-origin version)
   (origin

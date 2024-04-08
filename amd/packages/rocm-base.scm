@@ -15,7 +15,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (amd rocm-base)
+(define-module (amd packages rocm-base)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system trivial)
@@ -61,11 +61,11 @@
     ("rocm-5.3.3" . ,(base32 "06r4zrgjsaifnjc7lsp18nwkg6xvalfrlxmn0r7ixghnrhvkpai0"))))
 
 (define %llvm-patches
-  '(("rocm-5.7.1" "amd/patches/llvm-rocm-5.6.1.patch")
-    ("rocm-5.6.1" "amd/patches/llvm-rocm-5.6.1.patch")
-    ("rocm-5.5.1" "amd/patches/llvm-rocm-5.5.1.patch")
-    ("rocm-5.4.4" "amd/patches/llvm-rocm-5.4.4.patch")
-    ("rocm-5.3.3" "amd/patches/llvm-rocm-5.3.3.patch")))
+  '(("rocm-5.7.1" "amd/packages/patches/llvm-rocm-5.6.1.patch")
+    ("rocm-5.6.1" "amd/packages/patches/llvm-rocm-5.6.1.patch")
+    ("rocm-5.5.1" "amd/packages/patches/llvm-rocm-5.5.1.patch")
+    ("rocm-5.4.4" "amd/packages/patches/llvm-rocm-5.4.4.patch")
+    ("rocm-5.3.3" "amd/packages/patches/llvm-rocm-5.3.3.patch")))
 
 (define (llvm-rocm-monorepo version)
   (origin
@@ -294,11 +294,11 @@ to interact with the ROCk driver.")
     ("5.3.3" . ,(base32 "18hf3abq6g7hyxlkfzd61a661j8lxgq42nkarrs2x5491ny3p8fv"))))
 
 (define %rocr-runtime-patches
-  '(("5.7.1" "amd/patches/rocr-runtime-5.5.patch")
-    ("5.6.1" "amd/patches/rocr-runtime-5.5.patch")
-    ("5.5.1" "amd/patches/rocr-runtime-5.5.patch")
-    ("5.4.4" "amd/patches/rocr-runtime-5.3.3.patch")
-    ("5.3.3" "amd/patches/rocr-runtime-5.3.3.patch")))
+  '(("5.7.1" "amd/packages/patches/rocr-runtime-5.5.patch")
+    ("5.6.1" "amd/packages/patches/rocr-runtime-5.5.patch")
+    ("5.5.1" "amd/packages/patches/rocr-runtime-5.5.patch")
+    ("5.4.4" "amd/packages/patches/rocr-runtime-5.3.3.patch")
+    ("5.3.3" "amd/packages/patches/rocr-runtime-5.3.3.patch")))
 
 (define (rocr-runtime-origin version)
   (origin
