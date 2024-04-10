@@ -34,6 +34,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages autotools)
 
+  #:use-module (amd packages rocm-origin)
   #:use-module (amd packages rocm-base)
   #:use-module (amd packages rocm-hip)
   #:use-module (amd packages rocm-tools)
@@ -44,28 +45,12 @@
   #:use-module (gnu packages fabric-management))
 
 ; rocprim
-(define %rocprim-hashes
-  `(("5.7.1" . ,(base32 "0rawbvyilzb1swj03f03h56i0gs52cg9kbcyz591ipdgqmd0bsgs"))
-    ("5.6.1" . ,(base32 "1dms8wm2b4f6h0jwmd76sibmb34g4fh1vdfqs178ncndsmcddgs0"))
-    ("5.5.1" . ,(base32 "0dwkshxkbbx4v48mppmkfp4d0gj0y3j9dlgn9f24pq8pqmwc8zld"))
-    ("5.4.4" . ,(base32 "1p1q95sw1d66kkh8s3m7nar68x91g147a6mxa85bp5i7pffp5j0s"))
-    ("5.3.3" . ,(base32 "0m97rlay6q56gxnn17h79830rp96smvncd6sll8w1cpj8ccfxx4d"))))
-
-(define (rocprim-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/ROCmSoftwarePlatform/rocPRIM.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "rocprim" version))
-    (sha256 (assoc-ref %rocprim-hashes version))))
-
 (define (make-rocprim rocm-cmake hipamd)
   (package
     (name "rocprim")
     (version (package-version hipamd))
     (source
-     (rocprim-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -239,28 +224,12 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
   (make-openmpi-rocm ucx-rocm-5.3 ofi-rocm-5.3 hipamd-5.3))
 
 ; roctracer
-(define %roctracer-hashes
-  `(("5.7.1" . ,(base32 "11bd53vylassbg0xcpa9hncvwrv0xcb04z51b12h2iyc1341i91z"))
-    ("5.6.1" . ,(base32 "1hsgmgil0k675y5arnhm1338r9b3ikiivfxifghwlisqjw3zy51g"))
-    ("5.5.1" . ,(base32 "0gvfawcnc5hr8cxg9c443hqzmjz88rdc9iins2lh5j2gdw8macfw"))
-    ("5.4.4" . ,(base32 "1dpc2jmsq2mcilz63fr4vxg99hhzpxdspqavhsg1v57jrhsi9xp6"))
-    ("5.3.3" . ,(base32 "0i0qy3mlq0yynrw0s3jh1x9wlpwimjjcn9xavrixf5l00xkljr18"))))
-
-(define (roctracer-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/ROCm-Developer-Tools/roctracer.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "roctracer" version))
-    (sha256 (assoc-ref %roctracer-hashes version))))
-
 (define (make-roctracer hipamd)
   (package
     (name "roctracer")
     (version (package-version hipamd))
     (source
-     (roctracer-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -299,37 +268,12 @@ the runtimes API callbacks and asynchronous activity records pool support.")
   (make-roctracer hipamd-5.3))
 
 ; rocblas
-(define %rocblas-hashes
-  `(("5.7.1" . ,(base32 "1ffwdyn5f237ad2m4k8b2ah15s0g2jfd6hm9qsywnsrby31af0nz"))
-    ("5.6.1" . ,(base32 "1vi927lzym8q063xllqlbay8v0yaqy5wvf687gdvc62vp2i22x73"))
-    ("5.5.1" . ,(base32 "1x1mp8fb05qrfd5sh6hyas2rfzr462xl9hixrhryi7ph8pi8r2aq"))
-    ("5.4.4" . ,(base32 "08qy5rrj6jwwqi1vnn3km92c0hl3pnc9aymifpack27g2p62j5jy"))
-    ("5.3.3" . ,(base32 "16iq2rjc4pljdycvflc55p8zc8jvs69mhh98cs4cgf5cbz21d3fg"))))
-
-(define %rocblas-patches
-  '(("5.7.1")
-    ("5.6.1" "amd/packages/patches/rocblas-5.6.1.patch")
-    ("5.5.1" "amd/packages/patches/rocblas-5.5.1.patch")
-    ("5.4.4" "amd/packages/patches/rocblas-5.4.4.patch")
-    ("5.3.3" "amd/packages/patches/rocblas-5.3.3.patch")))
-
-(define (rocblas-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/ROCmSoftwarePlatform/rocBLAS.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "rocblas" version))
-    (sha256 (assoc-ref %rocblas-hashes version))
-    (patches (map search-patch
-                  (assoc-ref %rocblas-patches version)))))
-
 (define (make-rocblas tensile rocm-cmake hipamd)
   (package
     (name "rocblas")
     (version (package-version hipamd))
     (source
-     (rocblas-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      (list
