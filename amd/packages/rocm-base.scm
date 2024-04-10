@@ -16,6 +16,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (amd packages rocm-base)
+  #:use-module (amd packages rocm-origin)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system trivial)
@@ -53,37 +54,13 @@
                        (setenv "CFLAGS" " -fPIC"))))))))
 
 ; llvm
-(define %llvm-monorepo-hashes
-  `(("rocm-5.7.1" . ,(base32 "1bwqrsvl2gdygp8lqz25xifhmrqwmwjhjhdnc51dr7lc72f4ksfk"))
-    ("rocm-5.6.1" . ,(base32 "080pmr2f7hmnpgixikwrrj8pb67b2mw5c5s5649ik2rl8dyjnmmi"))
-    ("rocm-5.5.1" . ,(base32 "0g4w7grbl3qf96biflamhgf0f1hvzxnd747cc0kjzpqa1bfcfrhl"))
-    ("rocm-5.4.4" . ,(base32 "1q3jlnmyrrj5mhyx33xpnfdbi8ikw8r28rnq0fhxc5j307lw4fq4"))
-    ("rocm-5.3.3" . ,(base32 "06r4zrgjsaifnjc7lsp18nwkg6xvalfrlxmn0r7ixghnrhvkpai0"))))
-
-(define %llvm-patches
-  '(("rocm-5.7.1" "amd/packages/patches/llvm-rocm-5.6.1.patch")
-    ("rocm-5.6.1" "amd/packages/patches/llvm-rocm-5.6.1.patch")
-    ("rocm-5.5.1" "amd/packages/patches/llvm-rocm-5.5.1.patch")
-    ("rocm-5.4.4" "amd/packages/patches/llvm-rocm-5.4.4.patch")
-    ("rocm-5.3.3" "amd/packages/patches/llvm-rocm-5.3.3.patch")))
-
-(define (llvm-rocm-monorepo version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/RadeonOpenCompute/llvm-project.git")
-                        (commit version)))
-    (file-name (git-file-name "llvm-project" version))
-    (sha256 (assoc-ref %llvm-monorepo-hashes version))
-    (patches (map search-patch
-                  (assoc-ref %llvm-patches version)))))
-
 (define (make-llvm-rocm version llvm)
   (package
     (inherit llvm)
-    (version (string-append "rocm-" version))
+    (name "rocm-llvm")
+    (version version)
     (source
-     (llvm-rocm-monorepo version))
+     (rocm-origin "llvm-project" version))
     (inputs (modify-inputs (package-inputs llvm)
               (replace "libffi" libffi-shared)))
     (properties `((hidden? . #t) ,@(package-properties llvm)))))
@@ -103,9 +80,10 @@
 (define-public (make-clang-runtime-rocm llvm-rocm clang-runtime)
   (package
     (inherit clang-runtime)
+    (name "rocm-clang-runtime")
     (version (package-version llvm-rocm))
     (source
-     (llvm-rocm-monorepo version))
+     (rocm-origin "llvm-project" version))
     (inputs (modify-inputs (package-inputs clang-runtime)
               (replace "llvm" llvm-rocm)
               (replace "libffi" libffi-shared)))
@@ -126,9 +104,10 @@
 (define (make-clang-rocm llvm-rocm clang-runtime-rocm clang)
   (package
     (inherit clang)
+    (name "rocm-clang")
     (version (package-version llvm-rocm))
     (source
-     (llvm-rocm-monorepo version))
+     (rocm-origin "llvm-project" version))
     (inputs (modify-inputs (package-inputs clang)
               (delete "clang-tools-extra")))
     (propagated-inputs (modify-inputs (package-propagated-inputs clang)
@@ -159,9 +138,10 @@
 (define (make-lld-rocm llvm-rocm lld)
   (package
     (inherit lld)
+    (name "rocm-lld")
     (version (package-version llvm-rocm))
     (source
-     (llvm-rocm-monorepo version))
+     (rocm-origin "llvm-project" version))
     (inputs (list llvm-rocm))
     (properties `((hidden? . #t) ,@(package-properties lld)))))
 
@@ -177,28 +157,12 @@
   (make-lld-rocm llvm-rocm-5.3 lld-15))
 
 ; rocm-device-libs
-(define %rocm-device-libs-hashes
-  `(("5.7.1" . ,(base32 "1xc4g5qb8x5hgnvrpzxqxqbsdnwaff1r12aqb8a84mmj5bznq701"))
-    ("5.6.1" . ,(base32 "1jg96ycy99s9fis8sk1b7qx5p33anw16mqlm07zqbnhry2gqkcbh"))
-    ("5.5.1" . ,(base32 "0apwrwa8av5ylf318blwid4xgz6j6bgdpc4frgzwd8vsjwzwkmm8"))
-    ("5.4.4" . ,(base32 "069nc6yg5scp9r0mj8ckb7a5mg74dsavb2ls6fqi75c65n1ny37j"))
-    ("5.3.3" . ,(base32 "15bcgwy5azmx7ldimhz5mdmbrmi4wzdfwdwmznj3g4793z81x8xc"))))
-
-(define (rocm-device-libs-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/RadeonopenCompute/ROCm-Device-Libs.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "rocm-device-libs" version))
-    (sha256 (assoc-ref %rocm-device-libs-hashes version))))
-
 (define (make-rocm-device-libs clang-rocm)
   (package
     (name "rocm-device-libs")
-    (version (list-ref (string-split (package-version clang-rocm) #\-) 1)) ;extract version without the rocm prefix
+    (version (package-version clang-rocm))
     (source
-     (rocm-device-libs-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -239,28 +203,12 @@ a set of AMD specific device-side language runtime libraries.")
   (make-rocm-device-libs clang-rocm-5.3))
 
 ; roct-thunk-interface
-(define %roct-thunk-hashes
-  `(("5.7.1" . ,(base32 "075advkplqlj9y3m3bsww4yiz3qxrfmxwhcf0giaa9dzrn9020wc"))
-    ("5.6.1" . ,(base32 "0v8j4gkbb21gqqmz1b4nmampx5ywva99ipsx8lcjr5ckcg84fn9x"))
-    ("5.5.1" . ,(base32 "1digw626k4m3kzcyi89kvba8j69xj4agqgi4avqsnkq5yf0vw9cz"))
-    ("5.4.4" . ,(base32 "0can34ccy2dm31m0wq9hhrxb8ykd6jj8bn3gfrlycmdklahnskhi"))
-    ("5.3.3" . ,(base32 "1adzhpa38lfsk0xj0m09fm11ird84vc594nspmhwqqmf3q3zrkkh"))))
-
-(define (roct-thunk-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/RadeonopenCompute/ROCT-Thunk-Interface.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "roct-thunk-interface" version))
-    (sha256 (assoc-ref %roct-thunk-hashes version))))
-
 (define (make-roct-thunk version)
   (package
     (name "roct-thunk-interface")
     (version version)
     (source
-     (roct-thunk-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -286,37 +234,12 @@ to interact with the ROCk driver.")
   (make-roct-thunk "5.3.3"))
 
 ; rocr-runtime
-(define %rocr-runtime-hashes
-  `(("5.7.1" . ,(base32 "02g53357i15d8laxlhvib7h01kfarlq8hyfm7rm3ii2wgrm23c0g"))
-    ("5.6.1" . ,(base32 "07wh7s1kgvpw8ydxmr2wvvn05fdqcmcc20qjbmnc3cbbhxviksyr"))
-    ("5.5.1" . ,(base32 "0zhqlbnkq2w0zqdqiqk4l2mksy618fl0zivkp2h6f5pjfnishpw9"))
-    ("5.4.4" . ,(base32 "09kpnfn5vpfcjh0amxbk1885hyib9jbisfmh2p9224cx156xfi16"))
-    ("5.3.3" . ,(base32 "18hf3abq6g7hyxlkfzd61a661j8lxgq42nkarrs2x5491ny3p8fv"))))
-
-(define %rocr-runtime-patches
-  '(("5.7.1" "amd/packages/patches/rocr-runtime-5.5.patch")
-    ("5.6.1" "amd/packages/patches/rocr-runtime-5.5.patch")
-    ("5.5.1" "amd/packages/patches/rocr-runtime-5.5.patch")
-    ("5.4.4" "amd/packages/patches/rocr-runtime-5.3.3.patch")
-    ("5.3.3" "amd/packages/patches/rocr-runtime-5.3.3.patch")))
-
-(define (rocr-runtime-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/RadeonOpenCompute/ROCR-Runtime.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "rocr-runtime" version))
-    (sha256 (assoc-ref %rocr-runtime-hashes version))
-    (patches (map search-patch
-                  (assoc-ref %rocr-runtime-patches version)))))
-
 (define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm)
   (package
     (name "rocr-runtime")
     (version (package-version rocm-device-libs))
     (source
-     (rocr-runtime-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -379,9 +302,10 @@ core runtime is also available.")
                           libomp)
   (package
     (inherit libomp)
+    (name "rocm-libomp")
     (version (package-version llvm-rocm))
     (source
-     (llvm-rocm-monorepo version))
+     (rocm-origin "llvm-project" version))
     (native-inputs (append (list `("gcc:lib" ,gcc "lib"))
                            (modify-inputs (package-native-inputs libomp)
                              (replace "clang" clang-rocm)
@@ -489,8 +413,7 @@ core runtime is also available.")
     (package
       (inherit rocm-clang-toolchain)
       (name "rocm-toolchain")
-      (version (list-ref (string-split (package-version rocm-clang-toolchain)
-                                       #\-) 1)) ;extract version without the rocm prefix
+      (version (package-version rocm-clang-toolchain))
       (inputs (modify-inputs (package-inputs rocm-clang-toolchain)
                 (append lld-wrapper-rocm rocr-runtime rocm-device-libs
                         roct-thunk)))
