@@ -30,31 +30,16 @@
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages serialization)
 
+  #:use-module (amd packages rocm-origin)
   #:use-module (amd packages rocm-base))
 
 ; rocminfo
-(define %rocminfo-hashes
-  `(("5.7.1" . ,(base32 "1a6viq9i7hcjn7xfyswzg7ivb5sp577097fiplzf7znkl3dahcsk"))
-    ("5.6.1" . ,(base32 "150bvyxp9krq8f7jqd1g5b4l85rih4ch322y4sg1hnciqpabn6a6"))
-    ("5.5.1" . ,(base32 "150bvyxp9krq8f7jqd1g5b4l85rih4ch322y4sg1hnciqpabn6a6"))
-    ("5.4.4" . ,(base32 "1i8p1w8f2wqdc2b9sq8j0xkdd1mbasn65bny24qnz00rj2dm61p3"))
-    ("5.3.3" . ,(base32 "1i8p1w8f2wqdc2b9sq8j0xkdd1mbasn65bny24qnz00rj2dm61p3"))))
-
-(define (rocminfo-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/RadeonOpenCompute/rocminfo.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "rocminfo" version))
-    (sha256 (assoc-ref %rocminfo-hashes version))))
-
 (define (make-rocminfo rocr-runtime)
   (package
     (name "rocminfo")
     (version (package-version rocr-runtime))
     (source
-     (rocminfo-origin version))
+     (rocm-origin name version))
     (build-system cmake-build-system)
     (arguments
      `(#:build-type "Release"
@@ -78,29 +63,14 @@
 (define-public rocminfo-5.3
   (make-rocminfo rocr-runtime-5.3))
 
+
 ; rocm-smi
-(define %rocmsmi-hashes
-  `(("5.7.1" . ,(base32 "0d9cacap0k8k7hmlfbpnrqbrj86pmxk3w1fl8ijglm8a3267i51m"))
-    ("5.6.1" . ,(base32 "0jxd74y4lgar0jy2y3kqbs872f23cdfj9yrfgjz9hmrp903c9hql"))
-    ("5.5.1" . ,(base32 "19qxgdc757f4qbkkggkwk8rs3c1jv8d8jgyhsg228s8w6gcr80ga"))
-    ("5.4.4" . ,(base32 "14f898i9xrbc5nvrpk9zkhjq6hwn0av13gbphq3a6lsd6f49sj4y"))
-    ("5.3.3" . ,(base32 "0x76gy8kzp4h6x9ssgrbswqpxajxlrps04kvpxh0z1dggn89pcai"))))
-
-(define (rocmsmi-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/RadeonOpenCompute/rocm_smi_lib.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "rocm-smi" version))
-    (sha256 (assoc-ref %rocmsmi-hashes version))))
-
 (define (make-rocm-smi version)
   (package
     (name "rocm-smi")
     (version version)
     (source
-     (rocmsmi-origin version))
+     (rocm-origin "rocm_smi_lib" version))
     (build-system cmake-build-system)
     (arguments
      `(#:build-type "Release"
@@ -127,37 +97,12 @@ provides a user space interface for applications to monitor and control GPU appl
   (make-rocm-smi "5.3.3"))
 
 ; tensile
-(define %tensile-hashes
-  `(("5.7.1" . ,(base32 "0visjmv63fmk8ywqjfcfvfbsr5784pmv83gsff4xppgrry4cc8qb"))
-    ("5.6.1" . ,(base32 "1s2fmq5p0yd2s3r92sz8kzrmmgjkqv9pz4rjy25i8xvaips9wl3s"))
-    ("5.5.1" . ,(base32 "0fs3cz6yaymawnzhm3szy9g3yg4r11gc9zni0k3m7gmycympbsg9"))
-    ("5.4.4" . ,(base32 "1a4d1sds391s99ymzyigqnd493d8l24hikrc964whzkddbmapb2v"))
-    ("5.3.3" . ,(base32 "1l3jxp9j4las9hwgsvbqx2alqxh9n0gyqqdjirkgdhs8hw8x23p8"))))
-
-(define %tensile-patches
-  '(("5.7.1" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.6.1" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.5.1" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.4.4" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")
-    ("5.3.3" "amd/packages/patches/tensile-5.3.3-copy-if-not-exist.patch")))
-
-(define (tensile-origin version)
-  (origin
-    (method git-fetch)
-    (uri (git-reference (url
-                         "https://github.com/ROCmSoftwarePlatform/Tensile.git")
-                        (commit (string-append "rocm-" version))))
-    (file-name (git-file-name "tensile" version))
-    (sha256 (assoc-ref %tensile-hashes version))
-    (patches (map search-patch
-                  (assoc-ref %tensile-patches version)))))
-
 (define (make-tensile version)
   (package
     (name "tensile")
     (version version)
     (source
-     (tensile-origin version))
+     (rocm-origin name version))
     (build-system python-build-system)
     (native-inputs (list python-pandas))
     (propagated-inputs (list msgpack-3 python-msgpack python-pyyaml
