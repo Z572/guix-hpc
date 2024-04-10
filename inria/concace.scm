@@ -819,11 +819,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "138c3ac29c6dd941f4cc4c31a796a7dbe6db39d2")))
+                    (commit "8b3d388a48be2ce18b4e63dfcd638bfbf1a287c0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "026w4c2c1369b86snlq1ky2kydl2p6b36wq2i19w9znbprdb11sm"))))
+                "1qmnrs1p6nj9rxg4xncabiriqjp4mz9v6jv3km0gvh9b07x8p9jm"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list elementaryx-core
@@ -920,11 +920,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "471774e42f28c87995844494f28477e2c87fdc43")))
+                    (commit "f1379d9a24e00156802399e0b9efb2e93cfe3249")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "13fpyp2fn4jqx21m4828ig1fl3y1xafbnb6rw8iizcdj5wz782x5"))))
+                "1v9ba1bybi182yycf9fzfvw88x6vpgvarqa7vcy0c435dsbp2chi"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox-base
