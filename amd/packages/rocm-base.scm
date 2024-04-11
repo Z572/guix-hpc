@@ -462,3 +462,49 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
                        rocr-runtime-5.3
                        rocm-device-libs-5.3
                        roct-thunk-5.3))
+
+
+; hipify
+(define (make-hipify clang-rocm)
+  (package
+    (name "hipify")
+    (version (package-version clang-rocm))
+    (source
+     (rocm-origin name version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:build-type "Release"
+      #:configure-flags #~(list "-DCMAKE_CXX_COMPILER=clang++"
+                                (if (string=? #$version "5.5.1")
+                                    "-DSWDEV_375013=ON" ""))
+      #:phases #~(modify-phases %standard-phases
+                   (add-before 'configure 'prepare-cmake
+                     (lambda _
+                       (substitute* "CMakeLists.txt"
+                         (("set.CMAKE_CXX_COMPILER.*")
+                          "")
+                         (("set.CMAKE_C_COMPILER.*")
+                          "")
+                         (("--disable-new-dtags")
+                          "--enable-new-dtags") ;required for 5.6.1 but does not seem to affect other versions
+                         ))))))
+    (inputs (list clang-rocm perl))
+    (synopsis
+     "HIPIFY: Convert CUDA to HIP code.")
+    (description
+     "HIPIFY is a set of tools that you can use to automatically translate
+CUDA source code into portable HIP C++.")
+    (home-page "https://github.com/ROCm/HIPIFY")
+    (license license:ncsa)))
+
+(define-public hipify-5.7
+  (make-hipify clang-rocm-5.7))
+(define-public hipify-5.6
+  (make-hipify clang-rocm-5.6))
+(define-public hipify-5.5
+  (make-hipify clang-rocm-5.5))
+(define-public hipify-5.4
+  (make-hipify clang-rocm-5.4))
+(define-public hipify-5.3
+  (make-hipify clang-rocm-5.3))

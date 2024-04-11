@@ -53,6 +53,12 @@
         (("rocr-runtime" "5.5.1") . ,(base32 "0zhqlbnkq2w0zqdqiqk4l2mksy618fl0zivkp2h6f5pjfnishpw9"))
         (("rocr-runtime" "5.4.4") . ,(base32 "09kpnfn5vpfcjh0amxbk1885hyib9jbisfmh2p9224cx156xfi16"))
         (("rocr-runtime" "5.3.3") . ,(base32 "18hf3abq6g7hyxlkfzd61a661j8lxgq42nkarrs2x5491ny3p8fv"))
+        ; hipify
+        (("hipify" "5.7.1") . ,(base32 "1llc51ah7dphvv9s46i7l8ay3q51dzxx7fvvs6ym16066makc94l"))
+        (("hipify" "5.6.1") . ,(base32 "1kf1wdrgf5zxzkdf6fjyglav2rffcd7ph2n4737z6521hcix25p0"))
+        (("hipify" "5.5.1") . ,(base32 "0rpqd8gy38fk176midzhg72gi7f606nm8j3d7hmp3fdimil0w60c"))
+        (("hipify" "5.4.4") . ,(base32 "1lkbrrjab3afl1ajjj3d8ds7fllnq9xvhvbal7i4335hbhiyv88i"))
+        (("hipify" "5.3.3") . ,(base32 "1mfsp0af86k4wdz5nhi8q4p4ri38s38sl5rsxx5k4vrr9awh7cma"))
         ; rocm-compilersupport
         (("rocm-compilersupport" "5.7.1") . ,(base32 "0p28jsbwjk19c4i6vwqkwgwpa4qkmqsgpyhhxsx3albnbz8wc7a0"))
         (("rocm-compilersupport" "5.6.1") . ,(base32 "15s2dx0pdvjv3xfccq5prkplcbwps8x9jas5qk93q7kv8wx57p3b"))
