@@ -155,6 +155,12 @@
         (("hipblas" "5.5.1") . ,(base32 "05jl7gz2w3cqspm8ybvk29rw55270f7h74alddi1dpabzjydzi8j"))
         (("hipblas" "5.4.4") . ,(base32 "0ja8b74jlcr2d64hbas3km0q4zh1cxnrapv5rp6gg28sqnml49lr"))
         (("hipblas" "5.3.3") . ,(base32 "134kh32mvwmyw6adz9yjcbrqfxpyb10fxqdf15vyk8lqvj205cyq"))
+        ; rocm-bandwidth-test
+        (("rocm_bandwidth_test" "5.7.1") . ,(base32 "1p9ldrk43imwl8bz5c4pxaxwwmipgqg7k3xzkph2jq7ji455v4zz"))
+        (("rocm_bandwidth_test" "5.6.1") . ,(base32 "0ca6r8xijw3a3hrlgkqqsf3iqyia6sdmidgmjl12f5vypxzp5kmm"))
+        (("rocm_bandwidth_test" "5.5.1") . ,(base32 "0ca6r8xijw3a3hrlgkqqsf3iqyia6sdmidgmjl12f5vypxzp5kmm"))
+        (("rocm_bandwidth_test" "5.4.4") . ,(base32 "0ca6r8xijw3a3hrlgkqqsf3iqyia6sdmidgmjl12f5vypxzp5kmm"))
+        (("rocm_bandwidth_test" "5.3.3") . ,(base32 "0j5vih77942aai79fr4yfya9a8v17g61w3567f6wxa705s62wqgs"))
         ; rocthrust
         (("rocthrust" "5.7.1") . ,(base32 "01zmy4gsd02w6gsah91458kbyl7kcvw3ffw2f09kl89v1xq0gdzr"))
         (("rocthrust" "5.6.1") . ,(base32 "1b8dy3xjqvgagbkanwkikifhjq8r9gdc6jqyb6wy9d8mpzgp00l6"))

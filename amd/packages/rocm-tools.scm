@@ -17,6 +17,7 @@
 
 (define-module (amd packages rocm-tools)
   #:use-module (guix packages)
+  #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system python)
   #:use-module (guix git-download)
@@ -64,6 +65,43 @@
   (make-rocminfo rocr-runtime-5.3))
 
 
+; rocm-bandwidth-test
+(define (make-rocm-bandwidth rocr-runtime)
+  (package
+    (name "rocm-bandwidth-test")
+    (version (package-version rocr-runtime))
+    (source
+     (rocm-origin "rocm_bandwidth_test" version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:tests? #f ;No tests.
+      #:configure-flags #~(list "-DCMAKE_CXX_FLAGS=-Wno-error=cpp" ;ignores include reorg issue
+                                )))
+    (inputs (list rocr-runtime))
+    (synopsis
+     "Bandwith test for ROCm")
+    (description
+     "RocBandwidthTest is designed to capture the performance
+characteristics of buffer copying and kernel read/write operations. The help
+screen of the benchmark shows various options one can use in initiating
+copy/read/writer operations.  In addition one can also query the topology of the
+system in terms of memory pools and their agents.")
+    (home-page "https://github.com/ROCm/rocm_bandwidth_test")
+    (license ncsa)))
+
+(define-public rocm-bandwidth-5.7
+  (make-rocm-bandwidth rocr-runtime-5.7))
+(define-public rocm-bandwidth-5.6
+  (make-rocm-bandwidth rocr-runtime-5.6))
+(define-public rocm-bandwidth-5.5
+  (make-rocm-bandwidth rocr-runtime-5.5))
+(define-public rocm-bandwidth-5.4
+  (make-rocm-bandwidth rocr-runtime-5.4))
+(define-public rocm-bandwidth-5.3
+  (make-rocm-bandwidth rocr-runtime-5.3))
+
+
 ; rocm-smi
 (define (make-rocm-smi version)
   (package
@@ -95,6 +133,7 @@ provides a user space interface for applications to monitor and control GPU appl
   (make-rocm-smi "5.4.4"))
 (define-public rocm-smi-5.3
   (make-rocm-smi "5.3.3"))
+
 
 ; tensile
 (define (make-tensile version)
