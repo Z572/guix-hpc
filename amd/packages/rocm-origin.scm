@@ -178,10 +178,7 @@
         (uri (git-reference
                 (url (string-append "https://github.com/ROCm/" name))
                 (commit (string-append "rocm-" version))
-                (recursive? recursive?)
-        ))
+                (recursive? recursive?)))
         (file-name (git-file-name name (string-append "rocm-" version)))
         (sha256 (assoc-ref rocm-hashes (list name version)))
-        (patches (map search-patch
-            (let ((patch-list (assoc-ref rocm-patches (list name version))))
-                (if patch-list patch-list '()))))))
+        (patches (map search-patch (or (assoc-ref rocm-patches (list name version)) '())))))
