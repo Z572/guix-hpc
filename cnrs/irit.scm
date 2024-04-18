@@ -4,7 +4,7 @@
 ;;; Note that this module provides packages that depend on "non-free"
 ;;; software, which denies users the ability to study and modify it.
 ;;;
-;;; Copyright © 2019 Inria
+;;; Copyright © 2019-2024 Inria
 
 (define-module (cnrs irit)
   #:use-module (guix)
@@ -30,17 +30,17 @@
 (define-public qr_mumps
   (package
    (name "qr_mumps")
-   (version "3.0.4")
+   (version "3.1")
    (home-page "https://gitlab.com/qr_mumps/qr_mumps")
    (source (origin
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "0a074a68b07b83d4b4284d07aa5a28dea71ab0c0")))
+                  (commit "3.1")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "13zlrdl40zcvjag5d2l0dvy4zpbrrdqi3a5k80fpl11fyzqmkr6l"))))
+              "1mic7q1ajhmv95qsinas73q02mdy7waiqsmf4gnikxd04rxwi3j5"))))
    (build-system cmake-build-system)
    (arguments
     '(#:configure-flags  (list
