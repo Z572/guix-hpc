@@ -198,7 +198,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.3)
     (name "starpu")
-    (version "1.4.4")
+    (version "1.4.5")
     (source (origin
               (method git-fetch)
               (uri (git-reference
