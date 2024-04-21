@@ -1,0 +1,173 @@
+diff --git a/Makefile b/Makefile
+index 0c8e8d2..c441e3a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -13,7 +13,7 @@ ENABLE_VECTO		= 1
+ ENABLE_TRACE		= 1
+ ENABLE_MPI			= 1
+ ENABLE_SHA			= 1
+-ENABLE_OPENCL		= 1
++ENABLE_OPENCL		= 0
+ ENABLE_MIPP			= 1
+ #ENABLE_CUDA			= 1
+ #ENABLE_PAPI			= 1
+@@ -23,6 +23,7 @@ ENABLE_MIPP			= 1
+ # Compilers
+ CC				:= gcc
+ CXX				:= g++
++LEX 			:= flex
+ 
+ # Optimization level
+ CFLAGS 			:= -O3 -march=native
+@@ -43,7 +44,7 @@ ARCH			:= $(shell uname -m | tr a-z A-Z)
+ SOURCES			:= $(wildcard src/*.c)
+ 
+ ifneq ($(ENABLE_SDL), 1)
+-SOURCES			:= $(filter-out src/gmonitor.c src/graphics.c src/cpustat.c, $(SOURCES))
++SOURCES			:= $(filter-out src/gmonitor.c src/graphics.c src/cpustat.c src/fonts.c, $(SOURCES))
+ endif
+ 
+ ifneq ($(ENABLE_PAPI), 1)
+diff --git a/include/fonts.h b/include/fonts.h
+new file mode 100644
+index 0000000..e34d440
+--- /dev/null
++++ b/include/fonts.h
+@@ -0,0 +1,13 @@
++#ifndef FONTS_IS_DEF
++#define FONTS_IS_DEF
++
++#ifdef ENABLE_SDL
++
++#include <SDL_ttf.h>
++
++TTF_Font *get_font (int ptsize);
++void close_font (TTF_Font *font);
++
++#endif
++
++#endif
+diff --git a/src/cpustat.c b/src/cpustat.c
+index 11ac3cc..88cc3fa 100644
+--- a/src/cpustat.c
++++ b/src/cpustat.c
+@@ -16,6 +16,7 @@
+ #include "time_macros.h"
+ #include "trace_common.h"
+ #include "gpu.h"
++#include "fonts.h"
+ 
+ #define HISTOGRAM_WIDTH 256
+ #define HISTOGRAM_HEIGHT 100
+@@ -133,11 +134,7 @@ static void cpustat_create_text_texture (void)
+   if (surface == NULL)
+     exit_with_error ("SDL_CreateRGBSurface failed: %s", SDL_GetError ());
+ 
+-  TTF_Font *font =
+-      TTF_OpenFont ("fonts/FreeSansBold.ttf", PERFMETER_HEIGHT - 2);
+-
+-  if (font == NULL)
+-    exit_with_error ("TTF_OpenFont failed: %s", SDL_GetError ());
++  TTF_Font *font = get_font (PERFMETER_HEIGHT - 2);
+ 
+   for (int c = 0; c <= NBCORES + NBGPUS; c++) {
+     char msg[32];
+@@ -163,7 +160,7 @@ static void cpustat_create_text_texture (void)
+     SDL_FreeSurface (s);
+   }
+ 
+-  TTF_CloseFont (font);
++  close_font (font);
+ 
+   text_texture = SDL_CreateTextureFromSurface (ren, surface);
+   if (text_texture == NULL)
+diff --git a/src/fonts.c b/src/fonts.c
+new file mode 100644
+index 0000000..603c607
+--- /dev/null
++++ b/src/fonts.c
+@@ -0,0 +1,31 @@
++#include <SDL_ttf.h>
++#include <stdlib.h>
++#include <string.h>
++#include <strings.h>
++#include <sys/mman.h>
++
++#include "fonts.h"
++#include "error.h"
++
++TTF_Font *get_font (int ptsize)
++{
++  TTF_Font *font = NULL;
++  if (TTF_Init () < 0)
++    exit_with_error ("TTF_Init");
++  char font_path[512] = {0};
++
++  sprintf(font_path, "%s/../fonts/FreeSansBold.ttf", SDL_GetBasePath());
++
++  font = TTF_OpenFont (font_path, ptsize);
++
++  if (font == NULL)
++    exit_with_error ("TTF_OpenFont: %s", TTF_GetError ());
++  return font;
++}
++
++void close_font (TTF_Font *font)
++{
++  TTF_CloseFont (font);
++
++  TTF_Quit ();
++}
+diff --git a/src/graphics.c b/src/graphics.c
+index b506d4c..b80c0aa 100644
+--- a/src/graphics.c
++++ b/src/graphics.c
+@@ -10,6 +10,7 @@
+ #include "minmax.h"
+ #include "time_macros.h"
+ #include "gpu.h"
++#include "fonts.h"
+ 
+ #include <SDL_image.h>
+ #include <SDL_opengl.h>
+@@ -246,21 +247,11 @@ void graphics_init (void)
+ 
+     // Digit textures
+     {
+-      TTF_Font *font = NULL;
+-
+-      if (TTF_Init () < 0)
+-        exit_with_error ("TTF_Init");
+-
+-      font = TTF_OpenFont ("fonts/FreeSansBold.ttf", FONT_HEIGHT - 4);
+-
+-      if (font == NULL)
+-        exit_with_error ("TTF_OpenFont: %s", TTF_GetError ());
++      TTF_Font *font = get_font (FONT_HEIGHT - 4);
+ 
+       create_digit_textures (font);
+ 
+-      TTF_CloseFont (font);
+-
+-      TTF_Quit ();
++      close_font (font);
+     }
+ 
+     // Option
+diff --git a/traces/Makefile b/traces/Makefile
+index 88107ac..1f55fbb 100644
+--- a/traces/Makefile
++++ b/traces/Makefile
+@@ -9,6 +9,12 @@ default: $(PROGRAM)
+ 
+ ENABLE_FUT	=	1
+ 
++###### Customization Section #######
++
++# Compilers
++CC				:= gcc
++CXX				:= g++
++
+ ######################
+ 
+ ARCH		:= $(shell uname -s | tr a-z A-Z)
