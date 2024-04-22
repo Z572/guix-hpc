@@ -206,7 +206,7 @@ kernels are executed as efficiently as possible.")
                     (commit (string-append "starpu-" version))))
               (file-name (git-file-name name version))
               (sha256
-               (base32 "040mky0v6skyx9i8q3q1r0j37scr88apkffxh3600v1gzjznlb92"))
+               (base32 "1vvdhsi5snai2ynyyk9x6q9sj8cczs7j7f1rs53pyw91d2j202wb"))
               (patches (search-patches %patch-path))
               (modules '((guix build utils)))))
     (arguments
@@ -306,4 +306,5 @@ collective errors detection in parallel applications.")
                    (add-before 'check 'mpi-setup
                      ,%openmpi-setup))))
     (license lgpl2.1)))
+
 
