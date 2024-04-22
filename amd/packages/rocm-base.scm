@@ -475,6 +475,7 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
     (arguments
      (list
       #:build-type "Release"
+      #:tests? #f ; No tests.
       #:configure-flags #~(list "-DCMAKE_CXX_COMPILER=clang++"
                                 (if (string=? #$version "5.5.1")
                                     "-DSWDEV_375013=ON" ""))
