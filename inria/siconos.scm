@@ -65,7 +65,9 @@
   ;; opencascade-oce
   #:use-module (gnu packages tcl)
   ;; python-h5py
-  #:use-module (gnu packages pkg-config))
+  #:use-module (gnu packages pkg-config)
+  ;; pythonocc-core (rapidjson)
+  #:use-module (gnu packages web))
 
 (define-public fclib-3.0
   (package
@@ -909,3 +911,51 @@ complete wrapping of the HDF5 API, while the high-level component supports
 access to HDF5 files, datasets and groups using established Python and NumPy
 concepts.")
     (license license:bsd-3)))
+
+
+(define-public pythonocc-core
+  (package
+    (name "pythonocc-core")
+    (version "7.6.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/tpaviot/pythonocc-core/archive/refs/tags/" version ".tar.gz"))
+       (sha256
+        (base32
+         "0j5q341wdr21wy0s1vpzl59w6yhnr1y1zaql6gy7w0k2nb9xmcc4"))))
+    (native-inputs
+     `(("cmake" ,cmake)
+       ("make" ,gnu-make)
+       ("swig" ,swig)
+       ("gcc" ,gcc)))
+    (inputs
+     `(("python" ,python)
+       ("rapidjson" ,rapidjson)
+       ("fontconfig" ,fontconfig)
+       ("freetype" ,freetype)
+       ("mesa" ,mesa)
+       ("glu" ,glu)
+       ("opencascade-occt" ,opencascade-occt)))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:build-type "Release"           ;Build without '-g' to save space.
+                    #:configure-flags
+                    `(,(string-append "-DPYTHONOCC_INSTALL_DIRECTORY="
+                                      (assoc-ref %outputs "out")))
+                    #:tests? #f))
+    (home-page "http://www.pythonocc.org/")
+    (synopsis "3D CAD for python")
+    (description
+     "pythonOCC is a 3D CAD/PLM development library for the Python
+programming language. It provides 3D hybrid modeling, data
+exchange (support for the STEP/IGES file format), GUI management
+support (wxPython, PyQt, python-xlib), parametric modeling, and
+advanced meshing features. pythonOCC is built upon the OpenCASCADE 3D
+modeling kernel and the salomegeom and salomesmesh packages. Some high
+level packages (for parametric modeling, topology, data exchange,
+webservices, etc.) extend the builtin features of those libraries to
+enable highly dynamic and modular programming of any CAD application.")
+    (license license:lgpl3)))
+
+
