@@ -1530,13 +1530,13 @@ large scale eigenvalue problems.")
     (license (license:non-copyleft "file://COPYING"
                                    "See COPYING in the distribution."))))
 
-;; Technically this is just jube version 2.4.1
+;; Technically this is just jube version 2.6.2
 ;; supporting yaml (in addition of xml) for bench files from version 2.4.0
 (define-public jube-with-yaml
   (package
     ;; This is a command-line tool, so no "python-" prefix.
     (name "jube-with-yaml")
-    (version "2.6.1")
+    (version "2.6.2")
     (source
      (origin
        (method url-fetch)
@@ -1544,7 +1544,7 @@ large scale eigenvalue problems.")
              "http://apps.fz-juelich.de/jsc/jube/jube2/download.php?version="
              version))
        (sha256
-        (base32 "0r5d2gdqa0f4c468q3k25ycw1k2g76gg8fyiln4ni98fvfsbx3il"))
+        (base32 "1c5za44y0azp81vf4xd6p2z9xvmzvskvygmq1vdbfqn00vcam22n"))
        (file-name (string-append "jube-" version ".tar.gz"))))
     (build-system python-build-system)
     (home-page "https://apps.fz-juelich.de/jsc/jube/jube2/docu/index.html")
