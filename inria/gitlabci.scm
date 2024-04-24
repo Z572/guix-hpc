@@ -23,10 +23,10 @@
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "91aba634bc236f21802b0272872259523b6e1813")))
+             (commit "ad1d692c9a75489d8816dec82ff552239b4a2fa8")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "0a72y5z51blj4m33g55hi4n5mps63zmk54014aslr5giibrb66zs"))))
+        (base32 "0wyxiq2b1wq7i19gqlr81w0f4hxij727fimlgm73i52hpjrq5467"))))
     (build-system cmake-build-system)
     (inputs (list googletest))
     (synopsis "Examples of performance tests")
