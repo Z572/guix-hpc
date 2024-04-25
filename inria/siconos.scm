@@ -946,9 +946,9 @@ concepts.")
       #:configure-flags
        #~(list (string-append "-DPYTHONOCC_INSTALL_DIRECTORY="
                               #$output
-                              "lib/python"
+                              "/lib/python"
                               #$(version-major+minor (package-version python))
-                              "site-packages/OCC"))
+                              "/site-packages/OCC"))
 ;       #:modules ((guix build gnu-build-system)
 ;                  (guix build utils)
 ;                  (srfi srfi-26))
