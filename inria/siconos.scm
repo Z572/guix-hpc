@@ -5,6 +5,7 @@
   #:use-module (ice-9 rdelim)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
   #:use-module (guix build-system python)
@@ -67,6 +68,7 @@
   ;; python-h5py
   #:use-module (gnu packages pkg-config)
   ;; pythonocc-core (rapidjson)
+  #:use-module (gnu packages build-tools)
   #:use-module (gnu packages web))
 
 (define-public fclib-3.0
@@ -939,11 +941,18 @@ concepts.")
        ("opencascade-occt" ,opencascade-occt)))
     (build-system cmake-build-system)
     (arguments
-     '(#:build-type "Release"           ;Build without '-g' to save space.
-                    #:configure-flags
-                    `(,(string-append "-DPYTHONOCC_INSTALL_DIRECTORY="
-                                      (assoc-ref %outputs "out")))
-                    #:tests? #f))
+     (list
+      #:build-type "Release"           ;Build without '-g' to save space.
+      #:configure-flags
+       #~(list (string-append "-DPYTHONOCC_INSTALL_DIRECTORY="
+                              #$output
+                              "lib/python"
+                              #$(version-major+minor (package-version python))
+                              "site-packages/OCC"))
+;       #:modules ((guix build gnu-build-system)
+;                  (guix build utils)
+;                  (srfi srfi-26))
+       #:tests? #f))
     (home-page "http://www.pythonocc.org/")
     (synopsis "3D CAD for python")
     (description
