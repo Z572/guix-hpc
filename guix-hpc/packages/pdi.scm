@@ -202,3 +202,18 @@ of it for the PDI library.")))
                        (chdir "plugins/trace"))))))
     (synopsis "The trace plugin generates a trace of what happens in
 PDI \"data store\"")))
+
+
+(define-public pdiplugin-user-code
+  (package/inherit pdi-common
+    (name "pdiplugin-user-code")
+    (arguments
+     (list
+      #:configure-flags #~(list (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:tests? #f ;; TODO
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/user_code"))))))
+    (synopsis "The user-code plugin enables one to call a user-defined function
+when a specified event occur or certain data becomes available.")))
