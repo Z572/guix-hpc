@@ -14,7 +14,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages cpp)
-  #:use-module (amd rocm-hip))
+  #:use-module (amd packages rocm-hip))
 
 (define-public kokkos-openmp
   (package/inherit kokkos
