@@ -36,6 +36,7 @@
   #:use-module (guix utils)
   #:use-module (srfi srfi-1)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages fabric-management)
   ;; To remove when/if python2 packages sympy and mpi4py
   ;; are fixed in official repo
   #:use-module (guix build-system python)
@@ -415,13 +416,14 @@ many-core systems, with a focus on solution of sparse linear systems.")
                   hdf5
                   python
                   bzip2
-                  libfabric))
+                  libfabric
+                  ucx))
     (propagated-inputs (list python-numpy python-mpi4py))
     (synopsis "The Adaptable Input Output System version 2")
     (description
-     "ADIOS2 transports data as groups of self-describing variables and 
-  attributes across different media types (such as files, wide-area-networks, and remote 
-  direct memory access) using a common application programming interface for all 
+     "ADIOS2 transports data as groups of self-describing variables and
+  attributes across different media types (such as files, wide-area-networks, and remote
+  direct memory access) using a common application programming interface for all
   transport modes. ADIOS2 can be used on supercomputers, cloud systems, and personal computers.")
     (home-page "https://github.com/ornladios/ADIOS2")
     (license license:asl2.0)))
