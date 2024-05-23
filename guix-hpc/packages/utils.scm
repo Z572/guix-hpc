@@ -413,7 +413,8 @@ many-core systems, with a focus on solution of sparse linear systems.")
                   zeromq
                   hdf5
                   python
-                  bzip2))
+                  bzip2
+                  libfabric))
     (propagated-inputs (list python-numpy python-mpi4py))
     (synopsis "The Adaptable Input Output System version 2")
     (description
