@@ -35,6 +35,7 @@
   #:use-module (gnu packages xml)
   #:use-module (guix utils)
   #:use-module (srfi srfi-1)
+  #:use-module (gnu packages linux)
   ;; To remove when/if python2 packages sympy and mpi4py
   ;; are fixed in official repo
   #:use-module (guix build-system python)
