@@ -198,7 +198,7 @@ kernels are executed as efficiently as possible.")
   (package
     (inherit starpu-1.3)
     (name "starpu")
-    (version "1.4.4")
+    (version "1.4.7")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -206,7 +206,7 @@ kernels are executed as efficiently as possible.")
                     (commit (string-append "starpu-" version))))
               (file-name (git-file-name name version))
               (sha256
-               (base32 "040mky0v6skyx9i8q3q1r0j37scr88apkffxh3600v1gzjznlb92"))
+               (base32 "14zfksh25bbqwy201nz6h4lxrwjx8yhzx288pc7m8l183ra9z0kd"))
               (patches (search-patches %patch-path))
               (modules '((guix build utils)))))
     (arguments
@@ -306,4 +306,5 @@ collective errors detection in parallel applications.")
                    (add-before 'check 'mpi-setup
                      ,%openmpi-setup))))
     (license lgpl2.1)))
+
 

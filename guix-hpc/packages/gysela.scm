@@ -38,7 +38,7 @@
 (define-public gyselalibxx
   (let ((commit "a3be632c27742dea183bd20b59484f0599b87d39")
         (version "0.1")
-        (revision "1"))
+        (revision "2"))
     (package
       (name "gyselalibxx")
       (version (git-version version revision commit))
@@ -67,18 +67,15 @@
       (propagated-inputs (list pdi ;needed to set up PDI_PLUGIN_PATH
                                pdiplugin-decl-hdf5-parallel
                                pdiplugin-set-value
-                               pdiplugin-mpi
-                               ;; needed to set up GUIX_PYTHONPATH
-                               python
-                               python-dask
-                               python-h5py
-                               python-matplotlib
-                               python-numpy
-                               python-scipy
-                               python-sympy
-                               python-xarray
-                               python-pyyaml))
-      (native-inputs (list pkg-config))
+                               pdiplugin-mpi))
+      (native-inputs (list pkg-config
+                           python
+                           python-matplotlib
+                           python-xarray
+                           python-numpy
+                           python-pyyaml
+                           python-dask
+                           python-h5py))
       (arguments
        (list
         #:configure-flags #~(list

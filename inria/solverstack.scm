@@ -1530,13 +1530,13 @@ large scale eigenvalue problems.")
     (license (license:non-copyleft "file://COPYING"
                                    "See COPYING in the distribution."))))
 
-;; Technically this is just jube version 2.4.1
+;; Technically this is just jube version 2.6.2
 ;; supporting yaml (in addition of xml) for bench files from version 2.4.0
 (define-public jube-with-yaml
   (package
     ;; This is a command-line tool, so no "python-" prefix.
     (name "jube-with-yaml")
-    (version "2.6.1")
+    (version "2.6.2")
     (source
      (origin
        (method url-fetch)
@@ -1544,7 +1544,7 @@ large scale eigenvalue problems.")
              "http://apps.fz-juelich.de/jsc/jube/jube2/download.php?version="
              version))
        (sha256
-        (base32 "0r5d2gdqa0f4c468q3k25ycw1k2g76gg8fyiln4ni98fvfsbx3il"))
+        (base32 "1c5za44y0azp81vf4xd6p2z9xvmzvskvygmq1vdbfqn00vcam22n"))
        (file-name (string-append "jube-" version ".tar.gz"))))
     (build-system python-build-system)
     (home-page "https://apps.fz-juelich.de/jsc/jube/jube2/docu/index.html")
@@ -1572,12 +1572,12 @@ for manual interpretation.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "cf6ae4dbd711db5d9448259d32e0d66a537e8a7b")
+             (commit "b99098de559f70a485b5bb296a2de3cf05d53dde")
              ;; We need the submodule in 'cmake_modules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version))
        (sha256
-        (base32 "01warwp5h814d1hvcpia53zxirhxw07ai34x34vax3s0q58lji56"))))
+        (base32 "03vhqsxg7y9p8ccqlcg657ds0rhpdzdsd4mjmgh3w9hr0fsanjgr"))))
     (arguments
      '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
                            "-Dscalfmm_BUILD_TOOLS=ON"

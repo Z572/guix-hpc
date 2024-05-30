@@ -57,15 +57,26 @@
 (define-public llvm-14-julia
   (package
     (inherit llvm-14)
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference (url "https://github.com/JuliaLang/llvm-project")
+                            (commit "julia-14.0.6-3")))
+        (file-name (git-file-name "llvm-project-julia" "14.0.6-3"))
+        (sha256
+          (base32
+            "16ynl9g4paksvglk6asfxdr15gy21bzvsjdkqb1msbcnkz2x610x"))))
     (arguments
      (substitute-keyword-arguments (package-arguments llvm-14)
        ((#:configure-flags flags
          ''())
+        ; FIXME: I think we should basically duplicate
+        ; https://github.com/JuliaLang/julia/blob/master/deps/llvm.mk
         #~(cons* "-DLLVM_BUILD_LLVM_DYLIB=ON"
                  "-DLLVM_LINK_LLVM_DYLIB=ON"
-                 ;; "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=NVPTX"
+                 "-DLLVM_SHLIB_SYMBOL_VERSION:STRING=JL_LLVM_14.0"
                  "-DLLVM_VERSION_SUFFIX:STRING=jl" ;Perhaps not needed.
-                 #$(string-append "-DLLVM_TARGETS_TO_BUILD="
+                 #$(string-append "-DLLVM_TARGETS_TO_BUILD=NVPTX;AMDGPU;"
                                   (system->llvm-target))
                  (delete "-DBUILD_SHARED_LIBS:BOOL=TRUE"
                          #$flags)))
