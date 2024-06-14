@@ -27,7 +27,7 @@
 (define-public composyx
   (package
     (name "composyx")
-    (version "1.0.0")
+    (version "1.0.1")
     (home-page "https://gitlab.inria.fr/composyx/composyx.git")
     (synopsis "Composable numerical solver")
     (description
@@ -46,7 +46,7 @@ node supercomputer parallel computations.")
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "0lz5mldwgi2b6370gsjrydx2384j450k35yzdz4k28vaqwv14klc"))))
+        (base32 "1bl26vj7wygi6wdf3hqfpbhlbfbjfcjkh2834zzj3gqn18m019wm"))))
     (arguments
      '(#:configure-flags '("-DCOMPOSYX_USE_EIGEN=OFF"
                            "-DCOMPOSYX_USE_FABULOUS=ON"
