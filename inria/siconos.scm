@@ -447,6 +447,122 @@ Mechanics, and Computer Graphics.")
 
 (define-public siconos-mpi siconos-mpi-4.4-rc3)
 
+
+(define-public siconos-with-vkernel
+  (package
+    (name "siconos-with-vkernel")
+    (version "4.5.x")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/bremond/siconos")
+             (commit "0801ae12471ba7ee91b15e055dd52504a4e23c9a")))
+       (sha256 (base32
+                "0d8pfdi4dpx5bzcp27f4ilkl0q56alklyi1hmgzrdnwkk3i43rv8"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:imported-modules ((guix build python-build-system)
+                           ,@%cmake-build-system-modules)
+       #:configure-flags `("-DCMAKE_VERBOSE_MAKEFILE=ON"
+                           "-DFCLIB_ROOT=ON"
+                           "-DWITH_BULLET=ON"
+                           "-DBULLET_USE_DOUBLE_PRECISION=ON"
+                           "-DWITH_OCE=ON"
+                           "-DWITH_FCLIB=ON"
+                           "-DISOLATED_INSTALL=True"
+                           ,(string-append "-DSICONOS_CUSTOM_INSTALL=" (assoc-ref %outputs "out"))
+                           "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io"
+                           "-DWITH_SYSTEM_SUITESPARSE=ON")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'check 'set-SOURCE-DATE-EPOCH
+           (lambda _
+             (setenv "SOURCE_DATE_EPOCH" "315532800")
+             #t))
+         (add-after 'unpack 'some-quick-patches
+           (lambda _
+             (substitute* "externals/numeric_bindings/boost/numeric/bindings/blas/detail/cblas.h"
+               (("#ifdef HAS_OpenBLAS") "#ifdef REMOVED_HAS_OpenBLAS"))
+             (substitute* "cmake/SiconosSetup.cmake"
+               (("FATAL_ERROR") "WARNING"))
+             (substitute* "cmake/SiconosInstallSetup.cmake"
+               (("FATAL_ERROR") "WARNING"))
+             (substitute* "cmake/fclib_setup.cmake"
+               (("find_package\\(FCLIB 3.0.0 CONFIG REQUIRED\\)")
+                "find_package(FCLIB 3.0.0 CONFIG REQUIRED)
+    set(ConfigPackageLocation lib/cmake/siconos-${SICONOS_VERSION})"))
+             #t))
+;         (add-after 'install 'patch-mechanisms
+;           (lambda*  (#:key outputs #:allow-other-keys)
+;             (substitute* (string-append (assoc-ref outputs "out")
+;                                         "/bin/siconos_mechanisms")
+;               (("/usr/bin/env python") (which "python3")))
+;             #t))
+         ;;  setup.py fails with recents python/numpy
+         (add-after 'install 'install-python-files
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let* ((python-version (@ (guix build python-build-system)
+                                       python-version))
+                    (out (assoc-ref outputs "out"))
+                    (version (python-version (assoc-ref inputs "python")))
+                    (pydir (string-append out "/lib/python"
+                                          version "/site-packages/")))
+               (chdir "./wrap")
+               (for-each (lambda (file)
+                           (let ((dirinst (string-append pydir "/" (dirname file))))
+                             (mkdir-p dirinst)
+                             (install-file file dirinst)))
+                         (find-files "siconos" "\\.py$"))
+               #t))))
+       #:tests? #f))                              ;XXX: no "test" target
+    (outputs '("out" "debug"))
+    (native-inputs
+     `(("swig" ,swig)
+       ("cc" ,gcc)
+       ("gfortran" ,gfortran)
+       ("gnu-make" ,gnu-make)
+       ("cmake" ,cmake)
+       ("git" ,git)
+       ("cppunit" ,cppunit)
+       ("python-pytest" ,python-pytest)))
+    (inputs
+     `(("python" ,python)))
+    (propagated-inputs
+     `(("boost" ,boost)
+       ("bullet" ,bullet-double-precision)
+       ("fclib" ,fclib)
+       ("gmp" ,gmp)
+       ("lapack" ,lapack)
+       ("openblas" ,openblas)
+       ("opencascade-oce", opencascade-oce)
+       ("python-h5py"  ,python-h5py)
+       ("python-lxml"  ,python-lxml)
+       ("python-numpy" ,python-numpy)
+       ("python-packaging" ,python-packaging)
+       ("python-scipy" ,python-scipy)
+       ("vtk" ,vtk)
+       ("opencascade" ,opencascade-occt)
+       ("suitesparse" ,suitesparse)))
+    (home-page "https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index.html")
+    (synopsis "Library for nonsmooth numerical simulation")
+    (description
+     "Siconos is an open-source scientific software primarily targeted at
+modeling and simulating nonsmooth dynamical systems in C++ and in Python:
+Mechanical systems (rigid or solid) with unilateral contact and Coulomb
+friction and impact (nonsmooth mechanics, contact dynamics, multibody systems
+dynamics or granular materials).  Switched Electrical Circuit such as
+electrical circuits with ideal and piecewise linear components: power
+converter, rectifier, Phase-Locked Loop (PLL) or Analog-to-Digital converter.
+Sliding mode control systems.  Biology (Gene regulatory network).
+
+Other applications are found in Systems and Control (hybrid systems,
+differential inclusions, optimal control with state constraints),
+Optimization (Complementarity systems and Variational inequalities), Fluid
+Mechanics, and Computer Graphics.")
+    (license license:asl2.0) ; Apache 2.0
+    ))
+
 (define-public siconos-bullet-single-precision
   (package
     (inherit siconos)
