@@ -179,6 +179,18 @@ guix build -L ~/src/guix-hpc starpu
 When you’re satisfied with your changes, push them—your changes are now
 just a `guix pull` away for users of your channel!
 
+## Guidelines for modifications
+
+New modules defining packages should be located in `guix-hpc/packages`
+thus belonging to the Guile `(guix-hpc packages)` namespace.
+
+New packages should be added to the relevant module in
+`guix-hpc/packages`. A new module can be created if needed.
+
+Note that there is an ongoing effort for moving the old modules to the
+new namespace, so not all the modules and packages follow the
+guidelines stated above.
+
 ## More information
 
 The Guix manual contains useful information:
