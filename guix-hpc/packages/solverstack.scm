@@ -1,9 +1,9 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2021, 2022, 2023 Inria
+;;; Copyright © 2017, 2019, 2021, 2022, 2023, 2024 Inria
 
-(define-module (inria solverstack)
+(define-module (guix-hpc packages solverstack)
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
@@ -232,7 +232,7 @@ area (CPUs-GPUs, distributed nodes).")
              ;; We need the submodule in 'CMakeModules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
-       (patches (search-patches "inria/patches/chameleon-cpp.patch"))
+       (patches (search-patches "guix-hpc/packages/patches/chameleon-cpp.patch"))
        (sha256
         (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
     (build-system cmake-build-system)
@@ -312,21 +312,7 @@ area (CPUs-GPUs, distributed nodes).")
        (patches (append (origin-patches (package-source
                                          chameleon+simgrid+nosmpi))
                         (search-patches
-                         "inria/patches/chameleon-simgrid-smpi.patch")))))
-    ;; (home-page "https://gitlab.inria.fr/solverstack/chameleon")
-    ;; (version "1.1.0")
-    ;; (source (origin
-    ;; (method git-fetch)
-    ;; (uri (git-reference
-    ;; (url home-page)
-    ;; (commit "4db899ca30d29927018d83964b9b6d517269abe1")
-    ;; ;; We need the submodule in 'CMakeModules/morse_cmake'.
-    ;; (recursive? #t)))
-    ;; (file-name (string-append name "-" version "-checkout"))
-    ;; (sha256
-    ;; (base32
-    ;; "0mpnacmkn1287c003a6n3c4r0n395l6fnjilzi7z53lb34s8kaap"))
-    ;; (patches (search-patches "inria/patches/chameleon-simgrid-smpi.patch"))))
+                         "guix-hpc/packages/patches/chameleon-simgrid-smpi.patch")))))
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon+simgrid+nosmpi)
        ((#:configure-flags flags
@@ -1449,7 +1435,7 @@ this limitation.")
        (uri (git-reference
              (url home-page)
              (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")))
-       (patches (search-patches "inria/patches/scalable-python.patch"
+       (patches (search-patches "guix-hpc/packages/patches/scalable-python.patch"
                                 "python-2.7-search-paths.patch"
                                 "python-2-deterministic-build-info.patch"
                                 "python-2.7-site-prefixes.patch"))

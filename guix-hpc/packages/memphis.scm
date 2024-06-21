@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2019, 2020, 2023 Inria
 
-(define-module (inria memphis)
+(define-module (guix-hpc packages memphis)
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)

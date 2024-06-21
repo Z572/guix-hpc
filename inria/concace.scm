@@ -50,7 +50,7 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
   ;;  #:use-module (hacky gitlab)
-  #:use-module (inria solverstack)
+  #:use-module (guix-hpc packages solverstack)
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
   #:use-module (inria storm)
