@@ -234,7 +234,13 @@ area (CPUs-GPUs, distributed nodes).")
        (file-name (string-append name "-" version "-checkout"))
        (patches (search-patches "guix-hpc/packages/patches/chameleon-cpp.patch"))
        (sha256
-        (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
+        (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))
+       (modules '((guix build utils)))
+       ;; Do not install 'config.log' to avoid retaining a reference to GCC,
+       ;; GFortran, etc.
+       (snippet #~(substitute* "cmake_modules/PrintOpts.cmake"
+                    (("^INSTALL.*config\\.log.*" all)
+                     (string-append "# " all "\n"))))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
