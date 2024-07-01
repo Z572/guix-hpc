@@ -24,6 +24,8 @@ export SUCCEEDED="${SUCCEEDED:-None}"
 export FAILED=$(echo $JSON | jq "map(select(.buildstatus != 0) | .nixname) | join(\", \")" | sed -e 's/"//g')
 export FAILED="${FAILED:-None}"
 
-curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"*Number of packages rebuilt*: $NBUILDS.\\r *Suceeded*: $SUCCEEDED.\\r*Failed*: $FAILED.\" }"
+curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"*Number of packages rebuilt*: $NBUILDS.\
+*Suceeded*: $SUCCEEDED.\
+*Failed*: $FAILED.\" }"
 
 exit $STATUS
