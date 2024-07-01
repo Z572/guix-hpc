@@ -1,227 +1,27 @@
-# Stage
-# 0. Guix update: call guix pull to get an up-to-date guix
-# 1. Lint: Check packages definition
-# 2. Build: Build packages
 stages:
-  - update
-  - lint
   - build
+  - check_merge_request_status
 
-# Init guix module path in current env
-before_script:
-  - export GUIX_PACKAGE_PATH="$PWD"
+default:
+  image: $CI_REGISTRY_IMAGE
+  tags: ['ci.inria.fr', 'linux']
 
-##########################
-# Stage 0: Guix update   #
-##########################
-update:
-  stage: update
-  script:
-    - guix pull
-
-##########################
-# Stage 1: Lint packages #
-##########################
-lint:
-  stage: lint
-  script:
-    - guix lint `guix package -A | grep -E "inria\/|airbus\/" | cut -f1` || true
-
-###########################
-# Stage 2: Build packages #
-###########################
-build_simgrid:
+build:
   stage: build
+  image: docker
+  rules:
+    - changes:
+        - .ci/Dockerfile
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - guix build simgrid
+    - docker build -f .ci/Dockerfile -t $CI_REGISTRY_IMAGE .
+    - docker push $CI_REGISTRY_IMAGE
 
-build_litl:
-  stage: build
+check_merge_request_status:
+  stage: check_merge_request_status
+  environment: merge_request_status
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   script:
-    - guix build litl
-
-build_fxt:
-  stage: build
-  script:
-    - guix build fxt
-
-build_eztrace:
-  stage: build
-  script:
-    - guix build eztrace
-
-build_vite:
-  stage: build
-  script:
-    - guix build vite
-
-build_paraview:
-  stage: build
-  script:
-    - guix build paraview
-
-build_metis_r64:
-  stage: build
-  script:
-    - guix build metis-r64
-
-build_starpu-1.1:
-  stage: build
-  script:
-    - guix build starpu@1.1
-
-build_parsec:
-  stage: build
-  script:
-    - guix build parsec
-
-build_parsec_mpi:
-  stage: build
-  script:
-    - guix build parsec-mpi
-
-build_quark:
-  stage: build
-  script:
-    - guix build quark
-
-build_starpu:
-  stage: build
-  script:
-    - guix build starpu
-
-build_starpu-simgrid:
-  stage: build
-  script:
-    - guix build starpu-simgrid
-
-build_starpu-fxt:
-  stage: build
-  script:
-    - guix build starpu-fxt
-
-build_chameleon:
-  stage: build
-  script:
-    - guix build chameleon
-
-build_chameleon-simgrid:
-  stage: build
-  script:
-    - guix build chameleon-simgrid
-
-build_chameleon-openmp:
-  stage: build
-  script:
-    - guix build chameleon-openmp
-
-build_chameleon-parsec:
-  stage: build
-  script:
-    - guix build chameleon-parsec
-
-build_chameleon-quark:
-  stage: build
-  script:
-    - guix build chameleon-quark
-
-build_maphys:
-  stage: build
-  script:
-    - guix build maphys
-
-build_pastix:
-  stage: build
-  script:
-    - guix build pastix
-
-build_pastix-5:
-  stage: build
-  script:
-    - guix build pastix-5
-
-build_pm2:
-  stage: build
-  script:
-    - guix build puk
-    - guix build pioman
-    - guix build pukabi
-    - guix build padicotm
-    - guix build padicotm-mini
-    - guix build padicotm-pukabi
-    - guix build padicotm-mini-pukabi
-    - guix build nmad
-    - guix build nmad-mini
-    - guix build mpibenchmark
-    - guix build mpi_sync_clocks
-    - guix build --with-input=openmpi=nmad mpi_sync_clocks
-
-build_starpu-nmad:
-  stage: build
-  script:
-    - guix build starpu --with-input=openmpi=nmad
-
-build_starpu-madmpi:
-  stage: build
-  script:
-    - guix build starpu --with-input=openmpi=nmad-mini
-
-build_pampa:
-  stage: build
-  script:
-    - guix build pampa
-
-build_gcvb:
-  stage: build
-  script:
-    - guix build gcvb
-
-build_hmat-oss:
-  stage: build
-  script:
-    - guix build hmat-oss
-
-build_mmg:
-  stage: build
-  script:
-    - guix build mmg
-
-build_librsb:
-  stage: build
-  script:
-    - guix build librsb
-
-build_r-starvz:
-  stage: build
-  script:
-    - guix build r-starvz
-
-build_r-arrow:
-  stage: build
-  script:
-    - guix build r-arrow
-
-build_r-data-tree:
-  stage: build
-  script:
-    - guix build r-data-tree
-
-build_pageng:
-  stage: build
-  script:
-    - guix build pageng
-
-build_openmpi-curta:
-  stage: build
-  script:
-    - guix build openmpi-curta
-
-build_parcoach:
-  stage: build
-  script:
-    - guix build parcoach
-
-build_bitpit:
-  stage: build
-  script:
-    - guix build bitpit
+    - .ci/handle-merge-request.sh $TOKEN $CI_MERGE_REQUEST_PROJECT_ID $CI_MERGE_REQUEST_IID $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME $CI_PROJECT_NAME
