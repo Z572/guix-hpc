@@ -17,6 +17,7 @@
 
 (define-module (amd packages rocm-hip)
   #:use-module (guix gexp)
+  #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system copy)
@@ -45,7 +46,7 @@
     (name "rocm-comgr")
     (version (package-version rocm-device-libs))
     (source
-     (rocm-origin "rocm-compilersupport" version))
+     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" "rocm-compilersupport") version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -53,7 +54,8 @@
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'chdir
                      (lambda _
-                       (chdir "lib/comgr"))))))
+                       (setenv "HIP_DEVICE_LIB_PATH" (string-append #$(this-package-input "rocm-device-libs") "/amdgcn/bitcode"))
+                       (chdir #$(if (version>=? version "6.1.1") "amd/comgr" "lib/comgr")))))))
     (inputs (list rocm-device-libs))
     (native-inputs (list llvm-rocm lld-rocm clang-rocm))
     (synopsis "The ROCm Code Object Manager")
@@ -62,6 +64,12 @@
     (home-page "https://github.com/RadeonOpenCompute/ROCm-CompilerSupport")
     (license ncsa)))
 
+(define-public llvm-comgr-6.1
+  (make-rocm-comgr llvm-device-libs-6.1 llvm-rocm-6.1 lld-rocm-6.1
+                   clang-rocm-6.1))
+(define-public rocm-comgr-6.0
+  (make-rocm-comgr rocm-device-libs-6.0 llvm-rocm-6.0 lld-rocm-6.0
+                   clang-rocm-6.0))
 (define-public rocm-comgr-5.7
   (make-rocm-comgr rocm-device-libs-5.7 llvm-rocm-5.7 lld-rocm-5.7
                    clang-rocm-5.7))
@@ -100,6 +108,10 @@ for AMD and NVIDIA GPUs from single source code.")
                     (home-page "https://github.com/ROCm-Developer-Tools/HIP")
                     (license expat))))
 
+(define-public hip-6.1
+  (make-hip "6.1.2"))
+(define-public hip-6.0
+  (make-hip "6.0.2"))
 (define-public hip-5.7
   (make-hip "5.7.1"))
 (define-public hip-5.6
@@ -111,12 +123,16 @@ for AMD and NVIDIA GPUs from single source code.")
                     (name "hipcc")
                     (version (package-version rocm-toolchain))
                     (source
-                     (rocm-origin name version))
+                     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" name) version))
                     (build-system cmake-build-system)
                     (arguments
                      (list
                       #:build-type "Release"
-                      #:tests? #f))
+                      #:tests? #f
+                      #:phases #~(modify-phases %standard-phases
+                        (add-after 'unpack 'chdir
+                            (lambda _
+                                (chdir #$(if (version>=? version "6.1.1") "amd/hipcc" ".")))))))
                     (propagated-inputs (list rocminfo rocm-toolchain))
                     (synopsis "HIP compiler driver (hipcc)")
                     (description
@@ -126,6 +142,10 @@ clang and pass the appropriate include and library options for the target compil
                      "https://github.com/ROCm-Developer-Tools/HIPCC.git")
                     (license expat))))
 
+(define-public hipcc-6.1
+  (make-hipcc rocminfo-6.1 rocm-toolchain-6.1))
+(define-public hipcc-6.0
+  (make-hipcc rocminfo-6.0 rocm-toolchain-6.0))
 (define-public hipcc-5.7
   (make-hipcc rocminfo-5.7 rocm-toolchain-5.7))
 (define-public hipcc-5.6
@@ -216,6 +236,10 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
     (home-page "https://github.com/ROCm-Developer-Tools/clr.git")
     (license expat)))
 
+(define-public hipamd-6.1
+  (make-clr-hipamd hip-6.1 hipcc-6.1 llvm-comgr-6.1))
+(define-public hipamd-6.0
+  (make-clr-hipamd hip-6.0 hipcc-6.0 rocm-comgr-6.0))
 (define-public hipamd-5.7
   (make-clr-hipamd hip-5.7 hipcc-5.7 rocm-comgr-5.7))
 (define-public hipamd-5.6
@@ -371,6 +395,10 @@ it is required for building some of the libraries that are a part of ROCm.")
     (home-page "https://github.com/RadeonOpenCompute/rocm-cmake.git")
     (license expat)))
 
+(define-public rocm-cmake-6.1
+  (make-rocm-cmake "6.1.2"))
+(define-public rocm-cmake-6.0
+  (make-rocm-cmake "6.0.2"))
 (define-public rocm-cmake-5.7
   (make-rocm-cmake "5.7.1"))
 (define-public rocm-cmake-5.6
