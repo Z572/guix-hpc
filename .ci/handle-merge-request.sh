@@ -10,7 +10,11 @@ export NR=1000
 export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
 export URL="https://guix.bordeaux.inria.fr/eval/$ID"
 
-curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"Starting new evaluation at [$URL]($URL).\" }"
+send_gitlab_comment() {
+    curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"$1\" }"
+}
+
+send_gitlab_comment "Starting new evaluation at [$URL]($URL)."
 
 while test $(curl "https://guix.bordeaux.inria.fr/api/latestbuilds?evaluation=$ID&nr=$NR" | jq "map(select(.finished == 0)) | length") -ne 0 ; do
     sleep 120
@@ -24,11 +28,11 @@ export SUCCEEDED="${SUCCEEDED:-None}"
 export FAILED=$(echo $JSON | jq "map(select(.buildstatus != 0) | .nixname) | join(\", \")" | sed -e 's/"//g')
 export FAILED="${FAILED:-None}"
 
-curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"*Number of packages rebuilt*: $NBUILDS.\" }"
+send_gitlab_comment "*Number of packages rebuilt*: $NBUILDS."
 
 if [ $NBUILDS -ne 0 ] ; then
-    curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"*Succeeded builds*: $SUCCEEDED.\" }"
-    curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"*Failed builds*: $FAILED.\" }"
+    send_gitlab_comment "*Succeeded builds*: $SUCCEEDED."
+    send_gitlab_comment "*Failed builds*: $FAILED."
 fi
 
 exit $STATUS
