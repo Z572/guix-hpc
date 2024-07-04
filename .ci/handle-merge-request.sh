@@ -16,6 +16,11 @@ send_gitlab_comment() {
     curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"$1\" }"
 }
 
+if test -z $ID ; then
+    send_gitlab_comment "Unable to get an evaluation ID for $SPEC_NAME."
+    exit 1
+fi
+
 send_gitlab_comment "Starting new evaluation at [$URL]($URL)."
 
 echo "Waiting for the jobset to be evaluated..."
