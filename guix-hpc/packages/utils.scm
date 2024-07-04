@@ -407,8 +407,7 @@ many-core systems, with a focus on solution of sparse linear systems.")
                                 "-DADIOS2_USE_HDF5=ON"
                                 "-DADIOS2_USE_Python=ON"
                                 "-DADIOS2_USE_Fortran=ON"
-                                "-DADIOS2_USE_SST=ON"
-                                "-DADIOS2_USE_BZip2=ON")))
+                                "-DADIOS2_USE_SST=ON")))
     (native-inputs (list pkg-config perl gfortran))
     (inputs (list libffi
                   openmpi
