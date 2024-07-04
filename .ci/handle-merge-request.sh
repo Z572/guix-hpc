@@ -16,10 +16,24 @@ send_gitlab_comment() {
 
 send_gitlab_comment "Starting new evaluation at [$URL]($URL)."
 
+echo "Waiting for the jobset to be evaluated..."
+while test $(curl "https://guix.bordeaux.inria.fr/api/evaluation?id=$ID" | jq ".status") -eq -1 ; do
+    sleep 120
+done
+
+# Exit if the evaluation failed
+if test $(curl "https://guix.bordeaux.inria.fr/api/evaluation?id=$ID" | jq ".status") -ne 0 ; then
+    echo "Evaluation failed"
+    send_gitlab_comment "Evaluation failed."
+    exit 1
+fi
+
+echo "Waiting for the packages to be built..."
 while test $(curl "https://guix.bordeaux.inria.fr/api/latestbuilds?evaluation=$ID&nr=$NR" | jq "map(select(.finished == 0)) | length") -ne 0 ; do
     sleep 120
 done
 
+echo "Finished building packages, if any."
 export JSON=$(curl "https://guix.bordeaux.inria.fr/api/latestbuilds?evaluation=$ID&nr=$NR")
 export STATUS=$(echo $JSON | jq "map(select(.buildstatus != 0)) | length")
 export NBUILDS=$(echo $JSON | jq "length")
