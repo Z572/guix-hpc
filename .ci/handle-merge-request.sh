@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 
 export TOKEN=$1
 export CI_MERGE_REQUEST_PROJECT_ID=$2
