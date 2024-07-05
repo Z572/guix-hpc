@@ -36,7 +36,7 @@ if test $(curl "https://guix.bordeaux.inria.fr/api/evaluation?id=$ID" | jq ".sta
 fi
 
 echo "Waiting for the packages to be built..."
-while test $(curl "https://guix.bordeaux.inria.fr/api/latestbuilds?evaluation=$ID&nr=$NR" | jq "map(select(.finished == 0)) | length") -ne 0 ; do
+while test $(curl "https://guix.bordeaux.inria.fr/api/queue?evaluation=$ID&nr=$NR" | jq "length") -ne 0 ; do
     sleep 120
 done
 
