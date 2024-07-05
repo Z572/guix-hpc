@@ -418,6 +418,7 @@ backends.")
 (define (make-openmpi-rocm ucx ofi hipamd)
   (package
     (inherit openmpi)
+    (name (string-append (package-name openmpi) "-rocm"))
     (version (string-append "5.0.2-rocm-"
                             (package-version hipamd)))
     (source
