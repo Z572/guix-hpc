@@ -9,6 +9,10 @@ export CI_MERGE_REQUEST_SOURCE_BRANCH_NAME=$4
 
 export SPEC_NAME=gitlab-merge-requests-Guix-HPC-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
 export NR=1000
+
+# Wait a few seconds for Cuirass to create the jobset after the webhook request
+sleep 20
+
 export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
 export URL="https://guix.bordeaux.inria.fr/eval/$ID"
 
