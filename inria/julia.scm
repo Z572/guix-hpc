@@ -57,6 +57,7 @@
 (define-public llvm-14-julia
   (package
     (inherit llvm-14)
+    (version "14.0.6-3-julia")
     (source
       (origin
         (method git-fetch)
