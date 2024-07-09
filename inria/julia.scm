@@ -474,7 +474,7 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                                                                       pkgname)
                                                                      "/lib")
                                                       pred)))))
-                        (link "libunwind" "libunwind\\.so")
+                        (link "libunwind-julia" "libunwind\\.so")
                         (link "llvm" "libLLVM-14jl\\.so")
                         (link "gmp" "libgmp\\.so.10")
                         (link "mpfr" "libmpfr\\.so.6")
@@ -530,44 +530,36 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                                          (dirname
                                           (search-input-file
                                            %build-inputs "/include/uv.h"))))))
-    (inputs `(("coreutils" ,coreutils)
-               ;for bindings to "mkdir" and the like
-              ("curl" ,curl-ssh)
-              ("gfortran" ,gfortran)
-              ;; required for libgcc_s.so
-              ("gfortran:lib" ,gfortran "lib")
-              ("gmp" ,gmp)
-              ("lapack" ,lapack)
-              ("libblastrampoline" ,libblastrampoline)
-              ("libgit2" ,libgit2)
-              ("libnghttp2" ,nghttp2 "lib")
-              ("libssh2" ,libssh2)
-              ("libunwind" ,libunwind-julia)
-              ("libuv" ,libuv-julia)
-              ("llvm" ,llvm-14-julia)
-              ("lld" ,lld-14)
-              ("mbedtls-apache" ,mbedtls-apache)
-              ("mpfr" ,mpfr)
-              ,@(if (target-x86-64?)
-                    `(("openblas" ,openblas-ilp64))
-                    `(("openblas" ,openblas)))
-              ("openlibm" ,openlibm)
-              ("p7zip" ,p7zip)
-              ("pcre2" ,pcre2-julia)
-              ("suitesparse" ,suitesparse)
-              ("utf8proc" ,utf8proc-2.7.0)
-              ("wget" ,wget)
-              ("which" ,which)
-              ("zlib" ,zlib)
-              ;; Find dependencies versions here:
-              ;; https://raw.githubusercontent.com/JuliaLang/julia/v1.6.0/deps/Versions.make
-              ("dsfmt" ,dsfmt)
-              ("libwhich" ,libwhich)))
-    (native-inputs `(("openssl" ,openssl)
-                     ("perl" ,perl)
-                     ("patchelf" ,patchelf)
-                     ("pkg-config" ,pkg-config)
-                     ("python" ,python)))
+    (inputs (list coreutils             ;for bindings to "mkdir" and the like
+                  curl-ssh
+                  gfortran
+                  `(,gfortran "lib")              ;required for libgcc_s.so
+                  gmp
+                  lapack
+                  libblastrampoline
+                  libgit2
+                  `(,nghttp2 "lib")
+                  libssh2
+                  libunwind-julia
+                  libuv-julia
+                  llvm-14-julia
+                  lld-14
+                  mbedtls-apache
+                  mpfr
+                  (if (target-x86-64?) openblas-ilp64 openblas)
+                  openlibm
+                  p7zip
+                  pcre2-julia
+                  suitesparse
+                  utf8proc-2.7.0
+                  wget
+                  which
+                  zlib
+                  ;; Find dependencies versions here:
+                  ;; https://raw.githubusercontent.com/JuliaLang/julia/v1.6.0/deps/Versions.make
+                  dsfmt
+                  libwhich))
+    (native-inputs (list openssl perl patchelf pkg-config python))
     (native-search-paths
      (list (search-path-specification
             (variable "JULIA_LOAD_PATH")
