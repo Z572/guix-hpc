@@ -1,0 +1,91 @@
+#+TITLE: Gitlab CI integration with Cuirass
+
+The Cuirass server is running at [[https://guix.bordeaux.inria.fr]].
+
+* Gitlab merge requests
+
+** Webhook configuration
+
+*** Setup
+Jobsets can be created on Cuirass using Gitlab webhooks mechanism
+through the =admin/gitlab/event= API. This requires a Cuirass version
+as recent as commit =db747b622adb137e2392ffec1a3ca0a74ba08c1b= at the
+time of writing (2024/07/01).
+
+In order to set it up, go to Guix HPC repo, =Settings= \rightarrow
+=Webhooks= and click =Add new webhook=.
+
+URL should be =https://guix.bodeaux.inria.fr/admin/gitlab/event=, the
+secret token should be the one defined in =/etc/nginx-token= on the
+head node and the =Merge request events= under the =Trigger= submenu
+and =Enable SSL verification= should be both checked.
+
+Click =Add webhook= to create it.
+
+*** Notes
+This webhook creates a new Cuirass jobset whenever a merge request is
+opened/reopened in the Guix HPC repo, triggers a reevaluation when the
+merge request is updated and deletes the jobset whenever the merge
+request is closed or merged.
+
+** Gitlab pipeline configuration
+In order to retrieve the status of the jobset, a pipeline has to be
+setup. This pipeline must activated only when a merge request event
+happens, which is done using the =rules= keyword. It also needs to use
+Gitlab API through a Gitlab token.
+
+*** Activate CI/CD and Container registry
+Go to =Settings= \rightarrow =General= and expand the =Visibility,
+project features, permissions= section.
+
+Activate the =CI/CD= and =Container registry= features. Set the
+permissions to =Everyone with access=.
+
+Ensure that the =Environment= feature is also activated.
+
+Click on =Save changes=.
+
+*** Create Gitlab Access token
+Go to =Settings= \rightarrow =Acces Tokens= and click =Add new token=.
+
+Set the =Token name= field to =merge_bot=. This is the name that will
+appear in the merge requests comments added by the pipeline.
+
+Remove the expiration date.
+
+Select the =Guest= role in the =Select a role= menu.
+
+In the =Select scopes= section, check the =api= box. It should be the
+only one selected.
+
+Click on =Create project access token=.
+
+Keep the page showing the token open.
+
+*** Make the token accessible to the pipeline
+Go to =Settings= \rightarrow =CI/CD= and expand the =Variables=
+section.
+
+Click on =Add new variable=.
+
+=Type= should be set to =Variable= (the default).
+
+=Environment= should be set to =merge_request_status=: click on the
+menu, write the value in the search field and click on =Create
+wildcard: merge_request_status=. Then select =merge_request_status=
+from the menu. This value corresponds to the =environment= key in the
+=.gitlab-ci.yml=.
+
+=Visibility= should be set to =Masked= so the token doesn't appear clear
+in the logs.
+
+=Flags= should all be unchecked (variable should not be restricted to
+protected branches and tags and should not be expanded).
+
+=Key= should be set to =TOKEN= : this is the name of the variable that
+is going to be used to pass the token value in the =script= entry of
+=.gitlab-ci.yml=.
+
+=Value= should contain the token value that is showed on the previous page.
+
+Click on =Add variable=.
