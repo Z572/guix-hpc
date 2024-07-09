@@ -185,31 +185,28 @@
                       (substitute* "cli/Makefile"
                         (("JLDFLAGS \\+= ")
                          (string-append "JLDFLAGS += "
-                                        (assoc-ref inputs "libuv")
-                                        "/lib/libuv.so ")))))
+                                        (search-input-file inputs
+                                                           "/lib/libuv.so")
+                                        " ")))))
                   (add-before 'build 'fix-nested-dlopen
                     (lambda* (#:key inputs #:allow-other-keys)
                       (substitute* "Make.inc"
                         ;; See the patch comment for the explanation, *must* be updated
                         ;; when updating julia.
                         (("GUIX_LIBUTF8PROC")
-                         (string-append (assoc-ref inputs "utf8proc")
-                                        "/lib/libutf8proc.a")))
+                         (search-input-file inputs "/lib/libutf8proc.a")))
                       (substitute* "Makefile"
                         ;; See the patch comment for the explanation, *must* be updated
                         ;; when updating julia.
                         (("GUIX_LIBCHOLMOD")
-                         (string-append (assoc-ref inputs "suitesparse")
-                                        "/lib/libcholmod.so"))
+                         (search-input-file inputs "/lib/libcholmod.so"))
                         (("GUIX_LIBSPQR")
-                         (string-append (assoc-ref inputs "suitesparse")
-                                        "/lib/libspqr.so"))
+                         (search-input-file inputs "/lib/libspqr.so"))
                         (("GUIX_LIBSC")
-                         (string-append (assoc-ref inputs "suitesparse")
-                                        "/lib/libsuitesparseconfig.so"))
+                         (search-input-file inputs
+                                            "/lib/libsuitesparseconfig.so"))
                         (("GUIX_LIBUMFPACK")
-                         (string-append (assoc-ref inputs "suitesparse")
-                                        "/lib/libumfpack.so")))))
+                         (search-input-file inputs "/lib/libumfpack.so")))))
                   (add-before 'build 'replace-default-shell
                     (lambda* (#:key inputs #:allow-other-keys)
                       (substitute* "base/client.jl"
@@ -224,40 +221,37 @@
                             (jlbasepath (lambda (pkgname)
                                           (string-append "base/" pkgname ".jl")))
                             (tolib (lambda (pkg libname)
-                                     (string-append (assoc-ref inputs pkg)
-                                                    "/lib/" libname ".so")))
+                                     (search-input-file
+                                      inputs
+                                      (string-append "/lib/" libname ".so"))))
                             (toquotedlib (lambda (pkg libname)
-                                           (string-append "\""
-                                                          (assoc-ref inputs
-                                                                     pkg)
-                                                          "/lib/" libname
-                                                          ".so\"")))
+                                           (define file
+                                             (string-append "/lib/" libname ".so"))
+                                           (string-append
+                                            "\""
+                                            (search-input-file inputs file)
+                                            "\"")))
                             (from (lambda (libname)
                                     (string-append "const " libname
                                                    " = .*\\.so")))
                             (to (lambda* (pkg libname
                                               #:optional libname_jl)
+                                  (define file
+                                    (string-append "/lib/" libname ".so"))
+
                                   (string-append "const "
                                                  (or libname_jl libname)
                                                  " = \""
-                                                 (assoc-ref inputs pkg)
-                                                 "/lib/"
-                                                 libname
-                                                 ".so"))))
+                                                 (search-input-file
+                                                  inputs file)))))
                         (substitute* "src/jitlayers.cpp"
                           (("libatomic.so")
-                           (string-append (assoc-ref inputs "gfortran:lib")
-                                          "/lib/libatomic.so")))
-                        (substitute* (jlbasepath "linking")
+                           (search-input-file inputs "/lib/libatomic.so")))
+                        (substitute* (list (jlbasepath "linking") (jlpath "LLD"))
                           (("\"lld\"")
                            (string-append "\""
-                                          (assoc-ref inputs "lld")
-                                          "/bin/lld\"")))
-                        (substitute* (jlpath "LLD")
-                          (("\"lld\"")
-                           (string-append "\""
-                                          (assoc-ref inputs "lld")
-                                          "/bin/lld\"")))
+                                          (search-input-file inputs "/bin/lld")
+                                          "\"")))
                         (substitute* (jlbasepath "pcre")
                           (("libpcre2-8")
                            (tolib "pcre2" "libpcre2-8")))
@@ -510,6 +504,7 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                               ("" "$JULIA_LOAD_PATH"))
                             `("JULIA_DEPOT_PATH" ":" prefix
                               ("" "$JULIA_DEPOT_PATH"))))))))
+
        #:make-flags (list (string-append "prefix="
                                          (assoc-ref %outputs "out"))
 
@@ -530,8 +525,7 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                              (_ "JULIA_CPU_TARGET=generic"))
 
                           "CONFIG_SHELL=bash -x" ;needed to build bundled libraries
-                          (string-append "CC="
-                                         ,(cc-for-target))
+                          (string-append "CC=" ,(cc-for-target))
 
                           ,@(if (target-x86-64?)
                                 `("USE_BLAS64=1" "LIBBLAS=-lopenblas64_"
@@ -544,8 +538,8 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                                          "/include")
                           ;; Make.inc expects a static library for libuv.
                           (string-append "LIBUV="
-                                         (assoc-ref %build-inputs "libuv")
-                                         "/lib/libuv.a")
+                                         (search-input-file %build-inputs
+                                                            "/lib/libuv.a"))
                           (string-append "LIBUV_INC="
                                          (assoc-ref %build-inputs "libuv")
                                          "/include"))))
