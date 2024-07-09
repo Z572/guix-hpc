@@ -157,25 +157,11 @@
                   (add-after 'unpack 'prepare-deps
                     (lambda* (#:key inputs #:allow-other-keys)
                       ;; needed by libwhich
-                      (setenv "LD_LIBRARY_PATH"
-                              (string-join (map (lambda (pkg)
-                                                  (string-append (assoc-ref
-                                                                  inputs pkg)
-                                                                 "/lib"))
-                                                '("curl" "dsfmt"
-                                                  "gmp"
-                                                  "lapack"
-                                                  "libssh2"
-                                                  "libnghttp2"
-                                                  "libgit2"
-                                                  "libblastrampoline"
-                                                  "mbedtls-apache"
-                                                  "mpfr"
-                                                  "openblas"
-                                                  "openlibm"
-                                                  "pcre2"
-                                                  "suitesparse"
-                                                  "gfortran:lib")) ":"))))
+                      (match inputs
+                        (((labels . directories) ...)
+                         (set-path-environment-variable "LD_LIBRARY_PATH"
+                                                        '("lib")
+                                                        directories)))))
                   (add-before 'check 'set-home
                     ;; Some tests require a home directory to be set.
                     (lambda _
@@ -541,8 +527,9 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                                          (search-input-file %build-inputs
                                                             "/lib/libuv.a"))
                           (string-append "LIBUV_INC="
-                                         (assoc-ref %build-inputs "libuv")
-                                         "/include"))))
+                                         (dirname
+                                          (search-input-file
+                                           %build-inputs "/include/uv.h"))))))
     (inputs `(("coreutils" ,coreutils)
                ;for bindings to "mkdir" and the like
               ("curl" ,curl-ssh)
