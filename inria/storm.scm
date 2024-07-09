@@ -16,6 +16,7 @@
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages gdb)
+  #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages python)
@@ -100,7 +101,9 @@
      (list gfortran
            pkg-config
            gdb
+           help2man
            libtool
+           python-wrapper ; required to generate manpages of Python scripts and for some tests
            autoconf
            automake))                             ;used upon test failure
     (inputs (list fftw fftwf))
@@ -246,11 +249,7 @@ kernels are executed as efficiently as possible.")
     (inherit starpu)
     (name "starpu-fxt")
     (inputs (modify-inputs (package-inputs starpu)
-              (prepend fxt)))
-    ;; some tests require python.
-    (native-inputs
-     (modify-inputs (package-native-inputs starpu)
-       (prepend python-wrapper)))))
+              (prepend fxt)))))
 
 (define-public starpu+simgrid
   (package
@@ -265,11 +264,7 @@ kernels are executed as efficiently as possible.")
               (prepend simgrid fxt+static)))
     (propagated-inputs
      (modify-inputs (package-propagated-inputs starpu)
-       (delete "openmpi")))
-    ;; some tests require python.
-    (native-inputs
-     (modify-inputs (package-native-inputs starpu)
-       (prepend python-wrapper)))))
+       (delete "openmpi")))))
 
 (define-public parcoach
   (package
