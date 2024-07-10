@@ -10,15 +10,23 @@ export CI_MERGE_REQUEST_SOURCE_BRANCH_NAME=$4
 export SPEC_NAME=gitlab-merge-requests-Guix-HPC-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
 export NR=1000
 
-# Wait a few seconds for Cuirass to create the jobset after the webhook request
-sleep 20
-
-export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
-export URL="https://guix.bordeaux.inria.fr/eval/$ID"
-
 send_gitlab_comment() {
     curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"$1\" }"
 }
+
+# Wait a few seconds for Cuirass to create the jobset after the webhook request
+sleep 30
+
+export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
+
+if test -z $ID ; then
+    export NSEC=120
+    echo "Unable to get an evaluation, testing again in $NSEC seconds"
+    sleep $NSEC
+    export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
+fi
+
+export URL="https://guix.bordeaux.inria.fr/eval/$ID"
 
 if test -z $ID ; then
     send_gitlab_comment "Unable to get an evaluation ID for $SPEC_NAME."
