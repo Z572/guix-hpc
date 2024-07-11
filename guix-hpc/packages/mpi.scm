@@ -12,7 +12,8 @@
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages mpi)
-  #:use-module (gnu packages python))
+  #:use-module (gnu packages python)
+  #:use-module (guix-hpc packages parallel))
 
 (define-public openmpi-5
   (package/inherit openmpi
@@ -29,7 +30,9 @@
     (inputs (modify-inputs (package-inputs openmpi)
               ;; As of Open MPI 5.0.X, PMIx is used to communicate
               ;; with SLURM, so SLURM'S PMI is no longer needed.
-              (delete "slurm")))
+              (delete "slurm")
+              (append openpmix)
+              (append prrte)))
     (native-inputs (modify-inputs (package-native-inputs openmpi)
                      (append python)))
     (arguments
@@ -48,7 +51,7 @@
                             ;; Open MPI no longer uses the ORTE
                             ;; environment - it has been replaced by
                             ;; PRRTE.
-                            "--enable-pprte-prefix-by-default"
+                            "--enable-prrte-prefix-by-default"
 
                             ;; InfiniBand support
                             "--enable-openib-control-hdr-padding"
@@ -61,7 +64,8 @@
                             ;; Interface for Exascale' (PMIx) Vused e.g. by
                             ;; Slurm for the management communication and
                             ;; coordination of MPI processes.
-                            "--with-pmix=internal")
+                            ,(string-append "--with-pmix=" #$(this-package-input "openpmix"))
+                            ,(string-append "--with-prrte=" #$(this-package-input "prrte")))
       #:phases #~(modify-phases %standard-phases
                    ;; opensm is needed for InfiniBand support.
                    (add-after 'unpack 'find-opensm-headers
