@@ -12,8 +12,41 @@
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages libevent)
+  #:use-module (gnu packages mpi)
   #:use-module (gnu packages parallel)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages python)
   #:use-module (guix-hpc packages mpi))
+
+(define-public openpmix
+  (package
+   (name "openpmix")
+   (version "4.2.8")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/openpmix/openpmix/releases/download/v"
+                  version "/pmix-" version ".tar.bz2"))
+            (sha256
+             (base32
+              "1j9xlhqrrmgjdkwakamn78y5gj756adi53hn25zksgr3is3l5d09"))))
+   (build-system gnu-build-system)
+   (arguments
+    (list #:configure-flags #~(list (string-append "--with-hwloc="
+                                                   (ungexp (this-package-input "hwloc") "lib")))))
+   (inputs (list libevent
+                 `(,hwloc-2 "lib")))
+   (native-inputs (list perl
+                        python))
+   (synopsis "PMIx library")
+   (description
+    "PMIx is an application programming interface standard that provides
+libraries and programming models with portable and well-defined access
+to commonly needed services in distributed and parallel computing
+systems.")
+   (home-page "https://pmix.org/")
+   ;; The provided license is kind of BSD-style but specific.
+   (license (license:fsf-free "https://github.com/openpmix/openpmix?tab=License-1-ov-file#License-1-ov-file"))))
 
 (define-public slurm-openpmix
   (package/inherit slurm
