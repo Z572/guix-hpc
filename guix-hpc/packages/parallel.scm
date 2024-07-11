@@ -15,8 +15,7 @@
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages parallel)
   #:use-module (gnu packages perl)
-  #:use-module (gnu packages python)
-  #:use-module (guix-hpc packages mpi))
+  #:use-module (gnu packages python))
 
 (define-public prrte
   (package
@@ -84,7 +83,7 @@ systems.")
   (package/inherit slurm
     (name "slurm-openpmix")
     (inputs (modify-inputs (package-inputs slurm)
-              (append openmpi-5)))
+              (append openpmix)))
     (arguments
      (list #:configure-flags
            #~(list "--enable-pam" "--sysconfdir=/etc/slurm"
@@ -95,7 +94,7 @@ systems.")
                    (string-append "--with-json=" #$(this-package-input "json-c"))
                    (string-append "--with-munge=" #$(this-package-input "munge"))
                    ;; Use PMIx bundled with Open MPI (this is required for Open MPI 5.x).
-                   (string-append "--with-pmix=" #$(this-package-input "openmpi-5"))
+                   (string-append "--with-pmix=" #$(this-package-input "openpmix"))
                    ;; 32-bit support is marked as deprecated and needs to be
                    ;; explicitly enabled.
                    #$@(if (target-64bit?) '() '("--enable-deprecated")))
