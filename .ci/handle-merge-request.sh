@@ -7,7 +7,7 @@ export CI_MERGE_REQUEST_PROJECT_ID=$2
 export CI_MERGE_REQUEST_IID=$3
 export CI_MERGE_REQUEST_SOURCE_BRANCH_NAME=$4
 
-export SPEC_NAME=gitlab-merge-requests-Guix-HPC-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+export SPEC_NAME=gitlab-merge-requests-Guix-HPC-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME-$CI_MERGE_REQUEST_IID
 export NR=1000
 
 send_gitlab_comment() {
