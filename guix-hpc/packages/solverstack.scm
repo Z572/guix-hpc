@@ -1564,12 +1564,12 @@ for manual interpretation.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "b99098de559f70a485b5bb296a2de3cf05d53dde")
+             (commit "3518924e85ae844033e1b9d49b05f79fb47de6ad")
              ;; We need the submodule in 'cmake_modules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version))
        (sha256
-        (base32 "03vhqsxg7y9p8ccqlcg657ds0rhpdzdsd4mjmgh3w9hr0fsanjgr"))))
+        (base32 "03i7sqs11qp38s520207524b7cy0g67zb7gf05jld7f96rvqssyd"))))
     (arguments
      '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
                            "-Dscalfmm_BUILD_TOOLS=ON"
