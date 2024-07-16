@@ -10,7 +10,8 @@ build:
   stage: build
   image: docker
   rules:
-    - changes:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
         - .ci/Dockerfile
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
