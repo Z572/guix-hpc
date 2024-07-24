@@ -6,6 +6,7 @@ export TOKEN=$1
 export CI_MERGE_REQUEST_PROJECT_ID=$2
 export CI_MERGE_REQUEST_IID=$3
 export CI_MERGE_REQUEST_SOURCE_BRANCH_NAME=$4
+export CI_COMMIT_SHA=$5
 
 export SPEC_NAME=gitlab-merge-requests-Guix-HPC-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME-$CI_MERGE_REQUEST_IID
 export NR=1000
@@ -14,16 +15,23 @@ send_gitlab_comment() {
     curl --location --request POST "https://gitlab.inria.fr/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"$1\" }"
 }
 
+# Trickery to get the evaluation ID corresponding to the merge request commit.
+# /!\ It doesn't check that the commit relates to Guix-HPC channel, but the
+# odds of having the same commit sha in different channels is very low.
+get_eval_id_with_commit() {
+    curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=$NR\&spec=$SPEC_NAME | jq "map(select(.checkouts.[].commit == \"$CI_COMMIT_SHA\")) | .[].id"
+}
+
 # Wait a few seconds for Cuirass to create the jobset after the webhook request
 sleep 30
 
-export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
+export ID=$(get_eval_id_with_commit)
 
 if test -z $ID ; then
     export NSEC=120
     echo "Unable to get an evaluation, testing again in $NSEC seconds"
     sleep $NSEC
-    export ID=$(curl https://guix.bordeaux.inria.fr/api/evaluations\?nr=1\&spec=$SPEC_NAME | jq ".[].id")
+    export ID=$(get_eval_id_with_commit)
 fi
 
 export URL="https://guix.bordeaux.inria.fr/eval/$ID"

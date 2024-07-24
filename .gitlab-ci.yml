@@ -24,4 +24,4 @@ check_merge_request_status:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   script:
-    - .ci/handle-merge-request.sh $TOKEN $CI_MERGE_REQUEST_PROJECT_ID $CI_MERGE_REQUEST_IID $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    - .ci/handle-merge-request.sh $TOKEN $CI_MERGE_REQUEST_PROJECT_ID $CI_MERGE_REQUEST_IID $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME $CI_COMMIT_SHA
