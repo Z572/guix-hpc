@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2019, 2021, 2024 Inria
 
-(define-module (inria vite)
+(define-module (guix-hpc packages traces)
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix licenses)
