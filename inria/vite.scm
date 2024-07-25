@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2019, 2021 Inria
+;;; Copyright © 2019, 2021, 2024 Inria
 
 (define-module (inria vite)
   #:use-module (guix packages)
@@ -17,24 +17,22 @@
 (define S specification->package)
 
 (define-public vite
-  (let ((commit "442cf13b6f8025eba09f0b4165e9a789d40409ae")
-        (revision "1"))
     (package
       (name "vite")
-      (version (git-version "1.2" revision commit))
+      (version "1.4")
       (home-page "https://gitlab.inria.fr/solverstack/vite/")
       (source (origin
+                (method git-fetch)
                 (uri (git-reference
                       (url home-page)
-                      (commit commit)))
-                (method git-fetch)
+                      (commit (string-append "v" version))))
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "09ymsab03qvbxn6zbzh660aa4746b4sn0v8644y7k54pjhk76372"))))
+                  "1f1a7p6mpjdw0ps0by1c0plxj2mnzsk59gya176yzk6bmh2khqyg"))))
       (build-system cmake-build-system)
       (arguments
-       '(#:configure-flags (list "-DUSE_QT5=TRUE"
+       '(#:configure-flags (list "-DVITE_ENABLE_MT_PARSERS=ON"
 
                                  ;; XXX: This requires a very old version of
                                  ;; Boost, older than 1.59.
@@ -60,4 +58,4 @@
 of parallel programs (OpenMP, MPI, etc.) in Pajé or OTF format for debugging
 and profiling parallel or distributed applications.  Such traces can be
 obtained using, for example, EZTrace.")
-      (license cecill))))
+      (license cecill)))
