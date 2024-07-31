@@ -158,9 +158,6 @@ of it for the PDI library.")))
                    (add-after 'unpack 'change-dir
                      (lambda _
                        (chdir "plugins/decl_hdf5")))
-                   (add-before 'check 'setup-pdi-plugin-path
-                     (lambda _
-                       (setenv "PDI_PLUGIN_PATH" (string-append #$pdiplugin-mpi "/lib/pdi/plugins_" #$(package-version pdi)))))
                    (add-before 'check 'fix-tests
                      (lambda* _
                        (substitute* "../build/tests/compatibility_tests/CTestTestfile.cmake"
