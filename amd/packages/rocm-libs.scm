@@ -330,7 +330,7 @@ backends.")
 (define (make-ofi-rocm rocr-runtime)
   (package
     (inherit libfabric)
-    (name "libfabric")
+    (name "libfabric-rocm")
     (version (string-append "1.20.x-rocm-"
                             (package-version rocr-runtime)))
     (source
@@ -365,7 +365,7 @@ backends.")
 (define (make-ucx-rocm roct-thunk rocr-runtime hipamd)
   (package
     (inherit ucx)
-    (name "ucx")
+    (name "ucx-rocm")
     (version (string-append "1.14.1-rocm-"
                             (package-version hipamd)))
     (source
