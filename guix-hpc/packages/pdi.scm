@@ -28,38 +28,23 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages serialization))
 
-;; This is a private package that is inherited by the main lib and the plugins
-(define pdi-common
-  (package
-   (name "pdi")
-   (version "1.6.0")
-   (source
-    (origin
-     (method git-fetch)
-     (uri (git-reference
-           (url "https://gitlab.maisondelasimulation.fr/pdidev/pdi/")
-           (commit version)))
-     (file-name (git-file-name name version))
-     (sha256
-      (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
-     (snippet #~(begin
-                  (use-modules (guix build utils))
-                  (delete-file-recursively "vendor")))))
-   (build-system cmake-build-system)
-   (inputs (list spdlog
-                 libyaml
-                 pkg-config
-                 paraconf))
-   (synopsis "A library allowing loose coupling between components.")
-   (description
-    "PDI supports loose coupling of simulation codes with data handling
-the simulation code is annotated in a library-agnostic way,
-libraries are used from the specification tree.")
-   (home-page "https://pdi.dev")
-   (license license:bsd-3)))
-
 (define-public pdi
-  (package/inherit pdi-common
+  (package
+    (name "pdi")
+    (version "1.6.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://gitlab.maisondelasimulation.fr/pdidev/pdi/")
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
+       (snippet #~(begin
+                    (use-modules (guix build utils))
+                    (delete-file-recursively "vendor")))))
+    (build-system cmake-build-system)
     (arguments
      (list
       #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
@@ -81,17 +66,28 @@ libraries are used from the specification tree.")
            ;; needed for building documentation
            doxygen))
     (native-search-paths
-      (list (search-path-specification
-              (variable "PDI_PLUGIN_PATH")
-              (files
-               (list
-                (string-append "lib/" (package-name pdi-common) "/plugins_" (package-version pdi-common)))))))))
+     (list (search-path-specification
+            (variable "PDI_PLUGIN_PATH")
+            (files
+             (list
+              (string-append "lib/" name "/plugins_" version))))))
+    (inputs (list spdlog
+                  libyaml
+                  pkg-config
+                  paraconf))
+    (synopsis "A library allowing loose coupling between components.")
+    (description
+     "PDI supports loose coupling of simulation codes with data handling
+the simulation code is annotated in a library-agnostic way,
+libraries are used from the specification tree.")
+    (home-page "https://pdi.dev")
+    (license license:bsd-3)))
 
 (define-public pdiplugin-mpi
-  (package/inherit pdi-common
+  (package/inherit pdi
     (name "pdiplugin-mpi")
     (inputs
-     (modify-inputs (package-inputs pdi-common)
+     (modify-inputs (package-inputs pdi)
        (append openmpi)))
     (native-inputs (list gfortran
                          googletest
@@ -107,14 +103,14 @@ libraries are used from the specification tree.")
                      (lambda _
                        (chdir "plugins/mpi")))
                    (add-before 'check 'mpi-setup
-                               #$%openmpi-setup))))
+                     #$%openmpi-setup))))
     (synopsis "MPI plugin for PDI")))
 
 (define-public pdiplugin-decl-hdf5
-  (package/inherit pdi-common
+  (package/inherit pdi
     (name "pdiplugin-decl-hdf5")
     (inputs
-     (modify-inputs (package-inputs pdi-common)
+     (modify-inputs (package-inputs pdi)
        (append hdf5)))
     (native-inputs (list gfortran
                          googletest
@@ -142,10 +138,10 @@ set but offers a simple declarative interface to access a large subset
 of it for the PDI library.")))
 
 (define-public pdiplugin-decl-hdf5-parallel
-  (package/inherit pdi-common
+  (package/inherit pdi
     (name "pdiplugin-decl-hdf5-parallel")
     (inputs
-     (modify-inputs (package-inputs pdi-common)
+     (modify-inputs (package-inputs pdi)
        (append hdf5-parallel-openmpi
                openmpi)))
     (native-inputs (list gfortran
@@ -164,7 +160,7 @@ of it for the PDI library.")))
                        (chdir "plugins/decl_hdf5")))
                    (add-before 'check 'setup-pdi-plugin-path
                      (lambda _
-                       (setenv "PDI_PLUGIN_PATH" (string-append #$pdiplugin-mpi "/lib/pdi/plugins_" #$(package-version pdi-common)))))
+                       (setenv "PDI_PLUGIN_PATH" (string-append #$pdiplugin-mpi "/lib/pdi/plugins_" #$(package-version pdi)))))
                    (add-before 'check 'fix-tests
                      (lambda* _
                        (substitute* "../build/tests/compatibility_tests/CTestTestfile.cmake"
@@ -175,7 +171,7 @@ of it for the PDI library.")))
     (synopsis "Parallel verson of the HDF5 plugin for PDI")))
 
 (define-public pdiplugin-set-value
-  (package/inherit pdi-common
+  (package/inherit pdi
     (name "pdiplugin-set-value")
     (arguments
      (list
@@ -190,7 +186,7 @@ of it for the PDI library.")))
     (synopsis "\"set value\" plugin for PDI")))
 
 (define-public pdiplugin-trace
-  (package/inherit pdi-common
+  (package/inherit pdi
     (name "pdiplugin-trace")
     (arguments
      (list
@@ -205,7 +201,7 @@ PDI \"data store\"")))
 
 
 (define-public pdiplugin-user-code
-  (package/inherit pdi-common
+  (package/inherit pdi
     (name "pdiplugin-user-code")
     (arguments
      (list
