@@ -59,3 +59,32 @@
       (synopsis "Benchmark to generate network bandwidth images")
       (description "mpiGraph is a MPI benchmark to generate network bandwidth images.")
       (license (license:fsf-free "https://github.com/LLNL/mpiGraph/blob/main/mpiGraph.c")))))
+
+(define-public osu-micro-benchmarks
+  (package
+    (name "osu-micro-benchmarks")
+    (version "7.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://mvapich.cse.ohio-state.edu/download/mvapich/" name "-"
+             version ".tar.gz"))
+       (sha256
+        (base32 "1z6fywvmcvk5s5k4q6qs5fsab2cnyfkl11xjpw4r96b1z8p0rp8y"))))
+    (build-system gnu-build-system)
+    (inputs (list openmpi))
+    (arguments
+     (list
+      #:configure-flags #~(list (string-append "CC="
+                                               #$(this-package-input "openmpi")
+                                               "/bin/mpicc")
+                                (string-append "CXX="
+                                               #$(this-package-input "openmpi")
+                                               "/bin/mpicxx"))))
+    (home-page "https://mvapich.cse.ohio-state.edu/benchmarks/")
+    (synopsis "Benchmarking suite from the MVAPICH project")
+    (description
+     "Microbenchmarks suite to evaluate MPI and PGAS (OpenSHMEM, UPC, and
+UPC++) libraries for CPUs and GPUs.")
+    (license license:bsd-3)))
