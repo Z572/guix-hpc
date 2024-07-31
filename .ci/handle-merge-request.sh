@@ -59,17 +59,20 @@ export JSON=$(curl "https://guix.bordeaux.inria.fr/api/latestbuilds?evaluation=$
 export STATUS=$(echo $JSON | jq "map(select(.buildstatus != 0 and .weather == 1)) | length")
 export NBUILDS=$(echo $JSON | jq "length")
 export SUCCEEDED=$(echo $JSON | jq "map(select(.buildstatus == 0) | .nixname) | join(\", \")" | sed -e 's/"//g')
-export SUCCEEDED="${SUCCEEDED:-None}"
 export NEWLY_FAILED=$(echo $JSON | jq "map(select(.buildstatus != 0 and .weather == 1) | .nixname) | join(\", \")" | sed -e 's/"//g')
-export NEWLY_FAILED="${FAILED:-None}"
 export STILL_FAILING=$(echo $JSON | jq "map(select(.buildstatus != 0 and .weather != 1) | .nixname) | join(\", \")" | sed -e 's/"//g')
-export STILL_FAILING="${STILL_FAILING:-None}"
 
 send_gitlab_comment "*Number of packages rebuilt* (eval $ID): $NBUILDS packages rebuilt."
 
-if [ $NBUILDS -ne 0 ] ; then
+if [ -n $SUCCEEDED ] ; then
     send_gitlab_comment "*Succeeded builds* (eval $ID): $SUCCEEDED."
+fi
+
+if [ -n $NEWLY_FAILED ] ; then
     send_gitlab_comment "*Newly failed builds* (eval $ID): $NEWLY_FAILED."
+fi
+
+if [ -n $STILL_FAILING ] ; then
     send_gitlab_comment "*Builds still failing* (eval $ID, for information only): $STILL_FAILING."
 fi
 
