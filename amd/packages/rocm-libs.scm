@@ -330,7 +330,7 @@ backends.")
 (define (make-ofi-rocm rocr-runtime)
   (package
     (inherit libfabric)
-    (name "libfabric")
+    (name "libfabric-rocm")
     (version (string-append "1.20.x-rocm-"
                             (package-version rocr-runtime)))
     (source
@@ -365,7 +365,7 @@ backends.")
 (define (make-ucx-rocm roct-thunk rocr-runtime hipamd)
   (package
     (inherit ucx)
-    (name "ucx")
+    (name "ucx-rocm")
     (version (string-append "1.14.1-rocm-"
                             (package-version hipamd)))
     (source
@@ -437,9 +437,9 @@ backends.")
                            (string-append "--with-rocm="
                                           #$(this-package-input "hipamd"))
                            (string-append "--with-ucx="
-                                          #$(this-package-input "ucx"))
+                                          #$(this-package-input "ucx-rocm"))
                            (string-append "--with-ofi="
-                                          #$(this-package-input "libfabric")))
+                                          #$(this-package-input "libfabric-rocm")))
       #:phases #~(modify-phases %standard-phases
                    ;; opensm is needed for InfiniBand support.
                    (add-after 'unpack 'find-opensm-headers
