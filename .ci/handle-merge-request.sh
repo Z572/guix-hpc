@@ -58,9 +58,9 @@ echo "Finished building packages, if any."
 export JSON=$(curl "https://guix.bordeaux.inria.fr/api/latestbuilds?evaluation=$ID&nr=$NR")
 export STATUS=$(echo $JSON | jq "map(select(.buildstatus != 0 and .weather == 1)) | length")
 export NBUILDS=$(echo $JSON | jq "length")
-export SUCCEEDED=$(echo $JSON | jq "map(select(.buildstatus == 0) | .nixname) | join(\", \")" | sed -e 's/"//g')
-export NEWLY_FAILED=$(echo $JSON | jq "map(select(.buildstatus != 0 and .weather == 1) | .nixname) | join(\", \")" | sed -e 's/"//g')
-export STILL_FAILING=$(echo $JSON | jq "map(select(.buildstatus != 0 and .weather != 1) | .nixname) | join(\", \")" | sed -e 's/"//g')
+export SUCCEEDED=$(echo $JSON | jq -r "map(select(.buildstatus == 0) | .nixname) | join(\", \")")
+export NEWLY_FAILED=$(echo $JSON | jq -r "map(select(.buildstatus != 0 and .weather == 1) | .nixname) | join(\", \")")
+export STILL_FAILING=$(echo $JSON | jq -r "map(select(.buildstatus != 0 and .weather != 1) | .nixname) | join(\", \")")
 
 send_gitlab_comment "*Number of packages rebuilt* (eval $ID): $NBUILDS packages rebuilt."
 
