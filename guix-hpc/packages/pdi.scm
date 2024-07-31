@@ -31,7 +31,7 @@
 (define-public pdi
   (package
     (name "pdi")
-    (version "1.6.0")
+    (version "1.7.1")
     (source
      (origin
        (method git-fetch)
@@ -40,7 +40,7 @@
              (commit version)))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0d68nlz92abcy9x642i8svbsv4121gq1qm48h6jgp1hmrbqz7mhh"))
+        (base32 "0rh0nkb9wipb7bgbxrb6vzizl27sszl5l708g3ckcifdd01dxwwb"))
        (snippet #~(begin
                     (use-modules (guix build utils))
                     (delete-file-recursively "vendor")))))
