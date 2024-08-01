@@ -23,5 +23,8 @@ check_merge_request_status:
   environment: merge_request_status
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  variables:
+    SPEC_NAME: "gitlab-merge-requests-Guix-HPC-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME-$CI_MERGE_REQUEST_IID"
   script:
-    - .ci/handle-merge-request.sh
+    - git clone $CI_SERVER_URL/guix-hpc/ci-tools.git ci-tools
+    - ./ci-tools/handle-merge-request.sh
