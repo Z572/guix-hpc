@@ -1,5 +1,5 @@
 FROM alpine
-RUN apk add --update bash curl jq sed
+RUN apk add --update bash curl jq git
 # Create a group and user
 RUN addgroup -S gitlab && adduser -S gitlab -G gitlab
 # Create a directory where ci jobs are performed
