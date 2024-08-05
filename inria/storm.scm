@@ -9,6 +9,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix git-download)
   #:use-module (guix licenses)
+  #:use-module (guix-hpc packages mpi)
   #:use-module (gnu packages)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages mpi)
@@ -22,7 +23,6 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages check)
-  #:use-module (inria tadaam)
   #:use-module (inria eztrace)
   #:use-module (inria llvm)
   #:use-module (inria mpi)
@@ -228,8 +228,6 @@ kernels are executed as efficiently as possible.")
                                    `(,hwloc "lib") ;hwloc 2.x
                                    )))))
 
-; next release of StarPU will have an optional dependency on tadaam/mpi_sync_clocks: don't forget to add it !
-
 (define-public starpu
   starpu-1.4)
 
@@ -249,7 +247,7 @@ kernels are executed as efficiently as possible.")
     (inherit starpu)
     (name "starpu-fxt")
     (inputs (modify-inputs (package-inputs starpu)
-              (prepend fxt)))))
+              (prepend fxt mpi_sync_clocks)))))
 
 (define-public starpu+simgrid
   (package
