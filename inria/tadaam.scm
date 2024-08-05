@@ -62,7 +62,7 @@
       #:phases (modify-phases %standard-phases
                  (add-after 'unpack 'fix-hardcoded-paths-chdir
                    (lambda _
-                     (substitute* "building-tools/common_vars.mk.in"
+                     (substitute* '("building-tools/common_vars.mk.in" "building-tools/package-version.sh")
                        (("/bin/sh")  (which "sh")))
                      (chdir "Puk")
                      #t))
@@ -97,7 +97,7 @@ hashtables, lock-free queues). It may be used with")
       #:phases (modify-phases %standard-phases
                  (add-after 'unpack 'fix-hardcoded-paths-chdir
                    (lambda _
-                     (substitute* "building-tools/common_vars.mk.in"
+                     (substitute* '("building-tools/common_vars.mk.in" "building-tools/package-version.sh")
                        (("/bin/sh")  (which "sh")))
                      (chdir "pioman")
                      #t))
@@ -141,7 +141,7 @@ supporting MPI_THREAD_MULTIPLE multi-threading level.")
       #:phases (modify-phases %standard-phases
                  (add-after 'unpack 'fix-hardcoded-paths-chdir
                    (lambda _
-                     (substitute* "building-tools/common_vars.mk.in"
+                     (substitute* '("building-tools/common_vars.mk.in" "building-tools/package-version.sh")
                        (("/bin/sh")  (which "sh")))
                      (chdir "PukABI")
                      #t))
@@ -180,7 +180,7 @@ than libc pthread; add hooks for memory.")
       #:phases (modify-phases %standard-phases
                  (add-after 'unpack 'fix-hardcoded-paths-chdir
                    (lambda _
-                     (substitute* "building-tools/common_vars.mk.in"
+                     (substitute* '("building-tools/common_vars.mk.in" "building-tools/package-version.sh")
                        (("/bin/sh")  (which "sh")))
                      (chdir "PadicoTM")
                      #t))
@@ -287,7 +287,7 @@ way rather than competitive.")
                       ;#t))
                  (add-after 'unpack 'fix-hardcoded-paths-chdir
                    (lambda _
-                     (substitute* "building-tools/common_vars.mk.in"
+                     (substitute* '("building-tools/common_vars.mk.in" "building-tools/package-version.sh")
                        (("/bin/sh")  (which "sh")))
                      (chdir "nmad")
                      #t))
@@ -393,9 +393,7 @@ the MPI_THREAD_MULTIPLE multi-threading level.")
       #:phases (modify-phases %standard-phases
                  (add-after 'unpack 'fix-hardcoded-paths-chdir
                    (lambda _
-                     (substitute* "building-tools/common_vars.mk.in"
-                       (("/bin/sh")  (which "sh")))
-                     (substitute* "mpi_sync_clocks/autogen.sh"
+                     (substitute* '("building-tools/common_vars.mk.in" "building-tools/package-version.sh" "mpi_sync_clocks/autogen.sh")
                        (("/bin/sh")  (which "sh")))
                      (chdir "mpibenchmark")
                      #t))
