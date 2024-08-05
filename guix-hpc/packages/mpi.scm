@@ -325,7 +325,7 @@ way rather than competitive.")
                               "install")))
                   (delete 'check))))
     (native-inputs (list pkg-config autoconf automake gfortran))
-    (propagated-inputs (list hwloc padicotm))
+    (propagated-inputs (list hwloc `(,hwloc "lib") padicotm))
     (inputs (list rdma-core psm psm2 slurm))
     (synopsis
      "An Optimizing Communication Library for High-Performance Networks")
