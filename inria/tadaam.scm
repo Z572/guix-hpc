@@ -36,9 +36,9 @@
 
 (define %pm2-home-page "https://pm2.gitlabpages.inria.fr/")
 (define %pm2-git "https://gitlab.inria.fr/pm2/pm2.git")
-(define %pm2-commit "dce4fedf6d0c3c1ef80d1fce3267c935f4bf1926")
-(define %pm2-hash "12pdqzwcghs0kahhnml06cxh0kv4q93861g9xrbbh0gxnb1jwq18") ; guix hash -rx .
-(define %pm2-version "2023-12-14")
+(define %pm2-commit "release-2024-07-12")
+(define %pm2-hash "1f45ip7xjm2lx6hnjfriklgv33vh0f1qsrdkan886z0bsadknww8") ; guix hash -rx .
+(define %pm2-version "2024-07-12")
 
 (define-public puk
   (package
@@ -68,7 +68,7 @@
                      #t))
                  (delete 'check)))) ; no make check in Puk
    (native-inputs (list pkg-config autoconf automake))
-   (propagated-inputs (list expat))
+   (propagated-inputs (list expat procps))
    (synopsis "PadicoTM micro-kernel")
    (description "Puk is the core of PadicoTM. It manages dynamically loadable
 modules, software components, and basic data structures (lists, vectors,
@@ -307,10 +307,9 @@ way rather than competitive.")
                             (invoke "make" "-j" (number->string (parallel-job-count)) "-C" "examples" "install")))
                  (delete 'check))))
    (native-inputs
-    (list pkg-config autoconf automake gfortran
-          `(,hwloc "lib")))
+    (list pkg-config autoconf automake gfortran))
    (propagated-inputs
-    (list padicotm))
+    (list hwloc padicotm))
    (inputs
     (list rdma-core psm psm2 slurm))
    (synopsis "An Optimizing Communication Library for High-Performance Networks")
@@ -446,6 +445,7 @@ are not benchmarked yet.")
     (list pkg-config autoconf automake))
    (inputs
     (list openmpi)) ; Every packet requiring mpi use openmpi, so use it, it will be simpler to then change with `--with-input=openmpi=nmad`
+   (propagated-inputs (list procps))
    (synopsis "Distributed synchronized clocks over MPI")
    (description "Small library with routines to synchronize clocks over several
                 nodes with MPI.")
