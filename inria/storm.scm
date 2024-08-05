@@ -153,7 +153,8 @@ kernels are executed as efficiently as possible.")
                ;; ensure a portable and reproducible cross-compilation. In
                ;; the future, it would be nice to give the opportunity to
                ;; change it at will when parametrized packages will be there.
-               '("--enable-maxcpus=128"))
+               '("--enable-maxcpus=128"
+                 "--enable-maxnumanodes=16"))
 
          ;; XXX: When using '--with-input=openmpi=nmad', the resulting input
          ;; label remains "openmpi" so we cannot really look for "nmad",
