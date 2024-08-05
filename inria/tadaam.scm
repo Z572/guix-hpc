@@ -72,7 +72,7 @@
    (synopsis "PadicoTM micro-kernel")
    (description "Puk is the core of PadicoTM. It manages dynamically loadable
 modules, software components, and basic data structures (lists, vectors,
-hashtables, lock-free queues). It may be used with")
+hashtables, lock-free queues).")
    (license license:gpl2)))
 
 (define-public pioman
@@ -105,7 +105,7 @@ hashtables, lock-free queues). It may be used with")
    (native-inputs (list pkg-config autoconf automake))
    (propagated-inputs (list puk `(,hwloc "lib")))
    (synopsis "A Generic I/O Manager")
-   (description " PIOMan is an I/O event manager of the PM2 software suite. It
+   (description "PIOMan is an I/O event manager of the PM2 software suite. It
 ensures communication progression using available cores and hooks in thread
 scheduler. It guarantees good reactivity, asynchronous communication progression,
 and communication/computation overlap.
