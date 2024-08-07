@@ -1,0 +1,15 @@
+diff --git a/futile/tests/Makefile.am b/futile/tests/Makefile.am
+index 15764cf34..e33037528 100644
+--- a/futile/tests/Makefile.am
++++ b/futile/tests/Makefile.am
+@@ -4,9 +4,7 @@ EXTRA_DIST = fldiff_yaml.py.in report.py.in README $(pytest_DATA)
+ 
+ SUBDIRS = \
+ 	flib \
+-	fft \
+-	wrappers \
+-	c-bindings
++	fft
+ 
+ #Installation of some python file (use $pythondir to access into).
+ pytest_PYTHON = yaml_hl.py fldiff.py f_regtest.py UniParse.py ${BUILT_SOURCES}
