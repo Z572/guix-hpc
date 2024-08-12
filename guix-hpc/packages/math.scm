@@ -1,9 +1,9 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2022, 2023 Inria
+;;; Copyright © 2022, 2023, 2024 Inria
 
-(define-module (inria freefem)
+(define-module (guix-hpc packages math)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -43,10 +43,10 @@
                     (lambda* (#:key inputs #:allow-other-keys)
                       ;; <libmmg.h> is in the mmg/ subdirectory.  Extends the
                       ;; header search path accordingly.
-		      (setenv "CPATH"
-                              (string-append
-                               (search-input-directory inputs "/include/mmg")
-                               ":" (getenv "CPATH")))))
+                     (setenv "CPATH"
+                                             (string-append
+                                              (search-input-directory inputs "/include/mmg")
+                                              ":" (getenv "CPATH")))))
                   (add-before 'check 'skip-faulty-tests
                     (lambda _
                       ;; XXX: Fix failing tests.
@@ -67,21 +67,21 @@
            gsl
            ipopt
            nlopt
-	   mumps                       ;FIXME: ./configure fails to use mumps
-	   (list mmg "lib")
-	   suitesparse-umfpack
-	   suitesparse-config
-	   suitesparse-amd
-	   suitesparse-cholmod
-	   hdf5
-	   fftw
-	   arpack-ng
-	   scalapack
-	   scotch
-	   pt-scotch
-           metis
-           openmpi
-           lapack))
+      mumps                       ;FIXME: ./configure fails to use mumps
+      (list mmg "lib")
+      suitesparse-umfpack
+      suitesparse-config
+      suitesparse-amd
+      suitesparse-cholmod
+      hdf5
+      fftw
+      arpack-ng
+      scalapack
+      scotch
+      pt-scotch
+      metis
+      openmpi
+      lapack))
     (properties `((tunable? . #true)))
     (home-page "https://freefem.org/")
     (synopsis "High-level multiphysics finite element library")
