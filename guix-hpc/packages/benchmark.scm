@@ -6,7 +6,8 @@
 (define-module (guix-hpc packages benchmark)
   #:use-module (guix)
   #:use-module (guix git-download)
-  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix licenses)
+                #:prefix license:)
   #:use-module (guix build utils)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
@@ -34,31 +35,39 @@
       (native-inputs (list openmpi))
       (inputs (list perl))
       (arguments
-       (list #:tests? #f                ; No tests in package.
-             #:modules '((ice-9 match)
-                         (guix build utils)
-                         (guix build gnu-build-system))
-             #:phases #~(modify-phases %standard-phases
-                          (delete 'configure) ; No configure script.
-                          (replace 'install
-                            (lambda _
-                              (let* ((tmpdir (getenv "TMPDIR"))
-                                    (source-dir (string-append tmpdir "/source"))
-                                    (bin (string-append #$output "/bin"))
-                                    (tools (string-append #$output "/share/mpigraph/tools"))
-                                    (doc (string-append #$output "/share/doc/mpigraph")))
-                                (for-each (lambda (file-dest-pair)
-                                            (match file-dest-pair
-                                              ((file . dest)
-                                               (install-file (string-append source-dir "/" file) dest))))
-                                          (list `("mpiGraph" . ,bin)
-                                                `("crunch_mpiGraph" . ,tools)
-                                                `("hostlist_lite.pm" . ,tools)
-                                                `("README.md" . ,doc)))))))))
+       (list
+        #:tests? #f ;No tests in package.
+        #:modules '((ice-9 match)
+                    (guix build utils)
+                    (guix build gnu-build-system))
+        #:phases #~(modify-phases %standard-phases
+                     (delete 'configure) ;No configure script.
+                     (replace 'install
+                       (lambda _
+                         (let* ((tmpdir (getenv "TMPDIR"))
+                                (source-dir (string-append tmpdir "/source"))
+                                (bin (string-append #$output "/bin"))
+                                (tools (string-append #$output
+                                                      "/share/mpigraph/tools"))
+                                (doc (string-append #$output
+                                                    "/share/doc/mpigraph")))
+                           (for-each (lambda (file-dest-pair)
+                                       (match file-dest-pair
+                                         ((file . dest) (install-file (string-append
+                                                                       source-dir
+                                                                       "/"
+                                                                       file)
+                                                                      dest))))
+                                     (list `("mpiGraph" unquote bin)
+                                           `("crunch_mpiGraph" unquote tools)
+                                           `("hostlist_lite.pm" unquote tools)
+                                           `("README.md" unquote doc)))))))))
       (home-page "https://github.com/LLNL/mpiGraph")
       (synopsis "Benchmark to generate network bandwidth images")
-      (description "mpiGraph is a MPI benchmark to generate network bandwidth images.")
-      (license (license:fsf-free "https://github.com/LLNL/mpiGraph/blob/main/mpiGraph.c")))))
+      (description
+       "mpiGraph is a MPI benchmark to generate network bandwidth images.")
+      (license (license:fsf-free
+                "https://github.com/LLNL/mpiGraph/blob/main/mpiGraph.c")))))
 
 (define-public osu-micro-benchmarks
   (package
