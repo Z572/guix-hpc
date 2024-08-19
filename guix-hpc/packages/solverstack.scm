@@ -170,7 +170,7 @@ of the available resources.")
 (define-public dplasma
   (package
     (name "dplasma")
-    (version "20230802")
+    (version "20240819")
     (home-page "https://github.com/ICLDisco/dplasma")
     (synopsis
      "Dense linear algebra package for distributed, accelerated, heterogeneous systems.")
@@ -188,11 +188,11 @@ Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "45831f1862f977ac5cc485887c77f6f207ebda2b")
+             (commit "5fa144b87c0c10032981f09fc9c60d3d0544c847")
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "058zc4xg7mfvgyg9yhsa0n4xdl725a86nh0i0dg5s2libinvgi4y"))))
+        (base32 "0lszhh8b23spsgsa1w3jfxlq11clpsv9jnkch8gb9dga263ndwxn"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
