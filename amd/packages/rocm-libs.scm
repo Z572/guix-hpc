@@ -355,43 +355,26 @@ backends.")
 
 ; ucx built with rocm
 (define (make-ucx-rocm roct-thunk rocr-runtime hipamd)
-  (package
-    (inherit ucx)
+  (package/inherit ucx
     (name "ucx-rocm")
-    (version (string-append "1.14.1-rocm-"
+    (version (string-append (package-version ucx) ".rocm"
                             (package-version hipamd)))
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/openucx/ucx")
-             (commit "v1.14.1")))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "0jij2qzy655f1k3slj05lr679zflavj9f3g9bzlnxbqv524a0250"))))
     (arguments
-     (list
-      #:configure-flags #~(list
-                           ;; XXX: Disable optimizations specific to the build
-                           ;; machine (AVX, etc.)  There's apparently no way to
-                           ;; have them picked up at load time.
-                           "--disable-optimizations"
-
-                           ;; "--enable-mt"
-                           "--disable-logging"
-                           "--disable-debug"
-                           "--disable-assertions"
-                           "--disable-params-check"
-                           "--without-cuda"
-                           "--without-knem"
-                           "--without-java"
-                           (string-append "--with-rocm="
-                                          #$(this-package-input "rocr-runtime"))
-                           (string-append "--with-hip="
-                                          #$(this-package-input "hipamd")))
-      #:make-flags #~(list "V=1")))
-    (native-inputs (list autoconf automake libtool pkg-config roct-thunk))
-    (inputs (list numactl hipamd rocr-runtime))
+     (substitute-keyword-arguments (package-arguments ucx)
+       ((#:configure-flags flags)
+        #~(append (list "--without-cuda"
+                        "--without-knem"
+                        "--without-java"
+                        (string-append "--with-rocm="
+                                       #$(this-package-input "rocr-runtime"))
+                        (string-append "--with-hip="
+                                       #$(this-package-input "hipamd")))
+                  #$flags))))
+    (native-inputs (modify-inputs (package-native-inputs ucx)
+                     (append roct-thunk)))
+    (inputs (modify-inputs (package-inputs ucx)
+              (append hipamd)
+              (append rocr-runtime)))
     (properties `((tunable? . #t) ,@(package-properties ucx)))))
 
 (define-public ucx-rocm-5.7
