@@ -386,49 +386,32 @@ backends.")
 
 ; openmpi built with ucx-rocm and libfabric-rocm
 (define (make-openmpi-rocm ucx ofi hipamd)
-  (package
-    (inherit openmpi)
+  (package/inherit openmpi-5
     (name (string-append (package-name openmpi) "-rocm"))
-    (version (string-append "5.0.2-rocm-"
-                            (package-version hipamd)))
-    (source
-     (origin
-       (method url-fetch)
-       (uri
-        "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.2.tar.bz2")
-       (sha256
-        (base32 "13v9jqrqnr0ir3fv7hqb18rqrwybfzwbyq11fxqgzhz2xs7asipf"))))
     (arguments
-     (list
-      #:configure-flags #~(list
-                           ;; "--enable-mca-no-build=btl-uct"
-                           ;; "--enable-mpi1-compatibility"
-                           "--with-pmix=internal"
-                           (string-append "--with-rocm="
-                                          #$(this-package-input "hipamd"))
-                           (string-append "--with-ucx="
-                                          #$(this-package-input "ucx-rocm"))
-                           (string-append "--with-ofi="
-                                          #$(this-package-input "libfabric-rocm")))
-      #:phases #~(modify-phases %standard-phases
+     (substitute-keyword-arguments (package-arguments libfabric)
+       ((#:configure-flags flags)
+        #~(append (list "--with-pmix=internal"
+                        (string-append "--with-rocm="
+                                       #$(this-package-input "hipamd"))
+                        (string-append "--with-ofi="
+                                       #$(this-package-input "libfabric")))
+                  #$flags))
+       ((#:phases phases '%standard-phases)
+        #~(modify-phases #$phases
                    ;; opensm is needed for InfiniBand support.
-                   (add-after 'unpack 'find-opensm-headers
-                     (lambda* (#:key inputs #:allow-other-keys)
-                       (setenv "C_INCLUDE_PATH"
-                               (search-input-directory inputs
-                                                       "/include/infiniband"))
-                       (setenv "CPLUS_INCLUDE_PATH"
-                               (search-input-directory inputs
-                                                       "/include/infiniband")))))))
-    (native-inputs (list perl python-wrapper pkg-config))
-    (inputs (list hwloc-2
-                  libevent
-                  opensm
-                  rdma-core
-                  gfortran
-                  ucx
-                  ofi
-                  hipamd))))
+            (add-after 'unpack 'find-opensm-headers
+              (lambda* (#:key inputs #:allow-other-keys)
+                (setenv "C_INCLUDE_PATH"
+                        (search-input-directory inputs
+                                                "/include/infiniband"))
+                (setenv "CPLUS_INCLUDE_PATH"
+                        (search-input-directory inputs
+                                                "/include/infiniband"))))))))
+    (inputs (modify-inputs (package-inputs openmpi-5)
+              (replace "ucx" ucx)
+              (replace "libfabric" ofi)
+              (append hipamd)))))
 
 (define-public openmpi-rocm-5.7
   (make-openmpi-rocm ucx-rocm-5.7 ofi-rocm-5.7 hipamd-5.7))
