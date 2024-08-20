@@ -328,25 +328,17 @@ backends.")
 
 ; libfabric built with rocm
 (define (make-ofi-rocm rocr-runtime)
-  (package
-    (inherit libfabric)
+  (package/inherit libfabric
     (name "libfabric-rocm")
-    (version (string-append "1.20.x-rocm-"
+    (version (string-append (package-version libfabric) ".rocm"
                             (package-version rocr-runtime)))
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/ofiwg/libfabric")
-             (commit "3a3f35fc6")))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "01bkmh57gjgzamybm143zhvylcsvf6dbb7bai19bi0qzzfyp6hnr"))))
+
     (arguments
-     (list
-      #:configure-flags #~(list (string-append "--with-rocr="
-                                               #$rocr-runtime))))
-    (native-inputs (list autoconf automake libtool))
+     (substitute-keyword-arguments (package-arguments libfabric)
+       ((#:configure-flags flags)
+        #~(append (list (string-append "--with-rocr="
+                                       #$rocr-runtime))
+                  #$flags))))
     (inputs (modify-inputs (package-inputs libfabric)
               (append rocr-runtime)))))
 
