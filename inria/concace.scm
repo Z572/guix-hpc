@@ -70,25 +70,25 @@
      "ElementaryX: Elementary Emacs configuration coupled with Guix. Texlive add-on.")
     (license license:cecill-c)
     (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "27a5a0aeca37c8489b1c5dee2b4e8459693b4a63")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "075j1ciywizg0iiv04xnrha8z1apk531zh8vh9npss39s0nxd9f8"))))
+             (method git-fetch)
+             (uri (git-reference
+                   (url home-page)
+                   (commit "27a5a0aeca37c8489b1c5dee2b4e8459693b4a63")))
+             (file-name (string-append name "-" version "-checkout"))
+             (sha256
+              (base32
+               "075j1ciywizg0iiv04xnrha8z1apk531zh8vh9npss39s0nxd9f8"))))
     (build-system copy-build-system)
     (arguments
      '(#:install-plan
        '(("siam" "share/texmf-dist/tex/latex/siam")
-         ("beamerthemeguix" "share/texmf-dist/tex/latex/beamerthemeguix")
-         ("beamerthemeinria" "share/texmf-dist/tex/latex/beamerthemeinria")
-         ("compas" "share/texmf-dist/tex/latex/compas")
-         ("IEEEoverride" "share/texmf-dist/tex/latex/ieeeoverride")
-         ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
-         ("RR" "share/texmf-dist/tex/latex/inriarr")
-         ("poster" "share/texmf-dist/tex/latex/inriaposter"))))
+	 ("beamerthemeguix" "share/texmf-dist/tex/latex/beamerthemeguix")
+	 ("beamerthemeinria" "share/texmf-dist/tex/latex/beamerthemeinria")
+	 ("compas" "share/texmf-dist/tex/latex/compas")
+	 ("IEEEoverride" "share/texmf-dist/tex/latex/ieeeoverride")
+	 ("kbordermatrix" "share/texmf-dist/tex/latex/kbordermatrix")
+	 ("RR" "share/texmf-dist/tex/latex/inriarr")
+	 ("poster" "share/texmf-dist/tex/latex/inriaposter"))))
     (propagated-inputs (list texlive-rsfs)))) ;; for RR
 
 ;; Updated version of the emacs-rmsbolt from guix channel to have tree-sitter (ts) support
@@ -175,11 +175,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "195bf067e5e3fc80864a9d8ca6ab44232074d5cd")))
+                  (commit "17fb90b6beef2712530314973a554964ccba8f7f")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1iz117n40p6w8ll7jzgqm1zc9mapfgh0hzxqa95lalpvbf02csxh"))))
+              "08s09gv2b3pz82nfih83j7flns4w7i25icyhh3jwyjysklrf61az"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org))))
@@ -204,16 +204,17 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "6ad7672cfe613b0ee4b0a6b94345cafdc1204f5f")))
+                  (commit "698393f30be6f5c8d01bed9913fc8d428f9aaf93")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1z80l4yvgwi72z4y4ai176klwdfd6nhhi1iqsz2y2zr1zkkvywgh"))))
+              "1m8q80k5kz8mdnz78x77qbvv847rjagldms9hx9j47pxn2y55lkq"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org
           texlive-biblatex
           texlive-listings
+	  texlive-preview
           texlive-standalone))))
 
 ;; emacs-ob-latexmacro with emacs instead of emacs-minimal
@@ -328,11 +329,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "afb77b16a2d3602ef3458e46ec9a8b31b29fee47")))
+                  (commit "ad8e8fc0c8e30d627db0c57b2c7752d6ff3cb470")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1mg3rpj1hx90bp5r1rkxvynhq0ycxf68z8sba2i8q6a0ws6wkf6d"))))
+              "08jb1cpiifpd3l8ynhml5zjrpxw0czpqlzsp4wnin1gm30c7ry5j"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list bash-completion
@@ -619,11 +620,11 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f953c49f9ce6d6fb6c42d049a2f7336235b43bfb")))
+                    (commit "9c48dc84b98461815a0cde3e6642ba5c8223d194")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1hx2aab6zs06xp5amzl2k52zksnwmp7qlqfwzmibfiy38sjsswz9"))))
+                "1axfp6ms9k2ivmykijlhjhdhawmxqxxx978ir6xcf1v7nchk95n1"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-dev-minimal
@@ -655,8 +656,10 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
            tree-sitter-json
            tree-sitter-julia
 	   tree-sitter-lua
-           tree-sitter-markdown
-	   tree-sitter-markdown-gfm ;; github flavored markddown
+           ;; tree-sitter-markdown ;; it seems that there is not emacs ts mode yet: https://www.reddit.com/r/emacs/comments/1bqichi/did_anyone_manage_to_setup_markdowntsmode/
+	   ;; tree-sitter-markdown-gfm ;; probably the same as above (github flavored markddown)
+	   ;; therefore we use standard markdown mode instead:
+	   emacs-markdown-mode
 	   tree-sitter-ocaml ;; TODO: not sure how to use it
            tree-sitter-org
 	   tree-sitter-php
@@ -920,11 +923,11 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f1379d9a24e00156802399e0b9efb2e93cfe3249")))
+                    (commit "e222c621c11b4add0f5d70cc272556abaa0ccab8")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1v9ba1bybi182yycf9fzfvw88x6vpgvarqa7vcy0c435dsbp2chi"))))
+                "1zaryz6z0ylz8hc7hpyyix49pacj0mcz6s8c80s07f4nyjg70i1m"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox-base
