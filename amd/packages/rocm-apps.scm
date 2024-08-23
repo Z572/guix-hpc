@@ -23,6 +23,7 @@
   #:use-module (guix packages)
   #:use-module (guix licenses)
   #:use-module (guix download)
+  #:use-module (guix utils)
 
   #:use-module (gnu packages)
   #:use-module (gnu packages autotools)
@@ -31,7 +32,9 @@
 
   #:use-module (amd packages rocm-libs)
   #:use-module (amd packages aocl-libs)
-  #:use-module (amd packages rocm-hip))
+  #:use-module (amd packages rocm-hip)
+
+  #:use-module (guix-hpc packages benchmark))
 
 (define-public hpcg
   (package
@@ -224,36 +227,31 @@ language and optimized for AMD's latest discrete GPUs.")
 
 ; osu benchmarks
 (define (make-osubench-rocm openmpi-rocm hipamd)
-  (package
-    (name "osu-bench")
-    (version (string-append "7.0.1-rocm-"
+  (package/inherit osu-micro-benchmarks
+    (name (string-append (package-name osu-micro-benchmarks) "-rocm"))
+    (version (string-append (package-version osu-micro-benchmarks) ".rocm"
                             (package-version hipamd)))
-    (source
-     (origin
-       (method url-fetch)
-       (uri
-        "https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.0.1.tar.gz")
-       (sha256
-        (base32 "0rlcvb3mln5lbjgxkzk0b8nzwhzf7hmbiyhz8q5bk89b13m4m584"))))
-    (build-system gnu-build-system)
+
     (arguments
-     (list
-      #:configure-flags #~(list "CC=mpicc" "CXX=mpicxx" "--enable-rocm"
-                                (string-append "--with-rocm="
-                                               #$hipamd))
-      #:phases #~(modify-phases %standard-phases
-                   (add-after 'unpack 'patch-configure
-                     (lambda _
-                       (substitute* (list "configure" "configure.ac")
-                         (("__HIP_PLATFORM_HCC__")
-                          "__HIP_PLATFORM_AMD__")))))))
-    (native-inputs (list automake autoconf))
-    (inputs (list hipamd openmpi-rocm))
+     (substitute-keyword-arguments (package-arguments osu-micro-benchmarks)
+       ((#:configure-flags flags)
+        #~(append (list (string-append "--enable-rocm"
+                                       "--with-rocm="
+                                       #$(this-package-input "hipamd")))
+                  #$flags))
+       ((#:phases phases '%standard-phases)
+        #~(modify-phases #$phases
+            (add-after 'unpack 'patch-configure
+              (lambda _
+                (substitute* (list "configure" "configure.ac")
+                  (("__HIP_PLATFORM_HCC__")
+                   "__HIP_PLATFORM_AMD__"))))))))
+    (inputs (modify-inputs (package-inputs osu-micro-benchmarks)
+              (append hipamd)
+              (replace "openmpi" openmpi-rocm)))
     (synopsis "MPI microbenchmarks with ROCm support.")
     (description "A collection of host-based and device-based microbenchmarks for MPI
-communication with ROCm support.")
-    (home-page "https://mvapich.cse.ohio-state.edu/benchmarks/")
-    (license bsd-3)))
+communication with ROCm support.")))
 
 (define-public osubench-rocm-5.7
   (make-osubench-rocm openmpi-rocm-5.7 hipamd-5.7))
