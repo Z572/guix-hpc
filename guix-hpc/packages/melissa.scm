@@ -14,9 +14,9 @@
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-science)
   #:use-module (guix-hpc packages python-science)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pkg-config)
-  #:use-module (gnu packages commencement)
   #:use-module (gnu packages networking)
   #:use-module (gnu packages python)
   #:use-module (guix licenses))
@@ -53,7 +53,9 @@
     (source
      melissa-source)
     (build-system cmake-build-system)
-    (inputs (list openmpi zeromq gcc-toolchain gfortran-toolchain pkg-config))
+    (native-inputs (list gfortran
+                         pkg-config))
+    (inputs (list openmpi zeromq))
     (arguments
      '(#:tests? #f))
     (home-page melissa-homepage)
@@ -72,12 +74,11 @@ This package builds the API used when instrumenting the clients.")
     (source
      melissa-source)
     (build-system cmake-build-system)
+    (native-inputs (list gfortran
+                         pkg-config))
     (inputs (list melissa-api
                   openmpi
-                  gcc-toolchain
-                  gfortran-toolchain
-                  python
-                  pkg-config))
+                  python))
     (arguments
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
