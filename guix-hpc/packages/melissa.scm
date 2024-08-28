@@ -3,7 +3,7 @@
 ;;;
 ;;; Copyright © 2024 Inria
 
-(define-module (inria melissa)
+(define-module (guix-hpc packages melissa)
   #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (guix git-download)
