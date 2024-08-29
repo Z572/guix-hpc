@@ -139,7 +139,7 @@ sparse matrices, most of the matrix functions in NTPoly can be computed in linea
                   pt-scotch
                   metis
                   openmpi
-                  lapack))
+                  openblas))
     (properties `((tunable? . #t)))
     (home-page "https://freefem.org/")
     (synopsis "High-level multiphysics finite element library")
