@@ -127,7 +127,13 @@ sparse matrices, most of the matrix functions in NTPoly can be computed in linea
                          bison
                          flex
                          gfortran))
-    (inputs (list suitesparse-umfpack
+    (inputs (list ;petsc-openmpi
+                  gsl
+                  ipopt
+                  nlopt
+                  mumps ;FIXME: ./configure fails to use mumps
+                  (list mmg "lib") 
+                  suitesparse-umfpack
                   suitesparse-config
                   suitesparse-amd
                   suitesparse-cholmod
