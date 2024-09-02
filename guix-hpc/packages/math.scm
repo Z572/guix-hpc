@@ -111,6 +111,10 @@ sparse matrices, most of the matrix functions in NTPoly can be computed in linea
     (build-system gnu-build-system)
     (arguments
      (list
+      ;; Disable ISA extension optimizations (SSE, etc.) that are based on
+      ;; the build machine's /proc/cpuinfo.
+      #:configure-flags #~(list "--enable-generic")
+
       #:phases #~(modify-phases %standard-phases
                    (add-before 'check 'skip-faulty-tests
                      (lambda _
