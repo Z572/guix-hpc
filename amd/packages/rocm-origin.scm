@@ -215,7 +215,7 @@
 (define rocm-patches
     `(
         ; llvm-project
-        (("llvm-project" "5.7.1") . ("amd/packages/patches/llvm-rocm-5.6.1.patch"))
+        (("llvm-project" "5.7.1") . ())
         (("llvm-project" "5.6.1") . ("amd/packages/patches/llvm-rocm-5.6.1.patch"))
         (("llvm-project" "5.5.1") . ("amd/packages/patches/llvm-rocm-5.5.1.patch"))
         (("llvm-project" "5.4.4") . ("amd/packages/patches/llvm-rocm-5.4.4.patch"))
