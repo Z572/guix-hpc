@@ -13,7 +13,10 @@
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages mpi)
-  #:use-module (gnu packages perl))
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages gcc)
+  #:use-module (ice-9 match)
+  #:use-module (srfi srfi-1))
 
 (define-public mpigraph
   (let ((version "1")
@@ -97,3 +100,168 @@
      "Microbenchmarks suite to evaluate MPI and PGAS (OpenSHMEM, UPC, and
 UPC++) libraries for CPUs and GPUs.")
     (license license:bsd-3)))
+
+(define (cartesian-product proc a b)
+  "Given procedure that takes to arguments, applies it for each combination and
+returns the list of results"
+  (append-map (lambda (x)
+                (map (lambda (y)
+                       (proc x y)) b)) a))
+
+(define npb-classes
+  '("S" ;Small for quick test purposes
+    "W" ;Workstation size
+    "A"
+    "B"
+    "C" ;standard test problems
+    ;; ~4X size increase going from one class to the next
+    "D"
+    "E"
+    "F"))
+
+(define npb-names
+  '("is" ;Integer Sort, random memory access
+    "ep" ;Embarrassingly Parallel
+    "cg" ;Conjugate Gradient, irregular memory access and communication
+    "mg" ;Multi-Grid on a sequence of meshes, long- and short-distance communication, memory intensive
+    "ft" ;discrete 3D fast Fourier Transform, all-to-all communication
+    "bt" ;Block Tri-diagonal solver
+    "sp" ;Scalar Penta-diagonal solver
+    ;; Lower-Upper Gauss-Seidel solver
+    "lu"))
+
+(define npb-suite
+  (cartesian-product (lambda (name class)
+                       (match `(,name ,class)
+                         ;; Class F is not available for IS
+                         (("is" "F")
+                          (string-append "# skipping: " name " " class))
+                         (_ (string-append name " " class)))) npb-names
+                     npb-classes))
+
+(define-public npb-openmp
+  (package
+    (name "npb-openmp")
+    (version "3.4.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://www.nas.nasa.gov/assets/npb/NPB" version
+                           ".tar.gz"))
+       (sha256
+        (base32 "1svaz2q1s8451hksvavp70kwacinl4al8xcwlzxjdf3sx3bh6z59"))))
+    (build-system gnu-build-system)
+    (native-inputs (list gfortran))
+    (arguments
+     (list
+      #:make-flags #~(list "suite")
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (delete 'install) ;NPB builds directly into the install dir
+                   
+                   (add-after 'unpack 'chdir
+                     (lambda _
+                       (let* ((version' #$(version-major+minor (package-version
+                                                                this-package)))
+                              (subdir (string-append "NPB" version' "-OMP")))
+                         (chdir (pk 'subdir subdir)))))
+
+                   (replace 'configure
+                     (lambda _
+                       (let* ((lines `(("FC" "gfortran")
+                                       ("F77" "gfortran")
+                                       ("FLINK" "gfortran")
+                                       ("FFLAGS" "-O3 -fopenmp")
+                                       ("FLINKFLAGS" "-O3 -fopenmp")
+                                       ("CC" "gcc")
+                                       ("CLINK" "gcc")
+                                       ("C_LIB" "-lm")
+                                       ("CFLAGS" "-O3 -fopenmp")
+                                       ("CLINKFLAGS" "-O3 -fopenmp")
+                                       ("UCC" "gcc")
+                                       ("BINDIR" ,(string-append #$output
+                                                                 "/bin"))
+                                       ("RAND" "randi8")
+                                       ("WTIME" "wtime.c"))))
+                         (call-with-output-file "config/make.def"
+                           (lambda (port)
+                             (for-each (lambda (x)
+                                         (display (string-append (list-ref x 0)
+                                                                 " = "
+                                                                 (list-ref x 1)
+                                                                 "\n") port))
+                                       lines))))
+
+                       (call-with-output-file "config/suite.def"
+                         (lambda (port)
+                           (for-each (lambda (line)
+                                       (display line port)
+                                       (display "\n" port))
+                                     '#$npb-suite)))
+
+                       (mkdir-p (string-append #$output "/bin")))))))
+
+    (home-page "https://www.nas.nasa.gov/software/npb.html")
+    (synopsis "NAS Parallel Benchmarks (NPB), OpenMP variant")
+    (description
+     "The benchmarks are derived from computational fluid dynamics (CFD)
+applications and consist of five kernels and three pseudo-applications in the original
+\"pencil-and-paper\" specification (NPB 1). The benchmark suite has been extended
+to include new benchmarks for unstructured adaptive meshes, parallel I/O, multi-zone
+applications, and computational grids. Problem sizes in NPB are predefined and indicated
+as different classes.")
+    ;; License is not in the source, but declared in this comment
+    ;; https://github.com/LLNL/NPB/commit/35cd0e4a895da7dea0316fac34b4da9ab5d7cba5
+    (license license:expat)))
+
+(define-public npb-openmpi
+  (package/inherit npb-openmp
+    (name "npb-openmpi")
+    (inputs (list openmpi))
+    (arguments (substitute-keyword-arguments (package-arguments npb-openmp)
+                 ((#:phases phases)
+                  #~(modify-phases #$phases
+                      (replace 'chdir
+                        (lambda _
+                          (let* ((version' #$(version-major+minor (package-version
+                                                                   this-package)))
+                                 (subdir (string-append "NPB" version' "-MPI")))
+                            (chdir (pk 'subdir subdir)))))
+
+                      (replace 'configure
+                        (lambda _
+                          (let* ((lines `(("MPIFC" "mpif90")
+                                          ("MPIF77" "mpif77")
+                                          ("FLINK" "mpif77")
+                                          ("FFLAGS"
+                                           ;; GCC10 enforces rank matching, disable it as the software is very old
+                                           "-O3 -fallow-argument-mismatch")
+                                          ("FLINKFLAGS" "-O3")
+                                          ("MPICC" "mpicc")
+                                          ("CLINK" "mpicc")
+                                          ("CFLAGS" "-O3")
+                                          ("CLINKFLAGS" "-O3")
+                                          ("CC" "gcc")
+                                          ("BINDIR" ,(string-append #$output
+                                                                    "/bin"))
+                                          ("RAND" "randi8"))))
+                            (call-with-output-file "config/make.def"
+                              (lambda (port)
+                                (for-each (lambda (x)
+                                            (display (string-append (list-ref
+                                                                     x 0)
+                                                                    " = "
+                                                                    (list-ref
+                                                                     x 1) "\n")
+                                                     port)) lines))))
+
+                          (call-with-output-file "config/suite.def"
+                            (lambda (port)
+                              (for-each (lambda (line)
+                                          (display line port)
+                                          (display "\n" port))
+                                        '#$npb-suite)))
+
+                          (mkdir-p (string-append #$output "/bin"))))))))
+    (synopsis "NAS Parallel Benchmarks (NPB), MPI variant")))
+
