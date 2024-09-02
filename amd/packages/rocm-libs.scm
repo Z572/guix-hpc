@@ -64,9 +64,9 @@
       #:tests? #f ;No tests.
       #:build-type "Release"
       #:configure-flags #~(list (string-append "-DPCI_IDS_PATH="
-                                               #$hwdata))))
+                                               #$(this-package-input "hwdata")))))
     (inputs (list libbacktrace
-                  `(,hwdata "pci") rocm-comgr hipamd))
+                  hwdata rocm-comgr hipamd))
     (synopsis
      "ROCm debugger API.")
     (description
