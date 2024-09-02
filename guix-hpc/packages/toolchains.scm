@@ -17,9 +17,12 @@
   #:use-module (guix))
 
 (define-public gfortran-toolchain-13
-  (package (inherit ((@@ (gnu packages commencement) make-gcc-toolchain) gfortran-13))
+  (package
+    (inherit ((@@ (gnu packages commencement) make-gcc-toolchain)
+              gfortran-13))
     (synopsis "Complete GCC tool chain for Fortran development")
-    (description "This package provides a complete GCC tool chain for
+    (description
+     "This package provides a complete GCC tool chain for
 Fortran development to be installed in user profiles.  This includes
 gfortran, as well as libc (headers and binaries, plus debugging symbols
 in the @code{debug} output), and binutils.")))
