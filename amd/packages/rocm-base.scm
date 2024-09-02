@@ -82,8 +82,12 @@
     (inherit clang-runtime)
     (name "rocm-clang-runtime")
     (version (package-version llvm-rocm))
-    (source
-     (rocm-origin "llvm-project" version))
+    (source (let ((parent (rocm-origin "llvm-project" version)))
+              (origin
+                (inherit parent)
+                (patches
+                 (append (origin-patches parent)
+                         (origin-patches (package-source clang-runtime)))))))
     (inputs (modify-inputs (package-inputs clang-runtime)
               (replace "llvm" llvm-rocm)
               (replace "libffi" libffi-shared)))
