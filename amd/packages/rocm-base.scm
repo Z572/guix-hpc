@@ -480,8 +480,9 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
      (list
       #:build-type "Release"
       #:tests? #f ; No tests.
-      #:configure-flags #~(list "-DCMAKE_CXX_COMPILER=clang++"
-                                (if (string=? #$version "5.5.1")
+      #:configure-flags #~(list "-DCMAKE_C_COMPILER=clang"
+                                "-DCMAKE_CXX_COMPILER=clang++"
+                                (if (string=? #$(package-version this-package) "5.5.1")
                                     "-DSWDEV_375013=ON" ""))
       #:phases #~(modify-phases %standard-phases
                    (add-before 'configure 'prepare-cmake
@@ -492,8 +493,9 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
                          (("set.CMAKE_C_COMPILER.*")
                           "")
                          (("--disable-new-dtags")
-                          "--enable-new-dtags") ;required for 5.6.1 but does not seem to affect other versions
-                         ))))))
+                          ;; Required for 5.6.1 but does not seem to
+                          ;; affect other versions.
+                          "--enable-new-dtags")))))))
     (inputs (list clang-rocm perl))
     (synopsis
      "HIPIFY: Convert CUDA to HIP code.")
