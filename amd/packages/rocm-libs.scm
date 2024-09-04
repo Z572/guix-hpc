@@ -64,9 +64,9 @@
       #:tests? #f ;No tests.
       #:build-type "Release"
       #:configure-flags #~(list (string-append "-DPCI_IDS_PATH="
-                                               #$hwdata))))
+                                               #$(this-package-input "hwdata")))))
     (inputs (list libbacktrace
-                  `(,hwdata "pci") rocm-comgr hipamd))
+                  hwdata rocm-comgr hipamd))
     (synopsis
      "ROCm debugger API.")
     (description
@@ -328,25 +328,17 @@ backends.")
 
 ; libfabric built with rocm
 (define (make-ofi-rocm rocr-runtime)
-  (package
-    (inherit libfabric)
-    (name "libfabric")
-    (version (string-append "1.20.x-rocm-"
+  (package/inherit libfabric
+    (name "libfabric-rocm")
+    (version (string-append (package-version libfabric) ".rocm"
                             (package-version rocr-runtime)))
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/ofiwg/libfabric")
-             (commit "3a3f35fc6")))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "01bkmh57gjgzamybm143zhvylcsvf6dbb7bai19bi0qzzfyp6hnr"))))
+
     (arguments
-     (list
-      #:configure-flags #~(list (string-append "--with-rocr="
-                                               #$rocr-runtime))))
-    (native-inputs (list autoconf automake libtool))
+     (substitute-keyword-arguments (package-arguments libfabric)
+       ((#:configure-flags flags)
+        #~(append (list (string-append "--with-rocr="
+                                       #$rocr-runtime))
+                  #$flags))))
     (inputs (modify-inputs (package-inputs libfabric)
               (append rocr-runtime)))))
 
@@ -363,43 +355,26 @@ backends.")
 
 ; ucx built with rocm
 (define (make-ucx-rocm roct-thunk rocr-runtime hipamd)
-  (package
-    (inherit ucx)
-    (name "ucx")
-    (version (string-append "1.14.1-rocm-"
+  (package/inherit ucx
+    (name "ucx-rocm")
+    (version (string-append (package-version ucx) ".rocm"
                             (package-version hipamd)))
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/openucx/ucx")
-             (commit "v1.14.1")))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "0jij2qzy655f1k3slj05lr679zflavj9f3g9bzlnxbqv524a0250"))))
     (arguments
-     (list
-      #:configure-flags #~(list
-                           ;; XXX: Disable optimizations specific to the build
-                           ;; machine (AVX, etc.)  There's apparently no way to
-                           ;; have them picked up at load time.
-                           "--disable-optimizations"
-
-                           ;; "--enable-mt"
-                           "--disable-logging"
-                           "--disable-debug"
-                           "--disable-assertions"
-                           "--disable-params-check"
-                           "--without-cuda"
-                           "--without-knem"
-                           "--without-java"
-                           (string-append "--with-rocm="
-                                          #$(this-package-input "rocr-runtime"))
-                           (string-append "--with-hip="
-                                          #$(this-package-input "hipamd")))
-      #:make-flags #~(list "V=1")))
-    (native-inputs (list autoconf automake libtool pkg-config roct-thunk))
-    (inputs (list numactl hipamd rocr-runtime))
+     (substitute-keyword-arguments (package-arguments ucx)
+       ((#:configure-flags flags)
+        #~(append (list "--without-cuda"
+                        "--without-knem"
+                        "--without-java"
+                        (string-append "--with-rocm="
+                                       #$(this-package-input "rocr-runtime"))
+                        (string-append "--with-hip="
+                                       #$(this-package-input "hipamd")))
+                  #$flags))))
+    (native-inputs (modify-inputs (package-native-inputs ucx)
+                     (append roct-thunk)))
+    (inputs (modify-inputs (package-inputs ucx)
+              (append hipamd)
+              (append rocr-runtime)))
     (properties `((tunable? . #t) ,@(package-properties ucx)))))
 
 (define-public ucx-rocm-5.7
@@ -416,48 +391,33 @@ backends.")
 
 ; openmpi built with ucx-rocm and libfabric-rocm
 (define (make-openmpi-rocm ucx ofi hipamd)
-  (package
-    (inherit openmpi)
-    (version (string-append "5.0.2-rocm-"
+  (package/inherit openmpi-5
+    (name (string-append (package-name openmpi-5) "-rocm"))
+    (version (string-append (package-version openmpi-5) ".rocm"
                             (package-version hipamd)))
-    (source
-     (origin
-       (method url-fetch)
-       (uri
-        "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.2.tar.bz2")
-       (sha256
-        (base32 "13v9jqrqnr0ir3fv7hqb18rqrwybfzwbyq11fxqgzhz2xs7asipf"))))
     (arguments
-     (list
-      #:configure-flags #~(list
-                           ;; "--enable-mca-no-build=btl-uct"
-                           ;; "--enable-mpi1-compatibility"
-                           "--with-pmix=internal"
-                           (string-append "--with-rocm="
-                                          #$(this-package-input "hipamd"))
-                           (string-append "--with-ucx="
-                                          #$(this-package-input "ucx"))
-                           (string-append "--with-ofi="
-                                          #$(this-package-input "libfabric")))
-      #:phases #~(modify-phases %standard-phases
-                   ;; opensm is needed for InfiniBand support.
-                   (add-after 'unpack 'find-opensm-headers
-                     (lambda* (#:key inputs #:allow-other-keys)
-                       (setenv "C_INCLUDE_PATH"
-                               (search-input-directory inputs
-                                                       "/include/infiniband"))
-                       (setenv "CPLUS_INCLUDE_PATH"
-                               (search-input-directory inputs
-                                                       "/include/infiniband")))))))
-    (native-inputs (list perl python-wrapper pkg-config))
-    (inputs (list hwloc-2
-                  libevent
-                  opensm
-                  rdma-core
-                  gfortran
-                  ucx
-                  ofi
-                  hipamd))))
+     (substitute-keyword-arguments (package-arguments openmpi-5)
+       ((#:configure-flags flags)
+        #~(append (list (string-append "--with-rocm="
+                                       #$(this-package-input "hipamd"))
+                        (string-append "--with-ofi="
+                                       #$(this-package-input "libfabric")))
+                  #$flags))
+       ((#:phases phases '%standard-phases)
+        #~(modify-phases #$phases
+            ;; opensm is needed for InfiniBand support.
+            (add-after 'unpack 'find-opensm-headers
+              (lambda* (#:key inputs #:allow-other-keys)
+                (setenv "C_INCLUDE_PATH"
+                        (search-input-directory inputs
+                                                "/include/infiniband"))
+                (setenv "CPLUS_INCLUDE_PATH"
+                        (search-input-directory inputs
+                                                "/include/infiniband"))))))))
+    (inputs (modify-inputs (package-inputs openmpi-5)
+              (replace "ucx" ucx)
+              (replace "libfabric" ofi)
+              (append hipamd)))))
 
 (define-public openmpi-rocm-5.7
   (make-openmpi-rocm ucx-rocm-5.7 ofi-rocm-5.7 hipamd-5.7))

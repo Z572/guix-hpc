@@ -34,7 +34,7 @@
   #:use-module (gnu packages rpc)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages cpp)
-  #:use-module (inria solverstack)
+  #:use-module (guix-hpc packages solverstack)
   #:use-module (inria mpi)
   #:use-module (inria storm)
   #:use-module (inria tadaam)

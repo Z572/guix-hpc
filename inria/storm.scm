@@ -9,6 +9,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix git-download)
   #:use-module (guix licenses)
+  #:use-module (guix-hpc packages mpi)
   #:use-module (gnu packages)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages mpi)
@@ -16,12 +17,12 @@
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages gdb)
+  #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages python)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages check)
-  #:use-module (inria tadaam)
   #:use-module (inria eztrace)
   #:use-module (inria llvm)
   #:use-module (inria mpi)
@@ -100,7 +101,9 @@
      (list gfortran
            pkg-config
            gdb
+           help2man
            libtool
+           python-wrapper ; required to generate manpages of Python scripts and for some tests
            autoconf
            automake))                             ;used upon test failure
     (inputs (list fftw fftwf))
@@ -150,7 +153,8 @@ kernels are executed as efficiently as possible.")
                ;; ensure a portable and reproducible cross-compilation. In
                ;; the future, it would be nice to give the opportunity to
                ;; change it at will when parametrized packages will be there.
-               '("--enable-maxcpus=128"))
+               '("--enable-maxcpus=128"
+                 "--enable-maxnumanodes=16"))
 
          ;; XXX: When using '--with-input=openmpi=nmad', the resulting input
          ;; label remains "openmpi" so we cannot really look for "nmad",
@@ -225,8 +229,6 @@ kernels are executed as efficiently as possible.")
                                    `(,hwloc "lib") ;hwloc 2.x
                                    )))))
 
-; next release of StarPU will have an optional dependency on tadaam/mpi_sync_clocks: don't forget to add it !
-
 (define-public starpu
   starpu-1.4)
 
@@ -246,11 +248,7 @@ kernels are executed as efficiently as possible.")
     (inherit starpu)
     (name "starpu-fxt")
     (inputs (modify-inputs (package-inputs starpu)
-              (prepend fxt)))
-    ;; some tests require python.
-    (native-inputs
-     (modify-inputs (package-native-inputs starpu)
-       (prepend python-wrapper)))))
+              (prepend fxt mpi_sync_clocks)))))
 
 (define-public starpu+simgrid
   (package
@@ -265,11 +263,7 @@ kernels are executed as efficiently as possible.")
               (prepend simgrid fxt+static)))
     (propagated-inputs
      (modify-inputs (package-propagated-inputs starpu)
-       (delete "openmpi")))
-    ;; some tests require python.
-    (native-inputs
-     (modify-inputs (package-native-inputs starpu)
-       (prepend python-wrapper)))))
+       (delete "openmpi")))))
 
 (define-public parcoach
   (package

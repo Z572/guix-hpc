@@ -6,7 +6,7 @@
                 #:prefix license:)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
-  #:use-module (inria solverstack)
+  #:use-module (guix-hpc packages solverstack)
   #:use-module (lrz librsb)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages bison)

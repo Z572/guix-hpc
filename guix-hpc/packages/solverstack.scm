@@ -1,9 +1,9 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2021, 2022, 2023 Inria
+;;; Copyright © 2017, 2019, 2021, 2022, 2023, 2024 Inria
 
-(define-module (inria solverstack)
+(define-module (guix-hpc packages solverstack)
   #:use-module (guix)
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
@@ -11,6 +11,7 @@
                 #:prefix license:)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (guix-hpc packages mpi)
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages bison)
@@ -28,7 +29,6 @@
   #:use-module (gnu packages pretty-print)
   #:use-module (inria mpi)
   #:use-module (inria storm)
-  #:use-module (inria tadaam)
   #:use-module (inria eztrace)
   #:use-module (inria simgrid)
   #:use-module (inria mipp)
@@ -170,7 +170,7 @@ of the available resources.")
 (define-public dplasma
   (package
     (name "dplasma")
-    (version "20230802")
+    (version "20240819")
     (home-page "https://github.com/ICLDisco/dplasma")
     (synopsis
      "Dense linear algebra package for distributed, accelerated, heterogeneous systems.")
@@ -188,11 +188,11 @@ Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "45831f1862f977ac5cc485887c77f6f207ebda2b")
+             (commit "5fa144b87c0c10032981f09fc9c60d3d0544c847")
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "058zc4xg7mfvgyg9yhsa0n4xdl725a86nh0i0dg5s2libinvgi4y"))))
+        (base32 "0lszhh8b23spsgsa1w3jfxlq11clpsv9jnkch8gb9dga263ndwxn"))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
@@ -232,9 +232,15 @@ area (CPUs-GPUs, distributed nodes).")
              ;; We need the submodule in 'CMakeModules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
-       (patches (search-patches "inria/patches/chameleon-cpp.patch"))
+       (patches (search-patches "guix-hpc/packages/patches/chameleon-cpp.patch"))
        (sha256
-        (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))))
+        (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))
+       (modules '((guix build utils)))
+       ;; Do not install 'config.log' to avoid retaining a reference to GCC,
+       ;; GFortran, etc.
+       (snippet #~(substitute* "cmake_modules/PrintOpts.cmake"
+                    (("^INSTALL.*config\\.log.*" all)
+                     (string-append "# " all "\n"))))))
     (build-system cmake-build-system)
     (outputs '("debug" "out"))
     (arguments
@@ -312,21 +318,7 @@ area (CPUs-GPUs, distributed nodes).")
        (patches (append (origin-patches (package-source
                                          chameleon+simgrid+nosmpi))
                         (search-patches
-                         "inria/patches/chameleon-simgrid-smpi.patch")))))
-    ;; (home-page "https://gitlab.inria.fr/solverstack/chameleon")
-    ;; (version "1.1.0")
-    ;; (source (origin
-    ;; (method git-fetch)
-    ;; (uri (git-reference
-    ;; (url home-page)
-    ;; (commit "4db899ca30d29927018d83964b9b6d517269abe1")
-    ;; ;; We need the submodule in 'CMakeModules/morse_cmake'.
-    ;; (recursive? #t)))
-    ;; (file-name (string-append name "-" version "-checkout"))
-    ;; (sha256
-    ;; (base32
-    ;; "0mpnacmkn1287c003a6n3c4r0n395l6fnjilzi7z53lb34s8kaap"))
-    ;; (patches (search-patches "inria/patches/chameleon-simgrid-smpi.patch"))))
+                         "guix-hpc/packages/patches/chameleon-simgrid-smpi.patch")))))
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon+simgrid+nosmpi)
        ((#:configure-flags flags
@@ -883,19 +875,19 @@ etc.")
 (define-public pastix-6
   (package
     (name "pastix")
-    (version "6.3.2")
+    (version "6.4.0")
     (home-page "https://gitlab.inria.fr/solverstack/pastix")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "bff79df1a462e5be8b3cbdaef5787a9017aa8622")
+             (commit (string-append "v" version))
              ;; We need the submodule in 'cmake_modules/morse'.
              (recursive? #t)))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0fyf64v848qb4vsw14gskaxifbjpk2df8p02k3wv2mqljkj3vlzq"))))
+        (base32 "1xkadsvdrf7bw9a5hf4mh7zgxigqwgi17n39fk9h6l8j2lhldg3m"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DPASTIX_WITH_MPI=ON"
@@ -1449,7 +1441,7 @@ this limitation.")
        (uri (git-reference
              (url home-page)
              (commit "b0b9d3f29298b719f9e4f684deae713c0a224b0e")))
-       (patches (search-patches "inria/patches/scalable-python.patch"
+       (patches (search-patches "guix-hpc/packages/patches/scalable-python.patch"
                                 "python-2.7-search-paths.patch"
                                 "python-2-deterministic-build-info.patch"
                                 "python-2.7-site-prefixes.patch"))
@@ -1572,12 +1564,12 @@ for manual interpretation.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "b99098de559f70a485b5bb296a2de3cf05d53dde")
+             (commit "3518924e85ae844033e1b9d49b05f79fb47de6ad")
              ;; We need the submodule in 'cmake_modules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version))
        (sha256
-        (base32 "03vhqsxg7y9p8ccqlcg657ds0rhpdzdsd4mjmgh3w9hr0fsanjgr"))))
+        (base32 "03i7sqs11qp38s520207524b7cy0g67zb7gf05jld7f96rvqssyd"))))
     (arguments
      '(#:configure-flags '("-Dscalfmm_BUILD_EXAMPLES=ON"
                            "-Dscalfmm_BUILD_TOOLS=ON"
