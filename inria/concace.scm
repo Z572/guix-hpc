@@ -26,13 +26,16 @@
   #:use-module (gnu packages emacs)
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages freedesktop) ;; for xdg-utils
   #:use-module (gnu packages fontutils) ;; for fontconfig, e.g. used by emacs-all-the-icons
+  #:use-module (gnu packages fonts)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gdb)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
+  #:use-module (gnu packages less)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
@@ -341,8 +344,12 @@ a source code input file.")
           emacs-elementaryx-early-init
           emacs-evil
           emacs-which-key
+	  less
+	  lesspipe ;; extends less if LESSOPEN environment variable is setup
           man-db
-          man-pages))))
+          man-pages
+	  xdg-utils ;; for xdg-open
+	  ))))
 
 ;; emacs-elementaryx-minimal with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -364,11 +371,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "d2192bbd3ff021de769fb35733823fd2212bd544")))
+                    (commit "d84bbc1c87b6fb0de3c5cbd4225727cdfce885ed")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1qk33n3zyr7gi72385rawavyqrdl4hixjvab0kxp1q2n3zxyijqf"))))
+                "0jqh9w971fbzarcp426ghsmd0rmsfk6x9blr5ingj1d0m2p91d8y"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -426,8 +433,7 @@ for treemacs.")
    (build-system emacs-build-system)
    (propagated-inputs
     ;; (list emacs-treemacs-extra-light)
-    (list emacs-treemacs-extra-2024)
-    )))
+    (list emacs-cfrs emacs-treemacs-extra-2024))))
 
 ;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-all-the-icons`
 (define-public emacs-elementaryx-all-the-icons
@@ -499,9 +505,6 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 	   ;; Note: out-of-the-box emacs-treemacs nerd support?
 	   fontconfig
 	   ))))
-
-;; TODO emacs-vscode-dark-plus
-;; TODO emacs-vscode-icons
 
 ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
 ;; Use emacs-elementaryx-org-minimal publicly defined below instead
@@ -1163,6 +1166,63 @@ scheme.")
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx))))
+
+(define-public elementaryx-escode
+  (package
+    (name "elementaryx-escode")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-escode")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for ESCode, the Elementaryx fake true Studio Code.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for ESCode, the Elementaryx fake true Studio Code.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "5bed1e066d51bb522ffed10338fa8d2dcada65b7")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"05wx4n9kqsppmq19bz3257jv7k4kzvcw501x3ad8pp2iyf68x6j4"))))
+    (build-system emacs-build-system)
+    ;; We also define an elementaryx-escode executable wrapper call for easy call
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+		      (add-after 'install 'install-scripts
+				 (lambda* (#:key outputs #:allow-other-keys)
+				   (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+				     ;; Ensure the 'bin' directory exists
+				     (mkdir-p bin)
+				     ;; Create a script called 'elementaryx-escode'
+				     (call-with-output-file (string-append bin "/elementaryx-escode")
+				       (lambda (port)
+					 (format port "#!/usr/bin/env bash\n")
+					 (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-escode))\" --init-dir=$XDG_CONFIG_HOME/escode/ \"$@\"\n")))
+				     ;; Make the 'elementaryx-escode' script executable
+				     (chmod (string-append bin "/elementaryx-escode") #o755)
+				     ;; ;; Create a script called 'elementaryx-escode-nested-guix' ; TODO: how to escape $@ in bash -c ''?
+				     ;; (call-with-output-file (string-append bin "/elementaryx-escode-nested-guix")
+				     ;;   (lambda (port)
+				     ;; 	 (format port "#!/usr/bin/env bash\n")
+				     ;; 	 (format port "bash -c 'GUIX_PROFILE=\"/guix\" ; . \"$GUIX_PROFILE/etc/profile\" ; emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-escode))\" --init-dir=\\$XDG_CONFIG_HOME/escode/ \"$@\"'\n")))
+				     ;; ;; Make the 'elementaryx-escode-nested-guix' script executable
+				     ;; (chmod (string-append bin "/elementaryx-escode-nested-guix") #o755)
+				     #t))))))
+    (propagated-inputs
+     (list emacs-centaur-tabs
+	   emacs-dashboard
+	   emacs-elementaryx
+	   emacs-highlight-indentation ;; possible alternative: emacs-highlight-indent-guides
+	   emacs-minimap
+	   emacs-vscode-dark-plus ;; ;; TODO emacs-vscode-icons; with nerd-icons?
+	   fontconfig
+	   font-google-noto ;; TODO: investigate other fonts: font-dejavu font-liberation font-fira-code font-fira-mono font-hack font-adobe-source-code-pro
+	   ))))
+
 
 ;; site-start.el is already deployed by guix.
 ;; As a consequence the following package would have no effect.
