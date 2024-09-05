@@ -135,7 +135,7 @@
 (define-public clang-rocm-5.4
   (make-clang-rocm llvm-rocm-5.4 clang-runtime-rocm-5.4 clang-15))
 (define-public clang-rocm-5.3
-  (make-clang-rocm llvm-rocm-5.3 clang-runtime-rocm-5.5 clang-15))
+  (make-clang-rocm llvm-rocm-5.3 clang-runtime-rocm-5.3 clang-15))
 
 ; lld
 (define (make-lld-rocm llvm-rocm lld)
