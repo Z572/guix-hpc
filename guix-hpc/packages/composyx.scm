@@ -27,7 +27,7 @@
 (define-public composyx
   (package
     (name "composyx")
-    (version "1.0.1")
+    (version "1.1.0")
     (home-page "https://gitlab.inria.fr/composyx/composyx.git")
     (synopsis "Composable numerical solver")
     (description
@@ -46,7 +46,7 @@ node supercomputer parallel computations.")
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1bl26vj7wygi6wdf3hqfpbhlbfbjfcjkh2834zzj3gqn18m019wm"))))
+        (base32 "0h6iqs5qazhqasn8r8glv9nsrgggwwn09bw9vb311sgpi43qp9s4"))))
     (arguments
      '(#:configure-flags '("-DCOMPOSYX_USE_EIGEN=OFF"
                            "-DCOMPOSYX_USE_FABULOUS=ON"
@@ -76,7 +76,7 @@ node supercomputer parallel computations.")
                   arpack-ng
                   paddle
                   fabulous
-                  chameleon+nompi))
+                  chameleon))
     (propagated-inputs (list `(,hwloc "lib") openmpi))
     (native-inputs (list gfortran pkg-config openssh))
     (properties '((tunable? . #t)))))
@@ -106,7 +106,9 @@ node supercomputer parallel computations.")
     (name "composyx-minimal")
     (arguments (substitute-keyword-arguments (package-arguments composyx)
                  ((#:configure-flags flags)
-                  ''("-DCOMPOSYX_USE_PASTIX=OFF" "-DCOMPOSYX_USE_MUMPS=OFF"
+                  ''("-DCOMPOSYX_USE_PASTIX=OFF"
+		     "-DCOMPOSYX_USE_MUMPS=OFF"
+		     "-DCOMPOSYX_USE_CHAMELEON=OFF"
                      "-DCOMPOSYX_USE_ARPACK=OFF"
                      "-DCOMPOSYX_DRIVERS=OFF"
                      "-DCOMPOSYX_C_DRIVER=OFF"
@@ -114,7 +116,7 @@ node supercomputer parallel computations.")
                      "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
                      "-DCOMPOSYX_COMPILE_TESTS=ON"))))
     (inputs (modify-inputs (package-inputs composyx)
-              (delete "pastix" "mumps" "arpack" "paddle" "fabulous")))))
+              (delete "pastix" "mumps" "arpack" "paddle" "fabulous" "chameleon")))))
 
 ;; Minimal + pastix and arpack-ng dependencies
 (define-public composyx-lite
@@ -122,7 +124,9 @@ node supercomputer parallel computations.")
     (name "composyx-lite")
     (arguments (substitute-keyword-arguments (package-arguments composyx)
                  ((#:configure-flags flags)
-                  ''("-DCOMPOSYX_USE_PASTIX=ON" "-DCOMPOSYX_USE_MUMPS=OFF"
+                  ''("-DCOMPOSYX_USE_PASTIX=ON"
+		     "-DCOMPOSYX_USE_MUMPS=OFF"
+		     "-DCOMPOSYX_USE_CHAMELEON=OFF"
                      "-DCOMPOSYX_USE_ARPACK=ON"
                      "-DCOMPOSYX_DRIVERS=OFF"
                      "-DCOMPOSYX_C_DRIVER=OFF"
@@ -130,7 +134,7 @@ node supercomputer parallel computations.")
                      "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
                      "-DCOMPOSYX_COMPILE_TESTS=ON"))))
     (inputs (modify-inputs (package-inputs composyx)
-              (delete "mumps" "paddle" "fabulous")))))
+              (delete "mumps" "paddle" "fabulous" "chameleon")))))
 
 ;; composyx with librsb for sparse matrix operations
 (define-public composyx-librsb
