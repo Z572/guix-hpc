@@ -6,7 +6,8 @@
 (define-module (guix-hpc packages utils)
   #:use-module (guix)
   #:use-module (guix git-download)
-  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix licenses)
+                #:prefix license:)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system r)
@@ -39,70 +40,70 @@
   #:use-module (gnu packages fabric-management)
   ;; To remove when/if python2 packages sympy and mpi4py
   ;; are fixed in official repo
-  #:use-module (guix build-system python)
-  )
+  #:use-module (guix build-system python))
 
 (define-public r-rlist
-(package
- (name "r-rlist")
- (version "0.4.6.1")
- (source
-  (origin
-   (method url-fetch)
-   (uri (cran-uri "rlist" version))
-   (sha256
-    (base32
-     "08awy2p7rykc272wvvya4ddszbr7b7s7qv4wr3hs8ylr4jqlh0dv"))))
- (properties `((upstream-name . "rlist")))
- (build-system r-build-system)
- (propagated-inputs
-  (list r-data-table r-jsonlite r-xml r-yaml))
- (home-page "https://renkun.me/rlist")
- (synopsis
-  "A Toolbox for Non-Tabular Data Manipulation")
- (description
-  "This package provides a set of functions for data manipulation with list objects, including mapping, filtering, grouping, sorting, updating, searching, and other useful functions.  Most functions are designed to be pipeline friendly so that data processing with lists can be chained.")
- (license license:expat)))
+  (package
+    (name "r-rlist")
+    (version "0.4.6.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "rlist" version))
+       (sha256
+        (base32 "08awy2p7rykc272wvvya4ddszbr7b7s7qv4wr3hs8ylr4jqlh0dv"))))
+    (properties `((upstream-name . "rlist")))
+    (build-system r-build-system)
+    (propagated-inputs (list r-data-table r-jsonlite r-xml r-yaml))
+    (home-page "https://renkun.me/rlist")
+    (synopsis "A Toolbox for Non-Tabular Data Manipulation")
+    (description
+     "This package provides a set of functions for data manipulation with list objects, including mapping, filtering, grouping, sorting, updating, searching, and other useful functions.  Most functions are designed to be pipeline friendly so that data processing with lists can be chained.")
+    (license license:expat)))
 
 (define-public sz-compressor
   (package
-   (name "sz-compressor")
-   (version "2.1.11")
-   (home-page "https://github.com/szcompressor/SZ")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit (string-append "v" version))))
-            (file-name (git-file-name name version))
-            (sha256 (base32 "0kzmiigh12aysaq5nnapsh5vrcpvqc7nl21km4hz4xrmp94n2x9c"))))
-   (build-system cmake-build-system)
-   (arguments
-    '(#:build-type "Release"))
-   (synopsis "GUIX package for the SZ compressor.")
-   (description "GUIX package for the SZ compressor.")
-   (license license:gpl3+)))
+    (name "sz-compressor")
+    (version "2.1.11")
+    (home-page "https://github.com/szcompressor/SZ")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0kzmiigh12aysaq5nnapsh5vrcpvqc7nl21km4hz4xrmp94n2x9c"))))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:build-type "Release"))
+    (synopsis "GUIX package for the SZ compressor.")
+    (description "GUIX package for the SZ compressor.")
+    (license license:gpl3+)))
 
 (define-public sz3-compressor
   (package
-   (name "sz3-compressor")
-   (version "3.1.8")
-   (home-page "https://github.com/szcompressor/SZ3")
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url home-page)
-                  (commit (string-append "v" version))))
-            (file-name (git-file-name name version))
-            (sha256 (base32 "08hjcqmw49wika5crmqi74vi7lpb79krr7rkn54bp5hsh7ycsqx7"))))
-   (build-system cmake-build-system)
-   (arguments
-    '(#:build-type "Release"))
-   (native-inputs (list pkg-config))
-   (propagated-inputs (list `(,zstd "lib")))
-   (synopsis "GUIX package for the SZ3 compressor.")
-   (description "GUIX package for the SZ3 compressor.")
-   (license license:gpl3+)))
+    (name "sz3-compressor")
+    (version "3.1.8")
+    (home-page "https://github.com/szcompressor/SZ3")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "08hjcqmw49wika5crmqi74vi7lpb79krr7rkn54bp5hsh7ycsqx7"))))
+    (build-system cmake-build-system)
+    (arguments
+     '(#:build-type "Release"))
+    (native-inputs (list pkg-config))
+    (propagated-inputs (list `(,zstd "lib")))
+    (synopsis "GUIX package for the SZ3 compressor.")
+    (description "GUIX package for the SZ3 compressor.")
+    (license license:gpl3+)))
 
 (define-public zfp
   (package
@@ -129,38 +130,38 @@
 
 (define-public python-expecttest
   (package
-   (name "python-expecttest")
-   (version "0.1.3")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "expecttest" version))
-     (sha256
-      (base32
-       "16hlaymwnwz0iqghfh7aj850xf8d0x50kv8kxn51550xh6apc1c3"))))
-   (build-system python-build-system)
-   (home-page "https://github.com/ezyang/ghstack")
-   (synopsis "This library implements expect tests (also known as 'golden'
+    (name "python-expecttest")
+    (version "0.1.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "expecttest" version))
+       (sha256
+        (base32 "16hlaymwnwz0iqghfh7aj850xf8d0x50kv8kxn51550xh6apc1c3"))))
+    (build-system python-build-system)
+    (home-page "https://github.com/ezyang/ghstack")
+    (synopsis "This library implements expect tests (also known as 'golden'
 tests).")
-   (description "Expect tests are a method of writing tests where instead of
+    (description
+     "Expect tests are a method of writing tests where instead of
 hard-coding the expected output of a test, you run the test to get the output,
 and the test framework automatically populates the expected output.")
-   (license license:expat)))
+    (license license:expat)))
 
 (define-public redox
   (package
     (name "redox")
     (version "0.3") ;no official releases, according to HISTORY.md
     (home-page "https://github.com/mpoquet/redox") ;this fork contains additionnal commits to generate pkg-config files
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "e7904da79d5360ba22fbab64b96be167b6dda5f6")))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "0mmxrjfidcm5fq233wsgjb9rj81hq78rn52c02vwfmz8ax9bc5yg"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "e7904da79d5360ba22fbab64b96be167b6dda5f6")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0mmxrjfidcm5fq233wsgjb9rj81hq78rn52c02vwfmz8ax9bc5yg"))))
     (build-system cmake-build-system)
     (arguments
      '(#:build-type "Release"
@@ -180,22 +181,22 @@ and the test framework automatically populates the expected output.")
     (name "cpp-docopt")
     (version "0.6.3")
     (home-page "https://github.com/docopt/docopt.cpp")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "0cz3vv7g5snfbsqcf3q8bmd6kv5qp84gj3avwkn4vl00krw13bl7"))))
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0cz3vv7g5snfbsqcf3q8bmd6kv5qp84gj3avwkn4vl00krw13bl7"))))
     (build-system cmake-build-system)
     (arguments
      '(#:build-type "Release"
        #:tests? #f))
     (synopsis "C++11 port of docopt")
     (description
-      "docopt helps you:
+     "docopt helps you:
 - define the interface for your command-line app, and
 - automatically generate a parser for it.
 docopt is based on conventions that have been used for decades in help messages
@@ -302,7 +303,7 @@ multilevel checkpointing in large scale supercomputers.")
     (arguments
      (list
       #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
-				;; don't use vendored dependencies
+                                ;; don't use vendored dependencies
                                 "-DUSE_DEFAULT=SYSTEM")))
     (native-inputs (list pkg-config gfortran))
     (inputs (list libyaml))
@@ -352,11 +353,13 @@ array ranks supported by a given compiler.")
         (base32 "17zmjid1vjvpmvgd1k023ljk8yygqw18xilx78b7pxg7xws3w0bg"))))
     (build-system cmake-build-system)
     (arguments
-     (list #:configure-flags #~(list "-DMDSPAN_ENABLE_TESTS=ON"
-                                     "-DMDSPAN_USE_SYSTEM_GTEST=ON")))
+     (list
+      #:configure-flags #~(list "-DMDSPAN_ENABLE_TESTS=ON"
+                                "-DMDSPAN_USE_SYSTEM_GTEST=ON")))
     (native-inputs (list googletest))
     (synopsis "Reference implementation of mdspan targeting C++23")
-    (description "This package aims to provide a production-quality implementation of
+    (description
+     "This package aims to provide a production-quality implementation of
 the ISO-C++ proposal P0009, which will add support for non-owning
 multi-dimensional array references to the C++ standard library.")
     (home-page "https://github.com/kokkos/mdspan")
@@ -381,7 +384,8 @@ multi-dimensional array references to the C++ standard library.")
       #:configure-flags #~(list "-DGINKGO_BUILD_BENCHMARKS=OFF")))
     (native-inputs (list googletest))
     (synopsis "Numerical linear algebra software package")
-    (description "Ginkgo is a high-performance numerical linear algebra library for
+    (description
+     "Ginkgo is a high-performance numerical linear algebra library for
 many-core systems, with a focus on solution of sparse linear systems.")
     (home-page "https://ginkgo-project.github.io/")
     (license license:bsd-2)))
