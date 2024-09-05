@@ -110,8 +110,7 @@
     (inherit clang)
     (name "rocm-clang")
     (version (package-version llvm-rocm))
-    (source
-     (rocm-origin "llvm-project" version))
+    (source (package-source clang-runtime-rocm))
     (inputs (modify-inputs (package-inputs clang)
               (delete "clang-tools-extra")))
     (propagated-inputs (modify-inputs (package-propagated-inputs clang)
