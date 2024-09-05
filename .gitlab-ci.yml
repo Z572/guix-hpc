@@ -23,6 +23,8 @@ check_merge_request_status:
   environment: merge_request_status
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  variables:
+    DEBUG_VARS: "--verbose"
   script:
     - git clone $CI_SERVER_URL/guix-hpc/ci-tools.git ci-tools
     - ./ci-tools/handle-merge-request.sh
