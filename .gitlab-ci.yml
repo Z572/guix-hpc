@@ -26,5 +26,7 @@ check_merge_request_status:
   variables:
     DEBUG_VARS: "--verbose"
   script:
+    - echo $CI_PROJECT_NAME
+    - echo $CI_PROJECT_TITLE
     - git clone $CI_SERVER_URL/guix-hpc/ci-tools.git ci-tools
     - ./ci-tools/handle-merge-request.sh
