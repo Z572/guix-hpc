@@ -14,7 +14,8 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages cpp)
-  #:use-module (amd packages rocm-hip))
+  #:use-module (amd packages rocm-hip)
+  #:use-module (amd packages rocm-libs))
 
 (define-public kokkos-openmp
   (package/inherit kokkos
@@ -78,6 +79,8 @@ threads support)")))
             (delete 'remove-cruft)))))
     (inputs
      (modify-inputs (package-inputs kokkos)
-       (prepend hipamd-5.7)))
+       (prepend hipamd-5.7)
+       (append rocthrust-5.7)
+       (append rocprim-5.7)))
     (synopsis "C++ abstractions for parallel execution and data management (with HIP
 support)")))
