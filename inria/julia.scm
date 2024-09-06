@@ -139,10 +139,8 @@
 
            ;; The test suite takes many times longer than building and
            ;; can easily fail on smaller machines when they run out of memory.
-           ;; FIXME: they work, but let's speed up the build process atm
-           #:tests? #f
-           ;; #:tests? ,(not (or (%current-target-system)
-           ;; (target-aarch64?)))
+           #:tests? (not (or (%current-target-system)
+                             (target-aarch64?)))
 
            ;; Do not strip binaries to keep support for full backtraces.
            ;; See https://github.com/JuliaLang/julia/issues/17831
