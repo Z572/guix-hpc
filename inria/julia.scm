@@ -139,10 +139,8 @@
 
            ;; The test suite takes many times longer than building and
            ;; can easily fail on smaller machines when they run out of memory.
-           ;; FIXME: they work, but let's speed up the build process atm
-           #:tests? #f
-           ;; #:tests? ,(not (or (%current-target-system)
-           ;; (target-aarch64?)))
+           #:tests? (not (or (%current-target-system)
+                             (target-aarch64?)))
 
            ;; Do not strip binaries to keep support for full backtraces.
            ;; See https://github.com/JuliaLang/julia/issues/17831
@@ -385,7 +383,36 @@
                    (substitute* "test/spawn.jl"
                      (("shcmd = `sh`")
                       (string-append "shcmd = `"
-                                     (which "sh") "`")))))
+                                     (which "sh") "`")))
+
+                   ;; Some tests only check to see if the input is the correct version.
+                   (substitute* "stdlib/PCRE2_jll/test/runtests.jl"
+                     (("10\\.42\\.0")
+                      #$(package-version (this-package-input "pcre2"))))
+                   (substitute* "stdlib/MbedTLS_jll/test/runtests.jl"
+                     (("2\\.28\\.0")
+                      #$(package-version (this-package-input "mbedtls-apache"))))
+                   (substitute* "stdlib/MPFR_jll/test/runtests.jl"
+                     (("4\\.2\\.0")
+                      #$(package-version (this-package-input "mpfr"))))
+                   (substitute* "stdlib/GMP_jll/test/runtests.jl"
+                     (("6\\.2\\.1")
+                      #$(package-version (this-package-input "gmp"))))
+                   (substitute* "stdlib/LibGit2_jll/test/runtests.jl"
+                     (("1\\.5\\.1")
+                      #$(package-version (this-package-input "libgit2"))))
+                   (substitute* "stdlib/nghttp2_jll/test/runtests.jl"
+                     (("1\\.49\\.0")
+                      #$(package-version (this-package-input "nghttp2"))))
+                   (substitute* "stdlib/Zlib_jll/test/runtests.jl"
+                     (("1\\.2\\.13")
+                      #$(package-version (this-package-input "zlib"))))
+                   (substitute* "stdlib/SuiteSparse_jll/test/runtests.jl"
+                     (("5013")
+                      #$(string-replace-substring
+                         (version-major+minor
+                          (package-version
+                           (this-package-input "suitesparse"))) "." "0")))))
                (add-before 'check 'disable-broken-tests
                  (lambda* (#:key inputs #:allow-other-keys)
                    ;; disabling REPL tests because they require a stdin
@@ -548,7 +575,7 @@ using Dates: @dateformat_str, Date, DateTime, DateFormat, Time"))
                   gmp
                   lapack
                   libblastrampoline
-                  libgit2
+                  libgit2-1.5
                   `(,nghttp2 "lib")
                   libssh2
                   libunwind-julia
