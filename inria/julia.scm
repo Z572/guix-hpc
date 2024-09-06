@@ -119,7 +119,7 @@
 (define-public julia
   (package
     (name "julia")
-    (version "1.9.4")
+    (version "1.9.3")
     (source
      (origin
        (method url-fetch)
@@ -127,7 +127,7 @@
              "https://github.com/JuliaLang/julia/releases/download/v" version
              "/julia-" version ".tar.gz"))
        (sha256
-        (base32 "15xv325ynwpl52dl1kbp937lq6n8f9v21h0wv6n8wqd7gwn8hkjb"))
+        (base32 "0788hbcr1v89crv2j3insy89lxs0zwjbxk9q73jpj4g7j26bszcd"))
        (patches (search-patches "julia-SOURCE_DATE_EPOCH-mtime.patch"
                                 "inria/patches/julia.patch"))))
     (build-system gnu-build-system)
