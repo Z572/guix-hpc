@@ -26,7 +26,7 @@
 (define-public adios2
   (package
     (name "adios2")
-    (version "2.10.0-rc1")
+    (version "2.10.1")
     (source
      (origin
        (method git-fetch)
@@ -34,7 +34,7 @@
              (url "https://github.com/ornladios/ADIOS2")
              (commit (string-append "v" version))))
        (sha256
-        (base32 "1z19ifn6s7v5lwz8hahpr77zfp2lbckl2aw1qy590089rz1bqgw4"))))
+        (base32 "157d68vsww8wcrwpm9dc9lc5rpy922b28vy2rn9dhcfghix0vnzx"))))
     (build-system cmake-build-system)
     (arguments
      (list
