@@ -29,7 +29,12 @@
        ((#:phases phases '%standard-phases)
         #~(modify-phases #$phases
             ;; File is not present in CUDA build
-            (delete 'remove-cruft)))))
+            (delete 'remove-cruft)
+            (add-before 'configure 'dummy
+                (lambda _
+                  (format #t "Dummy phase executed.~%")
+                  (format #t "Newly failing but not built previously~%")
+                  (exit #f)))))))
     (synopsis "C++ abstractions for parallel execution and data management (with
 OpenMP support)")))
 
