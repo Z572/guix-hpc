@@ -339,7 +339,9 @@ a source code input file.")
               "08jb1cpiifpd3l8ynhml5zjrpxw0czpqlzsp4wnin1gm30c7ry5j"))))
    (build-system emacs-build-system)
    (propagated-inputs
+    ;; TODO move to a higher level package: bash-completion, diffutils, less, lesspipe, and maybe man-db and man-pages
     (list bash-completion
+	  diffutils ;; provides diff; used by diff-hl-flydiff-mode
           elementaryx-core
           emacs-elementaryx-early-init
           emacs-evil
@@ -379,31 +381,34 @@ a source code input file.")
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
-           emacs-elementaryx-minimal
-           emacs-cape
-           emacs-consult
-           emacs-consult-xdg-recent-files
-           emacs-corfu
-           ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
-           emacs-corfu-terminal
+	   emacs-elementaryx-minimal
+	   emacs-cape
+	   emacs-consult
+	   emacs-consult-xdg-recent-files
+	   emacs-corfu
+	   ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
+	   emacs-corfu-terminal
 	   ;;  emacs-dirvish TODO
-           emacs-embark
+	   emacs-embark
 	   emacs-guix
-           ;; emacs-embark-consult: library provided within emacs-embark package
-           ;; emacs-eshell
-           emacs-kind-icon
-           emacs-marginalia
-           emacs-multi-vterm
-           emacs-orderless
-           emacs-pdf-tools
-           emacs-ripgrep
-           emacs-vertico
-           ;; emacs-vertico-directory: library provided within emacs-vertico package
-           emacs-vterm-toggle
-           emacs-wgrep
+	   ;; emacs-embark-consult: library provided within emacs-embark package
+	   ;; emacs-eshell
+	   emacs-kind-icon
+	   emacs-marginalia
+	   emacs-move-text
+	   emacs-multi-vterm
+	   emacs-multiple-cursors
+	   emacs-orderless
+	   emacs-pdf-tools
+	   emacs-ripgrep
+	   emacs-undo-fu
+	   emacs-vertico
+	   ;; emacs-vertico-directory: library provided within emacs-vertico package
+	   emacs-vterm-toggle
+	   emacs-wgrep
 	   inetutils ;; for `hostname`, requested by liquidprompt
 	   liquidprompt ;; for nice PS1 prompt
-           ripgrep))))
+	   ripgrep))))
 
 ;; emacs-elementaryx-base with emacs instead of emacs-minimal
 ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
@@ -594,8 +599,10 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
                 "0s379man8frhbkzdlf46kgzg9bbipp40cp4nlzkfn188jq40w9m1"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-elementaryx-base
+     (list emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
+	   emacs-elementaryx-base
            emacs-editorconfig
+	   ;; emacs-git-gutter ;; for highlighting differences of current buffer with VC (alternative: emacs-diff-hl)
            emacs-json-mode
            emacs-magit
            emacs-yaml-mode
@@ -1143,7 +1150,23 @@ scheme.")
 (define-public emacs-elementaryx
   (package
    (inherit emacs-elementaryx-full)
-   (name "emacs-elementaryx")))
+   (name "emacs-elementaryx")
+   (arguments
+    `(#:phases
+      (modify-phases %standard-phases
+		     (add-after 'install 'install-scripts
+				(lambda* (#:key outputs #:allow-other-keys)
+				  (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+				    ;; Ensure the 'bin' directory exists
+				    (mkdir-p bin)
+				    ;; Create a script called 'elementaryx-emacs'
+				    (call-with-output-file (string-append bin "/elementaryx-emacs")
+				      (lambda (port)
+					(format port "#!/usr/bin/env bash\n")
+					(format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full))\" --init-dir=$XDG_CONFIG_HOME/emacs-elementaryx/ \"$@\"\n")))
+				    ;; Make the 'elementaryx-escode' script executable
+				    (chmod (string-append bin "/elementaryx-emacs") #o755)
+				    #t))))))))
 
 (define-public emacs-elementaryx-as-default
   (package
@@ -1201,7 +1224,8 @@ for ESCode, the Elementaryx fake true Studio Code.")
 				     (call-with-output-file (string-append bin "/elementaryx-escode")
 				       (lambda (port)
 					 (format port "#!/usr/bin/env bash\n")
-					 (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-escode))\" --init-dir=$XDG_CONFIG_HOME/escode/ \"$@\"\n")))
+					 (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(use-package elementaryx-escode)\" --init-dir=$XDG_CONFIG_HOME/escode/ \"$@\"\n")))
+					 ;; (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-escode))\" --init-dir=$XDG_CONFIG_HOME/escode/ \"$@\"\n")))
 				     ;; Make the 'elementaryx-escode' script executable
 				     (chmod (string-append bin "/elementaryx-escode") #o755)
 				     ;; ;; Create a script called 'elementaryx-escode-nested-guix' ; TODO: how to escape $@ in bash -c ''?
@@ -1215,13 +1239,63 @@ for ESCode, the Elementaryx fake true Studio Code.")
     (propagated-inputs
      (list emacs-centaur-tabs
 	   emacs-dashboard
-	   emacs-elementaryx
+	   emacs-elementaryx-full
 	   emacs-highlight-indentation ;; possible alternative: emacs-highlight-indent-guides
 	   emacs-minimap
 	   emacs-vscode-dark-plus ;; ;; TODO emacs-vscode-icons; with nerd-icons?
 	   fontconfig
 	   font-google-noto ;; TODO: investigate other fonts: font-dejavu font-liberation font-fira-code font-fira-mono font-hack font-adobe-source-code-pro
 	   ))))
+
+(define-public elementaryx-vym
+  (package
+    (name "elementaryx-vym")
+    (version "1.4.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-evil")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for Vym, the fake true VY iMprovised.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for Vym, the fake ture VY iMprovised. Version of Elementaryx with
+vim-like keybindings. Based on evil and related packages such as
+evil-collection.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "5b2f8d72ebd8b0fc5febe8162376370f451de952")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1v2nr5dy0bjv9cc4inp4z6sg7ilc6hqwpbb7lkkfdyijrzglnsj4"))))
+    (build-system emacs-build-system)
+    ;; We also define an elementaryx-vym executable wrapper call for easy call
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+		      (add-after 'install 'install-scripts
+				 (lambda* (#:key outputs #:allow-other-keys)
+				   (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+				     ;; Ensure the 'bin' directory exists
+				     (mkdir-p bin)
+				     ;; Create a script called 'elementaryx-escode'
+				     (call-with-output-file (string-append bin "/elementaryx-vym")
+				       (lambda (port)
+					 (format port "#!/usr/bin/env bash\n")
+					 (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-evil))\" --init-dir=$XDG_CONFIG_HOME/vym/ \"$@\"\n")))
+				     ;; Make the 'elementaryx-escode' script executable
+				     (chmod (string-append bin "/elementaryx-vym") #o755)
+				     #t))))))
+    (propagated-inputs
+     (list emacs-elementaryx-full
+           emacs-evil
+	   emacs-evil-collection
+	   emacs-evil-tex
+	   emacs-evil-org
+	   emacs-evil-quickscope
+	   ))))
+
 
 
 ;; site-start.el is already deployed by guix.
@@ -1251,23 +1325,23 @@ for ESCode, the Elementaryx fake true Studio Code.")
 (define-public emacs-ob-compose-latexpicture
   (package
    (name "emacs-ob-compose-latexpicture")
-    (version "0.1")
-    (home-page "https://gitlab.inria.fr/compose/include/compose-ob-latexpicture")
-    (synopsis "Tentative portable (latex and html) usage of vector pictures for org-mode.")
-    (description
-     "Tentative portable (latex and html) usage of vector pictures for org-mode.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
-    (build-system emacs-build-system)
-    (propagated-inputs (list emacs-org))))
+   (version "0.1")
+   (home-page "https://gitlab.inria.fr/compose/include/compose-ob-latexpicture")
+   (synopsis "Tentative portable (latex and html) usage of vector pictures for org-mode.")
+   (description
+    "Tentative portable (latex and html) usage of vector pictures for org-mode.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
+   (build-system emacs-build-system)
+   (propagated-inputs (list emacs-org))))
 
 (define-public emacs-org-compose-publish
   (package
