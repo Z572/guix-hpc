@@ -25,11 +25,7 @@
          (package-arguments kokkos)
        ((#:configure-flags flags)
         #~(append (list "-DKokkos_ENABLE_OPENMP=ON")
-                  #$flags))
-       ((#:phases phases '%standard-phases)
-        #~(modify-phases #$phases
-            ;; File is not present in CUDA build
-            (delete 'remove-cruft)))))
+                  #$flags))))
     (synopsis "C++ abstractions for parallel execution and data management (with
 OpenMP support)")))
 
