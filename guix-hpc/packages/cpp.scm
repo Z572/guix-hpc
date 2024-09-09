@@ -25,7 +25,14 @@
          (package-arguments kokkos)
        ((#:configure-flags flags)
         #~(append (list "-DKokkos_ENABLE_OPENMP=ON")
-                  #$flags))))
+                  #$flags))
+       ((#:phases phases '%standard-phases)
+        #~(modify-phases #$phases
+            ;; File is not present in build
+            (delete 'remove-cruft)
+            (add-before 'configure
+              (lambda _
+                (format #t "Dummy phase executed.~%")))))))
     (synopsis "C++ abstractions for parallel execution and data management (with
 OpenMP support)")))
 
