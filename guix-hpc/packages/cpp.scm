@@ -33,8 +33,7 @@
             (add-before 'configure 'dummy
                 (lambda _
                   (format #t "Dummy phase executed.~%")
-                  (format #t "Still failing~%")
-                  (exit #f)))))))
+                  (format #t "Now succeeding~%")))))))
     (synopsis "C++ abstractions for parallel execution and data management (with
 OpenMP support)")))
 
