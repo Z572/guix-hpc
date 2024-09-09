@@ -775,6 +775,8 @@ portable, generic, and flexible design that allows seamless integration with oth
                                 "-DAMDGPU_TARGETS=gfx90a;gfx1030")))
     (inputs (list hipamd))
     (native-inputs (list rocm-cmake python-wrapper sqlite))
+    ;; Versions 5.4 and 5.3 stay silent more than 1h in the build phase.
+    (properties '((max-silent-time . 7200)))
     (synopsis
      "Fast Fourier transforms (FFTs) for ROCm.")
     (description
