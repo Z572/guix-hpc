@@ -43,7 +43,10 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages vim))
 
-(define-public libffi-shared
+;; This package is needed only for the clan/llvm ROCm stack. Don't
+;; export its symbol publicly as it might conflict with upstream
+;; libffi (same package name and version).
+(define libffi-shared
   (package
     (inherit libffi)
     (arguments
