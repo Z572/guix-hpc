@@ -57,7 +57,7 @@
 (define (make-llvm-rocm version llvm)
   (package
     (inherit llvm)
-    (name "rocm-llvm")
+    (name (string-append (package-name llvm) "-rocm"))
     (version version)
     (source
      (rocm-origin "llvm-project" version))
@@ -80,7 +80,7 @@
 (define-public (make-clang-runtime-rocm llvm-rocm clang-runtime)
   (package
     (inherit clang-runtime)
-    (name "rocm-clang-runtime")
+    (name (string-append (package-name clang-runtime) "-rocm"))
     (version (package-version llvm-rocm))
     (source (let ((parent (rocm-origin "llvm-project" version)))
               (origin
@@ -108,7 +108,7 @@
 (define (make-clang-rocm llvm-rocm clang-runtime-rocm clang)
   (package
     (inherit clang)
-    (name "rocm-clang")
+    (name (string-append (package-name clang) "-rocm"))
     (version (package-version llvm-rocm))
     (source (package-source clang-runtime-rocm))
     (inputs (modify-inputs (package-inputs clang)
@@ -141,7 +141,7 @@
 (define (make-lld-rocm llvm-rocm lld)
   (package
     (inherit lld)
-    (name "rocm-lld")
+    (name (string-append (package-name lld) "-rocm"))
     (version (package-version llvm-rocm))
     (source
      (rocm-origin "llvm-project" version))
@@ -305,7 +305,7 @@ core runtime is also available.")
                           libomp)
   (package
     (inherit libomp)
-    (name "rocm-libomp")
+    (name (string-append (package-name libomp) "-rocm"))
     (version (package-version llvm-rocm))
     (source
      (rocm-origin "llvm-project" version))
