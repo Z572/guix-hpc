@@ -776,7 +776,7 @@ portable, generic, and flexible design that allows seamless integration with oth
     (inputs (list hipamd))
     (native-inputs (list rocm-cmake python-wrapper sqlite))
     ;; Versions 5.4 and 5.3 stay silent more than 1h in the build phase.
-    (properties '((max-silent-time . 7200)))
+    (properties '((max-silent-time . 14400)))
     (synopsis
      "Fast Fourier transforms (FFTs) for ROCm.")
     (description
