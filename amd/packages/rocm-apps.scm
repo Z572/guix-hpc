@@ -226,7 +226,7 @@ language and optimized for AMD's latest discrete GPUs.")
                roctracer-5.3))
 
 ; osu benchmarks
-(define (make-osubench-rocm openmpi-rocm hipamd)
+(define (make-osubench-rocm openmpi-rocm hipamd rccl)
   (package/inherit osu-micro-benchmarks
     (name (string-append (package-name osu-micro-benchmarks) "-rocm"))
     (version (string-append (package-version osu-micro-benchmarks) ".rocm"
@@ -237,7 +237,10 @@ language and optimized for AMD's latest discrete GPUs.")
        ((#:configure-flags flags)
         #~(append (list  "--enable-rocm"
                          (string-append "--with-rocm="
-                                        #$(this-package-input "hipamd")))
+                                        #$(this-package-input "hipamd"))
+                         "--enable-rcclomb"
+                         (string-append "--with-rccl="
+                                        #$ (this-package-input "rccl")))
                   #$flags))
        ((#:phases phases '%standard-phases)
         #~(modify-phases #$phases
@@ -250,18 +253,19 @@ language and optimized for AMD's latest discrete GPUs.")
     (native-inputs (list automake autoconf))
     (inputs (modify-inputs (package-inputs osu-micro-benchmarks)
                            (append hipamd)
+                           (append rccl)
                            (replace "openmpi" openmpi-rocm)))
     (synopsis "MPI microbenchmarks with ROCm support.")
     (description "A collection of host-based and device-based microbenchmarks for MPI
 communication with ROCm support.")))
 
 (define-public osubench-rocm-5.7
-  (make-osubench-rocm openmpi-rocm-5.7 hipamd-5.7))
+  (make-osubench-rocm openmpi-rocm-5.7 hipamd-5.7 rccl-5.7))
 (define-public osubench-rocm-5.6
-  (make-osubench-rocm openmpi-rocm-5.6 hipamd-5.6))
+  (make-osubench-rocm openmpi-rocm-5.6 hipamd-5.6 rccl-5.6))
 (define-public osubench-rocm-5.5
-  (make-osubench-rocm openmpi-rocm-5.5 hipamd-5.5))
+  (make-osubench-rocm openmpi-rocm-5.5 hipamd-5.5 rccl-5.5))
 (define-public osubench-rocm-5.4
-  (make-osubench-rocm openmpi-rocm-5.4 hipamd-5.4))
+  (make-osubench-rocm openmpi-rocm-5.4 hipamd-5.4 rccl-5.4))
 (define-public osubench-rocm-5.3
-  (make-osubench-rocm openmpi-rocm-5.3 hipamd-5.3))
+  (make-osubench-rocm openmpi-rocm-5.3 hipamd-5.3 rccl-5.3))
