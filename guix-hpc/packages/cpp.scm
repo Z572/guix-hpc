@@ -13,9 +13,37 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages cpp)
   #:use-module (amd packages rocm-hip)
   #:use-module (amd packages rocm-libs))
+
+(define-public mdspan
+  (package
+    (name "mdspan")
+    (version "0.6.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/kokkos/mdspan")
+             (commit (string-append name "-" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "17zmjid1vjvpmvgd1k023ljk8yygqw18xilx78b7pxg7xws3w0bg"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:configure-flags #~(list "-DMDSPAN_ENABLE_TESTS=ON"
+                                "-DMDSPAN_USE_SYSTEM_GTEST=ON")))
+    (native-inputs (list googletest))
+    (synopsis "Reference implementation of mdspan targeting C++23")
+    (description
+     "This package aims to provide a production-quality implementation of
+the ISO-C++ proposal P0009, which will add support for non-owning
+multi-dimensional array references to the C++ standard library.")
+    (home-page "https://github.com/kokkos/mdspan")
+    (license license:asl2.0)))
 
 (define-public kokkos-openmp
   (package/inherit kokkos
