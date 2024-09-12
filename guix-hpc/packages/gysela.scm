@@ -32,6 +32,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages tls)
+  #:use-module (guix-hpc packages cpp)
   #:use-module (guix-hpc packages pdi)
   #:use-module (guix-hpc packages utils))
 
