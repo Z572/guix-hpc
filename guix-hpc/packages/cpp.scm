@@ -13,8 +13,15 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages algebra)
+  #:use-module (gnu packages benchmark)
   #:use-module (gnu packages check)
   #:use-module (gnu packages cpp)
+  #:use-module (gnu packages maths)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages serialization)
+  #:use-module (guix-hpc packages pdi)
+  #:use-module (guix-hpc packages utils)
   #:use-module (amd packages rocm-hip)
   #:use-module (amd packages rocm-libs))
 
@@ -67,6 +74,42 @@ multi-dimensional array references to the C++ standard library.")
 algebra and graph operations, using the Kokkos shared-memory parallel
 programming model.")
     (license license:bsd-2)))
+
+(define-public ddc
+  (let ((commit "e9e1435eae2d4a56243e167c49026035277418bb") ;; Commit from 12-09-2024.
+        (version "0.0.1")
+        (revision "1"))
+    (package
+      (name "ddc")
+      (version (git-version version revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/CExA-project/ddc")
+               (commit commit)))
+         (sha256
+          (base32 "106lh7vshkrf9khlk42vslpk3fydplrwfmzisc8725y7jmklkrn3"))
+         (file-name (git-file-name name version))))
+      (build-system cmake-build-system)
+      (inputs (list kokkos
+                    kokkos-kernels
+                    mdspan
+                    fftw
+                    fftwf
+                    pdi
+                    paraconf
+                    libyaml
+                    ginkgo
+                    openblas))
+      (native-inputs (list googletest
+                           benchmark
+                           pkg-config))
+      (synopsis "Discrete domain computation library")
+      (description "DDC is a C++-17 library that aims to offer to the C++/MPI world an
+equivalent to the xarray.DataArray/dask.Array python environment.")
+      (home-page "https://ddc.mdls.fr/")
+      (license license:expat))))
 
 (define-public kokkos-openmp
   (package/inherit kokkos
