@@ -11,6 +11,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system copy)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages algebra)
@@ -35,6 +36,29 @@
   #:use-module (guix-hpc packages cpp)
   #:use-module (guix-hpc packages pdi)
   #:use-module (guix-hpc packages utils))
+
+(define-public libkoliop
+  (package
+    (name "libkoliop")
+    (version "0.0.18")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://gitlab.com/cines/code.gysela/libkoliop")
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0pyb6msknq2g1k6q6f58an5illqkhpxyz6zlw01w91sqqzy4z6li"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("." "src"))))
+    (home-page "https://gitlab.com/cines/code.gysela/libkoliop")
+    (synopsis "KOkkos based colLIsion OPerator (KoLiOp) for Gysela")
+    (description "A KOkkos based colLIsion OPerator (KoLiOp) for Gysela that computes
+the evolution of the distribution function due to collisions.")
+    (license license:expat)))
 
 (define-public gyselalibxx
   ;; Commit from 04-09-2024.
