@@ -45,6 +45,29 @@ multi-dimensional array references to the C++ standard library.")
     (home-page "https://github.com/kokkos/mdspan")
     (license license:asl2.0)))
 
+;; This should be at the same version as upstream Kokkos package.
+(define-public kokkos-kernels
+  (package
+    (name "kokkos-kernels")
+    (version "4.3.01")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/kokkos/kokkos-kernels")
+             (commit version)))
+       (sha256
+        (base32 "082yqvha5012zrgxz67kc4famn1alnxrka3mfi8ybfp98g23ppd0"))
+       (file-name (git-file-name name version))))
+    (build-system cmake-build-system)
+    (inputs (list kokkos))
+    (home-page "https://github.com/kokkos/kokkos-kernels")
+    (synopsis "Kokkos C++ Performance Portability Programming Ecosystem: Math Kernels")
+    (description "KokkosKernels implements local computational kernels for linear
+algebra and graph operations, using the Kokkos shared-memory parallel
+programming model.")
+    (license license:bsd-2)))
+
 (define-public kokkos-openmp
   (package/inherit kokkos
     (name "kokkos-openmp")
