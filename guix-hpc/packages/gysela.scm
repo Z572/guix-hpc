@@ -37,9 +37,10 @@
   #:use-module (guix-hpc packages utils))
 
 (define-public gyselalibxx
-  (let ((commit "a3be632c27742dea183bd20b59484f0599b87d39")
+  ;; Commit from 04-09-2024.
+  (let ((commit "806f94c601c7bcf604174506f212ec0be374b348")
         (version "0.1")
-        (revision "2"))
+        (revision "3"))
     (package
       (name "gyselalibxx")
       (version (git-version version revision commit))
@@ -48,24 +49,52 @@
          (method git-fetch)
          (uri (git-reference
                (url "https://github.com/gyselax/gyselalibxx")
-               (commit commit)))
+               (commit commit)
+               (recursive? #t)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "179dm3sldkqxg0zq3lp140q3kdk0wpiiy2fqsrqjzwdkgrpyi0vq"))))
+          (base32 "153cv3x9k5fx0vf7cq0df6qvz11g8kd5flq5wv2j0v1dhrb62d46"))
+         ;; Remove nearly everything from the vendored dependencies.
+         ;; We keep only koliop which is statically linked.
+         (snippet #~(begin
+                      (use-modules (guix build utils))
+                      (for-each (lambda (dir)
+                                  (delete-file-recursively (string-append "vendor/" dir)))
+                                (list "benchmark"
+                                      "googletest"
+                                      "kokkos"
+                                      "kokkos-kernels"
+                                      ;; For now, use vendored kokkos-tools as the
+                                      ;; upstream repo is not properly versioned.
+                                        ;"kokkos-tools"
+                                      "mdspan"
+                                      "eigen"
+                                      "ddc"))
+                      ;; While here, fix dependency solver of koliop.
+                      ;; This could be done in a phase but we do it here
+                      ;; so when koliop is properly packaged, all the snippet
+                      ;; can be removed.
+                      (substitute* "vendor/koliop/dependencies/kokkos/seeker.cmake"
+                        (("VERSION          \"4.1.0...<5.0.0\"")
+                         "VERSION \"\""))))))
       (build-system cmake-build-system)
-      (inputs (list eigen
+      (inputs (list ddc
+                    eigen
                     fftw
                     fftwf
                     ginkgo
                     googletest
                     hdf5
                     kokkos
+                    ;; For now we need to use a fork of kokkos-kernels.
+                    ;; Changes are to be upstreamed.
+                    (@@ (guix-hpc packages cpp) kokkos-kernels-for-ddc-and-gyselalibxx)
                     libyaml
                     mdspan
                     openmpi
                     openblas
                     paraconf))
-      (propagated-inputs (list pdi ;needed to set up PDI_PLUGIN_PATH
+      (propagated-inputs (list pdi   ;needed to set up PDI_PLUGIN_PATH
                                pdiplugin-decl-hdf5-parallel
                                pdiplugin-set-value
                                pdiplugin-mpi))
@@ -87,8 +116,15 @@
                      (add-after 'unpack 'fix-kokkos-dep
                        (lambda _
                          (substitute* "CMakeLists.txt"
-                           (("add_subdirectory.*kokkos.*")
-                            "find_package(Kokkos REQUIRED)")))))))
+                           (("add_subdirectory\\(\"vendor/kokkos/\" \"kokkos\"\\)")
+                            "find_package(Kokkos REQUIRED)")
+                           (("add_subdirectory\\(\"vendor/kokkos-kernels/\" \"kokkos-kernels\"\\)")
+                            "find_package(KokkosKernels REQUIRED)")
+                           (("add_subdirectory\\(\"vendor/ddc/\" \"ddc\"\\)")
+                            "find_package(DDC REQUIRED)")
+                           ;; koliop should be able to find Kokkos by itself.
+                           ((".*koliop_ENABLE_Kokkos.*")
+                            "")))))))
       (synopsis
        "Collection of C++ components for writing gyrokinetic semi-lagrangian codes")
       (description
