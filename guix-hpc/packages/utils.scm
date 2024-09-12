@@ -17,6 +17,7 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages cran)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages documentation)
@@ -368,7 +369,7 @@ multi-dimensional array references to the C++ standard library.")
 (define-public ginkgo
   (package
     (name "ginkgo")
-    (version "1.7.0")
+    (version "1.8.0")
     (source
      (origin
        (method git-fetch)
@@ -377,12 +378,14 @@ multi-dimensional array references to the C++ standard library.")
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0mjrwvy1lbys8ymdxh00zw4p3qhpk3f5400yj4864m99fs72f01g"))))
+        (base32 "0z7rmwks3xjbw7xdz2jxr89gk79bhwp2wdlgz9l1z0qvcwb3pk3b"))))
     (build-system cmake-build-system)
     (arguments
      (list
       #:configure-flags #~(list "-DGINKGO_BUILD_BENCHMARKS=OFF")))
-    (native-inputs (list googletest))
+    (native-inputs (list googletest
+                         python))
+    (inputs (list nlohmann-json))
     (synopsis "Numerical linear algebra software package")
     (description
      "Ginkgo is a high-performance numerical linear algebra library for
