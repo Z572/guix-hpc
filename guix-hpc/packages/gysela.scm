@@ -90,7 +90,7 @@ the evolution of the distribution function due to collisions.")
                                       "kokkos-kernels"
                                       ;; For now, use vendored kokkos-tools as the
                                       ;; upstream repo is not properly versioned.
-                                        ;"kokkos-tools"
+                                      ;;"kokkos-tools"
                                       "mdspan"
                                       "eigen"
                                       "ddc"))
@@ -133,11 +133,13 @@ the evolution of the distribution function due to collisions.")
       (arguments
        (list
         #:configure-flags #~(list
-                             "-DGYSELALIBXX_DEPENDENCY_POLICIES=INSTALLED")
+                             "-DGYSELALIBXX_DEPENDENCY_POLICIES=INSTALLED"
+                             (string-append "-DFFTW3f_DIR=" #$(this-package-input "fftwf") "/lib/cmake/fftw3")
+                             (string-append "-DFFTW3_DIR=" #$(this-package-input "fftw") "/lib/cmake/fftw3"))
         #:phases #~(modify-phases %standard-phases
                      (add-before 'check 'mpi-setup
                        #$%openmpi-setup)
-                     (add-after 'unpack 'fix-kokkos-dep
+                     (add-after 'unpack 'fix-dependency-handling
                        (lambda _
                          (substitute* "CMakeLists.txt"
                            (("add_subdirectory\\(\"vendor/kokkos/\" \"kokkos\"\\)")
@@ -148,7 +150,15 @@ the evolution of the distribution function due to collisions.")
                             "find_package(DDC REQUIRED)")
                            ;; koliop should be able to find Kokkos by itself.
                            ((".*koliop_ENABLE_Kokkos.*")
-                            "")))))))
+                            "")
+                           ;; DDC complains that FFTW is not properly
+                           ;; imported by the CMake subsystem.
+                           (("(add_subdirectory\\(\"vendor/sll/\" \"sll\"\\) # SYSTEM\\))" line)
+                            (string-append line "\n"
+                                           "find_package(FFTW3f REQUIRED)\n"
+                                           "add_library(FFTW::Float ALIAS FFTW3f)\n"
+                                           "find_package(FFTW3 REQUIRED)\n"
+                                           "add_library(FFTW::double ALIAS FFTW3)\n"))))))))
       (synopsis
        "Collection of C++ components for writing gyrokinetic semi-lagrangian codes")
       (description
