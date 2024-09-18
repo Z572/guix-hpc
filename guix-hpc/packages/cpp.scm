@@ -29,7 +29,11 @@
        ((#:phases phases '%standard-phases)
         #~(modify-phases #$phases
             ;; File is not present in CUDA build
-            (delete 'remove-cruft)))))
+            (delete 'remove-cruft)
+            ;; Fix check phase according to error message.
+            (add-before 'check 'env-for-tests
+              (lambda _
+                (setenv "OMP_PROC_BIND" "false")))))))
     (synopsis "C++ abstractions for parallel execution and data management (with
 OpenMP support)")))
 
