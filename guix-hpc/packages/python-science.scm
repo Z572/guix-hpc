@@ -242,6 +242,7 @@ fully supported to run on the GPU.")
              (url
               "https://github.com/IterativeStatistics/BasicIterativeStatistics")
              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
        (sha256
         (base32 "1hjqi4zrvrcidjryq65nf1046pw04ya3w1xmsapldjbqmxd259n2"))))
     (build-system pyproject-build-system)
