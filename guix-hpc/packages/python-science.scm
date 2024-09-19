@@ -245,6 +245,14 @@ fully supported to run on the GPU.")
        (sha256
         (base32 "1hjqi4zrvrcidjryq65nf1046pw04ya3w1xmsapldjbqmxd259n2"))))
     (build-system pyproject-build-system)
+    (arguments
+     (list #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'unpack 'change-pyyaml-requirement
+                 (lambda _
+                   (substitute* "pyproject.toml"
+                     (("pyyaml = \"6.0\"")
+                      "pyyaml = \">=6.0\"")))))))
     (native-inputs (list python-poetry-core python-pytest python-openturns))
     (propagated-inputs (list python-numpy python-pyyaml))
     (home-page
