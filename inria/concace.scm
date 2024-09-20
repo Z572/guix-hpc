@@ -47,6 +47,7 @@
   #:use-module (gnu packages shellutils) ;; for direnv
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages statistics) ;; for emacs-ess
+  #:use-module (gnu packages terminals) ;; for fzf
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texlive)
   #:use-module (gnu packages tree-sitter)
@@ -339,13 +340,15 @@ a source code input file.")
               "08jb1cpiifpd3l8ynhml5zjrpxw0czpqlzsp4wnin1gm30c7ry5j"))))
    (build-system emacs-build-system)
    (propagated-inputs
-    ;; TODO move to a higher level package: bash-completion, diffutils, less, lesspipe, and maybe man-db and man-pages
+    ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages
     (list bash-completion
+	  bat ;; enhanced cat: supports syntax highlighting; possible to couple nicely it with fzf
 	  diffutils ;; provides diff; used by diff-hl-flydiff-mode
           elementaryx-core
           emacs-elementaryx-early-init
           emacs-evil
           emacs-which-key
+	  fzf ;; fuzzy search
 	  less
 	  lesspipe ;; extends less if LESSOPEN environment variable is setup
           man-db
@@ -390,6 +393,7 @@ a source code input file.")
 	   emacs-corfu-terminal
 	   ;;  emacs-dirvish TODO
 	   emacs-embark
+	   emacs-expand-region
 	   emacs-guix
 	   ;; emacs-embark-consult: library provided within emacs-embark package
 	   ;; emacs-eshell
@@ -567,6 +571,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
      (list emacs-elementaryx-base
            emacs-elementaryx-org-minimal
            emacs-consult-org-roam
+	   emacs-ob-async ;; allow async org-babel src execution with :async header arg beyond vanilla :session and ipython
            emacs-org-ql ;; for a better speed (to be investigated)
            emacs-org-roam
            ;; emacs-org-roam-ui
@@ -599,7 +604,8 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
                 "0s379man8frhbkzdlf46kgzg9bbipp40cp4nlzkfn188jq40w9m1"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
+     (list emacs-consult-eglot
+           emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
 	   emacs-elementaryx-base
            emacs-editorconfig
 	   ;; emacs-git-gutter ;; for highlighting differences of current buffer with VC (alternative: emacs-diff-hl)
@@ -1241,6 +1247,7 @@ for ESCode, the Elementaryx fake true Studio Code.")
 	   emacs-dashboard
 	   emacs-elementaryx-full
 	   emacs-highlight-indentation ;; possible alternative: emacs-highlight-indent-guides
+	   emacs-hydra
 	   emacs-minimap
 	   emacs-vscode-dark-plus ;; ;; TODO emacs-vscode-icons; with nerd-icons?
 	   fontconfig
