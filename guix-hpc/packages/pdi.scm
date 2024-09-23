@@ -210,3 +210,27 @@ PDI \"data store\"")))
                        (chdir "plugins/user_code"))))))
     (synopsis "The user-code plugin enables one to call a user-defined function
 when a specified event occur or certain data becomes available.")))
+
+(define-public pdiplugin-decl-netcdf
+  (package/inherit pdi
+    (name "pdiplugin-decl-netcdf")
+    (inputs
+     (modify-inputs (package-inputs pdi)
+       (append netcdf)
+       ;; netcdf plugin depends on HDF5 headers to build.
+       (append hdf5)))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+                                ;; force usage of system packages
+                                "-DUSE_DEFAULT=SYSTEM"
+                                "-DBUILD_DECL_HDF5_PLUGIN=OFF"
+                                "-DBUILD_NETCDF_PARALLEL=OFF"
+                                (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/decl_netcdf"))))))
+    (synopsis "Serial version of the NetCDF plugin for PDI")
+    (description "Decl'NetCDF plugin allows interaction with the NetCDF software library
+and data format.")))
