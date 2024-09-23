@@ -64,6 +64,10 @@
   #:use-module (srfi srfi-1)
   )
 
+(define %elementaryx-version "2.0.0")
+
+(define %emacs-ob-latexpicture "0.1")
+
 (define-public texlive-elementaryx
   (package
     (name "texlive-elementaryx")
@@ -169,7 +173,7 @@ a source code input file.")
 (define emacs-ob-latexmacro-with-emacs-minimal
   (package
    (name "emacs-ob-latexmacro")
-   (version "1.4.0")
+   (version %emacs-ob-latexpicture)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-ob-latexmacro")
    (synopsis "Extension of ob-latex for supporting common macro definitions for ox-latex and ox-html backends.")
    (description
@@ -198,7 +202,7 @@ a source code input file.")
 (define emacs-ob-latexpicture-with-emacs-minimal
   (package
    (name "emacs-ob-latexpicture")
-   (version "1.4.0")
+   (version %emacs-ob-latexpicture)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-ob-latexpicture")
    (synopsis "Extension of ob-latex for supporting vectorial output for both ox-latex (inlined) and ox-html (through svg generation) backends.")
    (description
@@ -265,7 +269,7 @@ a source code input file.")
 (define emacs-elementaryx-early-init-with-emacs-minimal
   (package
     (name "emacs-elementaryx-early-init")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-early-init")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Early init.")
     (description
@@ -292,7 +296,7 @@ a source code input file.")
 (define-public elementaryx-core
   (package
    (name "elementaryx-core")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Core packages for non interactive usage.")
    (description
@@ -323,7 +327,7 @@ a source code input file.")
 (define emacs-elementaryx-minimal-with-emacs-minimal
   (package
    (name "emacs-elementaryx-minimal")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
    (description
@@ -366,7 +370,7 @@ a source code input file.")
 (define emacs-elementaryx-base-with-emacs-minimal
   (package
    (name "emacs-elementaryx-base")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-base")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Base setup.")
     (description
@@ -422,7 +426,7 @@ a source code input file.")
 (define-public emacs-elementaryx-treemacs
   (package
    (name "emacs-elementaryx-treemacs")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-treemacs")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for treemacs.")
@@ -448,7 +452,7 @@ for treemacs.")
 (define-public emacs-elementaryx-all-the-icons
   (package
     (name "emacs-elementaryx-all-the-icons")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-all-the-icons")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for all-the-icons.")
@@ -485,7 +489,7 @@ alternative.")
 (define-public emacs-elementaryx-nerd-icons
   (package
     (name "emacs-elementaryx-nerd-icons")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-nerd-icons")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for nerd-icons.")
@@ -521,7 +525,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define emacs-elementaryx-org-minimal-with-emacs-minimal
   (package
    (name "emacs-elementaryx-org-minimal")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
    (description
@@ -551,7 +555,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define emacs-elementaryx-org-with-emacs-minimal
   (package
    (name "emacs-elementaryx-org")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. org-mode setup.")
     (description
@@ -561,11 +565,11 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "9cc230a944ed060a2272d1a2d0bc13f233eaae7c")))
+                    (commit "12c06a75f0714929cb0db95ca185025a70b406e3")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "16a4c3wn8l5r5n9haxn9apcx7l219xdnvgzr1q9g917wphk2pqmz"))))
+                "1pfd3x4ah0wk7npl5l8cyqksd64zqwq4il1agkqh2mgcf8pn736w"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-base
@@ -587,7 +591,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define emacs-elementaryx-dev-minimal-with-emacs-minimal
   (package
    (name "emacs-elementaryx-dev-minimal")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-minimal")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev minimal setup.")
     (description
@@ -626,7 +630,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define emacs-elementaryx-dev-with-emacs-minimal
   (package
    (name "emacs-elementaryx-dev")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev full setup.")
     (description
@@ -697,7 +701,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define emacs-elementaryx-dev-parentheses-with-emacs-minimal
   (package
    (name "emacs-elementaryx-dev-parentheses")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-parentheses")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup for languages with parentheses or alike: lisp, scheme.")
     (description
@@ -728,7 +732,7 @@ scheme.")
 (define emacs-elementaryx-write-with-emacs-minimal
   (package
    (name "emacs-elementaryx-write")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-write")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Write setup.")
    (description
@@ -738,11 +742,11 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "12c8ae6231fc0de483afa8490c87c43ee253720d")))
+                  (commit "26c649b4dade5c917063286ed1d9c75a4ae1eac1")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "0rgm9dzs0437hkppnir4imnn20ih5ndvj7xhlgripdyx9qx0a8m7"))))
+                "07am7vbylk4zrf2dnh6w7y4640dpm4cx2592qrjz715c38ng6288"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
@@ -763,7 +767,7 @@ scheme.")
 (define-public emacs-elementaryx-ox-latex-minimal
   (package
    (name "emacs-elementaryx-ox-latex-minimal")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (arguments
     `(#:builder (mkdir (assoc-ref %outputs "out"))))
    (source #f)
@@ -798,7 +802,7 @@ scheme.")
 (define emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal
   (package
     (name "emacs-elementaryx-ox-beamer-minimal")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-beamer-minimal")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal org-mode latex beamer (ox-beamer) setup.")
     (description
@@ -828,7 +832,7 @@ scheme.")
 (define emacs-elementaryx-ox-base-with-emacs-minimal
   (package
     (name "emacs-elementaryx-ox-base")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-base")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Base org export (ox) setup.")
     (description
@@ -861,7 +865,7 @@ scheme.")
 (define emacs-elementaryx-ox-latex-classes-with-emacs-minimal
   (package
     (name "emacs-elementaryx-ox-latex-classes")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-latex-classes")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Latex classes for org export (ox) setup.")
     (description
@@ -929,7 +933,7 @@ scheme.")
 (define emacs-elementaryx-ox-latex-with-emacs-minimal
   (package
     (name "emacs-elementaryx-ox-latex")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-latex")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex (ox-latex) setup.")
     (description
@@ -976,7 +980,7 @@ scheme.")
 ;; (define emacs-elementaryx-ox-beamer-with-emacs-minimal
 ;;   (package
 ;;     (name "emacs-elementaryx-ox-beamer")
-;;     (version "1.4.0")
+;;     (version %elementaryx-version)
 ;;     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-beamer")
 ;;     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex beamer (ox-beamer) setup.")
 ;;     (description
@@ -1006,7 +1010,7 @@ scheme.")
 (define emacs-elementaryx-ox-html-with-emacs-minimal
   (package
     (name "emacs-elementaryx-ox-html")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-html")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode html (ox-html) setup.")
     (description
@@ -1037,7 +1041,7 @@ scheme.")
 (define emacs-elementaryx-ox-with-emacs-minimal
   (package
    (name "emacs-elementaryx-ox")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode export (ox) setup.")
    (description
@@ -1069,7 +1073,7 @@ scheme.")
 (define emacs-elementaryx-ox-publish-with-emacs-minimal
   (package
     (name "emacs-elementaryx-ox-publish")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-publish")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode publish (ox-publish) setup.")
     (description
@@ -1096,7 +1100,7 @@ scheme.")
 (define-public emacs-elementaryx-ox-publish-as-default
   (package
    (name "emacs-elementaryx-ox-publish-as-default")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-publish-default")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el startup file for export-only + publish elementaryx setup together with a vanilla emacs IDE.")
    (description
@@ -1121,7 +1125,7 @@ scheme.")
 (define emacs-elementaryx-full-with-emacs-minimal
   (package
    (name "emacs-elementaryx-full")
-   (version "1.4.0")
+   (version %elementaryx-version)
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-full")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Full setup.")
    (description
@@ -1177,7 +1181,7 @@ scheme.")
 (define-public emacs-elementaryx-as-default
   (package
    (name "emacs-elementaryx-as-default")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-default")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el starup file.")
     (description
@@ -1199,7 +1203,7 @@ scheme.")
 (define-public elementaryx-escode
   (package
     (name "elementaryx-escode")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-escode")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for ESCode, the Elementaryx fake true Studio Code.")
@@ -1257,7 +1261,7 @@ for ESCode, the Elementaryx fake true Studio Code.")
 (define-public elementaryx-vym
   (package
     (name "elementaryx-vym")
-    (version "1.4.0")
+    (version %elementaryx-version)
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-evil")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for Vym, the fake true VY iMprovised.")
@@ -1310,7 +1314,7 @@ evil-collection.")
 ;; (define-public emacs-elementaryx-as-site-start
 ;;   (package
 ;;    (name "emacs-elementaryx-as-site-start")
-;;     (version "1.4.0")
+;;     (version %elementaryx-version)
 ;;     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-site-start")
 ;;     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a site-start.el starup file.")
 ;;     (description
