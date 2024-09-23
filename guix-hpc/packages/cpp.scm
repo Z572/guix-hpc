@@ -56,7 +56,7 @@ multi-dimensional array references to the C++ standard library.")
 (define-public kokkos-kernels
   (package
     (name "kokkos-kernels")
-    (version "4.3.01")
+    (version "4.4.01")
     (source
      (origin
        (method git-fetch)
@@ -64,7 +64,7 @@ multi-dimensional array references to the C++ standard library.")
              (url "https://github.com/kokkos/kokkos-kernels")
              (commit version)))
        (sha256
-        (base32 "082yqvha5012zrgxz67kc4famn1alnxrka3mfi8ybfp98g23ppd0"))
+        (base32 "0s1sy54jydad9057a95j4q2pjvg6z64v1y5l7rf2jqxahi62vic0"))
        (file-name (git-file-name name version))))
     (build-system cmake-build-system)
     (inputs (list kokkos))
