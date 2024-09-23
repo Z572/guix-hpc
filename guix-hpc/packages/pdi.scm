@@ -230,3 +230,15 @@ when a specified event occur or certain data becomes available.")))
     (synopsis "Serial version of the NetCDF plugin for PDI")
     (description "Decl'NetCDF plugin allows interaction with the NetCDF software library
 and data format.")))
+
+(define-public pdiplugin-serialize
+  (package/inherit pdi
+    (name "pdiplugin-serialize")
+    (arguments
+     (list
+      #:configure-flags #~(list (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/serialize"))))))
+    (synopsis "Serialize plugin for PDI")))
