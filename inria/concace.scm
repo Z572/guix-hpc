@@ -26,13 +26,16 @@
   #:use-module (gnu packages emacs)
   ;; #:use-module (nongnu packages emacs) ;; emacs-org-roam-ui
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages freedesktop) ;; for xdg-utils
   #:use-module (gnu packages fontutils) ;; for fontconfig, e.g. used by emacs-all-the-icons
+  #:use-module (gnu packages fonts)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gdb)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
+  #:use-module (gnu packages less)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
@@ -44,6 +47,7 @@
   #:use-module (gnu packages shellutils) ;; for direnv
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages statistics) ;; for emacs-ess
+  #:use-module (gnu packages terminals) ;; for fzf
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texlive)
   #:use-module (gnu packages tree-sitter)
@@ -63,7 +67,7 @@
 (define-public texlive-elementaryx
   (package
     (name "texlive-elementaryx")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/compose/include/compose-styles")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Texlive add-on.")
     (description
@@ -155,17 +159,15 @@ a source code input file.")
              (base32
               "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))))
 
-(define emacs-instead-of-emacs-minimal
-  ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
-  ;; Try to do nothing (before deciding completely purging it):
-  (package-input-rewriting `((,emacs-minimal . ,emacs-minimal))))
+;; (define emacs-instead-of-emacs-minimal
+;;   ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
+;;   ;; Try to do nothing (before deciding completely purging it):
+;;   (package-input-rewriting `((,emacs-minimal . ,emacs-minimal))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-ob-latex-macros publicly defined below instead
-(define emacs-ob-latexmacro-with-emacs-minimal
+(define-public emacs-ob-latexmacro
   (package
    (name "emacs-ob-latexmacro")
-   (version "1.4.0")
+   (version "v0.1")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-ob-latexmacro")
    (synopsis "Extension of ob-latex for supporting common macro definitions for ox-latex and ox-html backends.")
    (description
@@ -184,17 +186,10 @@ a source code input file.")
    (propagated-inputs
     (list emacs-org))))
 
-;; emacs-ob-latexmacro with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-ob-latexmacro
-  (emacs-instead-of-emacs-minimal emacs-ob-latexmacro-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-ob-latexpicture publicly defined below instead
-(define emacs-ob-latexpicture-with-emacs-minimal
+(define-public emacs-ob-latexpicture
   (package
    (name "emacs-ob-latexpicture")
-   (version "1.4.0")
+   (version "v0.1")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-ob-latexpicture")
    (synopsis "Extension of ob-latex for supporting vectorial output for both ox-latex (inlined) and ox-html (through svg generation) backends.")
    (description
@@ -216,11 +211,6 @@ a source code input file.")
           texlive-listings
 	  texlive-preview
           texlive-standalone))))
-
-;; emacs-ob-latexmacro with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-ob-latexpicture
-  (emacs-instead-of-emacs-minimal emacs-ob-latexpicture-with-emacs-minimal))
 
 (define-public emacs-lob-ob-latexpicture
   (package
@@ -256,12 +246,10 @@ a source code input file.")
 ;;                ;; mu
 ;; 	       )))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-early-init publicly defined below instead
-(define emacs-elementaryx-early-init-with-emacs-minimal
+(define-public emacs-elementaryx-early-init
   (package
     (name "emacs-elementaryx-early-init")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-early-init")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Early init.")
     (description
@@ -271,7 +259,7 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "7520afe41a21a52f5fc39c293397fda2b41f063c")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -280,15 +268,10 @@ a source code input file.")
     ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
     (propagated-inputs (list emacs))))
 
-;; emacs-elementaryx-early-init with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-early-init
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-early-init-with-emacs-minimal))
-
 (define-public elementaryx-core
   (package
    (name "elementaryx-core")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Core packages for non interactive usage.")
    (description
@@ -314,12 +297,10 @@ a source code input file.")
           tree
           which))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-minimal publicly defined below instead
-(define emacs-elementaryx-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-minimal
   (package
    (name "emacs-elementaryx-minimal")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
    (description
@@ -329,32 +310,33 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "ad8e8fc0c8e30d627db0c57b2c7752d6ff3cb470")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "08jb1cpiifpd3l8ynhml5zjrpxw0czpqlzsp4wnin1gm30c7ry5j"))))
+              "1psv1x6izk0vpjswpb6cdnxca7nb7spg5qw0kbbins9w02njngnl"))))
    (build-system emacs-build-system)
    (propagated-inputs
+    ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages
     (list bash-completion
+	  bat ;; enhanced cat: supports syntax highlighting; possible to couple nicely it with fzf
+	  diffutils ;; provides diff; used by diff-hl-flydiff-mode
           elementaryx-core
           emacs-elementaryx-early-init
           emacs-evil
           emacs-which-key
+	  fzf ;; fuzzy search
+	  less
+	  lesspipe ;; extends less if LESSOPEN environment variable is setup
           man-db
-          man-pages))))
+          man-pages
+	  xdg-utils ;; for xdg-open
+	  ))))
 
-;; emacs-elementaryx-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-base publicly defined below instead
-(define emacs-elementaryx-base-with-emacs-minimal
+(define-public emacs-elementaryx-base
   (package
    (name "emacs-elementaryx-base")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-base")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Base setup.")
     (description
@@ -364,49 +346,48 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "d2192bbd3ff021de769fb35733823fd2212bd544")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1qk33n3zyr7gi72385rawavyqrdl4hixjvab0kxp1q2n3zxyijqf"))))
+                "0ayr6g5iz7wb5krasfvfbrmy13zh282r1ckpr3zplws1c6zgv5af"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
-           emacs-elementaryx-minimal
-           emacs-cape
-           emacs-consult
-           emacs-consult-xdg-recent-files
-           emacs-corfu
-           ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
-           emacs-corfu-terminal
+	   emacs-elementaryx-minimal
+	   emacs-cape
+	   emacs-consult
+	   emacs-consult-xdg-recent-files
+	   emacs-corfu
+	   ;; emacs-corfu-popupinfo: library provided within emacs-corfu package
+	   emacs-corfu-terminal
 	   ;;  emacs-dirvish TODO
-           emacs-embark
+	   emacs-embark
+	   emacs-expand-region
 	   emacs-guix
-           ;; emacs-embark-consult: library provided within emacs-embark package
-           ;; emacs-eshell
-           emacs-kind-icon
-           emacs-marginalia
-           emacs-multi-vterm
-           emacs-orderless
-           emacs-pdf-tools
-           emacs-ripgrep
-           emacs-vertico
-           ;; emacs-vertico-directory: library provided within emacs-vertico package
-           emacs-vterm-toggle
-           emacs-wgrep
+	   ;; emacs-embark-consult: library provided within emacs-embark package
+	   ;; emacs-eshell
+	   emacs-kind-icon
+	   emacs-marginalia
+	   emacs-move-text
+	   emacs-multi-vterm
+	   emacs-multiple-cursors
+	   emacs-orderless
+	   emacs-pdf-tools
+	   emacs-ripgrep
+	   emacs-undo-fu
+	   emacs-vertico
+	   ;; emacs-vertico-directory: library provided within emacs-vertico package
+	   emacs-vterm-toggle
+	   emacs-wgrep
 	   inetutils ;; for `hostname`, requested by liquidprompt
 	   liquidprompt ;; for nice PS1 prompt
-           ripgrep))))
-
-;; emacs-elementaryx-base with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-base
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-base-with-emacs-minimal))
+	   ripgrep))))
 
 (define-public emacs-elementaryx-treemacs
   (package
    (name "emacs-elementaryx-treemacs")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-treemacs")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for treemacs.")
@@ -418,7 +399,7 @@ for treemacs.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "dd1eb529d4a561174280bc5110704958cb53622a")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
@@ -426,14 +407,13 @@ for treemacs.")
    (build-system emacs-build-system)
    (propagated-inputs
     ;; (list emacs-treemacs-extra-light)
-    (list emacs-treemacs-extra-2024)
-    )))
+    (list emacs-cfrs emacs-treemacs-extra-2024))))
 
 ;; This package can be used out of the elementaryx suite, e.g.: `guix shell emacs emacs-elementaryx-all-the-icons`
 (define-public emacs-elementaryx-all-the-icons
   (package
     (name "emacs-elementaryx-all-the-icons")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-all-the-icons")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for all-the-icons.")
@@ -447,7 +427,7 @@ alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "c9e621bbe438ad60f1cd747b6d9d3df5a92c6384")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -470,7 +450,7 @@ alternative.")
 (define-public emacs-elementaryx-nerd-icons
   (package
     (name "emacs-elementaryx-nerd-icons")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-nerd-icons")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for nerd-icons.")
@@ -482,7 +462,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "6254e785c908ca5b59be78494bdc412aa100ca9c")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -500,16 +480,11 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 	   fontconfig
 	   ))))
 
-;; TODO emacs-vscode-dark-plus
-;; TODO emacs-vscode-icons
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-org-minimal publicly defined below instead
 ;; Note that this package is a common minimalist basis for both emacs-elementaryx-org and emacs-elementaryx-ox
-(define emacs-elementaryx-org-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-org-minimal
   (package
    (name "emacs-elementaryx-org-minimal")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
    (description
@@ -519,7 +494,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "4ae2d27cef6ac0ee60c07d8c20e630a1c74483fc")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
@@ -529,17 +504,10 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
     (list emacs-org
           graphviz))))
 
-;; emacs-elementaryx-org-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-org-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-org-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-org publicly defined below instead
-(define emacs-elementaryx-org-with-emacs-minimal
+(define-public emacs-elementaryx-org
   (package
    (name "emacs-elementaryx-org")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. org-mode setup.")
     (description
@@ -549,32 +517,26 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "9cc230a944ed060a2272d1a2d0bc13f233eaae7c")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "16a4c3wn8l5r5n9haxn9apcx7l219xdnvgzr1q9g917wphk2pqmz"))))
+                "1pfd3x4ah0wk7npl5l8cyqksd64zqwq4il1agkqh2mgcf8pn736w"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-base
            emacs-elementaryx-org-minimal
            emacs-consult-org-roam
+	   emacs-ob-async ;; allow async org-babel src execution with :async header arg beyond vanilla :session and ipython
            emacs-org-ql ;; for a better speed (to be investigated)
            emacs-org-roam
            ;; emacs-org-roam-ui
            ))))
 
-;; emacs-elementaryx-org with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-org
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-org-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-dev-minimal publicly defined below instead
-(define emacs-elementaryx-dev-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-dev-minimal
   (package
    (name "emacs-elementaryx-dev-minimal")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-minimal")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev minimal setup.")
     (description
@@ -584,15 +546,18 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "06fa7ccc1a0fb0ddb3afb2fbf9636bf205e69a44")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0s379man8frhbkzdlf46kgzg9bbipp40cp4nlzkfn188jq40w9m1"))))
+                "1l9pc3qiggwpvlgp79n6pn9mxmfpxb6r6g295b81warypzqdyahx"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-elementaryx-base
+     (list emacs-consult-eglot
+           emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
+	   emacs-elementaryx-base
            emacs-editorconfig
+	   ;; emacs-git-gutter ;; for highlighting differences of current buffer with VC (alternative: emacs-diff-hl)
            emacs-json-mode
            emacs-magit
            emacs-yaml-mode
@@ -600,17 +565,10 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
            openssh
            ))))
 
-;; emacs-elementaryx-dev-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-dev-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-dev publicly defined below instead
-(define emacs-elementaryx-dev-with-emacs-minimal
+(define-public emacs-elementaryx-dev
   (package
    (name "emacs-elementaryx-dev")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev full setup.")
     (description
@@ -620,7 +578,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "9c48dc84b98461815a0cde3e6642ba5c8223d194")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -671,17 +629,10 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 	   ;; tree-sitter-yaml ;; https://issues.guix.gnu.org/66836
            ))))
 
-;; emacs-elementaryx-dev with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-dev
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-dev-parentheses publicly defined below instead
-(define emacs-elementaryx-dev-parentheses-with-emacs-minimal
+(define-public emacs-elementaryx-dev-parentheses
   (package
    (name "emacs-elementaryx-dev-parentheses")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-parentheses")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup for languages with parentheses or alike: lisp, scheme.")
     (description
@@ -692,27 +643,20 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "77918117de2f4a7de8fd72fa86c5371f5239092b")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0z0fhkrbjxfbkpl7f9fdb68qzax9liypml9c7b9vzxr9gcvcqj0h"))))
+                "1c0zdbhcgckw2bvd252gqypbmxi31qrk7filrvhs0vssc14ziw6v"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-geiser-guile
            emacs-paredit))))
 
-;; emacs-elementaryx-dev-parentheses with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-dev-parentheses
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-parentheses-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-write publicly defined below instead
-(define emacs-elementaryx-write-with-emacs-minimal
+(define-public emacs-elementaryx-write
   (package
    (name "emacs-elementaryx-write")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-write")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Write setup.")
    (description
@@ -722,11 +666,11 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "12c8ae6231fc0de483afa8490c87c43ee253720d")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "0rgm9dzs0437hkppnir4imnn20ih5ndvj7xhlgripdyx9qx0a8m7"))))
+                "07am7vbylk4zrf2dnh6w7y4640dpm4cx2592qrjz715c38ng6288"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
@@ -739,15 +683,10 @@ scheme.")
           emacs-citar-org-roam
           emacs-jinx))))
 
-;; emacs-elementaryx-write with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-write
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-write-with-emacs-minimal))
-
 (define-public emacs-elementaryx-ox-latex-minimal
   (package
    (name "emacs-elementaryx-ox-latex-minimal")
-   (version "1.4.0")
+   (version "2.0.0")
    (arguments
     `(#:builder (mkdir (assoc-ref %outputs "out"))))
    (source #f)
@@ -777,12 +716,10 @@ scheme.")
           texlive-xkeyval
           rubber))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-beamer-minimal publicly defined below instead
-(define emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-ox-beamer-minimal
   (package
     (name "emacs-elementaryx-ox-beamer-minimal")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-beamer-minimal")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Minimal org-mode latex beamer (ox-beamer) setup.")
     (description
@@ -792,7 +729,7 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "7bd8db55fbe034aa0c3d96ee0557863b21a576b6")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -802,17 +739,10 @@ scheme.")
      (list emacs-elementaryx-ox-latex-minimal
            texlive-beamer))))
 
-;; emacs-elementaryx-ox-beamer-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-beamer-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-base publicly defined below instead
-(define emacs-elementaryx-ox-base-with-emacs-minimal
+(define-public emacs-elementaryx-ox-base
   (package
     (name "emacs-elementaryx-ox-base")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-base")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Base org export (ox) setup.")
     (description
@@ -822,7 +752,7 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "8b3d388a48be2ce18b4e63dfcd638bfbf1a287c0")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -835,17 +765,10 @@ scheme.")
            emacs-ob-latexmacro
            emacs-ob-latexpicture))))
 
-;; emacs-elementaryx-ox-base with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-base
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-base-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-latex-classes publicly defined below instead
-(define emacs-elementaryx-ox-latex-classes-with-emacs-minimal
+(define-public emacs-elementaryx-ox-latex-classes
   (package
     (name "emacs-elementaryx-ox-latex-classes")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-latex-classes")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Latex classes for org export (ox) setup.")
     (description
@@ -855,7 +778,7 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "600a252561470394ef29f6de125cc3faf7f1e53c")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -903,17 +826,10 @@ scheme.")
            ;;texlive-XXX
            ))))
 
-;; emacs-elementaryx-ox-latex-classes with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-latex-classes
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-latex-classes-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-latex publicly defined below instead
-(define emacs-elementaryx-ox-latex-with-emacs-minimal
+(define-public emacs-elementaryx-ox-latex
   (package
     (name "emacs-elementaryx-ox-latex")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-latex")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex (ox-latex) setup.")
     (description
@@ -923,7 +839,7 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "e222c621c11b4add0f5d70cc272556abaa0ccab8")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -950,17 +866,10 @@ scheme.")
            texlive-pgf ;; pgd/tikz
            texlive-trimspaces))))
 
-;; emacs-elementaryx-ox-latex with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-latex
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-latex-with-emacs-minimal))
-
-;; ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; ;; Use emacs-elementaryx-ox-beamer publicly defined below instead
-;; (define emacs-elementaryx-ox-beamer-with-emacs-minimal
+;; (define-public emacs-elementaryx-ox-beamer
 ;;   (package
 ;;     (name "emacs-elementaryx-ox-beamer")
-;;     (version "1.4.0")
+;;     (version "2.0.0")
 ;;     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-beamer")
 ;;     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode latex beamer (ox-beamer) setup.")
 ;;     (description
@@ -980,17 +889,10 @@ scheme.")
 ;;      (list emacs-elementaryx-ox-beamer-minimal
 ;;            emacs-elementaryx-ox-latex))))
 
-;; ;; emacs-elementaryx-ox-beamer with emacs instead of emacs-minimal
-;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-;; (define-public emacs-elementaryx-ox-beamer
-;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-beamer--with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-latex publicly defined below instead
-(define emacs-elementaryx-ox-html-with-emacs-minimal
+(define-public emacs-elementaryx-ox-html
   (package
     (name "emacs-elementaryx-ox-html")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-html")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode html (ox-html) setup.")
     (description
@@ -1000,7 +902,7 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "f22d3f0945891010815e556fd048a90e07b389cc")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -1011,17 +913,10 @@ scheme.")
            emacs-citeproc-el
            emacs-htmlize))))
 
-;; emacs-elementaryx-ox-html with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-html
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-html-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox publicly defined below instead
-(define emacs-elementaryx-ox-with-emacs-minimal
+(define-public emacs-elementaryx-ox
   (package
    (name "emacs-elementaryx-ox")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode export (ox) setup.")
    (description
@@ -1031,7 +926,7 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "ed014f91ca8617e351304110fabcfd88c6332537")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
@@ -1043,17 +938,10 @@ scheme.")
           emacs-elementaryx-ox-latex
           emacs-org-re-reveal))))
 
-;; emacs-elementaryx-ox with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-publish publicly defined below instead
-(define emacs-elementaryx-ox-publish-with-emacs-minimal
+(define-public emacs-elementaryx-ox-publish
   (package
     (name "emacs-elementaryx-ox-publish")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-publish")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix org-mode publish (ox-publish) setup.")
     (description
@@ -1063,24 +951,19 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "de23a7b4f4ac29252a23b03c215c080693b9352e")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "1cb6lv3bw1zkwb3y6a5j5l441clm7219arjr8xc4w8pvnrwwjgh0"))))
+                "104qxzdblxzg1fy8sgzkxd56732ywaifdzjzkcy9r659swxjzsib"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox))))
 
-;; emacs-elementaryx-ox-publish with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-publish
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-publish-with-emacs-minimal))
-
 (define-public emacs-elementaryx-ox-publish-as-default
   (package
    (name "emacs-elementaryx-ox-publish-as-default")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-ox-publish-default")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el startup file for export-only + publish elementaryx setup together with a vanilla emacs IDE.")
    (description
@@ -1090,7 +973,7 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "b5b8225bdec1c7bdbb79b2d0b1b45a114f6eb08e")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
@@ -1100,12 +983,10 @@ scheme.")
     (list emacs
           emacs-elementaryx-ox-publish))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-full publicly defined below instead
-(define emacs-elementaryx-full-with-emacs-minimal
+(define-public emacs-elementaryx-full
   (package
    (name "emacs-elementaryx-full")
-   (version "1.4.0")
+   (version "2.0.0")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-full")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Full setup.")
    (description
@@ -1115,7 +996,7 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "c95c9a638845373a84354deab914b250bc2eecb2")))
+                  (commit "v2.0.0")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
@@ -1132,20 +1013,31 @@ scheme.")
 	  ;; emacs-elementaryx-nerd-icons ;; Waiting for nerd icons integration https://issues.guix.gnu.org/67983
 	  ))))
 
-;; emacs-elementaryx-full with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-full
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-full-with-emacs-minimal))
-
 (define-public emacs-elementaryx
   (package
    (inherit emacs-elementaryx-full)
-   (name "emacs-elementaryx")))
+   (name "emacs-elementaryx")
+   (arguments
+    `(#:phases
+      (modify-phases %standard-phases
+		     (add-after 'install 'install-scripts
+				(lambda* (#:key outputs #:allow-other-keys)
+				  (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+				    ;; Ensure the 'bin' directory exists
+				    (mkdir-p bin)
+				    ;; Create a script called 'elementaryx-emacs'
+				    (call-with-output-file (string-append bin "/elementaryx-emacs")
+				      (lambda (port)
+					(format port "#!/usr/bin/env bash\n")
+					(format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full))\" --init-dir=$XDG_CONFIG_HOME/emacs-elementaryx/ \"$@\"\n")))
+				    ;; Make the 'elementaryx-escode' script executable
+				    (chmod (string-append bin "/elementaryx-emacs") #o755)
+				    #t))))))))
 
 (define-public emacs-elementaryx-as-default
   (package
    (name "emacs-elementaryx-as-default")
-    (version "1.4.0")
+    (version "2.0.0")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-default")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a default.el starup file.")
     (description
@@ -1155,7 +1047,7 @@ scheme.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "69ef643114f36ba4297f131d169a92736d2c6740")))
+                    (commit "v2.0.0")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
@@ -1164,12 +1056,121 @@ scheme.")
     (propagated-inputs
      (list emacs-elementaryx))))
 
+(define-public elementaryx-escode
+  (package
+    (name "elementaryx-escode")
+    (version "2.0.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-escode")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for ESCode, the Elementaryx fake true Studio Code.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for ESCode, the Elementaryx fake true Studio Code.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "v2.0.0")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"1z602v81wwz67zikj69gxjkbbkzyzxw7zbfl21yzchpmgwn7d5hm"))))
+    (build-system emacs-build-system)
+    ;; We also define an elementaryx-escode executable wrapper call for easy call
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+		      (add-after 'install 'install-scripts
+				 (lambda* (#:key outputs #:allow-other-keys)
+				   (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+				     ;; Ensure the 'bin' directory exists
+				     (mkdir-p bin)
+				     ;; Create a script called 'elementaryx-escode'
+				     (call-with-output-file (string-append bin "/elementaryx-escode")
+				       (lambda (port)
+					 (format port "#!/usr/bin/env bash\n")
+					 (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(use-package elementaryx-escode)\" --init-dir=$XDG_CONFIG_HOME/escode/ \"$@\"\n")))
+					 ;; (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-escode))\" --init-dir=$XDG_CONFIG_HOME/escode/ \"$@\"\n")))
+				     ;; Make the 'elementaryx-escode' script executable
+				     (chmod (string-append bin "/elementaryx-escode") #o755)
+				     ;; ;; Create a script called 'elementaryx-escode-nested-guix' ; TODO: how to escape $@ in bash -c ''?
+				     ;; (call-with-output-file (string-append bin "/elementaryx-escode-nested-guix")
+				     ;;   (lambda (port)
+				     ;; 	 (format port "#!/usr/bin/env bash\n")
+				     ;; 	 (format port "bash -c 'GUIX_PROFILE=\"/guix\" ; . \"$GUIX_PROFILE/etc/profile\" ; emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-escode))\" --init-dir=\\$XDG_CONFIG_HOME/escode/ \"$@\"'\n")))
+				     ;; ;; Make the 'elementaryx-escode-nested-guix' script executable
+				     ;; (chmod (string-append bin "/elementaryx-escode-nested-guix") #o755)
+				     #t))))))
+    (propagated-inputs
+     (list emacs-centaur-tabs
+	   emacs-dashboard
+	   emacs-elementaryx-full
+	   emacs-highlight-indentation ;; possible alternative: emacs-highlight-indent-guides
+	   emacs-hydra
+	   emacs-minimap
+	   emacs-vscode-dark-plus ;; ;; TODO emacs-vscode-icons; with nerd-icons?
+	   fontconfig
+	   font-google-noto ;; TODO: investigate other fonts: font-dejavu font-liberation font-fira-code font-fira-mono font-hack font-adobe-source-code-pro
+	   ))))
+
+(define-public elementaryx-vym
+  (package
+    (name "elementaryx-vym")
+    (version "2.0.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-evil")
+    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for Vym, the fake true VY iMprovised.")
+    (description
+     "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
+for Vym, the fake true VY iMprovised. Version of Elementaryx with
+vim-like keybindings. Based on evil and related packages such as
+evil-collection.")
+    (license license:cecill-c)
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit "v2.0.0")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+		"0rsxyr17qz53dzqgwlwkfrhq8sx7v1s9riwhvhbgs1pwh6fivwia"))))
+    (build-system emacs-build-system)
+    ;; We also define an elementaryx-vym executable wrapper call for easy call
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+		      (add-after 'install 'install-scripts
+				 (lambda* (#:key outputs #:allow-other-keys)
+				   (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+				     ;; Ensure the 'bin' directory exists
+				     (mkdir-p bin)
+				     ;; Create a script called 'elementaryx-escode'
+				     (call-with-output-file (string-append bin "/elementaryx-vym")
+				       (lambda (port)
+					 (format port "#!/usr/bin/env bash\n")
+					 (format port "emacs $([ -n \"$SSH_CONNECTION\" ] && echo \"-nw\") --eval \"(progn (use-package elementaryx-full) (use-package elementaryx-evil))\" --init-dir=$XDG_CONFIG_HOME/vym/ \"$@\"\n")))
+				     ;; Make the 'elementaryx-escode' script executable
+				     (chmod (string-append bin "/elementaryx-vym") #o755)
+				     #t))))))
+    (propagated-inputs
+     (list emacs-elementaryx-full
+           emacs-evil
+	   emacs-evil-collection
+	   emacs-evil-tex
+	   emacs-evil-org
+	   emacs-evil-quickscope
+	   ))))
+
+
+
 ;; site-start.el is already deployed by guix.
 ;; As a consequence the following package would have no effect.
 ;; (define-public emacs-elementaryx-as-site-start
 ;;   (package
 ;;    (name "emacs-elementaryx-as-site-start")
-;;     (version "1.4.0")
+;;     (version "2.0.0")
 ;;     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-site-start")
 ;;     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Add a site-start.el starup file.")
 ;;     (description
@@ -1191,23 +1192,23 @@ scheme.")
 (define-public emacs-ob-compose-latexpicture
   (package
    (name "emacs-ob-compose-latexpicture")
-    (version "0.1")
-    (home-page "https://gitlab.inria.fr/compose/include/compose-ob-latexpicture")
-    (synopsis "Tentative portable (latex and html) usage of vector pictures for org-mode.")
-    (description
-     "Tentative portable (latex and html) usage of vector pictures for org-mode.")
-    (license license:cecill-c)
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
-    (build-system emacs-build-system)
-    (propagated-inputs (list emacs-org))))
+   (version "0.1")
+   (home-page "https://gitlab.inria.fr/compose/include/compose-ob-latexpicture")
+   (synopsis "Tentative portable (latex and html) usage of vector pictures for org-mode.")
+   (description
+    "Tentative portable (latex and html) usage of vector pictures for org-mode.")
+   (license license:cecill-c)
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url home-page)
+                  (commit "b2d04e7337ce9c99dce13147c9e0e59d152bcb55")))
+            (file-name (string-append name "-" version "-checkout"))
+            (sha256
+             (base32
+              "05mm70xj82ck8bcmcdv3jrkv54l3g5wixg5dpyd7iwxxxx6ysd12"))))
+   (build-system emacs-build-system)
+   (propagated-inputs (list emacs-org))))
 
 (define-public emacs-org-compose-publish
   (package
