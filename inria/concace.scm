@@ -163,14 +163,12 @@ a source code input file.")
              (base32
               "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))))
 
-(define emacs-instead-of-emacs-minimal
-  ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
-  ;; Try to do nothing (before deciding completely purging it):
-  (package-input-rewriting `((,emacs-minimal . ,emacs-minimal))))
+;; (define emacs-instead-of-emacs-minimal
+;;   ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
+;;   ;; Try to do nothing (before deciding completely purging it):
+;;   (package-input-rewriting `((,emacs-minimal . ,emacs-minimal))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-ob-latex-macros publicly defined below instead
-(define emacs-ob-latexmacro-with-emacs-minimal
+(define-public emacs-ob-latexmacro
   (package
    (name "emacs-ob-latexmacro")
    (version %emacs-ob-latexpicture)
@@ -192,14 +190,7 @@ a source code input file.")
    (propagated-inputs
     (list emacs-org))))
 
-;; emacs-ob-latexmacro with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-ob-latexmacro
-  (emacs-instead-of-emacs-minimal emacs-ob-latexmacro-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-ob-latexpicture publicly defined below instead
-(define emacs-ob-latexpicture-with-emacs-minimal
+(define-public emacs-ob-latexpicture
   (package
    (name "emacs-ob-latexpicture")
    (version %emacs-ob-latexpicture)
@@ -224,11 +215,6 @@ a source code input file.")
           texlive-listings
 	  texlive-preview
           texlive-standalone))))
-
-;; emacs-ob-latexmacro with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-ob-latexpicture
-  (emacs-instead-of-emacs-minimal emacs-ob-latexpicture-with-emacs-minimal))
 
 (define-public emacs-lob-ob-latexpicture
   (package
@@ -264,9 +250,7 @@ a source code input file.")
 ;;                ;; mu
 ;; 	       )))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-early-init publicly defined below instead
-(define emacs-elementaryx-early-init-with-emacs-minimal
+(define-public emacs-elementaryx-early-init
   (package
     (name "emacs-elementaryx-early-init")
     (version %elementaryx-version)
@@ -287,11 +271,6 @@ a source code input file.")
     (build-system emacs-build-system)
     ;;(propagated-inputs (list (transform-no-emacs-minimal (specification->package "emacs"))))))
     (propagated-inputs (list emacs))))
-
-;; emacs-elementaryx-early-init with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-early-init
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-early-init-with-emacs-minimal))
 
 (define-public elementaryx-core
   (package
@@ -322,9 +301,7 @@ a source code input file.")
           tree
           which))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-minimal publicly defined below instead
-(define emacs-elementaryx-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-minimal
   (package
    (name "emacs-elementaryx-minimal")
    (version %elementaryx-version)
@@ -360,14 +337,7 @@ a source code input file.")
 	  xdg-utils ;; for xdg-open
 	  ))))
 
-;; emacs-elementaryx-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-base publicly defined below instead
-(define emacs-elementaryx-base-with-emacs-minimal
+(define-public emacs-elementaryx-base
   (package
    (name "emacs-elementaryx-base")
     (version %elementaryx-version)
@@ -417,11 +387,6 @@ a source code input file.")
 	   inetutils ;; for `hostname`, requested by liquidprompt
 	   liquidprompt ;; for nice PS1 prompt
 	   ripgrep))))
-
-;; emacs-elementaryx-base with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-base
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-base-with-emacs-minimal))
 
 (define-public emacs-elementaryx-treemacs
   (package
@@ -519,10 +484,8 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 	   fontconfig
 	   ))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-org-minimal publicly defined below instead
 ;; Note that this package is a common minimalist basis for both emacs-elementaryx-org and emacs-elementaryx-ox
-(define emacs-elementaryx-org-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-org-minimal
   (package
    (name "emacs-elementaryx-org-minimal")
    (version %elementaryx-version)
@@ -545,14 +508,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
     (list emacs-org
           graphviz))))
 
-;; emacs-elementaryx-org-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-org-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-org-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-org publicly defined below instead
-(define emacs-elementaryx-org-with-emacs-minimal
+(define-public emacs-elementaryx-org
   (package
    (name "emacs-elementaryx-org")
     (version %elementaryx-version)
@@ -581,14 +537,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
            ;; emacs-org-roam-ui
            ))))
 
-;; emacs-elementaryx-org with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-org
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-org-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-dev-minimal publicly defined below instead
-(define emacs-elementaryx-dev-minimal-with-emacs-minimal
+(define emacs-elementaryx-dev-minimal
   (package
    (name "emacs-elementaryx-dev-minimal")
     (version %elementaryx-version)
@@ -620,14 +569,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
            openssh
            ))))
 
-;; emacs-elementaryx-dev-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-dev-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-dev publicly defined below instead
-(define emacs-elementaryx-dev-with-emacs-minimal
+(define-public emacs-elementaryx-dev
   (package
    (name "emacs-elementaryx-dev")
     (version %elementaryx-version)
@@ -691,14 +633,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 	   ;; tree-sitter-yaml ;; https://issues.guix.gnu.org/66836
            ))))
 
-;; emacs-elementaryx-dev with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-dev
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-dev-parentheses publicly defined below instead
-(define emacs-elementaryx-dev-parentheses-with-emacs-minimal
+(define-public emacs-elementaryx-dev-parentheses
   (package
    (name "emacs-elementaryx-dev-parentheses")
     (version %elementaryx-version)
@@ -722,14 +657,7 @@ scheme.")
      (list emacs-geiser-guile
            emacs-paredit))))
 
-;; emacs-elementaryx-dev-parentheses with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-dev-parentheses
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-dev-parentheses-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-write publicly defined below instead
-(define emacs-elementaryx-write-with-emacs-minimal
+(define-public emacs-elementaryx-write
   (package
    (name "emacs-elementaryx-write")
    (version %elementaryx-version)
@@ -758,11 +686,6 @@ scheme.")
           emacs-citar
           emacs-citar-org-roam
           emacs-jinx))))
-
-;; emacs-elementaryx-write with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-write
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-write-with-emacs-minimal))
 
 (define-public emacs-elementaryx-ox-latex-minimal
   (package
@@ -797,9 +720,7 @@ scheme.")
           texlive-xkeyval
           rubber))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-beamer-minimal publicly defined below instead
-(define emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal
+(define-public emacs-elementaryx-ox-beamer-minimal
   (package
     (name "emacs-elementaryx-ox-beamer-minimal")
     (version %elementaryx-version)
@@ -822,14 +743,7 @@ scheme.")
      (list emacs-elementaryx-ox-latex-minimal
            texlive-beamer))))
 
-;; emacs-elementaryx-ox-beamer-minimal with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-beamer-minimal
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-beamer-minimal-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-base publicly defined below instead
-(define emacs-elementaryx-ox-base-with-emacs-minimal
+(define-public emacs-elementaryx-ox-base
   (package
     (name "emacs-elementaryx-ox-base")
     (version %elementaryx-version)
@@ -855,14 +769,7 @@ scheme.")
            emacs-ob-latexmacro
            emacs-ob-latexpicture))))
 
-;; emacs-elementaryx-ox-base with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-base
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-base-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-latex-classes publicly defined below instead
-(define emacs-elementaryx-ox-latex-classes-with-emacs-minimal
+(define-public emacs-elementaryx-ox-latex-classes
   (package
     (name "emacs-elementaryx-ox-latex-classes")
     (version %elementaryx-version)
@@ -923,14 +830,7 @@ scheme.")
            ;;texlive-XXX
            ))))
 
-;; emacs-elementaryx-ox-latex-classes with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-latex-classes
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-latex-classes-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-latex publicly defined below instead
-(define emacs-elementaryx-ox-latex-with-emacs-minimal
+(define-public emacs-elementaryx-ox-latex
   (package
     (name "emacs-elementaryx-ox-latex")
     (version %elementaryx-version)
@@ -970,14 +870,7 @@ scheme.")
            texlive-pgf ;; pgd/tikz
            texlive-trimspaces))))
 
-;; emacs-elementaryx-ox-latex with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-latex
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-latex-with-emacs-minimal))
-
-;; ;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; ;; Use emacs-elementaryx-ox-beamer publicly defined below instead
-;; (define emacs-elementaryx-ox-beamer-with-emacs-minimal
+;; (define-public emacs-elementaryx-ox-beamer
 ;;   (package
 ;;     (name "emacs-elementaryx-ox-beamer")
 ;;     (version %elementaryx-version)
@@ -1000,14 +893,7 @@ scheme.")
 ;;      (list emacs-elementaryx-ox-beamer-minimal
 ;;            emacs-elementaryx-ox-latex))))
 
-;; ;; emacs-elementaryx-ox-beamer with emacs instead of emacs-minimal
-;; ;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-;; (define-public emacs-elementaryx-ox-beamer
-;;   (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-beamer--with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-latex publicly defined below instead
-(define emacs-elementaryx-ox-html-with-emacs-minimal
+(define-public emacs-elementaryx-ox-html
   (package
     (name "emacs-elementaryx-ox-html")
     (version %elementaryx-version)
@@ -1031,14 +917,7 @@ scheme.")
            emacs-citeproc-el
            emacs-htmlize))))
 
-;; emacs-elementaryx-ox-html with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-html
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-html-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox publicly defined below instead
-(define emacs-elementaryx-ox-with-emacs-minimal
+(define-public emacs-elementaryx-ox
   (package
    (name "emacs-elementaryx-ox")
    (version %elementaryx-version)
@@ -1063,14 +942,7 @@ scheme.")
           emacs-elementaryx-ox-latex
           emacs-org-re-reveal))))
 
-;; emacs-elementaryx-ox with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-with-emacs-minimal))
-
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-ox-publish publicly defined below instead
-(define emacs-elementaryx-ox-publish-with-emacs-minimal
+(define-public emacs-elementaryx-ox-publish
   (package
     (name "emacs-elementaryx-ox-publish")
     (version %elementaryx-version)
@@ -1091,11 +963,6 @@ scheme.")
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-elementaryx-ox))))
-
-;; emacs-elementaryx-ox-publish with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-ox-publish
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-ox-publish-with-emacs-minimal))
 
 (define-public emacs-elementaryx-ox-publish-as-default
   (package
@@ -1120,9 +987,7 @@ scheme.")
     (list emacs
           emacs-elementaryx-ox-publish))))
 
-;; This package is not meant to be used as it depends on emacs and thus implicitly emacs-minimal
-;; Use emacs-elementaryx-full publicly defined below instead
-(define emacs-elementaryx-full-with-emacs-minimal
+(define-public emacs-elementaryx-full
   (package
    (name "emacs-elementaryx-full")
    (version %elementaryx-version)
@@ -1151,11 +1016,6 @@ scheme.")
 	  emacs-elementaryx-all-the-icons
 	  ;; emacs-elementaryx-nerd-icons ;; Waiting for nerd icons integration https://issues.guix.gnu.org/67983
 	  ))))
-
-;; emacs-elementaryx-full with emacs instead of emacs-minimal
-;; See motivation here: https://guix.gnu.org/manual/en/html_node/Application-Setup.html#Emacs-Packages-1
-(define-public emacs-elementaryx-full
-  (emacs-instead-of-emacs-minimal emacs-elementaryx-full-with-emacs-minimal))
 
 (define-public emacs-elementaryx
   (package
@@ -1267,7 +1127,7 @@ for ESCode, the Elementaryx fake true Studio Code.")
 for Vym, the fake true VY iMprovised.")
     (description
      "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
-for Vym, the fake ture VY iMprovised. Version of Elementaryx with
+for Vym, the fake true VY iMprovised. Version of Elementaryx with
 vim-like keybindings. Based on evil and related packages such as
 evil-collection.")
     (license license:cecill-c)
