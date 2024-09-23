@@ -203,7 +203,6 @@ PDI \"data store\"")))
     (arguments
      (list
       #:configure-flags #~(list (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
-      #:tests? #f ;; TODO
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'change-dir
                      (lambda _
