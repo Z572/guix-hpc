@@ -131,7 +131,7 @@ libraries are used from the specification tree.")
                        (substitute* "../build/tests/compatibility_tests/CTestTestfile.cmake"
                          (("/bin/bash")
                           (which "bash"))))))))
-    (synopsis "Serial verson of the HDF5 plugin for PDI")
+    (synopsis "Serial version of the HDF5 plugin for PDI")
     (description "Decl'HDF5 plugin enables one to read and write data from HDF5 files in
 a declarative way. Decl'HDF5 does not support the full HDF5 feature
 set but offers a simple declarative interface to access a large subset
@@ -165,7 +165,7 @@ of it for the PDI library.")))
                           (which "bash")))))
                    (add-after 'fix-tests 'mpi-setup
                               #$%openmpi-setup))))
-    (synopsis "Parallel verson of the HDF5 plugin for PDI")))
+    (synopsis "Parallel version of the HDF5 plugin for PDI")))
 
 (define-public pdiplugin-set-value
   (package/inherit pdi
