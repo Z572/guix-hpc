@@ -26,7 +26,8 @@
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages ssh)
-  #:use-module (gnu packages serialization))
+  #:use-module (gnu packages serialization)
+  #:use-module (gnu packages xml))
 
 (define-public pdi
   (package
@@ -230,6 +231,28 @@ when a specified event occur or certain data becomes available.")))
     (synopsis "Serial version of the NetCDF plugin for PDI")
     (description "Decl'NetCDF plugin allows interaction with the NetCDF software library
 and data format.")))
+
+(define-public pdiplugin-decl-netcdf-parallel
+  (package/inherit pdi
+    (name "pdiplugin-decl-netcdf-parallel")
+    (inputs
+     (modify-inputs (package-inputs pdi)
+       (append hdf5-parallel-openmpi
+               netcdf-parallel-openmpi
+               openmpi)))
+    (propagated-inputs (list pdiplugin-mpi))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DBUILD_TESTING=ON" ;activate tests
+                                "-DBUILD_NETCDF_PARALLEL=ON"
+                                (string-append "-DPDI_DIR=" #$pdi "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/decl_netcdf")))
+                   (add-before 'check 'mpi-setup
+                               #$%openmpi-setup))))
+    (synopsis "Parallel version of the NetCDF plugin for PDI")))
 
 (define-public pdiplugin-serialize
   (package/inherit pdi
