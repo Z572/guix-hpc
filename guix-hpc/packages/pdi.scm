@@ -242,3 +242,18 @@ and data format.")))
                      (lambda _
                        (chdir "plugins/serialize"))))))
     (synopsis "Serialize plugin for PDI")))
+
+(define-public pdi+python
+  (package/inherit pdi
+    (name (string-append (package-name pdi) "+python"))
+    (arguments
+     (substitute-keyword-arguments (package-arguments pdi)
+       ((#:configure-flags flags)
+        #~(append (list "-DBUILD_PYTHON=ON")
+                  #$flags))))
+    (inputs (modify-inputs (package-inputs pdi)
+              (append python pybind11)))
+    (native-inputs (modify-inputs (package-native-inputs pdi)
+                     ;; needed for tests.
+                     (append python-numpy)))
+    (synopsis "PDI package with Python support")))
