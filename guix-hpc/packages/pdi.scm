@@ -257,3 +257,15 @@ and data format.")))
                      ;; needed for tests.
                      (append python-numpy)))
     (synopsis "PDI package with Python support")))
+
+(define-public pdiplugin-pycall
+  (package/inherit pdi+python
+    (name "pdiplugin-pycall")
+    (arguments
+     (list
+      #:configure-flags #~(list (string-append "-DPDI_DIR=" #$pdi+python "/share/pdi/cmake"))
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'change-dir
+                     (lambda _
+                       (chdir "plugins/pycall"))))))
+    (synopsis "Pycall plugin for PDI")))
