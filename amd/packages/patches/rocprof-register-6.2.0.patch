@@ -1,0 +1,25 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 30d1308..7572226 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -113,6 +113,6 @@ if(ROCPROFILER_REGISTER_BUILD_SAMPLES)
+     add_subdirectory(samples)
+ endif()
+ 
+-include(rocprofiler_register_config_packaging)
++#include(rocprofiler_register_config_packaging)
+ 
+ rocprofiler_register_print_features()
+diff --git a/source/lib/rocprofiler-register/CMakeLists.txt b/source/lib/rocprofiler-register/CMakeLists.txt
+index 840fbed..2cdca02 100644
+--- a/source/lib/rocprofiler-register/CMakeLists.txt
++++ b/source/lib/rocprofiler-register/CMakeLists.txt
+@@ -17,6 +17,8 @@ target_include_directories(
+     rocprofiler-register PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/source
+                                  ${PROJECT_BINARY_DIR}/source)
+ 
++find_package(fmt REQUIRED)
++find_package(glog REQUIRED)
+ target_link_libraries(
+     rocprofiler-register
+     PUBLIC rocprofiler-register::headers
