@@ -617,12 +617,12 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "a935110f1fb7ba6ecc0fb2574bc4e71e0cb7e490")
+             (commit "6731c9d356bee6aa30e6438a7d37d9d6970efe25")
              ;; We need the submodule in 'cmake_modules/morse'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1i68vpn3ycp4kgjpj30gs7cm2lyddmwm6wa5asy3fkj76zbhc0sd"))))
+        (base32 "1sj4zg1r26czx8186pfdgk46nlwhp4chsaw2a9sp97i90micamfj"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DPADDLE_BUILD_TESTS=ON"
