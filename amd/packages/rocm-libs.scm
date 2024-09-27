@@ -23,6 +23,7 @@
   #:use-module (guix git-download)
   #:use-module (guix download)
   #:use-module (guix licenses)
+  #:use-module (guix build utils)
   #:use-module (guix utils)
 
   #:use-module (gnu packages)
@@ -76,6 +77,8 @@ of AMD's commercially available GPU architectures.")
     (home-page "https://github.com/ROCm/ROCdbgapi")
     (license expat)))
 
+(define-public rocdbg-api-6.2
+  (make-rocdbg-api llvm-comgr-6.2 hipamd-6.2))
 (define-public rocdbg-api-6.1
   (make-rocdbg-api llvm-comgr-6.1 hipamd-6.1))
 (define-public rocdbg-api-6.0
@@ -117,6 +120,8 @@ for developing performant GPU-accelerated code on the AMD ROCm platform.")
     (home-page "https://github.com/ROCmSoftwarePlatform/rocPRIM.git")
     (license expat)))
 
+(define-public rocprim-6.2
+  (make-rocprim rocm-cmake-6.2 hipamd-6.2))
 (define-public rocprim-6.1
   (make-rocprim rocm-cmake-6.1 hipamd-6.1))
 (define-public rocprim-6.0
@@ -158,6 +163,8 @@ CUB project into HIP so you can use AMD hardware (and ROCm software).")
     (home-page "https://github.com/ROCm/hipCUB")
     (license bsd-3)))
 
+(define-public hipcub-6.2
+  (make-hipcub hipamd-6.2 rocm-cmake-6.2 rocprim-6.2))
 (define-public hipcub-6.1
   (make-hipcub hipamd-6.1 rocm-cmake-6.1 rocprim-6.1))
 (define-public hipcub-6.0
@@ -186,9 +193,20 @@ CUB project into HIP so you can use AMD hardware (and ROCm software).")
      (list
       #:tests? #f ;No tests.
       #:build-type "Release"
-      #:configure-flags #~(list (string-append "-DCMAKE_CXX_COMPILER="
-                                               #$hipamd "/bin/hipcc")
-                                "-DAMDGPU_TARGETS=gfx90a,gfx1030")))
+      #:configure-flags
+      #~(list
+          (string-append "-DROCM_PATH=" #$(this-package-input "hipamd"))
+          (string-append "-DCMAKE_CXX_COMPILER=" #$(this-package-input "hipamd") "/bin/hipcc")
+          "-DAMDGPU_TARGETS=gfx90a,gfx1030")
+      #:phases
+      #~(modify-phases %standard-phases
+        (add-before 'configure 'parallel-jobs
+            (lambda _
+              (substitute* "CMakeLists.txt"
+                (("target_compile_options\\(rccl PRIVATE -parallel-jobs=.*\\)") 
+                            "target_compile_options(rccl PRIVATE -parallel-jobs=1)")
+                (("target_link_options\\(rccl PRIVATE -parallel-jobs=.*\\)")
+                            "target_link_options(rccl PRIVATE -parallel-jobs=4)")))))))
     (inputs (list hipamd rocm-smi))
     (native-inputs (list rocm-cmake hipify))
     (synopsis
@@ -203,6 +221,8 @@ or multiple nodes, and can be used in either single- or multi-process (e.g., MPI
     (home-page "https://github.com/ROCm/rccl")
     (license bsd-3)))
 
+(define-public rccl-6.2
+  (make-rccl hipamd-6.2 rocm-cmake-6.2 rocm-smi-6.2 hipify-6.2))
 (define-public rccl-6.1
   (make-rccl hipamd-6.1 rocm-cmake-6.1 rocm-smi-6.1 hipify-6.1))
 (define-public rccl-6.0
@@ -242,6 +262,8 @@ which uses the rocPRIM library. The HIP-ported library works on HIP and ROCm sof
     (home-page "https://github.com/ROCm/rocThrust.git")
     (license asl2.0)))
 
+(define-public rocthrust-6.2
+  (make-rocthrust hipamd-6.2 rocm-cmake-6.2 rocprim-6.2))
 (define-public rocthrust-6.1
   (make-rocthrust hipamd-6.1 rocm-cmake-6.1 rocprim-6.1))
 (define-public rocthrust-6.0
@@ -290,6 +312,9 @@ the HIP programming language and optimized for AMD's latest discrete GPUs.")
     (home-page "https://github.com/ROCm/rocSPARSE.git")
     (license expat)))
 
+(define-public rocsparse-6.2
+  (make-rocsparse rocm-cmake-6.2 hipamd-6.2 llvm-device-libs-6.2
+                  rocr-runtime-6.2 rocprim-6.2))
 (define-public rocsparse-6.1
   (make-rocsparse rocm-cmake-6.1 hipamd-6.1 llvm-device-libs-6.1
                   rocr-runtime-6.1 rocprim-6.1))
@@ -341,6 +366,8 @@ backends.")
     (home-page "https://github.com/ROCm/hipSPARSE.git")
     (license expat)))
 
+(define-public hipsparse-6.2
+  (make-hipsparse hipamd-6.2 rocm-cmake-6.2 rocsparse-6.2))
 (define-public hipsparse-6.1
   (make-hipsparse hipamd-6.1 rocm-cmake-6.1 rocsparse-6.1))
 (define-public hipsparse-6.0
@@ -372,6 +399,8 @@ backends.")
     (inputs (modify-inputs (package-inputs libfabric)
               (append rocr-runtime)))))
 
+(define-public ofi-rocm-6.2
+  (make-ofi-rocm rocr-runtime-6.2))
 (define-public ofi-rocm-6.1
   (make-ofi-rocm rocr-runtime-6.1))
 (define-public ofi-rocm-6.0
@@ -411,6 +440,8 @@ backends.")
               (append rocr-runtime)))
     (properties `((tunable? . #t) ,@(package-properties ucx)))))
 
+(define-public ucx-rocm-6.2
+  (make-ucx-rocm roct-thunk-6.2 rocr-runtime-6.2 hipamd-6.2))
 (define-public ucx-rocm-6.1
   (make-ucx-rocm roct-thunk-6.1 rocr-runtime-6.1 hipamd-6.1))
 (define-public ucx-rocm-6.0
@@ -457,6 +488,8 @@ backends.")
               (replace "libfabric" ofi)
               (append hipamd)))))
 
+(define-public openmpi-rocm-6.2
+  (make-openmpi-rocm ucx-rocm-6.2 ofi-rocm-6.2 hipamd-6.2))
 (define-public openmpi-rocm-6.1
   (make-openmpi-rocm ucx-rocm-6.1 ofi-rocm-6.1 hipamd-6.1))
 (define-public openmpi-rocm-6.0
@@ -505,6 +538,8 @@ the runtimes API callbacks and asynchronous activity records pool support.")
     (home-page "https://github.com/ROCm-Developer-Tools/roctracer.git")
     (license expat)))
 
+(define-public roctracer-6.2
+  (make-roctracer hipamd-6.2))
 (define-public roctracer-6.1
   (make-roctracer hipamd-6.1))
 (define-public roctracer-6.0
@@ -566,6 +601,8 @@ rocBLAS is implemented in the HIP programming language and optimized for AMD GPU
     (home-page "https://github.com/ROCmSoftwarePlatform/rocBLAS.git")
     (license (list expat bsd-3))))
 
+(define-public rocblas-6.2
+  (make-rocblas tensile-6.2 rocm-cmake-6.2 hipamd-6.2))
 (define-public rocblas-6.1
   (make-rocblas tensile-6.1 rocm-cmake-6.1 hipamd-6.1))
 (define-public rocblas-6.0
@@ -582,7 +619,7 @@ rocBLAS is implemented in the HIP programming language and optimized for AMD GPU
   (make-rocblas tensile-5.3 rocm-cmake-5.3 hipamd-5.3))
 
 ; rocsolver
-(define (make-rocsolver hipamd rocm-cmake rocblas)
+(define (make-rocsolver hipamd rocm-cmake rocblas rocprim)
   (package
     (name "rocsolver")
     (version (package-version hipamd))
@@ -613,7 +650,7 @@ rocBLAS is implemented in the HIP programming language and optimized for AMD GPU
                                                        #\:))))
                        (setenv "CPLUS_INCLUDE_PATH"
                                (string-join cplus-include-path ":")))))))
-    (inputs (list fmt-8 hipamd rocblas))
+    (inputs (list fmt-8 hipamd rocblas rocprim))
     (native-inputs (list python-wrapper rocm-cmake))
     (synopsis
      "rocSOLVER provides LAPACK operations for the ROCm platform.")
@@ -623,21 +660,22 @@ on the ROCm platform.")
     (home-page "https://github.com/ROCm/rocSOLVER.git")
     (license (list bsd-2 bsd-3))))
 
+(define-public rocsolver-6.2
+  (make-rocsolver hipamd-6.2 rocm-cmake-6.2 rocblas-6.2 rocprim-6.2)); rocprim first neeeded for rocm-6.2.0
 (define-public rocsolver-6.1
-  (make-rocsolver hipamd-6.1 rocm-cmake-6.1 rocblas-6.1))
+  (make-rocsolver hipamd-6.1 rocm-cmake-6.1 rocblas-6.1 rocprim-6.1))
 (define-public rocsolver-6.0
-  (make-rocsolver hipamd-6.0 rocm-cmake-6.0 rocblas-6.0))
+  (make-rocsolver hipamd-6.0 rocm-cmake-6.0 rocblas-6.0 rocprim-6.0))
 (define-public rocsolver-5.7
-  (make-rocsolver hipamd-5.7 rocm-cmake-5.7 rocblas-5.7))
+  (make-rocsolver hipamd-5.7 rocm-cmake-5.7 rocblas-5.7 rocprim-5.7))
 (define-public rocsolver-5.6
-  (make-rocsolver hipamd-5.6 rocm-cmake-5.6 rocblas-5.6))
+  (make-rocsolver hipamd-5.6 rocm-cmake-5.6 rocblas-5.6 rocprim-5.6))
 (define-public rocsolver-5.5
-  (make-rocsolver hipamd-5.5 rocm-cmake-5.5 rocblas-5.5))
+  (make-rocsolver hipamd-5.5 rocm-cmake-5.5 rocblas-5.5 rocprim-5.5))
 (define-public rocsolver-5.4
-  (make-rocsolver hipamd-5.4 rocm-cmake-5.4 rocblas-5.4))
+  (make-rocsolver hipamd-5.4 rocm-cmake-5.4 rocblas-5.4 rocprim-5.4))
 (define-public rocsolver-5.3
-  (make-rocsolver hipamd-5.3 rocm-cmake-5.3 rocblas-5.3))
-
+  (make-rocsolver hipamd-5.3 rocm-cmake-5.3 rocblas-5.3 rocprim-5.3))
 
 ; hipblas
 (define-public (make-hipblas hipamd rocm-cmake rocblas rocsolver)
@@ -667,6 +705,8 @@ cuBLAS backends.")
     (home-page "https://github.com/ROCm/hipBLAS.git")
     (license (list bsd-3 expat))))
 
+(define-public hipblas-6.2
+  (make-hipblas hipamd-6.2 rocm-cmake-6.2 rocblas-6.2 rocsolver-6.2))
 (define-public hipblas-6.1
   (make-hipblas hipamd-6.1 rocm-cmake-6.1 rocblas-6.1 rocsolver-6.1))
 (define-public hipblas-6.0
@@ -713,6 +753,8 @@ It is designed to run on top of AMD's ROCm runtime, but it also works on CUDA-en
     (home-page "https://github.com/ROCm/rocRAND.git")
     (license expat)))
 
+(define-public rocrand-6.2
+  (make-rocrand hipamd-6.2 rocm-cmake-6.2))
 (define-public rocrand-6.1
   (make-rocrand hipamd-6.1 rocm-cmake-6.1))
 (define-public rocrand-6.0
@@ -728,6 +770,49 @@ It is designed to run on top of AMD's ROCm runtime, but it also works on CUDA-en
 (define-public rocrand-5.3
   (make-rocrand hipamd-5.3 rocm-cmake-5.3))
 
+; hiprand
+(define-public (make-hiprand hipamd rocm-cmake rocrand)
+  (package
+    (name "hiprand")
+    (version (package-version hipamd))
+    (source
+     (rocm-origin name version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:tests? #f ;No tests.
+      #:build-type "Release"
+      #:configure-flags
+      #~(list
+            (string-append "-DCMAKE_CXX_COMPILER=" #$hipamd "/bin/hipcc")
+            "-DAMDGPU_TARGETS=gfx90a,gfx1030")))
+    (inputs (list hipamd rocrand))
+    (native-inputs (list git rocm-cmake))
+    (synopsis
+     "RAND library for HIP programming language.")
+    (description
+     "The rocRAND project provides functions that generate pseudorandom and quasirandom numbers.
+The rocRAND library is implemented in the HIP programming language and optimized for AMD's latest discrete GPUs.
+It is designed to run on top of AMD's ROCm runtime, but it also works on CUDA-enabled GPUs.")
+    (home-page "https://github.com/ROCm/rocRAND.git")
+    (license expat)))
+
+(define-public hiprand-6.2
+  (make-hiprand hipamd-6.2 rocm-cmake-6.2 rocrand-6.2))
+(define-public hiprand-6.1
+  (make-hiprand hipamd-6.1 rocm-cmake-6.1 rocrand-6.1))
+(define-public hiprand-6.0
+  (make-hiprand hipamd-6.0 rocm-cmake-6.0 rocrand-6.0))
+(define-public hiprand-5.7
+  (make-hiprand hipamd-5.7 rocm-cmake-5.7 rocrand-5.7))
+(define-public hiprand-5.6
+  (make-hiprand hipamd-5.6 rocm-cmake-5.6 rocrand-5.6))
+(define-public hiprand-5.5
+  (make-hiprand hipamd-5.5 rocm-cmake-5.5 rocrand-5.5))
+(define-public hiprand-5.4
+  (make-hiprand hipamd-5.4 rocm-cmake-5.4 rocrand-5.4))
+(define-public hiprand-5.3
+  (make-hiprand hipamd-5.3 rocm-cmake-5.3 rocrand-5.3))
 
 ; rocalution
 (define-public (make-rocalution hipamd
@@ -782,6 +867,13 @@ portable, generic, and flexible design that allows seamless integration with oth
     (home-page "https://github.com/ROCm/rocALUTION.git")
     (license expat)))
 
+(define-public rocalution-6.2
+  (make-rocalution hipamd-6.2
+                   rocm-cmake-6.2
+                   rocsparse-6.2
+                   rocblas-6.2
+                   rocprim-6.2
+                   rocrand-6.2))
 (define-public rocalution-6.1
   (make-rocalution hipamd-6.1
                    rocm-cmake-6.1
@@ -862,6 +954,8 @@ library can be used with AMD and NVIDIA GPUs.")
     (home-page "https://github.com/ROCm/rocFFT")
     (license expat)))
 
+(define-public rocfft-6.2
+  (make-rocfft hipamd-6.2 rocm-cmake-6.2))
 (define-public rocfft-6.1
   (make-rocfft hipamd-6.1 rocm-cmake-6.1))
 (define-public rocfft-6.0
@@ -905,6 +999,8 @@ inputs to the backend and marshals results back to your application.")
     (home-page "https://github.com/ROCm/hipFFT")
     (license expat)))
 
+(define-public hipfft-6.2
+  (make-hipfft hipamd-6.2 rocm-cmake-6.2 rocfft-6.2))
 (define-public hipfft-6.1
   (make-hipfft hipamd-6.1 rocm-cmake-6.1 rocfft-6.1))
 (define-public hipfft-6.0

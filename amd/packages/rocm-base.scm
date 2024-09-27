@@ -17,9 +17,11 @@
 
 (define-module (amd packages rocm-base)
   #:use-module (amd packages rocm-origin)
+  #:use-module (amd packages logging)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system trivial)
+  #:use-module (guix build utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
@@ -35,8 +37,10 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages pretty-print)
   #:use-module (gnu packages python)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages crypto)
   #:use-module ((guix licenses)
                 #:prefix license:)
   #:use-module (gnu packages linux)
@@ -69,6 +73,8 @@
               (replace "libffi" libffi-shared)))
     (properties `((hidden? . #t) ,@(package-properties llvm)))))
 
+(define-public llvm-rocm-6.2
+  (make-llvm-rocm "6.2.0" llvm-18))
 (define-public llvm-rocm-6.1
   (make-llvm-rocm "6.1.2" llvm-17))
 (define-public llvm-rocm-6.0
@@ -90,23 +96,22 @@
     (inherit clang-runtime)
     (name (string-append (package-name clang-runtime) "-rocm"))
     (version (package-version llvm-rocm))
-    (source (let ((parent (rocm-origin "llvm-project" version)))
-              (origin
-                (inherit parent)
-                (patches
-                 (append (origin-patches parent)
-                         (origin-patches (package-source clang-runtime)))))))
+    (source
+      (rocm-origin "llvm-project" version))
     (inputs (modify-inputs (package-inputs clang-runtime)
               (replace "llvm" llvm-rocm)
-              (replace "libffi" libffi-shared)))
+              (replace "libffi" libffi-shared)
+              (append libxcrypt)))
     (properties `((hidden? . #t) ,@(package-properties clang-runtime)))))
 
+(define-public clang-runtime-rocm-6.2
+  (make-clang-runtime-rocm llvm-rocm-6.2 clang-runtime-18))
 (define-public clang-runtime-rocm-6.1
   (make-clang-runtime-rocm llvm-rocm-6.1 clang-runtime-17))
 (define-public clang-runtime-rocm-6.0
   (make-clang-runtime-rocm llvm-rocm-6.0 clang-runtime-17))
 (define-public clang-runtime-rocm-5.7
-  (make-clang-runtime-rocm llvm-rocm-5.7 clang-runtime-16))
+  (make-clang-runtime-rocm llvm-rocm-5.7 clang-runtime-17))
 (define-public clang-runtime-rocm-5.6
   (make-clang-runtime-rocm llvm-rocm-5.6 clang-runtime-16))
 (define-public clang-runtime-rocm-5.5
@@ -138,6 +143,8 @@
                 (copy-recursively "../clang-tools-extra" "tools/extra")))))))
     (properties `((hidden? . #t) ,@(package-properties clang)))))
 
+(define-public clang-rocm-6.2
+  (make-clang-rocm llvm-rocm-6.2 clang-runtime-rocm-6.2 clang-18))
 (define-public clang-rocm-6.1
   (make-clang-rocm llvm-rocm-6.1 clang-runtime-rocm-6.1 clang-17))
 (define-public clang-rocm-6.0
@@ -164,6 +171,8 @@
     (inputs (list llvm-rocm))
     (properties `((hidden? . #t) ,@(package-properties lld)))))
 
+(define-public lld-rocm-6.2
+  (make-lld-rocm llvm-rocm-6.2 lld-18))
 (define-public lld-rocm-6.1
   (make-lld-rocm llvm-rocm-6.1 lld-17))
 (define-public lld-rocm-6.0
@@ -215,6 +224,8 @@ a set of AMD specific device-side language runtime libraries.")
     (home-page "https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git")
     (license license:ncsa)))
 
+(define-public llvm-device-libs-6.2
+  (make-rocm-device-libs clang-rocm-6.2))
 (define-public llvm-device-libs-6.1
   (make-rocm-device-libs clang-rocm-6.1))
 (define-public rocm-device-libs-6.0
@@ -250,6 +261,8 @@ to interact with the ROCk driver.")
     (home-page "https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface.git")
     (license license:expat)))
 
+(define-public roct-thunk-6.2
+  (make-roct-thunk "6.2.0"))
 (define-public roct-thunk-6.1
   (make-roct-thunk "6.1.2"))
 (define-public roct-thunk-6.0
@@ -265,8 +278,34 @@ to interact with the ROCk driver.")
 (define-public roct-thunk-5.3
   (make-roct-thunk "5.3.3"))
 
+; rocprof-register
+(define (make-rocprof-register version)
+    (package
+        (name "rocprof-register")
+        (version version)
+        (source (rocm-origin "rocprofiler-register" version))
+        (build-system cmake-build-system)
+        (arguments
+            (list
+                #:tests? #f
+                #:configure-flags
+                ;; Don't let CMake download and build these dependencies
+                #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
+                        "-DROCPROFILER_REGISTER_BUILD_FMT=OFF")))
+        (inputs (list fmt glog-0.7))
+        (synopsis "The rocprofiler-register helper library.")
+        (description "The rocprofiler-register library is a helper library that coordinates
+the modification of the intercept API table(s) of the HSA/HIP/ROCTx runtime libraries by the
+ROCprofiler (v2) library. The purpose of this library is to provide a consistent and automated
+mechanism of enabling performance analysis in the ROCm runtimes which does not rely on environment
+variables or unique methods for each runtime library.")
+        (home-page "https://github.com/rocm/rocprofiler-register")
+        (license license:expat)))
+
+(define-public rocprof-register-6.2 (make-rocprof-register "6.2.0"))
+
 ; rocr-runtime
-(define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm)
+(define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm rocprof-register)
   (package
     (name "rocr-runtime")
     (version (package-version rocm-device-libs))
@@ -285,7 +324,8 @@ to interact with the ROCk driver.")
                    (add-after 'unpack 'chdir
                      (lambda _
                        (chdir "src"))))))
-    (inputs (list numactl roct-thunk rocm-device-libs libdrm libffi))
+    (inputs (append (list numactl libdrm libffi roct-thunk rocm-device-libs)
+                    (if (version>=? version "6.2.0") (list rocprof-register) '() )))
     (native-inputs (list xxd libelf lld-rocm clang-rocm pkg-config))
     (synopsis "HSA Runtime API and runtime for ROCm")
     (description
@@ -296,29 +336,34 @@ core runtime is also available.")
     (home-page "https://github.com/RadeonOpenCompute/ROCR-Runtime.git")
     (license license:ncsa)))
 
+(define-public rocr-runtime-6.2
+  (make-rocr-runtime roct-thunk-6.2 llvm-device-libs-6.2 lld-rocm-6.2
+                     clang-rocm-6.2 rocprof-register-6.2))
 (define-public rocr-runtime-6.1
   (make-rocr-runtime roct-thunk-6.1 llvm-device-libs-6.1 lld-rocm-6.1
-                     clang-rocm-6.1))
+                     clang-rocm-6.1 #f))
 (define-public rocr-runtime-6.0
   (make-rocr-runtime roct-thunk-6.0 rocm-device-libs-6.0 lld-rocm-6.0
-                     clang-rocm-6.0))
+                     clang-rocm-6.0 #f))
 (define-public rocr-runtime-5.7
   (make-rocr-runtime roct-thunk-5.7 rocm-device-libs-5.7 lld-rocm-5.7
-                     clang-rocm-5.7))
+                     clang-rocm-5.7 #f))
 (define-public rocr-runtime-5.6
   (make-rocr-runtime roct-thunk-5.6 rocm-device-libs-5.6 lld-rocm-5.6
-                     clang-rocm-5.6))
+                     clang-rocm-5.6 #f))
 (define-public rocr-runtime-5.5
   (make-rocr-runtime roct-thunk-5.5 rocm-device-libs-5.5 lld-rocm-5.5
-                     clang-rocm-5.5))
+                     clang-rocm-5.5 #f))
 (define-public rocr-runtime-5.4
   (make-rocr-runtime roct-thunk-5.4 rocm-device-libs-5.4 lld-rocm-5.4
-                     clang-rocm-5.4))
+                     clang-rocm-5.4 #f))
 (define-public rocr-runtime-5.3
   (make-rocr-runtime roct-thunk-5.3 rocm-device-libs-5.3 lld-rocm-5.3
-                     clang-rocm-5.3))
+                     clang-rocm-5.3 #f))
 
 ; lld-wrapper
+(define-public lld-wrapper-rocm-6.2
+  (make-lld-wrapper lld-rocm-6.2))
 (define-public lld-wrapper-rocm-6.1
   (make-lld-wrapper lld-rocm-6.1))
 (define-public lld-wrapper-rocm-6.0
@@ -387,9 +432,12 @@ core runtime is also available.")
                                        (assoc-ref inputs "gcc:lib") "/lib"))))
             (add-after 'unpack 'patch-clang-tools
               (lambda _
-                (substitute* (list "openmp/libomptarget/CMakeLists.txt"
-                              "openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-                              "openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt")
+                ;; FIXME: Create a patch exposing a configuration option (e.g. -DCLANG_DIR=<...>)
+                ;; to use instead of this substitution
+                (substitute* (append '("openmp/libomptarget/CMakeLists.txt"
+                                       "openmp/libomptarget/DeviceRTL/CMakeLists.txt")
+                                     (if #$(version>=? "6.1.2" version)
+                                        '("openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt") '()))
                   (("find_program\\(CLANG_TOOL clang PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                    (string-append "find_program(CLANG_TOOL clang PATHS "
                                   #$clang-rocm "/bin"))
@@ -403,6 +451,14 @@ core runtime is also available.")
                     #$clang-rocm "/bin")))))))))
     (properties `((hidden? . #t) ,@(package-properties libomp)))))
 
+(define-public libomp-rocm-6.2
+  (make-libomp-rocm llvm-rocm-6.2
+                    clang-rocm-6.2
+                    lld-wrapper-rocm-6.2
+                    llvm-device-libs-6.2
+                    rocr-runtime-6.2
+                    roct-thunk-6.2
+                    libomp-18))
 (define-public libomp-rocm-6.1
   (make-libomp-rocm llvm-rocm-6.1
                     clang-rocm-6.1
@@ -485,6 +541,13 @@ development to be installed in user profiles. This includes Clang, as well as
 libc (headers and binaries, plus debugging symbols in the @code{debug}
 output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
 
+(define-public rocm-toolchain-6.2
+  (make-rocm-toolchain clang-rocm-6.2
+                       libomp-rocm-6.2
+                       lld-wrapper-rocm-6.2
+                       rocr-runtime-6.2
+                       llvm-device-libs-6.2
+                       roct-thunk-6.2))
 (define-public rocm-toolchain-6.1
   (make-rocm-toolchain clang-rocm-6.1
                        libomp-rocm-6.1
@@ -573,6 +636,8 @@ CUDA source code into portable HIP C++.")
     (home-page "https://github.com/ROCm/HIPIFY")
     (license license:ncsa)))
 
+(define-public hipify-6.2
+  (make-hipify clang-rocm-6.2))
 (define-public hipify-6.1
   (make-hipify clang-rocm-6.1))
 (define-public hipify-6.0

@@ -1,0 +1,75 @@
+diff --git a/amd/hipcc/bin/hipcc b/amd/hipcc/bin/hipcc
+index 8559bb099f1c..4002631b5721 100755
+--- a/amd/hipcc/bin/hipcc
++++ b/amd/hipcc/bin/hipcc
+@@ -29,7 +29,7 @@ use File::Spec::Functions 'catfile';
+ 
+ # TODO: By default select perl script until change incorporated in HIP build script.
+ my $USE_PERL_SCRIPT = $ENV{'HIP_USE_PERL_SCRIPTS'};
+-$USE_PERL_SCRIPT //= 0;  # use defined-or assignment operator.  Use env var, but if not defined default to 1.
++$USE_PERL_SCRIPT //= 1;  # use defined-or assignment operator.  Use env var, but if not defined default to 1.
+ 
+ my $isWindows =  ($^O eq 'MSWin32' or $^O eq 'msys');
+ # escapes args with quotes SWDEV-341955
+diff --git a/amd/hipcc/bin/hipcc.pl b/amd/hipcc/bin/hipcc.pl
+index 27839e58fa4e..a5f896df2283 100755
+--- a/amd/hipcc/bin/hipcc.pl
++++ b/amd/hipcc/bin/hipcc.pl
+@@ -129,8 +129,10 @@ $HIP_CLANG_PATH =   $hipvars::HIP_CLANG_PATH;
+ $CUDA_PATH      =   $hipvars::CUDA_PATH;
+ $HIP_PATH       =   $hipvars::HIP_PATH;
+ $ROCM_PATH      =   $hipvars::ROCM_PATH;
++$ROCMINFO_PATH  =   $hipvars::ROCMINFO_PATH;
+ $HIP_VERSION    =   $hipvars::HIP_VERSION;
+-$HIP_ROCCLR_HOME =   $hipvars::HIP_ROCCLR_HOME;
++$HIP_ROCCLR_HOME =  $hipvars::HIP_ROCCLR_HOME;
++$DEVICE_LIB_PATH =  $hipvars::DEVICE_LIB_PATH;
+ 
+ sub get_normalized_path {
+   return $doubleQuote . $_[0] . $doubleQuote;
+@@ -480,7 +482,7 @@ if($HIP_PLATFORM eq "amd"){
+             $targetsStr = $ENV{HCC_AMDGPU_TARGET};
+         } elsif (not $isWindows) {
+             # Else try using rocm_agent_enumerator
+-            $ROCM_AGENT_ENUM = "${ROCM_PATH}/bin/rocm_agent_enumerator";
++            $ROCM_AGENT_ENUM = "${ROCMINFO_PATH}/bin/rocm_agent_enumerator";
+             $targetsStr = `${ROCM_AGENT_ENUM} -t GPU`;
+             $targetsStr =~ s/\n/,/g;
+         }
+@@ -606,6 +608,7 @@ if ($needLDFLAGS and not $compileOnly) {
+     $CMD .= " $HIPLDFLAGS";
+ }
+ $CMD .= " $toolArgs";
++$CMD .= " --hip-path=${HIP_PATH}";
+ 
+ if ($verbose & 0x1) {
+     print "hipcc-cmd: ", $CMD, "\n";
+diff --git a/amd/hipcc/bin/hipconfig b/amd/hipcc/bin/hipconfig
+index f9385bb94149..58a2abf51bde 100755
+--- a/amd/hipcc/bin/hipconfig
++++ b/amd/hipcc/bin/hipconfig
+@@ -29,7 +29,7 @@ use File::Spec::Functions 'catfile';
+ 
+ #TODO: By default select perl script until change incorporated in HIP build script
+ my $USE_PERL_SCRIPT = $ENV{'HIP_USE_PERL_SCRIPTS'};
+-$USE_PERL_SCRIPT //= 0;  # use defined-or assignment operator.  Use env var, but if not defined default to 0.
++$USE_PERL_SCRIPT //= 1;  # use defined-or assignment operator.  Use env var, but if not defined default to 0.
+ my $isWindows =  ($^O eq 'MSWin32' or $^O eq 'msys');
+ my $SCRIPT_DIR=dirname(__FILE__);
+ if ($USE_PERL_SCRIPT) {
+diff --git a/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp b/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp
+index e27d59206e99..29ae8736353b 100644
+--- a/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp
++++ b/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp
+@@ -255,9 +255,9 @@ const char *amdgpu::dlr::getLinkCommandArgs(
+   }
+ 
+   // If device debugging turned on, add specially built bc files
+-  StringRef libpath = Args.MakeArgString(C.getDriver().Dir + "/../" + LibSuffix);
++  StringRef libpath = Args.MakeArgString(C.getDriver().InstalledDir + "/../" + LibSuffix);
+   std::string lib_debug_perf_path = FindDebugPerfInLibraryPath(LibSuffix);
+-  if (!lib_debug_perf_path.empty())
++  if (!lib_debug_perf_path.empty() && LibSuffix != "lib")
+     libpath = lib_debug_perf_path;
+ 
+   llvm::SmallVector<std::string, 12> BCLibs;
