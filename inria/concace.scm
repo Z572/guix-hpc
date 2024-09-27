@@ -317,7 +317,7 @@ a source code input file.")
               "1psv1x6izk0vpjswpb6cdnxca7nb7spg5qw0kbbins9w02njngnl"))))
    (build-system emacs-build-system)
    (propagated-inputs
-    ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages
+    ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages, as well as fonts (fontconfig and fonts themselves)
     (list bash-completion
 	  bat ;; enhanced cat: supports syntax highlighting; possible to couple nicely it with fzf
 	  diffutils ;; provides diff; used by diff-hl-flydiff-mode
@@ -325,6 +325,9 @@ a source code input file.")
           emacs-elementaryx-early-init
           emacs-evil
           emacs-which-key
+	  ;; TODO: considering adding fonts (WIP: needs further testing and refining)
+	  ; fontconfig
+	  ; font-dejavu font-liberation font-fira-code font-fira-mono font-hack font-adobe-source-code-pro font-gnu-freefont font-gnu-unifont
 	  fzf ;; fuzzy search
 	  less
 	  lesspipe ;; extends less if LESSOPEN environment variable is setup
@@ -553,7 +556,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
                 "1l9pc3qiggwpvlgp79n6pn9mxmfpxb6r6g295b81warypzqdyahx"))))
     (build-system emacs-build-system)
     (propagated-inputs
-     (list emacs-consult-eglot
+     (list ;; emacs-consult-eglot ;; Wait for https://issues.guix.gnu.org/70211 to be resolved:
            emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
 	   emacs-elementaryx-base
            emacs-editorconfig
