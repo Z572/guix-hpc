@@ -1,0 +1,166 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2af49b6..0c9ff6e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -116,6 +116,6 @@ if(ROCPROFILER_BUILD_SAMPLES)
+     add_subdirectory(samples)
+ endif()
+ 
+-include(rocprofiler_config_packaging)
++#include(rocprofiler_config_packaging)
+ 
+ rocprofiler_print_features()
+diff --git a/cmake/rocprofiler_config_interfaces.cmake b/cmake/rocprofiler_config_interfaces.cmake
+index c4ae0d6..355ace5 100644
+--- a/cmake/rocprofiler_config_interfaces.cmake
++++ b/cmake/rocprofiler_config_interfaces.cmake
+@@ -175,6 +175,7 @@ target_link_libraries(rocprofiler-amd-comgr INTERFACE amd_comgr)
+ #
+ # ----------------------------------------------------------------------------------------#
+ 
++find_package(PTL)
+ target_link_libraries(rocprofiler-ptl INTERFACE PTL::ptl-static)
+ 
+ # ----------------------------------------------------------------------------------------#
+diff --git a/external/CMakeLists.txt b/external/CMakeLists.txt
+index b52bf20..f39aa42 100644
+--- a/external/CMakeLists.txt
++++ b/external/CMakeLists.txt
+@@ -112,33 +112,40 @@ endif()
+ 
+ if(NOT TARGET PTL::ptl-static)
+     # checkout submodule if not already checked out or clone repo if no .gitmodules file
+-    rocprofiler_checkout_git_submodule(
+-        RELATIVE_PATH external/ptl
+-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+-        REPO_URL https://github.com/jrmadsen/PTL.git
+-        REPO_BRANCH rocprofiler)
+-
+-    set(PTL_USE_TBB OFF)
+-    set(PTL_USE_GPU OFF)
+-    set(PTL_USE_LOCKS ON)
+-    set(PTL_BUILD_EXAMPLES OFF)
+-    set(PTL_DEVELOPER_INSTALL OFF)
+-    add_subdirectory(ptl EXCLUDE_FROM_ALL)
++    if(ROCPROFILER_BUILD_PTL)
++        rocprofiler_checkout_git_submodule(
++            RELATIVE_PATH external/ptl
++            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
++            REPO_URL https://github.com/jrmadsen/PTL.git
++            REPO_BRANCH rocprofiler)
++
++        set(PTL_USE_GPU OFF)
++        set(PTL_USE_LOCKS ON)
++        set(PTL_BUILD_EXAMPLES OFF)
++        set(PTL_DEVELOPER_INSTALL OFF)
++        add_subdirectory(ptl EXCLUDE_FROM_ALL)
++    else()
++        find_package(PTL REQUIRED)
++    endif()
+ endif()
+ 
+-# checkout submodule if not already checked out or clone repo if no .gitmodules file
+-rocprofiler_checkout_git_submodule(
+-    RECURSIVE
+-    RELATIVE_PATH external/cereal
+-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+-    REPO_URL https://github.com/jrmadsen/cereal.git
+-    REPO_BRANCH "rocprofiler")
++if(ROCPROFILER_BUILD_CEREAL)
++    # checkout submodule if not already checked out or clone repo if no .gitmodules file
++    rocprofiler_checkout_git_submodule(
++        RECURSIVE
++        RELATIVE_PATH external/cereal
++        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
++        REPO_URL https://github.com/jrmadsen/cereal.git
++        REPO_BRANCH "rocprofiler")
+ 
+-target_compile_definitions(rocprofiler-cereal
+-                           INTERFACE $<BUILD_INTERFACE:CEREAL_THREAD_SAFE=1>)
+-target_include_directories(
+-    rocprofiler-cereal
+-    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cereal/include>)
++        target_compile_definitions(rocprofiler-cereal
++                 INTERFACE $<BUILD_INTERFACE:CEREAL_THREAD_SAFE=1>)
++        target_include_directories(
++        rocprofiler-cereal
++                INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cereal/include>)
++else()
++    find_package(cereal REQUIRED)
++endif()
+ 
+ # doxygen-awesome
+ if(ROCPROFILER_BUILD_DOCS)
+@@ -151,24 +158,28 @@ if(ROCPROFILER_BUILD_DOCS)
+         REPO_BRANCH "main")
+ endif()
+ 
+-rocprofiler_checkout_git_submodule(
+-    RECURSIVE
+-    RELATIVE_PATH external/perfetto
+-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+-    TEST_FILE meson.build
+-    REPO_URL https://android.googlesource.com/platform/external/perfetto external/perfetto
+-    REPO_BRANCH "v44.0")
+-
+-add_library(rocprofiler-perfetto-static-library STATIC)
+-target_sources(
+-    rocprofiler-perfetto-static-library
+-    PRIVATE ${PROJECT_SOURCE_DIR}/external/perfetto/sdk/perfetto.h
++if(ROCPROFILER_BUILD_PERFETTO)
++
++    rocprofiler_checkout_git_submodule(
++        RECURSIVE
++        RELATIVE_PATH external/perfetto
++        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
++        TEST_FILE meson.build
++        REPO_URL https://android.googlesource.com/platform/external/perfetto external/perfetto
++        REPO_BRANCH "v44.0")
++
++        add_library(rocprofiler-perfetto-static-library STATIC)
++        target_sources(rocprofiler-perfetto-static-library
++            PRIVATE ${PROJECT_SOURCE_DIR}/external/perfetto/sdk/perfetto.h
+             ${PROJECT_SOURCE_DIR}/external/perfetto/sdk/perfetto.cc)
+-target_include_directories(
+-    rocprofiler-perfetto-static-library SYSTEM
+-    INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/external/perfetto/sdk>)
+-set_target_properties(
+-    rocprofiler-perfetto-static-library PROPERTIES POSITION_INDEPENDENT_CODE ON
+-                                                   OUTPUT_NAME rocprofiler-sdk-perfetto)
+-target_link_libraries(rocprofiler-perfetto
++        target_include_directories(rocprofiler-perfetto-static-library SYSTEM
++            INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/external/perfetto/sdk>)
++        set_target_properties(rocprofiler-perfetto-static-library PROPERTIES POSITION_INDEPENDENT_CODE ON
++            OUTPUT_NAME rocprofiler-sdk-perfetto)
++        target_link_libraries(rocprofiler-perfetto
+                       INTERFACE $<BUILD_INTERFACE:rocprofiler-perfetto-static-library>)
++else()
++    find_package(PkgConfig REQUIRED)
++    pkg_check_modules(perfetto REQUIRED perfetto)
++    target_link_libraries(rocprofiler-perfetto INTERFACE ${perfetto_LIBRARIES})
++endif()
+diff --git a/source/bin/rocprofv3.py b/source/bin/rocprofv3.py
+index 0102c98..9b4295f 100755
+--- a/source/bin/rocprofv3.py
++++ b/source/bin/rocprofv3.py
+@@ -374,7 +374,7 @@ def main(argv=None):
+     )
+     update_env(
+         "LD_LIBRARY_PATH",
+-        f"{ROCM_DIR}/lib",
++        f"{ROCM_DIR}/lib:@AQL_DIR@/lib",
+         append=True,
+     )
+ 
+diff --git a/source/lib/rocprofiler-sdk-tool/output_file.hpp b/source/lib/rocprofiler-sdk-tool/output_file.hpp
+index fa34dbc..f59d61d 100644
+--- a/source/lib/rocprofiler-sdk-tool/output_file.hpp
++++ b/source/lib/rocprofiler-sdk-tool/output_file.hpp
+@@ -30,6 +30,7 @@
+ 
+ #include <array>
+ #include <iostream>
++#include <fstream>
+ #include <mutex>
+ #include <ostream>
+ #include <sstream>

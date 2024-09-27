@@ -53,6 +53,8 @@
     (home-page "https://github.com/RadeonOpenCompute/rocminfo")
     (license ncsa)))
 
+(define-public rocminfo-6.2
+  (make-rocminfo rocr-runtime-6.2))
 (define-public rocminfo-6.1
   (make-rocminfo rocr-runtime-6.1))
 (define-public rocminfo-6.0
@@ -94,6 +96,8 @@ system in terms of memory pools and their agents.")
     (home-page "https://github.com/ROCm/rocm_bandwidth_test")
     (license ncsa)))
 
+(define-public rocm-bandwidth-6.2
+  (make-rocm-bandwidth rocr-runtime-6.2))
 (define-public rocm-bandwidth-6.1
   (make-rocm-bandwidth rocr-runtime-6.1))
 (define-public rocm-bandwidth-6.0
@@ -131,6 +135,8 @@ provides a user space interface for applications to monitor and control GPU appl
     (home-page "https://github.com/RadeonOpenCompute/rocm_smi_lib.git")
     (license ncsa)))
 
+(define-public rocm-smi-6.2
+  (make-rocm-smi "6.2.0"))
 (define-public rocm-smi-6.1
   (make-rocm-smi "6.1.2"))
 (define-public rocm-smi-6.0
@@ -167,6 +173,8 @@ variety of 'compute' applications running on AMD GPUs.")
     (home-page "https://github.com/ROCmSoftwarePlatform/Tensile.git")
     (license expat)))
 
+(define-public tensile-6.2
+  (make-tensile "6.2.0"))
 (define-public tensile-6.1
   (make-tensile "6.1.2"))
 (define-public tensile-6.0

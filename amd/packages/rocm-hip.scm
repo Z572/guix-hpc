@@ -49,13 +49,18 @@
      (rocm-origin (if (version>=? version "6.1.1") "llvm-project" "rocm-compilersupport") version))
     (build-system cmake-build-system)
     (arguments
-     (list
-      #:tests? #f
-      #:phases #~(modify-phases %standard-phases
-                   (add-after 'unpack 'chdir
-                     (lambda _
-                       (setenv "HIP_DEVICE_LIB_PATH" (string-append #$(this-package-input "rocm-device-libs") "/amdgcn/bitcode"))
-                       (chdir #$(if (version>=? version "6.1.1") "amd/comgr" "lib/comgr")))))))
+        (list
+            #:tests? #f
+            #:phases
+            #~(modify-phases %standard-phases
+                (add-after 'unpack 'chdir
+                    (lambda _
+                        (setenv "HIP_DEVICE_LIB_PATH" (string-append #$(this-package-input "rocm-device-libs") "/amdgcn/bitcode"))
+                        (chdir #$(if (version>=? version "6.1.1") "amd/comgr" "lib/comgr"))))
+                (add-before 'configure 'fix-path
+                    (lambda _
+                        (substitute* "src/comgr-env.cpp"
+                            (("getDetector\\(\\)->getLLVMPath\\(\\)") (string-append "\"" #$clang-rocm "\""))))))))
     (inputs (list rocm-device-libs))
     (native-inputs (list llvm-rocm lld-rocm clang-rocm))
     (synopsis "The ROCm Code Object Manager")
@@ -64,6 +69,9 @@
     (home-page "https://github.com/RadeonOpenCompute/ROCm-CompilerSupport")
     (license ncsa)))
 
+(define-public llvm-comgr-6.2
+  (make-rocm-comgr llvm-device-libs-6.2 llvm-rocm-6.2 lld-rocm-6.2
+                   clang-rocm-6.2))
 (define-public llvm-comgr-6.1
   (make-rocm-comgr llvm-device-libs-6.1 llvm-rocm-6.1 lld-rocm-6.1
                    clang-rocm-6.1))
@@ -108,6 +116,8 @@ for AMD and NVIDIA GPUs from single source code.")
                     (home-page "https://github.com/ROCm-Developer-Tools/HIP")
                     (license expat))))
 
+(define-public hip-6.2
+  (make-hip "6.2.0"))
 (define-public hip-6.1
   (make-hip "6.1.2"))
 (define-public hip-6.0
@@ -142,6 +152,8 @@ clang and pass the appropriate include and library options for the target compil
                      "https://github.com/ROCm-Developer-Tools/HIPCC.git")
                     (license expat))))
 
+(define-public hipcc-6.2
+  (make-hipcc rocminfo-6.2 rocm-toolchain-6.2))
 (define-public hipcc-6.1
   (make-hipcc rocminfo-6.1 rocm-toolchain-6.1))
 (define-public hipcc-6.0
@@ -169,6 +181,7 @@ clang and pass the appropriate include and library options for the target compil
                                                #$hipcc "/bin")
                                 "-DCLR_BUILD_HIP=ON"
                                 "-DCLR_BUILD_OCL=OFF"
+                                "-DHIP_ENABLE_ROCPROFILER_REGISTER=OFF"
                                 "-D__HIP_ENABLE_PCH=OFF"
                                 "-DHIP_PLATFORM=amd")
       #:phases #~(modify-phases %standard-phases
@@ -236,6 +249,8 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
     (home-page "https://github.com/ROCm-Developer-Tools/clr.git")
     (license expat)))
 
+(define-public hipamd-6.2
+  (make-clr-hipamd hip-6.2 hipcc-6.2 llvm-comgr-6.2))
 (define-public hipamd-6.1
   (make-clr-hipamd hip-6.1 hipcc-6.1 llvm-comgr-6.1))
 (define-public hipamd-6.0
@@ -395,6 +410,8 @@ it is required for building some of the libraries that are a part of ROCm.")
     (home-page "https://github.com/RadeonOpenCompute/rocm-cmake.git")
     (license expat)))
 
+(define-public rocm-cmake-6.2
+  (make-rocm-cmake "6.2.0"))
 (define-public rocm-cmake-6.1
   (make-rocm-cmake "6.1.2"))
 (define-public rocm-cmake-6.0

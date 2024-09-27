@@ -1,0 +1,21 @@
+diff --git a/meson.build b/meson.build
+index 5ef6fce52c..561dcf4768 100644
+--- a/meson.build
++++ b/meson.build
+@@ -44,6 +44,7 @@ lib_perfetto = static_library(
+ )
+ 
+ inc_perfetto = include_directories('sdk')
++install_headers('sdk/perfetto.h')
+ 
+ dir_perfetto_trace = join_paths(meson.current_source_dir(),
+                                 'protos/perfetto/trace')
+@@ -57,3 +58,8 @@ dep_perfetto = declare_dependency(
+         'pkgdatadir': dir_perfetto_trace,
+     }
+ )
++
++pkg = import('pkgconfig')
++pkg.generate(lib_perfetto)
++
++
