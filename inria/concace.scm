@@ -53,6 +53,7 @@
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
+  #:use-module (gnu packages xdisorg) ;; for xclip
   ;;  #:use-module (hacky gitlab)
   #:use-module (guix-hpc packages solverstack)
   #:use-module (inria mpi)
@@ -325,6 +326,7 @@ a source code input file.")
           emacs-elementaryx-early-init
           emacs-evil
           emacs-which-key
+	  emacs-xclip
 	  ;; TODO: considering adding fonts (WIP: needs further testing and refining)
 	  ; fontconfig
 	  ; font-dejavu font-liberation font-fira-code font-fira-mono font-hack font-adobe-source-code-pro font-gnu-freefont font-gnu-unifont
@@ -333,6 +335,7 @@ a source code input file.")
 	  lesspipe ;; extends less if LESSOPEN environment variable is setup
           man-db
           man-pages
+	  xclip ;; for emacs-xclip; NB: alternative could be xsel; NB: on Wayland shall be wl-clipboard
 	  xdg-utils ;; for xdg-open
 	  ))))
 
