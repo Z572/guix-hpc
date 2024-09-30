@@ -53,6 +53,7 @@
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages wget)
+  #:use-module (gnu packages xdisorg) ;; for xclip
   ;;  #:use-module (hacky gitlab)
   #:use-module (guix-hpc packages solverstack)
   #:use-module (inria mpi)
@@ -300,7 +301,7 @@ a source code input file.")
 (define-public emacs-elementaryx-minimal
   (package
    (name "emacs-elementaryx-minimal")
-   (version "2.1.0")
+   (version "2.1.1")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
    (description
@@ -310,11 +311,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "v2.1.0")))
+                  (commit "v2.1.1")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "0g2ksxs3kz0nzz8h653x3zpd6vsz072d3s0qagj3p4z0sq2ki4p2"))))
+              "09rf0hccnhbvl0i09s14dhjzxiylirr05hfw9zxa3v7ps5a4sqyv"))))
    (build-system emacs-build-system)
    (propagated-inputs
     ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages, as well as fonts (fontconfig and fonts themselves)
@@ -325,6 +326,7 @@ a source code input file.")
           emacs-elementaryx-early-init
           emacs-evil
           emacs-which-key
+	  emacs-xclip
 	  ;; TODO: considering adding fonts (WIP: needs further testing and refining)
 	  ; fontconfig
 	  ; font-dejavu font-liberation font-fira-code font-fira-mono font-hack font-adobe-source-code-pro font-gnu-freefont font-gnu-unifont
@@ -333,6 +335,7 @@ a source code input file.")
 	  lesspipe ;; extends less if LESSOPEN environment variable is setup
           man-db
           man-pages
+	  xclip ;; for emacs-xclip; NB: alternative could be xsel; NB: on Wayland shall be wl-clipboard
 	  xdg-utils ;; for xdg-open
 	  ))))
 
