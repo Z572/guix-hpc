@@ -257,6 +257,9 @@ language and optimized for AMD's latest discrete GPUs.")
                                          #$openmpi-rocm "/bin/mpicc")
                           (string-append "CXX="
                                          #$openmpi-rocm "/bin/mpicxx")
+                          (string-append "CFLAGS=" "-I"
+                                         #$(this-package-input "rccl")
+                                         "/include/rccl")
                           "--enable-rocm"
                           (string-append "--with-rocm="
                                          #$(this-package-input "hipamd"))
