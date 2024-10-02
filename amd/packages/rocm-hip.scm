@@ -46,21 +46,27 @@
     (name "rocm-comgr")
     (version (package-version rocm-device-libs))
     (source
-     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" "rocm-compilersupport") version))
+     (rocm-origin (if (version>=? version "6.1.1") "llvm-project"
+                      "rocm-compilersupport") version))
     (build-system cmake-build-system)
     (arguments
-        (list
-            #:tests? #f
-            #:phases
-            #~(modify-phases %standard-phases
-                (add-after 'unpack 'chdir
-                    (lambda _
-                        (setenv "HIP_DEVICE_LIB_PATH" (string-append #$(this-package-input "rocm-device-libs") "/amdgcn/bitcode"))
-                        (chdir #$(if (version>=? version "6.1.1") "amd/comgr" "lib/comgr"))))
-                (add-before 'configure 'fix-path
-                    (lambda _
-                        (substitute* "src/comgr-env.cpp"
-                            (("getDetector\\(\\)->getLLVMPath\\(\\)") (string-append "\"" #$clang-rocm "\""))))))))
+     (list
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'chdir
+                     (lambda _
+                       (setenv "HIP_DEVICE_LIB_PATH"
+                               (string-append #$(this-package-input
+                                                 "rocm-device-libs")
+                                              "/amdgcn/bitcode"))
+                       (chdir #$(if (version>=? version "6.1.1") "amd/comgr"
+                                    "lib/comgr"))))
+                   (add-before 'configure 'fix-path
+                     (lambda _
+                       (substitute* "src/comgr-env.cpp"
+                         (("getDetector\\(\\)->getLLVMPath\\(\\)")
+                          (string-append "\""
+                                         #$clang-rocm "\""))))))))
     (inputs (list rocm-device-libs))
     (native-inputs (list llvm-rocm lld-rocm clang-rocm))
     (synopsis "The ROCm Code Object Manager")
@@ -119,16 +125,19 @@ for AMD and NVIDIA GPUs from single source code.")
                     (name "hipcc")
                     (version (package-version rocm-toolchain))
                     (source
-                     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" name) version))
+                     (rocm-origin (if (version>=? version "6.1.1")
+                                      "llvm-project" name) version))
                     (build-system cmake-build-system)
                     (arguments
                      (list
                       #:build-type "Release"
                       #:tests? #f
                       #:phases #~(modify-phases %standard-phases
-                        (add-after 'unpack 'chdir
-                            (lambda _
-                                (chdir #$(if (version>=? version "6.1.1") "amd/hipcc" ".")))))))
+                                   (add-after 'unpack 'chdir
+                                     (lambda _
+                                       (chdir #$(if (version>=? version
+                                                                "6.1.1")
+                                                    "amd/hipcc" ".")))))))
                     (propagated-inputs (list rocminfo rocm-toolchain))
                     (synopsis "HIP compiler driver (hipcc)")
                     (description
