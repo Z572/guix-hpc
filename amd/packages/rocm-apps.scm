@@ -57,7 +57,6 @@
       (commit (string-append "release/rocm-rel-" version))))
     (file-name (git-file-name "rochpcg" version))
     (sha256 (assoc-ref %hpcg-hashes version))
-    (patches (search-patches "amd/packages/patches/rochpcg-cmake.patch"))
     (modules '((guix build utils)))
     (snippet
       ;; Build without '-march=native' so that the binaries can be used on
