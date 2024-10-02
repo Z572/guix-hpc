@@ -16,17 +16,15 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (amd packages rocm-origin)
-    #:use-module (guix packages)
-    #:use-module (guix gexp)
-    #:use-module (guix git-download)
-    #:use-module (guix download)
-    #:use-module (guix utils)
+  #:use-module (guix packages)
+  #:use-module (guix gexp)
+  #:use-module (guix git-download)
+  #:use-module (guix download)
+  #:use-module (guix utils)
 
-    #:use-module (gnu packages)
+  #:use-module (gnu packages)
 
-    #:export (rocm-origin)
-    #:export (local-origin)
-)
+  #:export (rocm-origin))
 
 (define rocm-hashes
     `(
@@ -508,19 +506,19 @@
     )
 )
 
-
-(define* (rocm-origin name version #:key (recursive? #f))
-    "This procedure returns origin objects for ROCm components."
-    (origin
-        (method git-fetch)
-        (uri (git-reference
-                (url (string-append "https://github.com/ROCm/" name))
-                (commit (string-append "rocm-" version))
-                (recursive? recursive?)))
-        (file-name (git-file-name name (string-append "rocm-" version)))
-        (sha256 (assoc-ref rocm-hashes (list name version)))
-        (patches (map search-patch (or (assoc-ref rocm-patches (list name version)) '())))))
-
-(define* (local-origin name)
-    (define repo-path (string-append (getenv "HOME") "/repos/" name))
-    (local-file repo-path (string-append name "-checkout") #:recursive? #t #:select? (git-predicate repo-path)))
+(define* (rocm-origin name version
+                      #:key (recursive? #f))
+  "This procedure returns origin objects for ROCm components."
+  (origin
+    (method git-fetch)
+    (uri (git-reference (url (string-append "https://github.com/ROCm/" name))
+                        (commit (string-append "rocm-" version))
+                        (recursive? recursive?)))
+    (file-name (git-file-name name
+                              (string-append "rocm-" version)))
+    (sha256 (assoc-ref rocm-hashes
+                       (list name version)))
+    (patches (map search-patch
+                  (or (assoc-ref rocm-patches
+                                 (list name version))
+                      '())))))

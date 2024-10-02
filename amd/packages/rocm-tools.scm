@@ -76,8 +76,7 @@
       #:configure-flags #~(list "-DCMAKE_CXX_FLAGS=-Wno-error=cpp" ;ignores include reorg issue
                                 )))
     (inputs (list rocr-runtime))
-    (synopsis
-     "Bandwith test for ROCm")
+    (synopsis "Bandwith test for ROCm")
     (description
      "RocBandwidthTest is designed to capture the performance
 characteristics of buffer copying and kernel read/write operations. The help
