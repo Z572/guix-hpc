@@ -89,7 +89,7 @@
     (name (string-append (package-name clang-runtime) "-rocm"))
     (version (package-version llvm-rocm))
     (source
-      (rocm-origin "llvm-project" version))
+     (rocm-origin "llvm-project" version))
     (inputs (modify-inputs (package-inputs clang-runtime)
               (replace "llvm" llvm-rocm)
               (replace "libffi" libffi-shared)
@@ -111,7 +111,8 @@
     (inherit clang)
     (name (string-append (package-name clang) "-rocm"))
     (version (package-version llvm-rocm))
-    (source (package-source clang-runtime-rocm))
+    (source
+     (package-source clang-runtime-rocm))
     (inputs (modify-inputs (package-inputs clang)
               (delete "clang-tools-extra")))
     (propagated-inputs (modify-inputs (package-propagated-inputs clang)
@@ -162,7 +163,8 @@
     (name "rocm-device-libs")
     (version (package-version clang-rocm))
     (source
-     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" name) version))
+     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" name)
+                  version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -171,7 +173,8 @@
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'ockl_ocml_irif_inc
                      (lambda* (#:key outputs #:allow-other-keys)
-                       (chdir #$(if (version>=? version "6.1.1") "amd/device-libs" "."))
+                       (chdir #$(if (version>=? version "6.1.1")
+                                    "amd/device-libs" "."))
                        (copy-recursively "irif/inc"
                                          (string-append (assoc-ref outputs
                                                                    "out")
@@ -232,32 +235,36 @@ to interact with the ROCk driver.")
 
 ; rocprof-register
 (define (make-rocprof-register version)
-    (package
-        (name "rocprof-register")
-        (version version)
-        (source (rocm-origin "rocprofiler-register" version))
-        (build-system cmake-build-system)
-        (arguments
-            (list
-                #:tests? #f
-                #:configure-flags
-                ;; Don't let CMake download and build these dependencies
-                #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
-                        "-DROCPROFILER_REGISTER_BUILD_FMT=OFF")))
-        (inputs (list fmt glog-0.7))
-        (synopsis "The rocprofiler-register helper library.")
-        (description "The rocprofiler-register library is a helper library that coordinates
+  (package
+    (name "rocprof-register")
+    (version version)
+    (source
+     (rocm-origin "rocprofiler-register" version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:tests? #f
+      #:configure-flags
+      ;; Don't let CMake download and build these dependencies
+      #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
+              "-DROCPROFILER_REGISTER_BUILD_FMT=OFF")))
+    (inputs (list fmt glog-0.7))
+    (synopsis "The rocprofiler-register helper library.")
+    (description
+     "The rocprofiler-register library is a helper library that coordinates
 the modification of the intercept API table(s) of the HSA/HIP/ROCTx runtime libraries by the
 ROCprofiler (v2) library. The purpose of this library is to provide a consistent and automated
 mechanism of enabling performance analysis in the ROCm runtimes which does not rely on environment
 variables or unique methods for each runtime library.")
-        (home-page "https://github.com/rocm/rocprofiler-register")
-        (license license:expat)))
+    (home-page "https://github.com/rocm/rocprofiler-register")
+    (license license:expat)))
 
-(define-public rocprof-register-6.2 (make-rocprof-register "6.2.0"))
+(define-public rocprof-register-6.2
+  (make-rocprof-register "6.2.0"))
 
 ; rocr-runtime
-(define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm rocprof-register)
+(define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm
+                           rocprof-register)
   (package
     (name "rocr-runtime")
     (version (package-version rocm-device-libs))
@@ -277,7 +284,9 @@ variables or unique methods for each runtime library.")
                      (lambda _
                        (chdir "src"))))))
     (inputs (append (list numactl libdrm libffi roct-thunk rocm-device-libs)
-                    (if (version>=? version "6.2.0") (list rocprof-register) '() )))
+                    (if (version>=? version "6.2.0")
+                        (list rocprof-register)
+                        '())))
     (native-inputs (list xxd libelf lld-rocm clang-rocm pkg-config))
     (synopsis "HSA Runtime API and runtime for ROCm")
     (description
@@ -369,7 +378,8 @@ core runtime is also available.")
                 (substitute* (append '("openmp/libomptarget/CMakeLists.txt"
                                        "openmp/libomptarget/DeviceRTL/CMakeLists.txt")
                                      (if #$(version>=? "6.1.2" version)
-                                        '("openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt") '()))
+                                         '("openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt")
+                                         '()))
                   (("find_program\\(CLANG_TOOL clang PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                    (string-append "find_program(CLANG_TOOL clang PATHS "
                                   #$clang-rocm "/bin"))
@@ -481,11 +491,11 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
     (arguments
      (list
       #:build-type "Release"
-      #:tests? #f ; No tests.
+      #:tests? #f ;No tests.
       #:configure-flags #~(list "-DCMAKE_C_COMPILER=clang"
                                 "-DCMAKE_CXX_COMPILER=clang++"
-                                (if (string=? #$(package-version this-package) "5.5.1")
-                                    "-DSWDEV_375013=ON" ""))
+                                (if (string=? #$(package-version this-package)
+                                              "5.5.1") "-DSWDEV_375013=ON" ""))
       #:phases #~(modify-phases %standard-phases
                    (add-before 'configure 'prepare-cmake
                      (lambda _
@@ -499,8 +509,7 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
                           ;; affect other versions.
                           "--enable-new-dtags")))))))
     (inputs (list clang-rocm perl))
-    (synopsis
-     "HIPIFY: Convert CUDA to HIP code.")
+    (synopsis "HIPIFY: Convert CUDA to HIP code.")
     (description
      "HIPIFY is a set of tools that you can use to automatically translate
 CUDA source code into portable HIP C++.")
