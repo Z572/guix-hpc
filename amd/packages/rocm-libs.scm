@@ -178,6 +178,7 @@ CUB project into HIP so you can use AMD hardware (and ROCm software).")
                           "target_link_options(rccl PRIVATE -parallel-jobs=4)")))))))
     (inputs (list hipamd rocm-smi))
     (native-inputs (list rocm-cmake hipify))
+    (properties '((max-silent-time . 14400)))
     (synopsis "ROCm Communication Collectives Library")
     (description
      "RCCL (pronounced \"Rickle\") is a stand-alone library of standard collective communication
@@ -490,6 +491,7 @@ the runtimes API callbacks and asynchronous activity records pool support.")
                        (setenv "CPLUS_INCLUDE_PATH"
                                (string-join cplus-include-path ":")))))))
     (native-inputs (list python-wrapper tensile hipamd rocm-cmake))
+    (properties '((max-silent-time . 14400)))
     (synopsis "Next generation BLAS implementation for ROCm platform.")
     (description
      "rocBLAS is the ROCm Basic Linear Algebra Subprograms (BLAS) library.
@@ -764,7 +766,6 @@ portable, generic, and flexible design that allows seamless integration with oth
                                 "-DAMDGPU_TARGETS=gfx90a;gfx1030")))
     (inputs (list hipamd))
     (native-inputs (list rocm-cmake python-wrapper sqlite))
-    ;; Versions 5.4 and 5.3 stay silent more than 1h in the build phase.
     (properties '((max-silent-time . 14400)))
     (synopsis "Fast Fourier transforms (FFTs) for ROCm.")
     (description
