@@ -42,10 +42,6 @@
     ("6.1" . ,(base32 "1y63ypkblnhdrpf81lnn5643j7mdpk8fxpjj8ksc543qa2dg8r1s"))
     ("6.0" . ,(base32 "1hd3wzxvs33a9cj9d26931rw0xh22vl3nr0715i9nmnriwwysig4"))
     ("5.7" . ,(base32 "1dz32xsiccpb7099jvp2hkbabqnmsdjfn0p0h1x2z745c7a6p2ac"))
-    ("5.6" . ,(base32 "0fnivjkbk875jis97c5qaxn53a26wzaz6dccwfq20ch6g5fchrnd"))
-    ("5.5" . ,(base32 "0fnivjkbk875jis97c5qaxn53a26wzaz6dccwfq20ch6g5fchrnd"))
-    ("5.4" . ,(base32 "0fnivjkbk875jis97c5qaxn53a26wzaz6dccwfq20ch6g5fchrnd"))
-    ("5.3" . ,(base32 "0fnivjkbk875jis97c5qaxn53a26wzaz6dccwfq20ch6g5fchrnd"))
   )
 )
 
@@ -114,30 +110,6 @@
              rocprim-5.7
              openmpi-rocm-5.7
              "5.7"))
-(define-public hpcg-rocm-5.6
-  (make-hpcg hipamd-5.6
-             rocm-cmake-5.6
-             rocprim-5.6
-             openmpi-rocm-5.6
-             "5.6"))
-(define-public hpcg-rocm-5.5
-  (make-hpcg hipamd-5.5
-             rocm-cmake-5.5
-             rocprim-5.5
-             openmpi-rocm-5.5
-             "5.5"))
-(define-public hpcg-rocm-5.4
-  (make-hpcg hipamd-5.4
-             rocm-cmake-5.4
-             rocprim-5.4
-             openmpi-rocm-5.4
-             "5.4"))
-(define-public hpcg-rocm-5.3
-  (make-hpcg hipamd-5.3
-             rocm-cmake-5.3
-             rocprim-5.3
-             openmpi-rocm-5.3
-             "5.3"))
 
 (define (make-hpcg-sans-mpi hpcg)
   (package/inherit hpcg
@@ -200,14 +172,6 @@ The version of BabelStream is built targeting AMD GPUs using HIP.")
   (make-babelstream hipamd-6.0))
 (define-public babelstream-hip-5.7
   (make-babelstream hipamd-5.7))
-(define-public babelstream-hip-5.6
-  (make-babelstream hipamd-5.6))
-(define-public babelstream-hip-5.5
-  (make-babelstream hipamd-5.5))
-(define-public babelstream-hip-5.4
-  (make-babelstream hipamd-5.4))
-(define-public babelstream-hip-5.3
-  (make-babelstream hipamd-5.3))
 
 ; rochpl
 (define (make-rochpl rocm-cmake
@@ -290,34 +254,6 @@ language and optimized for AMD's latest discrete GPUs.")
                rocblas-5.7
                aocl-blis
                roctracer-5.7))
-(define-public rochpl-5.6
-  (make-rochpl rocm-cmake-5.6
-               hipamd-5.6
-               openmpi-rocm-5.6
-               rocblas-5.6
-               aocl-blis
-               roctracer-5.6))
-(define-public rochpl-5.5
-  (make-rochpl rocm-cmake-5.5
-               hipamd-5.5
-               openmpi-rocm-5.5
-               rocblas-5.5
-               aocl-blis
-               roctracer-5.5))
-(define-public rochpl-5.4
-  (make-rochpl rocm-cmake-5.4
-               hipamd-5.4
-               openmpi-rocm-5.4
-               rocblas-5.4
-               aocl-blis
-               roctracer-5.4))
-(define-public rochpl-5.3
-  (make-rochpl rocm-cmake-5.3
-               hipamd-5.3
-               openmpi-rocm-5.3
-               rocblas-5.3
-               aocl-blis
-               roctracer-5.3))
 
 ; osu benchmarks
 (define (make-osubench-rocm openmpi-rocm hipamd rccl)
@@ -365,11 +301,3 @@ communication with ROCm support.")))
   (make-osubench-rocm openmpi-rocm-6.0 hipamd-6.0 rccl-6.0))
 (define-public osubench-rocm-5.7
   (make-osubench-rocm openmpi-rocm-5.7 hipamd-5.7 rccl-5.7))
-(define-public osubench-rocm-5.6
-  (make-osubench-rocm openmpi-rocm-5.6 hipamd-5.6 rccl-5.6))
-(define-public osubench-rocm-5.5
-  (make-osubench-rocm openmpi-rocm-5.5 hipamd-5.5 rccl-5.5))
-(define-public osubench-rocm-5.4
-  (make-osubench-rocm openmpi-rocm-5.4 hipamd-5.4 rccl-5.4))
-(define-public osubench-rocm-5.3
-  (make-osubench-rocm openmpi-rocm-5.3 hipamd-5.3 rccl-5.3))

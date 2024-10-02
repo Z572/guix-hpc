@@ -81,18 +81,6 @@
 (define-public rocm-comgr-5.7
   (make-rocm-comgr rocm-device-libs-5.7 llvm-rocm-5.7 lld-rocm-5.7
                    clang-rocm-5.7))
-(define-public rocm-comgr-5.6
-  (make-rocm-comgr rocm-device-libs-5.6 llvm-rocm-5.6 lld-rocm-5.6
-                   clang-rocm-5.6))
-(define-public rocm-comgr-5.5
-  (make-rocm-comgr rocm-device-libs-5.5 llvm-rocm-5.5 lld-rocm-5.5
-                   clang-rocm-5.5))
-(define-public rocm-comgr-5.4
-  (make-rocm-comgr rocm-device-libs-5.4 llvm-rocm-5.4 lld-rocm-5.4
-                   clang-rocm-5.4))
-(define-public rocm-comgr-5.3
-  (make-rocm-comgr rocm-device-libs-5.3 llvm-rocm-5.3 lld-rocm-5.3
-                   clang-rocm-5.3))
 
 ; hipamd for versions 5.6 and above
 
@@ -124,8 +112,6 @@ for AMD and NVIDIA GPUs from single source code.")
   (make-hip "6.0.2"))
 (define-public hip-5.7
   (make-hip "5.7.1"))
-(define-public hip-5.6
-  (make-hip "5.6.1"))
 
 ; hipcc
 (define (make-hipcc rocminfo rocm-toolchain)
@@ -160,8 +146,6 @@ clang and pass the appropriate include and library options for the target compil
   (make-hipcc rocminfo-6.0 rocm-toolchain-6.0))
 (define-public hipcc-5.7
   (make-hipcc rocminfo-5.7 rocm-toolchain-5.7))
-(define-public hipcc-5.6
-  (make-hipcc rocminfo-5.6 rocm-toolchain-5.6))
 
 ; clr "hipamd" versions >= 5.6
 (define (make-clr-hipamd hip hipcc rocm-comgr)
@@ -257,136 +241,6 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
   (make-clr-hipamd hip-6.0 hipcc-6.0 rocm-comgr-6.0))
 (define-public hipamd-5.7
   (make-clr-hipamd hip-5.7 hipcc-5.7 rocm-comgr-5.7))
-(define-public hipamd-5.6
-  (make-clr-hipamd hip-5.6 hipcc-5.6 rocm-comgr-5.6))
-
-; hipamd package definitions for versions prior to 5.6.X
-
-; hip headers
-(define (make-hip-headers rocminfo rocm-toolchain)
-  (hidden-package (package
-                    (name "hip")
-                    (version (package-version rocm-toolchain))
-                    (source
-                     (rocm-origin name version))
-                    (build-system copy-build-system)
-                    (arguments
-                     (list
-                      #:install-plan #~`(("." "/"))))
-                    (propagated-inputs (list rocminfo rocm-toolchain))
-                    (synopsis
-                     "The Heterogeneous Interface for Portability (HIP) framework")
-                    (description
-                     "The Heterogeneous Interface for Portability (HIP) framework is a
-C++ Runtime API and Kernel Language that allows developers to create portable applications
-for AMD and NVIDIA GPUs from single source code.")
-                    (home-page "https://github.com/ROCm-Developer-Tools/HIP")
-                    (license expat))))
-
-(define-public hip-5.5
-  (make-hip-headers rocminfo-5.5 rocm-toolchain-5.5))
-(define-public hip-5.4
-  (make-hip-headers rocminfo-5.4 rocm-toolchain-5.4))
-(define-public hip-5.3
-  (make-hip-headers rocminfo-5.3 rocm-toolchain-5.3))
-
-; hipamd - implementation of HIP for AMD platforms
-(define (make-hipamd hip rocm-comgr rocclr rocm-opencl)
-  (package
-    (name "hipamd")
-    (version (package-version hip))
-    (source
-     (rocm-origin name version))
-    (build-system cmake-build-system)
-    (arguments
-     (list
-      #:build-type "Release"
-      #:tests? #f
-      #:configure-flags #~(list (string-append "-DHIP_COMMON_DIR="
-                                               #$hip)
-                                (string-append "-DROCCLR_PATH="
-                                               #$rocclr)
-                                (string-append "-DAMD_OPENCL_PATH="
-                                               #$rocm-opencl)
-                                "-D__HIP_ENABLE_PCH=OFF" "-DHIP_PLATFORM=amd")
-      #:phases #~(modify-phases %standard-phases
-                   (add-after 'install 'fix-clangrt-search-path
-                     (lambda* (#:key outputs inputs #:allow-other-keys)
-                       (substitute* (string-append (assoc-ref outputs "out")
-                                     "/lib/cmake/hip/hip-config.cmake")
-                         (("\\$\\{HIP_CLANGRT_LIB_SEARCH_PATHS\\}")
-                          (string-append (assoc-ref inputs "rocm-toolchain")
-                                         "/lib/linux")))))
-                   (add-after 'install 'overwrite-hipvars
-                     (lambda* (#:key outputs inputs #:allow-other-keys)
-                       (make-file-writable (string-append (assoc-ref outputs
-                                                                     "out")
-                                                          "/bin/hipvars.pm"))
-                       (with-output-to-file (string-append (assoc-ref outputs
-                                                                      "out")
-                                                           "/bin/hipvars.pm")
-                         (lambda ()
-                           (display (string-append "package hipvars;\n"
-                                     "$isWindows = 0;\n"
-                                     "$CUDA_PATH = \"\";\n"
-                                     "$HIP_PLATFORM = \"amd\";\n"
-                                     "$HIP_COMPILER = \"clang\";\n"
-                                     "$HIP_RUNTIME = \"rocclr\";\n"
-                                     "$HIP_CLANG_RUNTIME = \""
-                                     (assoc-ref inputs "rocm-toolchain")
-                                     "\";\n"
-                                     "$DEVICE_LIB_PATH = \""
-                                     (assoc-ref inputs "rocm-toolchain")
-                                     "/amdgcn/bitcode\";\n"
-                                     "$HIP_CLANG_PATH = \""
-                                     (assoc-ref inputs "rocm-toolchain")
-                                     "/bin\";\n"
-                                     "$HIP_PATH = \""
-                                     #$output
-                                     "\";\n"
-                                     "$HIP_VERSION= \""
-                                     #$version
-                                     "\";\n"
-                                     "$ROCMINFO_PATH = \""
-                                     (assoc-ref inputs "rocminfo")
-                                     "\";\n"
-                                     "$ROCR_RUNTIME_PATH = \""
-                                     (assoc-ref inputs "rocm-toolchain")
-                                     "\";\n"
-                                     "$HIP_INFO_PATH = \"$HIP_PATH/lib/.hipInfo\";
-"
-                                     "$HIP_ROCCLR_HOME = $HIP_PATH;\n"
-                                     "$ROCM_PATH = \""
-                                     (assoc-ref inputs "rocm-toolchain")
-                                     "\";")))))))))
-    (native-inputs (list mesa
-                         libffi
-                         git
-                         perl
-                         python-wrapper
-                         python-cppheaderparser))
-    (inputs (modify-inputs (package-inputs hip)
-              (append numactl)))
-    (propagated-inputs (modify-inputs (package-propagated-inputs hip)
-                         (append rocm-comgr)))
-    (synopsis "HIPamd: HIP implementation for the AMD platform")
-    (description
-     "This repository provides HIP implementation specifically for the AMD platform.")
-    (home-page "https://github.com/ROCm-Developer-Tools/hipamd")
-    (license expat)))
-
-(define-public hipamd-5.5
-  (make-hipamd hip-5.5 rocm-comgr-5.5
-               (rocm-origin "rocclr" "5.5.1")
-               (rocm-origin "rocm-opencl-runtime" "5.5.1")))
-(define-public hipamd-5.4
-  (make-hipamd hip-5.4 rocm-comgr-5.4
-               (rocm-origin "rocclr" "5.4.4")
-               (rocm-origin "rocm-opencl-runtime" "5.4.4")))
-(define-public hipamd-5.3
-  (make-hipamd hip-5.3 rocm-comgr-5.3
-               (rocm-origin "rocclr" "5.3.3")
-               (rocm-origin "rocm-opencl-runtime" "5.3.3")))
 
 ; rocm-cmake
 (define (make-rocm-cmake version)
@@ -418,11 +272,3 @@ it is required for building some of the libraries that are a part of ROCm.")
   (make-rocm-cmake "6.0.2"))
 (define-public rocm-cmake-5.7
   (make-rocm-cmake "5.7.1"))
-(define-public rocm-cmake-5.6
-  (make-rocm-cmake "5.6.1"))
-(define-public rocm-cmake-5.5
-  (make-rocm-cmake "5.5.1"))
-(define-public rocm-cmake-5.4
-  (make-rocm-cmake "5.4.4"))
-(define-public rocm-cmake-5.3
-  (make-rocm-cmake "5.3.3"))
