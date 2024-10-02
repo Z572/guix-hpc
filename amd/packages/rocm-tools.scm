@@ -117,7 +117,7 @@ provides a user space interface for applications to monitor and control GPU appl
     (license ncsa)))
 
 (define-public rocm-smi-6.2
-  (make-rocm-smi "6.2.0"))
+  (make-rocm-smi "6.2.2"))
 (define-public rocm-smi-6.1
   (make-rocm-smi "6.1.2"))
 (define-public rocm-smi-6.0
@@ -146,7 +146,7 @@ variety of 'compute' applications running on AMD GPUs.")
     (license expat)))
 
 (define-public tensile-6.2
-  (make-tensile "6.2.0"))
+  (make-tensile "6.2.2"))
 (define-public tensile-6.1
   (make-tensile "6.1.2"))
 (define-public tensile-6.0

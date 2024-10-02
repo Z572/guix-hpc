@@ -74,7 +74,7 @@
     (properties `((hidden? . #t) ,@(package-properties llvm)))))
 
 (define-public llvm-rocm-6.2
-  (make-llvm-rocm "6.2.0" llvm-18))
+  (make-llvm-rocm "6.2.2" llvm-18))
 (define-public llvm-rocm-6.1
   (make-llvm-rocm "6.1.2" llvm-17))
 (define-public llvm-rocm-6.0
@@ -225,7 +225,7 @@ to interact with the ROCk driver.")
     (license license:expat)))
 
 (define-public roct-thunk-6.2
-  (make-roct-thunk "6.2.0"))
+  (make-roct-thunk "6.2.2"))
 (define-public roct-thunk-6.1
   (make-roct-thunk "6.1.2"))
 (define-public roct-thunk-6.0
@@ -260,7 +260,7 @@ variables or unique methods for each runtime library.")
     (license license:expat)))
 
 (define-public rocprof-register-6.2
-  (make-rocprof-register "6.2.0"))
+  (make-rocprof-register "6.2.2"))
 
 ; rocr-runtime
 (define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm
