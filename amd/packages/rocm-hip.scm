@@ -111,7 +111,7 @@ for AMD and NVIDIA GPUs from single source code.")
                     (license expat))))
 
 (define-public hip-6.2
-  (make-hip "6.2.0"))
+  (make-hip "6.2.2"))
 (define-public hip-6.1
   (make-hip "6.1.2"))
 (define-public hip-6.0
@@ -274,7 +274,7 @@ it is required for building some of the libraries that are a part of ROCm.")
     (license expat)))
 
 (define-public rocm-cmake-6.2
-  (make-rocm-cmake "6.2.0"))
+  (make-rocm-cmake "6.2.2"))
 (define-public rocm-cmake-6.1
   (make-rocm-cmake "6.1.2"))
 (define-public rocm-cmake-6.0
