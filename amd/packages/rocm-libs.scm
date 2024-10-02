@@ -594,6 +594,7 @@ the runtimes API callbacks and asynchronous activity records pool support.")
                        (setenv "CPLUS_INCLUDE_PATH"
                                (string-join cplus-include-path ":")))))))
     (native-inputs (list python-wrapper tensile hipamd rocm-cmake))
+    (properties '((max-silent-time . 14400)))
     (synopsis "Next generation BLAS implementation for ROCm platform.")
     (description
      "rocBLAS is the ROCm Basic Linear Algebra Subprograms (BLAS) library.
