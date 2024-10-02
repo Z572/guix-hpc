@@ -61,15 +61,6 @@
   (make-rocminfo rocr-runtime-6.0))
 (define-public rocminfo-5.7
   (make-rocminfo rocr-runtime-5.7))
-(define-public rocminfo-5.6
-  (make-rocminfo rocr-runtime-5.6))
-(define-public rocminfo-5.5
-  (make-rocminfo rocr-runtime-5.5))
-(define-public rocminfo-5.4
-  (make-rocminfo rocr-runtime-5.4))
-(define-public rocminfo-5.3
-  (make-rocminfo rocr-runtime-5.3))
-
 
 ; rocm-bandwidth-test
 (define (make-rocm-bandwidth rocr-runtime)
@@ -85,8 +76,7 @@
       #:configure-flags #~(list "-DCMAKE_CXX_FLAGS=-Wno-error=cpp" ;ignores include reorg issue
                                 )))
     (inputs (list rocr-runtime))
-    (synopsis
-     "Bandwith test for ROCm")
+    (synopsis "Bandwith test for ROCm")
     (description
      "RocBandwidthTest is designed to capture the performance
 characteristics of buffer copying and kernel read/write operations. The help
@@ -104,15 +94,6 @@ system in terms of memory pools and their agents.")
   (make-rocm-bandwidth rocr-runtime-6.0))
 (define-public rocm-bandwidth-5.7
   (make-rocm-bandwidth rocr-runtime-5.7))
-(define-public rocm-bandwidth-5.6
-  (make-rocm-bandwidth rocr-runtime-5.6))
-(define-public rocm-bandwidth-5.5
-  (make-rocm-bandwidth rocr-runtime-5.5))
-(define-public rocm-bandwidth-5.4
-  (make-rocm-bandwidth rocr-runtime-5.4))
-(define-public rocm-bandwidth-5.3
-  (make-rocm-bandwidth rocr-runtime-5.3))
-
 
 ; rocm-smi
 (define (make-rocm-smi version)
@@ -143,15 +124,6 @@ provides a user space interface for applications to monitor and control GPU appl
   (make-rocm-smi "6.0.2"))
 (define-public rocm-smi-5.7
   (make-rocm-smi "5.7.1"))
-(define-public rocm-smi-5.6
-  (make-rocm-smi "5.6.1"))
-(define-public rocm-smi-5.5
-  (make-rocm-smi "5.5.1"))
-(define-public rocm-smi-5.4
-  (make-rocm-smi "5.4.4"))
-(define-public rocm-smi-5.3
-  (make-rocm-smi "5.3.3"))
-
 
 ; tensile
 (define (make-tensile version)
@@ -181,11 +153,3 @@ variety of 'compute' applications running on AMD GPUs.")
   (make-tensile "6.0.2"))
 (define-public tensile-5.7
   (make-tensile "5.7.1"))
-(define-public tensile-5.6
-  (make-tensile "5.6.1"))
-(define-public tensile-5.5
-  (make-tensile "5.5.1"))
-(define-public tensile-5.4
-  (make-tensile "5.4.4"))
-(define-public tensile-5.3
-  (make-tensile "5.3.3"))

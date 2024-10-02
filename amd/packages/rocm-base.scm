@@ -81,14 +81,6 @@
   (make-llvm-rocm "6.0.2" llvm-17))
 (define-public llvm-rocm-5.7
   (make-llvm-rocm "5.7.1" llvm-17))
-(define-public llvm-rocm-5.6
-  (make-llvm-rocm "5.6.1" llvm-16))
-(define-public llvm-rocm-5.5
-  (make-llvm-rocm "5.5.1" llvm-16))
-(define-public llvm-rocm-5.4
-  (make-llvm-rocm "5.4.4" llvm-15))
-(define-public llvm-rocm-5.3
-  (make-llvm-rocm "5.3.3" llvm-15))
 
 ; clang runtime
 (define-public (make-clang-runtime-rocm llvm-rocm clang-runtime)
@@ -97,7 +89,7 @@
     (name (string-append (package-name clang-runtime) "-rocm"))
     (version (package-version llvm-rocm))
     (source
-      (rocm-origin "llvm-project" version))
+     (rocm-origin "llvm-project" version))
     (inputs (modify-inputs (package-inputs clang-runtime)
               (replace "llvm" llvm-rocm)
               (replace "libffi" libffi-shared)
@@ -112,14 +104,6 @@
   (make-clang-runtime-rocm llvm-rocm-6.0 clang-runtime-17))
 (define-public clang-runtime-rocm-5.7
   (make-clang-runtime-rocm llvm-rocm-5.7 clang-runtime-17))
-(define-public clang-runtime-rocm-5.6
-  (make-clang-runtime-rocm llvm-rocm-5.6 clang-runtime-16))
-(define-public clang-runtime-rocm-5.5
-  (make-clang-runtime-rocm llvm-rocm-5.5 clang-runtime-16))
-(define-public clang-runtime-rocm-5.4
-  (make-clang-runtime-rocm llvm-rocm-5.4 clang-runtime-15))
-(define-public clang-runtime-rocm-5.3
-  (make-clang-runtime-rocm llvm-rocm-5.3 clang-runtime-15))
 
 ; clang
 (define (make-clang-rocm llvm-rocm clang-runtime-rocm clang)
@@ -127,7 +111,8 @@
     (inherit clang)
     (name (string-append (package-name clang) "-rocm"))
     (version (package-version llvm-rocm))
-    (source (package-source clang-runtime-rocm))
+    (source
+     (package-source clang-runtime-rocm))
     (inputs (modify-inputs (package-inputs clang)
               (delete "clang-tools-extra")))
     (propagated-inputs (modify-inputs (package-propagated-inputs clang)
@@ -151,14 +136,6 @@
   (make-clang-rocm llvm-rocm-6.0 clang-runtime-rocm-6.0 clang-17))
 (define-public clang-rocm-5.7
   (make-clang-rocm llvm-rocm-5.7 clang-runtime-rocm-5.7 clang-17))
-(define-public clang-rocm-5.6
-  (make-clang-rocm llvm-rocm-5.6 clang-runtime-rocm-5.6 clang-16))
-(define-public clang-rocm-5.5
-  (make-clang-rocm llvm-rocm-5.5 clang-runtime-rocm-5.5 clang-16))
-(define-public clang-rocm-5.4
-  (make-clang-rocm llvm-rocm-5.4 clang-runtime-rocm-5.4 clang-15))
-(define-public clang-rocm-5.3
-  (make-clang-rocm llvm-rocm-5.3 clang-runtime-rocm-5.3 clang-15))
 
 ; lld
 (define (make-lld-rocm llvm-rocm lld)
@@ -179,14 +156,6 @@
   (make-lld-rocm llvm-rocm-6.0 lld-17))
 (define-public lld-rocm-5.7
   (make-lld-rocm llvm-rocm-5.7 lld-17))
-(define-public lld-rocm-5.6
-  (make-lld-rocm llvm-rocm-5.6 lld-16))
-(define-public lld-rocm-5.5
-  (make-lld-rocm llvm-rocm-5.5 lld-16))
-(define-public lld-rocm-5.4
-  (make-lld-rocm llvm-rocm-5.4 lld-15))
-(define-public lld-rocm-5.3
-  (make-lld-rocm llvm-rocm-5.3 lld-15))
 
 ; rocm-device-libs
 (define (make-rocm-device-libs clang-rocm)
@@ -194,7 +163,8 @@
     (name "rocm-device-libs")
     (version (package-version clang-rocm))
     (source
-     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" name) version))
+     (rocm-origin (if (version>=? version "6.1.1") "llvm-project" name)
+                  version))
     (build-system cmake-build-system)
     (arguments
      (list
@@ -203,7 +173,8 @@
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'ockl_ocml_irif_inc
                      (lambda* (#:key outputs #:allow-other-keys)
-                       (chdir #$(if (version>=? version "6.1.1") "amd/device-libs" "."))
+                       (chdir #$(if (version>=? version "6.1.1")
+                                    "amd/device-libs" "."))
                        (copy-recursively "irif/inc"
                                          (string-append (assoc-ref outputs
                                                                    "out")
@@ -232,14 +203,6 @@ a set of AMD specific device-side language runtime libraries.")
   (make-rocm-device-libs clang-rocm-6.0))
 (define-public rocm-device-libs-5.7
   (make-rocm-device-libs clang-rocm-5.7))
-(define-public rocm-device-libs-5.6
-  (make-rocm-device-libs clang-rocm-5.6))
-(define-public rocm-device-libs-5.5
-  (make-rocm-device-libs clang-rocm-5.5))
-(define-public rocm-device-libs-5.4
-  (make-rocm-device-libs clang-rocm-5.4))
-(define-public rocm-device-libs-5.3
-  (make-rocm-device-libs clang-rocm-5.3))
 
 ; roct-thunk-interface
 (define (make-roct-thunk version)
@@ -269,43 +232,39 @@ to interact with the ROCk driver.")
   (make-roct-thunk "6.0.2"))
 (define-public roct-thunk-5.7
   (make-roct-thunk "5.7.1"))
-(define-public roct-thunk-5.6
-  (make-roct-thunk "5.6.1"))
-(define-public roct-thunk-5.5
-  (make-roct-thunk "5.5.1"))
-(define-public roct-thunk-5.4
-  (make-roct-thunk "5.4.4"))
-(define-public roct-thunk-5.3
-  (make-roct-thunk "5.3.3"))
 
 ; rocprof-register
 (define (make-rocprof-register version)
-    (package
-        (name "rocprof-register")
-        (version version)
-        (source (rocm-origin "rocprofiler-register" version))
-        (build-system cmake-build-system)
-        (arguments
-            (list
-                #:tests? #f
-                #:configure-flags
-                ;; Don't let CMake download and build these dependencies
-                #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
-                        "-DROCPROFILER_REGISTER_BUILD_FMT=OFF")))
-        (inputs (list fmt glog-0.7))
-        (synopsis "The rocprofiler-register helper library.")
-        (description "The rocprofiler-register library is a helper library that coordinates
+  (package
+    (name "rocprof-register")
+    (version version)
+    (source
+     (rocm-origin "rocprofiler-register" version))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:tests? #f
+      #:configure-flags
+      ;; Don't let CMake download and build these dependencies
+      #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
+              "-DROCPROFILER_REGISTER_BUILD_FMT=OFF")))
+    (inputs (list fmt glog-0.7))
+    (synopsis "The rocprofiler-register helper library.")
+    (description
+     "The rocprofiler-register library is a helper library that coordinates
 the modification of the intercept API table(s) of the HSA/HIP/ROCTx runtime libraries by the
 ROCprofiler (v2) library. The purpose of this library is to provide a consistent and automated
 mechanism of enabling performance analysis in the ROCm runtimes which does not rely on environment
 variables or unique methods for each runtime library.")
-        (home-page "https://github.com/rocm/rocprofiler-register")
-        (license license:expat)))
+    (home-page "https://github.com/rocm/rocprofiler-register")
+    (license license:expat)))
 
-(define-public rocprof-register-6.2 (make-rocprof-register "6.2.0"))
+(define-public rocprof-register-6.2
+  (make-rocprof-register "6.2.0"))
 
 ; rocr-runtime
-(define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm rocprof-register)
+(define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm
+                           rocprof-register)
   (package
     (name "rocr-runtime")
     (version (package-version rocm-device-libs))
@@ -325,7 +284,9 @@ variables or unique methods for each runtime library.")
                      (lambda _
                        (chdir "src"))))))
     (inputs (append (list numactl libdrm libffi roct-thunk rocm-device-libs)
-                    (if (version>=? version "6.2.0") (list rocprof-register) '() )))
+                    (if (version>=? version "6.2.0")
+                        (list rocprof-register)
+                        '())))
     (native-inputs (list xxd libelf lld-rocm clang-rocm pkg-config))
     (synopsis "HSA Runtime API and runtime for ROCm")
     (description
@@ -348,18 +309,6 @@ core runtime is also available.")
 (define-public rocr-runtime-5.7
   (make-rocr-runtime roct-thunk-5.7 rocm-device-libs-5.7 lld-rocm-5.7
                      clang-rocm-5.7 #f))
-(define-public rocr-runtime-5.6
-  (make-rocr-runtime roct-thunk-5.6 rocm-device-libs-5.6 lld-rocm-5.6
-                     clang-rocm-5.6 #f))
-(define-public rocr-runtime-5.5
-  (make-rocr-runtime roct-thunk-5.5 rocm-device-libs-5.5 lld-rocm-5.5
-                     clang-rocm-5.5 #f))
-(define-public rocr-runtime-5.4
-  (make-rocr-runtime roct-thunk-5.4 rocm-device-libs-5.4 lld-rocm-5.4
-                     clang-rocm-5.4 #f))
-(define-public rocr-runtime-5.3
-  (make-rocr-runtime roct-thunk-5.3 rocm-device-libs-5.3 lld-rocm-5.3
-                     clang-rocm-5.3 #f))
 
 ; lld-wrapper
 (define-public lld-wrapper-rocm-6.2
@@ -370,14 +319,6 @@ core runtime is also available.")
   (make-lld-wrapper lld-rocm-6.0))
 (define-public lld-wrapper-rocm-5.7
   (make-lld-wrapper lld-rocm-5.7))
-(define-public lld-wrapper-rocm-5.6
-  (make-lld-wrapper lld-rocm-5.6))
-(define-public lld-wrapper-rocm-5.5
-  (make-lld-wrapper lld-rocm-5.5))
-(define-public lld-wrapper-rocm-5.4
-  (make-lld-wrapper lld-rocm-5.4))
-(define-public lld-wrapper-rocm-5.3
-  (make-lld-wrapper lld-rocm-5.3))
 
 ; libomp
 (define (make-libomp-rocm llvm-rocm
@@ -437,7 +378,8 @@ core runtime is also available.")
                 (substitute* (append '("openmp/libomptarget/CMakeLists.txt"
                                        "openmp/libomptarget/DeviceRTL/CMakeLists.txt")
                                      (if #$(version>=? "6.1.2" version)
-                                        '("openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt") '()))
+                                         '("openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt")
+                                         '()))
                   (("find_program\\(CLANG_TOOL clang PATHS \\$\\{LLVM_TOOLS_BINARY_DIR\\}")
                    (string-append "find_program(CLANG_TOOL clang PATHS "
                                   #$clang-rocm "/bin"))
@@ -483,38 +425,6 @@ core runtime is also available.")
                     rocr-runtime-5.7
                     roct-thunk-5.7
                     libomp-17))
-(define-public libomp-rocm-5.6
-  (make-libomp-rocm llvm-rocm-5.6
-                    clang-rocm-5.6
-                    lld-wrapper-rocm-5.6
-                    rocm-device-libs-5.6
-                    rocr-runtime-5.6
-                    roct-thunk-5.6
-                    libomp-16))
-(define-public libomp-rocm-5.5
-  (make-libomp-rocm llvm-rocm-5.5
-                    clang-rocm-5.5
-                    lld-wrapper-rocm-5.5
-                    rocm-device-libs-5.5
-                    rocr-runtime-5.5
-                    roct-thunk-5.5
-                    libomp-16))
-(define-public libomp-rocm-5.4
-  (make-libomp-rocm llvm-rocm-5.4
-                    clang-rocm-5.4
-                    lld-wrapper-rocm-5.4
-                    rocm-device-libs-5.4
-                    rocr-runtime-5.4
-                    roct-thunk-5.4
-                    libomp-15))
-(define-public libomp-rocm-5.3
-  (make-libomp-rocm llvm-rocm-5.3
-                    clang-rocm-5.3
-                    lld-wrapper-rocm-5.3
-                    rocm-device-libs-5.3
-                    rocr-runtime-5.3
-                    roct-thunk-5.3
-                    libomp-15))
 
 ; rocm-toolchain
 (define (make-rocm-toolchain clang-rocm
@@ -569,35 +479,6 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
                        rocr-runtime-5.7
                        rocm-device-libs-5.7
                        roct-thunk-5.7))
-(define-public rocm-toolchain-5.6
-  (make-rocm-toolchain clang-rocm-5.6
-                       libomp-rocm-5.6
-                       lld-wrapper-rocm-5.6
-                       rocr-runtime-5.6
-                       rocm-device-libs-5.6
-                       roct-thunk-5.6))
-(define-public rocm-toolchain-5.5
-  (make-rocm-toolchain clang-rocm-5.5
-                       libomp-rocm-5.5
-                       lld-wrapper-rocm-5.5
-                       rocr-runtime-5.5
-                       rocm-device-libs-5.5
-                       roct-thunk-5.5))
-(define-public rocm-toolchain-5.4
-  (make-rocm-toolchain clang-rocm-5.4
-                       libomp-rocm-5.4
-                       lld-wrapper-rocm-5.4
-                       rocr-runtime-5.4
-                       rocm-device-libs-5.4
-                       roct-thunk-5.4))
-(define-public rocm-toolchain-5.3
-  (make-rocm-toolchain clang-rocm-5.3
-                       libomp-rocm-5.3
-                       lld-wrapper-rocm-5.3
-                       rocr-runtime-5.3
-                       rocm-device-libs-5.3
-                       roct-thunk-5.3))
-
 
 ; hipify
 (define (make-hipify clang-rocm)
@@ -610,11 +491,11 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
     (arguments
      (list
       #:build-type "Release"
-      #:tests? #f ; No tests.
+      #:tests? #f ;No tests.
       #:configure-flags #~(list "-DCMAKE_C_COMPILER=clang"
                                 "-DCMAKE_CXX_COMPILER=clang++"
-                                (if (string=? #$(package-version this-package) "5.5.1")
-                                    "-DSWDEV_375013=ON" ""))
+                                (if (string=? #$(package-version this-package)
+                                              "5.5.1") "-DSWDEV_375013=ON" ""))
       #:phases #~(modify-phases %standard-phases
                    (add-before 'configure 'prepare-cmake
                      (lambda _
@@ -628,8 +509,7 @@ output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
                           ;; affect other versions.
                           "--enable-new-dtags")))))))
     (inputs (list clang-rocm perl))
-    (synopsis
-     "HIPIFY: Convert CUDA to HIP code.")
+    (synopsis "HIPIFY: Convert CUDA to HIP code.")
     (description
      "HIPIFY is a set of tools that you can use to automatically translate
 CUDA source code into portable HIP C++.")
@@ -644,11 +524,3 @@ CUDA source code into portable HIP C++.")
   (make-hipify clang-rocm-6.0))
 (define-public hipify-5.7
   (make-hipify clang-rocm-5.7))
-(define-public hipify-5.6
-  (make-hipify clang-rocm-5.6))
-(define-public hipify-5.5
-  (make-hipify clang-rocm-5.5))
-(define-public hipify-5.4
-  (make-hipify clang-rocm-5.4))
-(define-public hipify-5.3
-  (make-hipify clang-rocm-5.3))
