@@ -234,14 +234,18 @@ language and optimized for AMD's latest discrete GPUs.")
 
     (arguments
      (substitute-keyword-arguments (package-arguments osu-micro-benchmarks)
-       ((#:configure-flags flags)
-        #~(append (list  "--enable-rocm"
-                         (string-append "--with-rocm="
-                                        #$(this-package-input "hipamd"))
-                         "--enable-rcclomb"
-                         (string-append "--with-rccl="
-                                        #$ (this-package-input "rccl")))
-                  #$flags))
+       ((#:configure-flags _)
+        #~(list (string-append "CC="
+                               #$openmpi-rocm
+                               "/bin/mpicc")
+                (string-append "CXX="
+                               #$openmpi-rocm
+                               "/bin/mpicxx")"--enable-rocm"
+                               (string-append "--with-rocm="
+                                              #$(this-package-input "hipamd"))
+                               "--enable-rcclomb"
+                               (string-append "--with-rccl="
+                                              #$ (this-package-input "rccl"))))
        ((#:phases phases '%standard-phases)
         #~(modify-phases #$phases
             (add-after 'unpack 'patch-configure
