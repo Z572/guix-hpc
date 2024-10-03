@@ -79,8 +79,8 @@ threads support)")))
             (delete 'remove-cruft)))))
     (inputs
      (modify-inputs (package-inputs kokkos)
-       (prepend hipamd-5.7)
-       (append rocthrust-5.7)
-       (append rocprim-5.7)))
+       (prepend hipamd)
+       (append rocthrust)
+       (append rocprim)))
     (synopsis "C++ abstractions for parallel execution and data management (with HIP
 support)")))
