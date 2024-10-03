@@ -160,6 +160,33 @@ a source code input file.")
              (base32
               "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))))
 
+(define-public emacs-build
+  ;; There is no release tag. Version is extracted from main file.
+  (let ((commit "bba54d1b79d0b1b61a175e1afad53c336ca72fad")
+        (revision "0")
+        (version "0"))
+    (package
+      (name "emacs-build")
+      (version (git-version version revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/27justin/build.el")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "0hiiyc70bpj3p5cvrdpl136khvnh4i8y87m6l0nwii3kqafsypi0"))))
+      (build-system emacs-build-system)
+      (home-page "https://github.com/27justin/build.el")
+      (synopsis "Emacs interface to build systems")
+      (description
+       "Build.el strives to provide clean and easy to understand functions, as
+well as a transient menu, to build projects of various build
+systems (CMake, Bazel, Make, Ninja, Cargo, NPM, ...).")
+      (license #f) ;; license:mit)
+      )))
+
 ;; (define emacs-instead-of-emacs-minimal
 ;;   ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
 ;;   ;; Try to do nothing (before deciding completely purging it):
@@ -301,7 +328,7 @@ a source code input file.")
 (define-public emacs-elementaryx-minimal
   (package
    (name "emacs-elementaryx-minimal")
-   (version "2.1.1")
+   (version "2.1.2")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
    (description
@@ -311,11 +338,11 @@ a source code input file.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "v2.1.1")))
+                  (commit "43b981cc2c68cecc1eff06f3c198d57634ff637b")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "09rf0hccnhbvl0i09s14dhjzxiylirr05hfw9zxa3v7ps5a4sqyv"))))
+              "119v7wkzqi501gflzmn2r4saf64gxin2dsnla16g2bjla7xq21mc"))))
    (build-system emacs-build-system)
    (propagated-inputs
     ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages, as well as fonts (fontconfig and fonts themselves)
@@ -342,7 +369,7 @@ a source code input file.")
 (define-public emacs-elementaryx-base
   (package
    (name "emacs-elementaryx-base")
-    (version "2.0.0")
+    (version "2.1.2")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-base")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Base setup.")
     (description
@@ -352,11 +379,11 @@ a source code input file.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "v2.0.0")))
+                    (commit "v2.1.2")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0ayr6g5iz7wb5krasfvfbrmy13zh282r1ckpr3zplws1c6zgv5af"))))
+                "0cig7pkj343r7kbxn3rm674nhhxhl4cvnrb4c9h532d4dyjy053s"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-avy
@@ -490,7 +517,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define-public emacs-elementaryx-org-minimal
   (package
    (name "emacs-elementaryx-org-minimal")
-   (version "2.0.0")
+   (version "2.1.2")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-org-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal org-mode setup.")
    (description
@@ -500,11 +527,11 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "v2.0.0")))
+                  (commit "v2.1.2")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-	      "1rn6ypb7f7f1pz6r9a35amgjmvvm6m34khsmf85hkrg8hg757mc5"))))
+	      "1zzb50j75y1g5xm675vz88707nfgx8ifidnwvkqfs6m5xg8gjr9j"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list emacs-org
@@ -542,7 +569,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
 (define-public emacs-elementaryx-dev-minimal
   (package
    (name "emacs-elementaryx-dev-minimal")
-    (version "2.1.0")
+    (version "2.1.2")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-dev-minimal")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Dev minimal setup.")
     (description
@@ -552,14 +579,15 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "v2.1.0")))
+                    (commit "v2.1.2")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "144pghk1aly9nmg1hv2jmldz27ncvx6wg0mnnadg3mf12px4dhql"))))
+                "1zsh2hghcnx5inqjzpn1gjwx67b6h1kl2yzmvf6qhpkqiafrsvdi"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list ;; emacs-consult-eglot ;; Wait for https://issues.guix.gnu.org/70211 to be resolved:
+           emacs-build ;; https://github.com/27justin/build.el
            emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
 	   emacs-elementaryx-base
            emacs-editorconfig
@@ -662,7 +690,7 @@ scheme.")
 (define-public emacs-elementaryx-write
   (package
    (name "emacs-elementaryx-write")
-   (version "2.0.0")
+   (version "2.1.2")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-write")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix Write setup.")
    (description
@@ -672,11 +700,11 @@ scheme.")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "v2.0.0")))
+                  (commit "v2.1.2")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
                (base32
-                "07am7vbylk4zrf2dnh6w7y4640dpm4cx2592qrjz715c38ng6288"))))
+                "1q27kfg05qiyh3fi7ajjmyq2phagibsypnkljrmf5dvhk0zjkbzq"))))
    (build-system emacs-build-system)
    (propagated-inputs
     (list aspell ;; emacs-jinx has enchant as input, which has aspell (and hunspell) as input, but not as propagated input
@@ -1065,7 +1093,7 @@ scheme.")
 (define-public elementaryx-escode
   (package
     (name "elementaryx-escode")
-    (version "2.1.0")
+    (version "2.1.2")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-escode")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for ESCode, the Elementaryx fake true Studio Code.")
@@ -1077,11 +1105,11 @@ for ESCode, the Elementaryx fake true Studio Code.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "v2.1.0")))
+                    (commit "v2.1.2")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"00pv2ry22ivis132sr649za53i8anw7p5x81pxi8a7gmqd3z71ka"))))
+		"09g687g1xnb5q14am362ax94xqripkdpfmrb23vqci09i15dly4j"))))
     (build-system emacs-build-system)
     ;; We also define an elementaryx-escode executable wrapper call for easy call
     (arguments
