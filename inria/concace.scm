@@ -160,6 +160,33 @@ a source code input file.")
              (base32
               "12jfivx5gqayv8n2q08f7inwqmxck51q0r9nxgb1m1kzi5vdisqp"))))))
 
+(define-public emacs-build
+  ;; There is no release tag. Version is extracted from main file.
+  (let ((commit "bba54d1b79d0b1b61a175e1afad53c336ca72fad")
+        (revision "0")
+        (version "0"))
+    (package
+      (name "emacs-build")
+      (version (git-version version revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/27justin/build.el")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "0hiiyc70bpj3p5cvrdpl136khvnh4i8y87m6l0nwii3kqafsypi0"))))
+      (build-system emacs-build-system)
+      (home-page "https://github.com/27justin/build.el")
+      (synopsis "Emacs interface to build systems")
+      (description
+       "Build.el strives to provide clean and easy to understand functions, as
+well as a transient menu, to build projects of various build
+systems (CMake, Bazel, Make, Ninja, Cargo, NPM, ...).")
+      (license #f) ;; license:mit)
+      )))
+
 ;; (define emacs-instead-of-emacs-minimal
 ;;   ;; (package-input-rewriting `((,emacs-minimal . ,emacs))))
 ;;   ;; Try to do nothing (before deciding completely purging it):
@@ -560,6 +587,7 @@ for nerd-icons. See also emacs-elementaryx-all-the-icons alternative.")
     (build-system emacs-build-system)
     (propagated-inputs
      (list ;; emacs-consult-eglot ;; Wait for https://issues.guix.gnu.org/70211 to be resolved:
+           emacs-build ;; https://github.com/27justin/build.el
            emacs-diff-hl ;; for highlighting differences of current buffer with VC (alternative: emacs-git-gutter)
 	   emacs-elementaryx-base
            emacs-editorconfig
