@@ -75,20 +75,9 @@
     (home-page "https://github.com/RadeonOpenCompute/ROCm-CompilerSupport")
     (license ncsa)))
 
-(define-public llvm-comgr-6.2
-  (make-rocm-comgr llvm-device-libs-6.2 llvm-rocm-6.2 lld-rocm-6.2
-                   clang-rocm-6.2))
-(define-public llvm-comgr-6.1
-  (make-rocm-comgr llvm-device-libs-6.1 llvm-rocm-6.1 lld-rocm-6.1
-                   clang-rocm-6.1))
-(define-public rocm-comgr-6.0
-  (make-rocm-comgr rocm-device-libs-6.0 llvm-rocm-6.0 lld-rocm-6.0
-                   clang-rocm-6.0))
-(define-public rocm-comgr-5.7
-  (make-rocm-comgr rocm-device-libs-5.7 llvm-rocm-5.7 lld-rocm-5.7
-                   clang-rocm-5.7))
-
-; hipamd for versions 5.6 and above
+(define-public llvm-comgr
+  (make-rocm-comgr llvm-device-libs llvm-rocm lld-rocm
+                   clang-rocm))
 
 ; hip headers
 (define (make-hip version)
@@ -110,14 +99,8 @@ for AMD and NVIDIA GPUs from single source code.")
                     (home-page "https://github.com/ROCm-Developer-Tools/HIP")
                     (license expat))))
 
-(define-public hip-6.2
-  (make-hip "6.2.2"))
-(define-public hip-6.1
-  (make-hip "6.1.2"))
-(define-public hip-6.0
-  (make-hip "6.0.2"))
-(define-public hip-5.7
-  (make-hip "5.7.1"))
+(define-public hip
+  (make-hip rocm-version-latest))
 
 ; hipcc
 (define (make-hipcc rocminfo rocm-toolchain)
@@ -147,14 +130,8 @@ clang and pass the appropriate include and library options for the target compil
                      "https://github.com/ROCm-Developer-Tools/HIPCC.git")
                     (license expat))))
 
-(define-public hipcc-6.2
-  (make-hipcc rocminfo-6.2 rocm-toolchain-6.2))
-(define-public hipcc-6.1
-  (make-hipcc rocminfo-6.1 rocm-toolchain-6.1))
-(define-public hipcc-6.0
-  (make-hipcc rocminfo-6.0 rocm-toolchain-6.0))
-(define-public hipcc-5.7
-  (make-hipcc rocminfo-5.7 rocm-toolchain-5.7))
+(define-public hipcc
+  (make-hipcc rocminfo rocm-toolchain))
 
 ; clr "hipamd" versions >= 5.6
 (define (make-clr-hipamd hip hipcc rocm-comgr)
@@ -242,14 +219,8 @@ compute languages runtimes: HIP and OpenCL. This package is built for HIP only."
     (home-page "https://github.com/ROCm-Developer-Tools/clr.git")
     (license expat)))
 
-(define-public hipamd-6.2
-  (make-clr-hipamd hip-6.2 hipcc-6.2 llvm-comgr-6.2))
-(define-public hipamd-6.1
-  (make-clr-hipamd hip-6.1 hipcc-6.1 llvm-comgr-6.1))
-(define-public hipamd-6.0
-  (make-clr-hipamd hip-6.0 hipcc-6.0 rocm-comgr-6.0))
-(define-public hipamd-5.7
-  (make-clr-hipamd hip-5.7 hipcc-5.7 rocm-comgr-5.7))
+(define-public hipamd
+  (make-clr-hipamd hip hipcc llvm-comgr))
 
 ; rocm-cmake
 (define (make-rocm-cmake version)
@@ -273,11 +244,5 @@ it is required for building some of the libraries that are a part of ROCm.")
     (home-page "https://github.com/RadeonOpenCompute/rocm-cmake.git")
     (license expat)))
 
-(define-public rocm-cmake-6.2
-  (make-rocm-cmake "6.2.2"))
-(define-public rocm-cmake-6.1
-  (make-rocm-cmake "6.1.2"))
-(define-public rocm-cmake-6.0
-  (make-rocm-cmake "6.0.2"))
-(define-public rocm-cmake-5.7
-  (make-rocm-cmake "5.7.1"))
+(define-public rocm-cmake
+  (make-rocm-cmake rocm-version-latest))

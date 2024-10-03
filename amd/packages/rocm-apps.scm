@@ -30,6 +30,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages version-control)
 
+  #:use-module (amd packages rocm-origin)
   #:use-module (amd packages rocm-libs)
   #:use-module (amd packages aocl-libs)
   #:use-module (amd packages rocm-hip)
@@ -88,14 +89,12 @@
     (home-page "https://github.com/ROCmSoftwarePlatform/rocHPCG.git")
     (license bsd-3)))
 
-(define-public hpcg-rocm-6.2
-  (make-hpcg hipamd-6.2 rocm-cmake-6.2 rocprim-6.2 openmpi-rocm-6.2 "6.2"))
-(define-public hpcg-rocm-6.1
-  (make-hpcg hipamd-6.1 rocm-cmake-6.1 rocprim-6.1 openmpi-rocm-6.1 "6.1"))
-(define-public hpcg-rocm-6.0
-  (make-hpcg hipamd-6.0 rocm-cmake-6.0 rocprim-6.0 openmpi-rocm-6.0 "6.0"))
-(define-public hpcg-rocm-5.7
-  (make-hpcg hipamd-5.7 rocm-cmake-5.7 rocprim-5.7 openmpi-rocm-5.7 "5.7"))
+(define-public hpcg-rocm
+  (make-hpcg hipamd
+             rocm-cmake
+             rocprim
+             openmpi-rocm
+             rocm-version-major-minor-latest))
 
 (define (make-hpcg-sans-mpi hpcg)
   (package/inherit hpcg
@@ -105,14 +104,8 @@
     (synopsis
      "ROCm version of the synthetic HPCG benchmark (without MPI support)")))
 
-(define-public hpcg-rocm-sans-mpi-6.2
-  (make-hpcg-sans-mpi hpcg-rocm-6.2))
-(define-public hpcg-rocm-sans-mpi-6.1
-  (make-hpcg-sans-mpi hpcg-rocm-6.1))
-(define-public hpcg-rocm-sans-mpi-6.0
-  (make-hpcg-sans-mpi hpcg-rocm-6.0))
-(define-public hpcg-rocm-sans-mpi-5.7
-  (make-hpcg-sans-mpi hpcg-rocm-5.7))
+(define-public hpcg-rocm-sans-mpi
+  (make-hpcg-sans-mpi hpcg-rocm))
 
 (define (make-babelstream hipamd)
   (package
@@ -151,14 +144,8 @@ The version of BabelStream is built targeting AMD GPUs using HIP.")
               "https://github.com/UoB-HPC/BabelStream/blob/main/LICENSE"
               "Custom permissive license based on John D. McCalpin's original STREAM benchmark."))))
 
-(define-public babelstream-hip-6.2
-  (make-babelstream hipamd-6.2))
-(define-public babelstream-hip-6.1
-  (make-babelstream hipamd-6.1))
-(define-public babelstream-hip-6.0
-  (make-babelstream hipamd-6.0))
-(define-public babelstream-hip-5.7
-  (make-babelstream hipamd-5.7))
+(define-public babelstream-hip
+  (make-babelstream hipamd))
 
 ; rochpl
 (define (make-rochpl rocm-cmake
@@ -214,34 +201,13 @@ language and optimized for AMD's latest discrete GPUs.")
     (home-page "https://github.com/ROCmSoftwarePlatform/rocHPL.git")
     (license (list bsd-4 bsd-3))))
 
-(define-public rochpl-6.2
-  (make-rochpl rocm-cmake-6.2
-               hipamd-6.2
-               openmpi-rocm-6.2
-               rocblas-6.2
+(define-public rochpl
+  (make-rochpl rocm-cmake
+               hipamd
+               openmpi-rocm
+               rocblas
                aocl-blis
-               roctracer-6.2))
-(define-public rochpl-6.1
-  (make-rochpl rocm-cmake-6.1
-               hipamd-6.1
-               openmpi-rocm-6.1
-               rocblas-6.1
-               aocl-blis
-               roctracer-6.1))
-(define-public rochpl-6.0
-  (make-rochpl rocm-cmake-6.0
-               hipamd-6.0
-               openmpi-rocm-6.0
-               rocblas-6.0
-               aocl-blis
-               roctracer-6.0))
-(define-public rochpl-5.7
-  (make-rochpl rocm-cmake-5.7
-               hipamd-5.7
-               openmpi-rocm-5.7
-               rocblas-5.7
-               aocl-blis
-               roctracer-5.7))
+               roctracer))
 
 ; osu benchmarks
 (define (make-osubench-rocm openmpi-rocm hipamd rccl)
@@ -285,11 +251,5 @@ language and optimized for AMD's latest discrete GPUs.")
      "A collection of host-based and device-based microbenchmarks for MPI
 communication with ROCm support.")))
 
-(define-public osubench-rocm-6.2
-  (make-osubench-rocm openmpi-rocm-6.2 hipamd-6.2 rccl-6.2))
-(define-public osubench-rocm-6.1
-  (make-osubench-rocm openmpi-rocm-6.1 hipamd-6.1 rccl-6.1))
-(define-public osubench-rocm-6.0
-  (make-osubench-rocm openmpi-rocm-6.0 hipamd-6.0 rccl-6.0))
-(define-public osubench-rocm-5.7
-  (make-osubench-rocm openmpi-rocm-5.7 hipamd-5.7 rccl-5.7))
+(define-public osubench-rocm
+  (make-osubench-rocm openmpi-rocm hipamd rccl))
