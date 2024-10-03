@@ -73,14 +73,9 @@
               (replace "libffi" libffi-shared)))
     (properties `((hidden? . #t) ,@(package-properties llvm)))))
 
-(define-public llvm-rocm-6.2
-  (make-llvm-rocm "6.2.2" llvm-18))
-(define-public llvm-rocm-6.1
-  (make-llvm-rocm "6.1.2" llvm-17))
-(define-public llvm-rocm-6.0
-  (make-llvm-rocm "6.0.2" llvm-17))
-(define-public llvm-rocm-5.7
-  (make-llvm-rocm "5.7.1" llvm-17))
+;; Latest version of ROCm depends on llvm-18
+(define-public llvm-rocm
+  (make-llvm-rocm rocm-version-latest llvm-18))
 
 ; clang runtime
 (define-public (make-clang-runtime-rocm llvm-rocm clang-runtime)
@@ -96,14 +91,9 @@
               (append libxcrypt)))
     (properties `((hidden? . #t) ,@(package-properties clang-runtime)))))
 
-(define-public clang-runtime-rocm-6.2
-  (make-clang-runtime-rocm llvm-rocm-6.2 clang-runtime-18))
-(define-public clang-runtime-rocm-6.1
-  (make-clang-runtime-rocm llvm-rocm-6.1 clang-runtime-17))
-(define-public clang-runtime-rocm-6.0
-  (make-clang-runtime-rocm llvm-rocm-6.0 clang-runtime-17))
-(define-public clang-runtime-rocm-5.7
-  (make-clang-runtime-rocm llvm-rocm-5.7 clang-runtime-17))
+;; Latest version of ROCm depends on llvm-18
+(define-public clang-runtime-rocm
+  (make-clang-runtime-rocm llvm-rocm clang-runtime-18))
 
 ; clang
 (define (make-clang-rocm llvm-rocm clang-runtime-rocm clang)
@@ -128,14 +118,9 @@
                 (copy-recursively "../clang-tools-extra" "tools/extra")))))))
     (properties `((hidden? . #t) ,@(package-properties clang)))))
 
-(define-public clang-rocm-6.2
-  (make-clang-rocm llvm-rocm-6.2 clang-runtime-rocm-6.2 clang-18))
-(define-public clang-rocm-6.1
-  (make-clang-rocm llvm-rocm-6.1 clang-runtime-rocm-6.1 clang-17))
-(define-public clang-rocm-6.0
-  (make-clang-rocm llvm-rocm-6.0 clang-runtime-rocm-6.0 clang-17))
-(define-public clang-rocm-5.7
-  (make-clang-rocm llvm-rocm-5.7 clang-runtime-rocm-5.7 clang-17))
+;; Latest version of ROCm depends on llvm-18
+(define-public clang-rocm
+  (make-clang-rocm llvm-rocm clang-runtime-rocm clang-18))
 
 ; lld
 (define (make-lld-rocm llvm-rocm lld)
@@ -148,14 +133,9 @@
     (inputs (list llvm-rocm))
     (properties `((hidden? . #t) ,@(package-properties lld)))))
 
-(define-public lld-rocm-6.2
-  (make-lld-rocm llvm-rocm-6.2 lld-18))
-(define-public lld-rocm-6.1
-  (make-lld-rocm llvm-rocm-6.1 lld-17))
-(define-public lld-rocm-6.0
-  (make-lld-rocm llvm-rocm-6.0 lld-17))
-(define-public lld-rocm-5.7
-  (make-lld-rocm llvm-rocm-5.7 lld-17))
+;; Latest version of ROCm depends on llvm-18
+(define-public lld-rocm
+  (make-lld-rocm llvm-rocm lld-18))
 
 ; rocm-device-libs
 (define (make-rocm-device-libs clang-rocm)
@@ -195,14 +175,8 @@ a set of AMD specific device-side language runtime libraries.")
     (home-page "https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git")
     (license license:ncsa)))
 
-(define-public llvm-device-libs-6.2
-  (make-rocm-device-libs clang-rocm-6.2))
-(define-public llvm-device-libs-6.1
-  (make-rocm-device-libs clang-rocm-6.1))
-(define-public rocm-device-libs-6.0
-  (make-rocm-device-libs clang-rocm-6.0))
-(define-public rocm-device-libs-5.7
-  (make-rocm-device-libs clang-rocm-5.7))
+(define-public llvm-device-libs
+  (make-rocm-device-libs clang-rocm))
 
 ; roct-thunk-interface
 (define (make-roct-thunk version)
@@ -224,14 +198,8 @@ to interact with the ROCk driver.")
     (home-page "https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface.git")
     (license license:expat)))
 
-(define-public roct-thunk-6.2
-  (make-roct-thunk "6.2.2"))
-(define-public roct-thunk-6.1
-  (make-roct-thunk "6.1.2"))
-(define-public roct-thunk-6.0
-  (make-roct-thunk "6.0.2"))
-(define-public roct-thunk-5.7
-  (make-roct-thunk "5.7.1"))
+(define-public roct-thunk
+  (make-roct-thunk rocm-version-latest))
 
 ; rocprof-register
 (define (make-rocprof-register version)
@@ -259,8 +227,9 @@ variables or unique methods for each runtime library.")
     (home-page "https://github.com/rocm/rocprofiler-register")
     (license license:expat)))
 
-(define-public rocprof-register-6.2
-  (make-rocprof-register "6.2.2"))
+;; Only valid for ROCm 6.2.0 and above
+(define-public rocprof-register
+  (make-rocprof-register rocm-version-latest))
 
 ; rocr-runtime
 (define (make-rocr-runtime roct-thunk rocm-device-libs lld-rocm clang-rocm
@@ -297,28 +266,14 @@ core runtime is also available.")
     (home-page "https://github.com/RadeonOpenCompute/ROCR-Runtime.git")
     (license license:ncsa)))
 
-(define-public rocr-runtime-6.2
-  (make-rocr-runtime roct-thunk-6.2 llvm-device-libs-6.2 lld-rocm-6.2
-                     clang-rocm-6.2 rocprof-register-6.2))
-(define-public rocr-runtime-6.1
-  (make-rocr-runtime roct-thunk-6.1 llvm-device-libs-6.1 lld-rocm-6.1
-                     clang-rocm-6.1 #f))
-(define-public rocr-runtime-6.0
-  (make-rocr-runtime roct-thunk-6.0 rocm-device-libs-6.0 lld-rocm-6.0
-                     clang-rocm-6.0 #f))
-(define-public rocr-runtime-5.7
-  (make-rocr-runtime roct-thunk-5.7 rocm-device-libs-5.7 lld-rocm-5.7
-                     clang-rocm-5.7 #f))
+;; rocprof-register only required for ROCm 6.2.0 and above
+(define-public rocr-runtime
+  (make-rocr-runtime roct-thunk llvm-device-libs lld-rocm
+                     clang-rocm rocprof-register))
 
 ; lld-wrapper
-(define-public lld-wrapper-rocm-6.2
-  (make-lld-wrapper lld-rocm-6.2))
-(define-public lld-wrapper-rocm-6.1
-  (make-lld-wrapper lld-rocm-6.1))
-(define-public lld-wrapper-rocm-6.0
-  (make-lld-wrapper lld-rocm-6.0))
-(define-public lld-wrapper-rocm-5.7
-  (make-lld-wrapper lld-rocm-5.7))
+(define-public lld-wrapper-rocm
+  (make-lld-wrapper lld-rocm))
 
 ; libomp
 (define (make-libomp-rocm llvm-rocm
@@ -393,38 +348,15 @@ core runtime is also available.")
                     #$clang-rocm "/bin")))))))))
     (properties `((hidden? . #t) ,@(package-properties libomp)))))
 
-(define-public libomp-rocm-6.2
-  (make-libomp-rocm llvm-rocm-6.2
-                    clang-rocm-6.2
-                    lld-wrapper-rocm-6.2
-                    llvm-device-libs-6.2
-                    rocr-runtime-6.2
-                    roct-thunk-6.2
+;; Latest version of ROCm depends on llvm-18
+(define-public libomp-rocm
+  (make-libomp-rocm llvm-rocm
+                    clang-rocm
+                    lld-wrapper-rocm
+                    llvm-device-libs
+                    rocr-runtime
+                    roct-thunk
                     libomp-18))
-(define-public libomp-rocm-6.1
-  (make-libomp-rocm llvm-rocm-6.1
-                    clang-rocm-6.1
-                    lld-wrapper-rocm-6.1
-                    llvm-device-libs-6.1
-                    rocr-runtime-6.1
-                    roct-thunk-6.1
-                    libomp-17))
-(define-public libomp-rocm-6.0
-  (make-libomp-rocm llvm-rocm-6.0
-                    clang-rocm-6.0
-                    lld-wrapper-rocm-6.0
-                    rocm-device-libs-6.0
-                    rocr-runtime-6.0
-                    roct-thunk-6.0
-                    libomp-17))
-(define-public libomp-rocm-5.7
-  (make-libomp-rocm llvm-rocm-5.7
-                    clang-rocm-5.7
-                    lld-wrapper-rocm-5.7
-                    rocm-device-libs-5.7
-                    rocr-runtime-5.7
-                    roct-thunk-5.7
-                    libomp-17))
 
 ; rocm-toolchain
 (define (make-rocm-toolchain clang-rocm
@@ -451,34 +383,13 @@ development to be installed in user profiles. This includes Clang, as well as
 libc (headers and binaries, plus debugging symbols in the @code{debug}
 output), Binutils, the ROCm device libraries, and the ROCr runtime."))))
 
-(define-public rocm-toolchain-6.2
-  (make-rocm-toolchain clang-rocm-6.2
-                       libomp-rocm-6.2
-                       lld-wrapper-rocm-6.2
-                       rocr-runtime-6.2
-                       llvm-device-libs-6.2
-                       roct-thunk-6.2))
-(define-public rocm-toolchain-6.1
-  (make-rocm-toolchain clang-rocm-6.1
-                       libomp-rocm-6.1
-                       lld-wrapper-rocm-6.1
-                       rocr-runtime-6.1
-                       llvm-device-libs-6.1
-                       roct-thunk-6.1))
-(define-public rocm-toolchain-6.0
-  (make-rocm-toolchain clang-rocm-6.0
-                       libomp-rocm-6.0
-                       lld-wrapper-rocm-6.0
-                       rocr-runtime-6.0
-                       rocm-device-libs-6.0
-                       roct-thunk-6.0))
-(define-public rocm-toolchain-5.7
-  (make-rocm-toolchain clang-rocm-5.7
-                       libomp-rocm-5.7
-                       lld-wrapper-rocm-5.7
-                       rocr-runtime-5.7
-                       rocm-device-libs-5.7
-                       roct-thunk-5.7))
+(define-public rocm-toolchain
+  (make-rocm-toolchain clang-rocm
+                       libomp-rocm
+                       lld-wrapper-rocm
+                       rocr-runtime
+                       llvm-device-libs
+                       roct-thunk))
 
 ; hipify
 (define (make-hipify clang-rocm)
@@ -516,11 +427,5 @@ CUDA source code into portable HIP C++.")
     (home-page "https://github.com/ROCm/HIPIFY")
     (license license:ncsa)))
 
-(define-public hipify-6.2
-  (make-hipify clang-rocm-6.2))
-(define-public hipify-6.1
-  (make-hipify clang-rocm-6.1))
-(define-public hipify-6.0
-  (make-hipify clang-rocm-6.0))
-(define-public hipify-5.7
-  (make-hipify clang-rocm-5.7))
+(define-public hipify
+  (make-hipify clang-rocm))

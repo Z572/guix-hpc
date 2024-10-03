@@ -53,14 +53,8 @@
     (home-page "https://github.com/RadeonOpenCompute/rocminfo")
     (license ncsa)))
 
-(define-public rocminfo-6.2
-  (make-rocminfo rocr-runtime-6.2))
-(define-public rocminfo-6.1
-  (make-rocminfo rocr-runtime-6.1))
-(define-public rocminfo-6.0
-  (make-rocminfo rocr-runtime-6.0))
-(define-public rocminfo-5.7
-  (make-rocminfo rocr-runtime-5.7))
+(define-public rocminfo
+  (make-rocminfo rocr-runtime))
 
 ; rocm-bandwidth-test
 (define (make-rocm-bandwidth rocr-runtime)
@@ -86,14 +80,8 @@ system in terms of memory pools and their agents.")
     (home-page "https://github.com/ROCm/rocm_bandwidth_test")
     (license ncsa)))
 
-(define-public rocm-bandwidth-6.2
-  (make-rocm-bandwidth rocr-runtime-6.2))
-(define-public rocm-bandwidth-6.1
-  (make-rocm-bandwidth rocr-runtime-6.1))
-(define-public rocm-bandwidth-6.0
-  (make-rocm-bandwidth rocr-runtime-6.0))
-(define-public rocm-bandwidth-5.7
-  (make-rocm-bandwidth rocr-runtime-5.7))
+(define-public rocm-bandwidth
+  (make-rocm-bandwidth rocr-runtime))
 
 ; rocm-smi
 (define (make-rocm-smi version)
@@ -116,14 +104,8 @@ provides a user space interface for applications to monitor and control GPU appl
     (home-page "https://github.com/RadeonOpenCompute/rocm_smi_lib.git")
     (license ncsa)))
 
-(define-public rocm-smi-6.2
-  (make-rocm-smi "6.2.2"))
-(define-public rocm-smi-6.1
-  (make-rocm-smi "6.1.2"))
-(define-public rocm-smi-6.0
-  (make-rocm-smi "6.0.2"))
-(define-public rocm-smi-5.7
-  (make-rocm-smi "5.7.1"))
+(define-public rocm-smi
+  (make-rocm-smi rocm-version-latest))
 
 ; tensile
 (define (make-tensile version)
@@ -145,11 +127,5 @@ variety of 'compute' applications running on AMD GPUs.")
     (home-page "https://github.com/ROCmSoftwarePlatform/Tensile.git")
     (license expat)))
 
-(define-public tensile-6.2
-  (make-tensile "6.2.2"))
-(define-public tensile-6.1
-  (make-tensile "6.1.2"))
-(define-public tensile-6.0
-  (make-tensile "6.0.2"))
-(define-public tensile-5.7
-  (make-tensile "5.7.1"))
+(define-public tensile
+  (make-tensile rocm-version-latest))

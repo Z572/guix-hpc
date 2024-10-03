@@ -24,7 +24,16 @@
 
   #:use-module (gnu packages)
 
-  #:export (rocm-origin))
+  #:export (rocm-origin
+            rocm-version-latest
+            rocm-version-major-minor-latest))
+
+(define-public rocm-version-latest
+  ;; Default version for ROCm packages based on the latest release.
+  "6.2.2")
+
+(define-public rocm-version-major-minor-latest
+  (version-major+minor rocm-version-latest))
 
 (define rocm-hashes
     `(

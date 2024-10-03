@@ -237,7 +237,7 @@ kernels are executed as efficiently as possible.")
     (inherit starpu)
     (name "starpu-hip")
     (inputs (modify-inputs (package-inputs starpu)
-              (append hipamd-5.7)))
+              (append hipamd)))
     (synopsis
      "Run-time system for heterogeneous computing (with AMD HIP support)")))
 
