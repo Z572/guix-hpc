@@ -90,10 +90,7 @@
     (license bsd-3)))
 
 (define-public hpcg-rocm
-  (make-hpcg hipamd
-             rocm-cmake
-             rocprim
-             openmpi-rocm
+  (make-hpcg hipamd rocm-cmake rocprim openmpi-rocm
              rocm-version-major-minor-latest))
 
 (define (make-hpcg-sans-mpi hpcg)

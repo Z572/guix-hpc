@@ -268,8 +268,8 @@ core runtime is also available.")
 
 ;; rocprof-register only required for ROCm 6.2.0 and above
 (define-public rocr-runtime
-  (make-rocr-runtime roct-thunk llvm-device-libs lld-rocm
-                     clang-rocm rocprof-register))
+  (make-rocr-runtime roct-thunk llvm-device-libs lld-rocm clang-rocm
+                     rocprof-register))
 
 ; lld-wrapper
 (define-public lld-wrapper-rocm
