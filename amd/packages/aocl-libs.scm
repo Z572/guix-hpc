@@ -98,8 +98,7 @@ AMD has extensively optimized the implementation of BLIS for AMD processors.")
      (list
       #:tests? #f))
     (synopsis
-     "The library AOCL-Utils is intended to provide a uniform interface to all
-AOCL libraries to access CPU features, especially for AMD CPUs.")
+     "AOCL libraries to access CPU features, especially AMD CPUs")
     (description
      "AOCL-Utils is designed to be integrated into other AOCL libraries. Each
 project has their own mechanism to identify CPU and provide necessary features such as
