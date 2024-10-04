@@ -96,9 +96,8 @@ AMD has extensively optimized the implementation of BLIS for AMD processors.")
     (build-system cmake-build-system)
     (arguments
      (list
-      #:tests? #f))
-    (synopsis
-     "AOCL libraries to access CPU features, especially AMD CPUs")
+      #:tests? #f)) ;No tests
+    (synopsis "AOCL libraries to access CPU features, especially AMD CPUs")
     (description
      "AOCL-Utils is designed to be integrated into other AOCL libraries. Each
 project has their own mechanism to identify CPU and provide necessary features such as
@@ -123,7 +122,7 @@ update/validate and provide information to the users of this library.")
     (build-system gnu-build-system)
     (arguments
      (list
-      #:tests? #f
+      #:tests? #f ;No tests
       #:configure-flags #~(list "--enable-amd-flags")
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'patch-config
@@ -158,6 +157,8 @@ update/validate and provide information to the users of this library.")
     (build-system cmake-build-system)
     (arguments
      (list
+      ;; One tests fails due to an illegal value being passed to DSTEGR2A.
+      ;; Disabling for now.
       #:tests? #f
       #:configure-flags #~(list "-DBUILD_SHARED_LIBS:BOOL=YES"
                                 "-DUSE_OPTIMIZED_LAPACK_BLAS=ON"

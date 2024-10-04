@@ -211,7 +211,6 @@ to interact with the ROCk driver.")
     (build-system cmake-build-system)
     (arguments
      (list
-      #:tests? #f
       #:configure-flags
       ;; Don't let CMake download and build these dependencies
       #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
