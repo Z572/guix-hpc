@@ -1,3 +1,5 @@
+Set perl script activation and necessary GUIX variables for HIPCC.
+Fix libpath to ensure standard path is not modified or overwritten.
 diff --git a/amd/hipcc/bin/hipcc b/amd/hipcc/bin/hipcc
 index 8559bb099f1c..4002631b5721 100755
 --- a/amd/hipcc/bin/hipcc

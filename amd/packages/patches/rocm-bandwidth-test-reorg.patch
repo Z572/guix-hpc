@@ -1,3 +1,5 @@
+hsa-runtime64 is provided through rocr-runtime; this patch removes
+CMake paths that tries to resolve hsa-runtime64 using opt/rocm.
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index a2172e7..762acfd 100755
 --- a/CMakeLists.txt

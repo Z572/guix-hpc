@@ -1,3 +1,6 @@
+Fix libpath to ensure standard path is not modified or overwritten.
+NOTE: upstream clang-*-libc-search-path.patch does NOT apply cleanly
+for ROCm versions based on LLVM 17. Therefore it is duplicated here.
 diff --git a/clang/lib/Driver/Distro.cpp b/clang/lib/Driver/Distro.cpp
 index 85d82180a805..b7bc4a28f5ab 100644
 --- a/clang/lib/Driver/Distro.cpp

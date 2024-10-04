@@ -1,3 +1,4 @@
+Remove git as a hard dependency and set rocblas_VERSION_COMMIT_ID
 diff --git a/library/CMakeLists.txt b/library/CMakeLists.txt
 index 90a75dd3..8ca10301 100755
 --- a/library/CMakeLists.txt
