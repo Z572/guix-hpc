@@ -21,7 +21,6 @@
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system trivial)
-  #:use-module (guix build utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
