@@ -76,8 +76,7 @@
     (license ncsa)))
 
 (define-public llvm-comgr
-  (make-rocm-comgr llvm-device-libs llvm-rocm lld-rocm
-                   clang-rocm))
+  (make-rocm-comgr llvm-device-libs llvm-rocm lld-rocm clang-rocm))
 
 ; hip headers
 (define (make-hip version)
