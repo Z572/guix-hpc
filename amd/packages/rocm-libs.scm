@@ -232,8 +232,7 @@ the HIP programming language and optimized for AMD's latest discrete GPUs.")
     (license expat)))
 
 (define-public rocsparse
-  (make-rocsparse rocm-cmake hipamd llvm-device-libs
-                  rocr-runtime rocprim))
+  (make-rocsparse rocm-cmake hipamd llvm-device-libs rocr-runtime rocprim))
 
 ; hipsparse
 (define-public (make-hipsparse hipamd rocm-cmake rocsparse)

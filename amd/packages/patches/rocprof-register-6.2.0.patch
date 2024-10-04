@@ -1,3 +1,4 @@
+Do not let CMake attempt to build fmt and glog; let CMake find it instead
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 30d1308..7572226 100644
 --- a/CMakeLists.txt

@@ -22,5 +22,7 @@
         (base32 "1zh482ga8mndsw277h9wrq4i5xffji0li3v0xha1i6j1llzicz7s"))))
     (arguments
      (list
+      ;; Tests pass but package fails to install.
+      ;; Fails in phase 'install-license-files'. Disabling for now.
       #:tests? #f))
     (properties `((hidden? . #t) ,@(package-properties glog)))))

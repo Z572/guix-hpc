@@ -1,3 +1,4 @@
+Install perfetto headers
 diff --git a/meson.build b/meson.build
 index 5ef6fce52c..561dcf4768 100644
 --- a/meson.build

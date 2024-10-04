@@ -21,7 +21,6 @@
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system trivial)
-  #:use-module (guix build utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
@@ -211,7 +210,6 @@ to interact with the ROCk driver.")
     (build-system cmake-build-system)
     (arguments
      (list
-      #:tests? #f
       #:configure-flags
       ;; Don't let CMake download and build these dependencies
       #~(list "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"
@@ -268,8 +266,8 @@ core runtime is also available.")
 
 ;; rocprof-register only required for ROCm 6.2.0 and above
 (define-public rocr-runtime
-  (make-rocr-runtime roct-thunk llvm-device-libs lld-rocm
-                     clang-rocm rocprof-register))
+  (make-rocr-runtime roct-thunk llvm-device-libs lld-rocm clang-rocm
+                     rocprof-register))
 
 ; lld-wrapper
 (define-public lld-wrapper-rocm
