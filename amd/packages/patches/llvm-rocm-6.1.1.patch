@@ -1,3 +1,7 @@
+Set perl script activation and necessary GUIX variables for HIPCC.
+Fix libpath to ensure standard path is not modified or overwritten.
+NOTE: upstream clang-*-libc-search-path.patch does NOT apply cleanly
+for ROCm versions based on LLVM 17. Therefore it is duplicated here.
 diff --git a/amd/hipcc/bin/hipcc.pl b/amd/hipcc/bin/hipcc.pl
 index 513a4278482c..65ecd6f9c6e1 100755
 --- a/amd/hipcc/bin/hipcc.pl

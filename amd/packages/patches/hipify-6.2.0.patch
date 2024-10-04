@@ -1,3 +1,4 @@
+Ensure installed files carry over the same permissions as the source.
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 0d105e20..0c1bbb57 100644
 --- a/CMakeLists.txt
