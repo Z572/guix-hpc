@@ -328,7 +328,7 @@ systems (CMake, Bazel, Make, Ninja, Cargo, NPM, ...).")
 (define-public emacs-elementaryx-minimal
   (package
    (name "emacs-elementaryx-minimal")
-   (version "2.1.2")
+   (version "2.1.3")
    (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-minimal")
    (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Minimal setup.")
    (description
@@ -338,11 +338,11 @@ systems (CMake, Bazel, Make, Ninja, Cargo, NPM, ...).")
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "43b981cc2c68cecc1eff06f3c198d57634ff637b")))
+                  (commit "v2.1.3")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "119v7wkzqi501gflzmn2r4saf64gxin2dsnla16g2bjla7xq21mc"))))
+              "0s2mbqcx9bfsyw16rr3zmwzryz8vv6is9pb21f5gigyqq5985zx4"))))
    (build-system emacs-build-system)
    (propagated-inputs
     ;; TODO move to a higher level package: bash-completion, bat, diffutils, fzf, less, lesspipe, and maybe man-db and man-pages, as well as fonts (fontconfig and fonts themselves)
@@ -1093,7 +1093,7 @@ scheme.")
 (define-public elementaryx-escode
   (package
     (name "elementaryx-escode")
-    (version "2.1.2")
+    (version "2.1.3")
     (home-page "https://gitlab.inria.fr/elementaryx/emacs-elementaryx-escode")
     (synopsis "ElementaryX: Elementary Emacs configuration coupled with Guix. Setup
 for ESCode, the Elementaryx fake true Studio Code.")
@@ -1105,11 +1105,11 @@ for ESCode, the Elementaryx fake true Studio Code.")
               (method git-fetch)
               (uri (git-reference
                     (url home-page)
-                    (commit "v2.1.2")))
+                    (commit "v2.1.3")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-		"09g687g1xnb5q14am362ax94xqripkdpfmrb23vqci09i15dly4j"))))
+		"0p006pj2inwlcxjy3yji7a34h8827dra1mv3xqxc18c7hhmy9fzb"))))
     (build-system emacs-build-system)
     ;; We also define an elementaryx-escode executable wrapper call for easy call
     (arguments
