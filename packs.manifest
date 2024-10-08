@@ -1,0 +1,55 @@
+;;; This is actually -*- Scheme -*-.
+;;;
+;;; This module extends GNU Guix and is licensed under the same terms, those
+;;; of the GNU GPL version 3 or (at your option) any later version.
+;;;
+;;; Copyright © 2024 Inria
+
+;; Manifest to build packs for a variety of applications.  This is primarily
+;; meant to be used by Cuirass.
+
+(use-modules (guix packages)
+             (guix profiles)
+             ((guix gexp) #:select (define-gexp-compiler))
+             ((guix scripts pack) #:select (squashfs-image))
+             (gnu compression)
+             (guix-hpc packages gysela)
+             (srfi srfi-9))
+
+;; XXX: The <monadic> hack below will hopefully become unnecessary once the
+;; (guix scripts pack) interface switches to declarative style--i.e.,
+;; file-like objects.
+
+(define-record-type <monadic>
+  (monadic->declarative mvalue)
+  monadic?
+  (mvalue monadic-value))
+
+(define-gexp-compiler (monadic-compiler (monadic <monadic>) system target)
+  (monadic-value monadic))
+
+
+(define (package->development-squashfs-image package)
+  "Return a squashfs image suitable for Singularity/Apptainer that contains
+the development environment of PACKAGE."
+  ;; 'squashfs-image' returns a monadic value; turn it into a file-like
+  ;; object.
+  (monadic->declarative
+   (squashfs-image (string-append (package-name package)
+                                  "-squashfs-image")
+                   (profile
+                    (content (package->development-manifest package)))
+
+                   ;; Zstd is faster and more efficient than gzip, but
+                   ;; squashfs in the kernel does not necessarily support it.
+                   #:compressor (lookup-compressor "gzip")
+
+                   #:symlinks '(("/bin" -> "bin")
+                                ("/lib" -> "lib")))))
+
+;; Return the manifest containing packs.
+(manifest
+ (list (manifest-entry
+         (name "gysela-development")
+         (version (package-version gyselalibxx))
+         (item (package->development-squashfs-image gyselalibxx)))))
