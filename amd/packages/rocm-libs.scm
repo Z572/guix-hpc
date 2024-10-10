@@ -312,11 +312,11 @@ backends.")
 
 ; openmpi built with ucx-rocm and libfabric-rocm
 (define (make-openmpi-rocm ucx ofi hipamd)
-  (package/inherit openmpi-5
-    (name (string-append (package-name openmpi-5) "-rocm"))
-    (version (string-append (package-version openmpi-5) ".rocm"
+  (package/inherit openmpi
+    (name (string-append (package-name openmpi) "-rocm"))
+    (version (string-append (package-version openmpi) ".rocm"
                             (package-version hipamd)))
-    (arguments (substitute-keyword-arguments (package-arguments openmpi-5)
+    (arguments (substitute-keyword-arguments (package-arguments openmpi)
                  ((#:configure-flags flags)
                   #~(append (list (string-append "--with-rocm="
                                                  #$(this-package-input
@@ -337,7 +337,7 @@ backends.")
                           (setenv "CPLUS_INCLUDE_PATH"
                                   (search-input-directory inputs
                                    "/include/infiniband"))))))))
-    (inputs (modify-inputs (package-inputs openmpi-5)
+    (inputs (modify-inputs (package-inputs openmpi)
               (replace "ucx" ucx)
               (replace "libfabric" ofi)
               (append hipamd)))))
