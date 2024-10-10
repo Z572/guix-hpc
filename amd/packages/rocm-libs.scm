@@ -376,7 +376,7 @@ backends.")
     (description
      "ROCm tracer provides an API to provide functionality for registering
 the runtimes API callbacks and asynchronous activity records pool support.")
-    (home-page "https://github.com/ROCm-Developer-Tools/roctracer.git")
+    (home-page "https://github.com/ROCm/roctracer")
     (license expat)))
 
 (define-public roctracer

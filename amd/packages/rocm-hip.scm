@@ -125,8 +125,7 @@ for AMD and NVIDIA GPUs from single source code.")
                     (description
                      "The HIP compiler driver (hipcc) is a compiler utility that will call
 clang and pass the appropriate include and library options for the target compiler and HIP infrastructure.")
-                    (home-page
-                     "https://github.com/ROCm-Developer-Tools/HIPCC.git")
+                    (home-page "https://github.com/ROCm/HIPCC")
                     (license expat))))
 
 (define-public hipcc
@@ -215,7 +214,7 @@ clang and pass the appropriate include and library options for the target compil
     (description
      "AMD Common Language Runtime contains source code for AMD's
 compute languages runtimes: HIP and OpenCL. This package is built for HIP only.")
-    (home-page "https://github.com/ROCm-Developer-Tools/clr.git")
+    (home-page "https://github.com/ROCm/clr")
     (license expat)))
 
 (define-public hipamd
