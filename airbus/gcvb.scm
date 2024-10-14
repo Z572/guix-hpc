@@ -44,50 +44,6 @@
    (description #f)
    (license license:expat)))
 
-(define-public python-selenium
-  (package
-   (name "python-selenium")
-   (version "3.141.0")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "selenium" version))
-     (sha256
-      (base32
-       "039hf9knvl4s3hp21bzwsp1g5ri9gxsh504dp48lc6nr1av35byy"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    (list python-urllib3))
-   (home-page
-    "https://github.com/SeleniumHQ/selenium/")
-   (synopsis "Python bindings for Selenium")
-   (description #f)
-   (license license:asl2.0)))
-
-(define-public python-fire
-  (package
-   (name "python-fire")
-   (version "0.2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "fire" version))
-     (sha256
-      (base32
-       "1jc4w1md352bdzfwv9klkwk2kisn5k4s58jnrv9179w1d7ygwrb8"))))
-   (build-system python-build-system)
-   (arguments
-    ;; Broken tests or cyclic dependecies with other packages.
-    '(#:tests? #f))
-   (propagated-inputs
-    (list python-six python-termcolor))
-   (home-page
-    "https://github.com/google/python-fire")
-   (synopsis
-    "A library for automatically generating command line interfaces.")
-   (description #f)
-   (license license:asl2.0)))
-
 (define-public python-dash-dangerously-set-inner-html
   (package
    (name "python-dash-dangerously-set-inner-html")
@@ -254,27 +210,6 @@
    (description #f)
    (license license:expat)))
 
-(define-public python-flask-compress
-  (package
-   (name "python-flask-compress")
-   (version "1.4.0")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "Flask-Compress" version))
-     (sha256
-      (base32
-       "1cxdbdiyxkspg7vkchfmaqr7c6q79gwvakna3fjcc6nivps971j6"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    (list python-flask))
-   (home-page
-    "https://libwilliam.github.io/flask-compress/")
-   (synopsis
-    "Compress responses in your Flask app with gzip.")
-   (description #f)
-   (license license:expat)))
-
 (define-public python-dash
   (package
    (name "python-dash")
@@ -373,19 +308,6 @@
 is to defer loading JS scripts until after the Dash React elements have
 loaded.")
    (license license:expat)))
-
-(define-public python-pyyaml-5
-  (package
-   (inherit python-pyyaml)
-   (name "python-pyyaml-5")
-   (version "5.3")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "PyYAML" version))
-     (sha256
-      (base32
-       "058nd4p8f25wwzy2aiwh18wcrdm6663cqbfdkgjp8y9cp7ampx79"))))))
 
 (define-public gcvb
   (let ((release "1.0.0")
