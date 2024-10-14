@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2020, 2021, 2022 Inria
+;;; Copyright © 2019, 2020, 2021, 2022, 2024 Inria
 
 (define-module (airbus gcvb)
   #:use-module (guix)
