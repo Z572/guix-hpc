@@ -1197,6 +1197,25 @@ evil-collection.")
 	   emacs-evil-quickscope
 	   ))))
 
+(define-public elementaryx
+  (package
+    (name "elementaryx")
+    (version "2.2.0")
+    (home-page "https://gitlab.inria.fr/elementaryx/")
+    (synopsis "ElementaryX Suite: Elementary Emacs configuration coupled with Guix. Setup
+for the suite composed of Emacs, Vym, ESCode versions.")
+    (description
+     "ElementaryX suite: Elementary Emacs configuration coupled with Guix. Setup
+for the suite composed of Emacs, Vym, ESCode versions. This is a meta-package.")
+   (arguments
+    `(#:builder (mkdir (assoc-ref %outputs "out"))))
+   (source #f)
+   (build-system trivial-build-system)
+   (license #f)
+   (propagated-inputs
+    (list elementaryx-vym
+	  elementaryx-escode
+          emacs-elementaryx))))
 
 
 ;; site-start.el is already deployed by guix.
