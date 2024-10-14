@@ -667,19 +667,19 @@ moderate number of blocks which ensures a reasonable convergence behavior.")
 (define-public fabulous
   (package
     (name "fabulous")
-    (version "1.1.3")
+    (version "1.1.4")
     (home-page "https://gitlab.inria.fr/solverstack/fabulous")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "0cdaf28fef3f5ab6f3177ef76099f7dc831edf4e")
+             (commit "2857e8a7b8580e85af5c1d0b51fe0fd6787f80b1")
              ;; We need the submodule in 'cmake_modules/morse'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "18lqas3015n0pblp6pmjcpagpfh2b4z8kxlzyz67h9kadnifm4mq"))))
+        (base32 "0hff6v6ghjr7ix4wdp3yxy8hxv63m6m57rxim2xkc5w29gqabdwn"))))
     (build-system cmake-build-system)
     (arguments
      '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
