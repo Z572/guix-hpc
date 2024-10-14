@@ -362,7 +362,7 @@ metrics of your computation with references that can be a file, depends of the
          "0bfqfxzfb3y75jaddzpk7vhjj2xhdv9qbaxj1g409f801rnggi9p"))))
      (build-system python-build-system)
      (arguments
-      ;; No tests available.
+      ;; No tests available for this package.
       '(#:tests? #f))
      (propagated-inputs
       (list python-pyyaml-5 python-dash-bootstrap-components))
