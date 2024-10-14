@@ -388,79 +388,83 @@ loaded.")
        "058nd4p8f25wwzy2aiwh18wcrdm6663cqbfdkgjp8y9cp7ampx79"))))))
 
 (define-public gcvb
-  (package
-   (name "gcvb")
-   (version "1.0.0")
-   (source
-    (origin
-     (method git-fetch)
-     (uri
-      (git-reference
-       (url "https://github.com/jm-cc/gcvb")
-       (commit version)))
-     (sha256
-      (base32
-       "1ny3lgfi1qpqyckxsixpr39df0gqlsqaq9w0sjj4q9fvmqvz5bql"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    (list python-pyyaml-5 python-dash-bootstrap-components
-          python-dash-defer-js-import))
-   (home-page "https://github.com/jm-cc/gcvb")
-   (synopsis
-    "Python 3 module aiming at facilitating non-regression, validation and
+  (let ((release "1.0.0")
+        (commit "9266eff392343ee22f6bd440d843ebf2bc8227aa")
+        (revision "25"))
+    (package
+     (name "gcvb")
+     (version (git-version release revision commit))
+     (source
+      (origin
+       (method git-fetch)
+       (uri
+        (git-reference
+         (url "https://github.com/jm-cc/gcvb")
+         (commit commit)))
+       (sha256
+        (base32
+         "10ahn5c71gcml37kr4vn43ciihawgq740fn5ay6rs4zpwnsp1py8"))))
+     (build-system python-build-system)
+     (propagated-inputs
+      (list python-pyyaml-5 python-dash-bootstrap-components
+            python-dash-defer-js-import))
+     (home-page "https://github.com/jm-cc/gcvb")
+     (synopsis
+      "Python 3 module aiming at facilitating non-regression, validation and
 benchmarking of simulation codes")
-   (description
-    "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
+     (description
+      "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
 facilitating non-regression, validation and benchmarking of simulation codes.
 gcvb is not a complete tool of continuous integration (CI). It is rather a
 component of the testing part of a CI workflow. It can compare the different
 metrics of your computation with references that can be a file, depends of the
 'configuration' or are absolute.")
-   (license license:expat)))
+     (license license:expat))))
 
-(define-public gcvb-felsocim
-  (package
-   (name "gcvb-felsocim")
-   (version "0.0.1-git.6b03aec")
-   (source
-    (origin
-     (method git-fetch)
-     (uri
-      (git-reference
-       (url "https://gitlab.inria.fr/mfelsoci/gcvb")
-       (commit "6b03aecd7c5b252bf6aab2f5023a97cd5e6a30a6")))
-     (sha256
-      (base32
-       "05m8m18bld2q6jdcc5mfjdf8czd25ymspnz97b31j3xsdpiz2lib"))))
-   (build-system python-build-system)
-   (arguments
-    ;; There are no tests defined for this package. The test phase is useless
-    ;; here.
-    '(#:tests? #f))
-   (propagated-inputs
-    (list python-pyyaml-5 python-dash-bootstrap-components))
-   (home-page "https://github.com/felsocim/gcvb")
-   (synopsis
-    "Python 3 module aiming at facilitating non-regression, validation and
-benchmarking of simulation codes (felsocim's fork)")
-   (description
-    "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
+(define-public gcvb-mfelsoci
+  (let ((release "1.0.0")
+        (commit "0d6d025fdfb21bbb100a38d42bac1d9131fa1887")
+        (revision "39"))
+    (package
+     (name "gcvb-mfelsoci")
+     (version (git-version release revision commit))
+     (source
+      (origin
+       (method git-fetch)
+       (uri
+        (git-reference
+         (url "https://github.com/felsocim/gcvb")
+         (commit commit)))
+       (sha256
+        (base32
+         "0bfqfxzfb3y75jaddzpk7vhjj2xhdv9qbaxj1g409f801rnggi9p"))))
+     (build-system python-build-system)
+     (arguments
+      ;; No tests available.
+      '(#:tests? #f))
+     (propagated-inputs
+      (list python-pyyaml-5 python-dash-bootstrap-components))
+     (home-page "https://github.com/felsocim/gcvb")
+     (synopsis
+      "Python 3 module aiming at facilitating non-regression, validation and
+benchmarking of simulation codes (fork of `mfelsoci')")
+     (description
+      "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
 facilitating non-regression, validation and benchmarking of simulation codes.
 gcvb is not a complete tool of continuous integration (CI). It is rather a
 component of the testing part of a CI workflow. It can compare the different
 metrics of your computation with references that can be a file, depends of the
-'configuration' or are absolute. This is the forked version by felsocim of the
-original gcvb by jm-cc.")
-   (license license:expat)))
+'configuration' or are absolute. This is the fork of Marek Felšöci.")
+     (license license:expat))))
 
-(define-public gcvb-minimal-felsocim
+(define-public gcvb-minimal-mfelsoci
   (package
-   (inherit gcvb-felsocim)
-   (name "gcvb-minimal-felsocim")
+   (inherit gcvb-mfelsoci)
+   (name "gcvb-minimal-mfelsoci")
    (propagated-inputs
-    (modify-inputs (package-propagated-inputs gcvb-felsocim)
-      (delete "python-dash-bootstrap-components")))
+    (modify-inputs (package-propagated-inputs gcvb-mfelsoci)
+                   (delete "python-dash-bootstrap-components")))
    (synopsis
     "Python 3 module aiming at facilitating non-regression, validation and
-benchmarking of simulation codes (felsocim's fork). This is a minimal version
+benchmarking of simulation codes (fork of `mfelsoci'). This is a minimal version
 without the dashboard functionality.")))
