@@ -577,7 +577,9 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
                   ;; which is not allowed by default by OpenMPI
                   (add-before 'check 'prepare-test-environment
                     (lambda _
-                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1"))))))
+                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1"))))
+       ;; Attempt to fix non-deterministic tests.
+       #:parallel-tests? #f))
 
     (inputs (list `(,hwloc "lib")
                   openmpi
