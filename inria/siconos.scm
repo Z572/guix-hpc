@@ -434,9 +434,9 @@ Mechanics, and Computer Graphics.")
         (add-after 'unpack 'some-quick-patches
                    (lambda _
                      (substitute* "siconos-config.cmake.in"
-                                  (("set(CMAKE_CXX_COMPILER @CMAKE_CXX_COMPILER@)" "")
-                                   ("set(CMAKE_C_COMPILER @CMAKE_C_COMPILER@)" "")
-                                   ("set(CMAKE_Fortran_COMPILER @CMAKE_Fortran_COMPILER@)" "")))
+                                  (("set\\(CMAKE_CXX_COMPILER @CMAKE_CXX_COMPILER@\\)" "")
+                                   ("set\\(CMAKE_C_COMPILER @CMAKE_C_COMPILER@\\)" "")
+                                   ("set\\(CMAKE_Fortran_COMPILER @CMAKE_Fortran_COMPILER@\\)" "")))
                      (substitute* "externals/numeric_bindings/boost/numeric/bindings/blas/detail/cblas.h"
                                   (("#ifdef HAS_OpenBLAS") "#ifdef REMOVED_HAS_OpenBLAS"))
                      (substitute* "cmake/SiconosSetup.cmake"
