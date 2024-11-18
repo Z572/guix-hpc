@@ -345,8 +345,8 @@ metrics of your computation with references that can be a file, depends of the
 
 (define-public gcvb-mfelsoci
   (let ((release "1.0.0")
-        (commit "0d6d025fdfb21bbb100a38d42bac1d9131fa1887")
-        (revision "39"))
+        (commit "75594c9445a0a18fa8c6b399d412e7c2cd1077b2")
+        (revision "40"))
     (package
      (name "gcvb-mfelsoci")
      (version (git-version release revision commit))
@@ -359,7 +359,7 @@ metrics of your computation with references that can be a file, depends of the
          (commit commit)))
        (sha256
         (base32
-         "0bfqfxzfb3y75jaddzpk7vhjj2xhdv9qbaxj1g409f801rnggi9p"))))
+         "03m43icdbv0wv2c0n2vmg9i1la4wwzbx61v1qk4c6x37y1hw2hf0"))))
      (build-system python-build-system)
      (arguments
       ;; No tests available for this package.
