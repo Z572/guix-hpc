@@ -3,13 +3,22 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2023 Inria
+;;; Copyright © 2023, 2024 Inria
 
 ;; Manifest for continuous integration of Guix-HPC, using the latest release
 ;; of a several key packages before they're even packaged.
 
-(use-modules (guix transformations)
-             (ice-9 match))
+(use-modules (guix memoization)
+             (guix monads)
+             (guix packages)
+             (guix profiles)
+             (guix sets)
+             (guix store)
+             (guix transformations)
+             (guix graph)
+             ((guix scripts graph) #:select (%bag-node-type))
+             (ice-9 match)
+             (srfi srfi-1))
 
 (define cutting-edge-packages
   '("openmpi" "hwloc"
@@ -17,6 +26,65 @@
     "slurm" "intel-mpi-benchmarks"
     "openblas"
     "starpu" "chameleon"))
+
+(define all-packages
+  (mlambda ()
+    "Return the list of all the distro's packages."
+    (fold-packages cons '()
+                   #:select?
+                   (negate package-superseded)))) ;include hidden packages
+
+(define (dependents packages max-depth)
+  "List all the things that would need to be rebuilt if PACKAGES are changed."
+  ;; Using %BAG-NODE-TYPE is more accurate than using %PACKAGE-NODE-TYPE
+  ;; because it includes implicit dependencies.
+  (define (get-dependents packages edges)
+    (let loop ((packages packages)
+               (result '())
+               (depth 0)
+               (visited (setq)))
+      (if (= depth max-depth)
+          (values result visited)
+          (match packages
+            (()
+             (values result visited))
+            ((head . tail)
+             (if (set-contains? visited head)
+                 (loop tail result depth visited)
+                 (let ((next (edges head)))
+                   (call-with-values
+                       (lambda ()
+                         (loop next
+                               (cons head result)
+                               (+ depth 1)
+                               (set-insert head visited)))
+                     (lambda (result visited)
+                       (loop tail result depth visited))))))))))
+
+  (with-store store
+    (run-with-store store
+      (mlet %store-monad ((edges (node-back-edges %bag-node-type
+                                                  (package-closure (all-packages)))))
+        (return (get-dependents packages edges))))))
+
+(define individual-upgrades
+  ;; Upgrades of individual packages with their dependents built against that
+  ;; upgrade.
+  (manifest
+   (append-map (match-lambda
+                 ((package . output)
+                  (let* ((name (package-name package))
+                         (latest (options->transformation
+                                  `((with-latest . ,name)))))
+                    (map (lambda (package)
+                           (manifest-entry
+                             (inherit (package->manifest-entry
+                                       (latest package)))
+                             (name (string-append
+                                    (package-full-name package "-")
+                                    "-latest-" name))))
+                         (dependents (list package) 2)))))
+               (specifications->packages cutting-edge-packages))))
 
 (define the-latest
   ;; Transformation that returns the given package built against the latest
@@ -26,8 +94,12 @@
           `(with-latest . ,package))
         cutting-edge-packages)))
 
-(packages->manifest
- (map (match-lambda
-        ((package . output)
-         (cons (the-latest package) output)))
-      (specifications->packages cutting-edge-packages)))
+(define global-upgrades
+  ;; Build the latest version of each one of CUTTING-EDGE-PACKAGES together.
+  (packages->manifest
+   (map (match-lambda
+          ((package . output)
+           (cons (the-latest package) output)))
+        (specifications->packages cutting-edge-packages))))
+
+(concatenate-manifests individual-upgrades global-upgrades)
