@@ -102,4 +102,4 @@
            (cons (the-latest package) output)))
         (specifications->packages cutting-edge-packages))))
 
-(concatenate-manifests individual-upgrades global-upgrades)
+(concatenate-manifests (list individual-upgrades global-upgrades))
