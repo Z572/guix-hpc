@@ -27,12 +27,12 @@
 (define %pm2-git
   "https://gitlab.inria.fr/pm2/pm2.git")
 (define %pm2-commit
-  "release-2024-07-12")
+  "release-2024-11-21")
 (define %pm2-hash
-  "1f45ip7xjm2lx6hnjfriklgv33vh0f1qsrdkan886z0bsadknww8")
+  "09wnrgn0xm109fvbbz9hvzyhbw9wm3ldshkqc5az9iaf76hqszd0")
  ; guix hash -rx .
 (define %pm2-version
-  "2024-07-12")
+  "2024-11-21")
 
 (define-public puk
   (package
@@ -401,17 +401,17 @@ the MPI_THREAD_MULTIPLE multi-threading level.")
 (define-public mpibenchmark
   (package
     (name "mpibenchmark")
-    (version "0.4")
+    (version "0.5")
     (home-page (string-append %pm2-home-page "mpibenchmark"))
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url %pm2-git)
-             (commit "9f08955628deca25e45bb23be21f91e7d0377121")))
+             (commit "release-2024-11-21")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "0pk872qdjvw9jx6rnilxlzyp0ygbgcamh38c5izvbkh9pms00l4h"))))
+        (base32 "09wnrgn0xm109fvbbz9hvzyhbw9wm3ldshkqc5az9iaf76hqszd0"))))
     (build-system gnu-build-system)
     (arguments
      '(#:out-of-source? #t
@@ -444,8 +444,8 @@ are not benchmarked yet.")
 (define-public mpi_sync_clocks
   (package
     (name "mpi_sync_clocks")
-    (version %pm2-version)
-    (home-page %pm2-home-page)
+    (version "1.0")
+    (home-page (string-append %pm2-home-page "mpi_sync_clocks/doc/"))
     (source
      (origin
        (method git-fetch)
