@@ -27,6 +27,8 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pretty-print)
+  #:use-module (amd packages rocm-hip)
+  #:use-module (amd packages rocm-libs)
   #:use-module (inria mpi)
   #:use-module (inria storm)
   #:use-module (inria eztrace)
@@ -390,6 +392,26 @@ area (CPUs-GPUs, distributed nodes).")
               (delete "starpu")))
     (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
                          (delete "openmpi")))))
+
+(define-public chameleon+hip
+  (package
+    (inherit chameleon)
+    (name "chameleon-hip")
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        #~(cons* "-DCHAMELEON_USE_HIP=ON"
+                 ;; Keep using the GNU toolchain, despite the presence of
+                 ;; Clang in Flang in $PATH due to 'rocm-toolchain'.
+                 "-DCMAKE_C_COMPILER=gcc"
+                 "-DCMAKE_Fortran_COMPILER=gfortran"
+                 #$flags))))
+    (inputs (modify-inputs (package-inputs chameleon)
+              (append hipblas hipamd)
+              (prepend starpu-hip)
+              (delete "starpu")))))
+
 
 (define-public mini-chameleon
   (package
