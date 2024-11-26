@@ -80,9 +80,8 @@
                            (manifest-entry
                              (inherit (package->manifest-entry
                                        (latest package)))
-                             (name (string-append
-                                    (package-full-name package "-")
-                                    "-latest-" name))))
+                             (name (string-append (package-name package)
+                                                  "-latest-" name))))
                          (dependents (list package) 2)))))
                (specifications->packages cutting-edge-packages))))
 
