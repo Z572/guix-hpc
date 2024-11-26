@@ -43,7 +43,7 @@
                (result '())
                (depth 0)
                (visited (setq)))
-      (if (= depth max-depth)
+      (if (> depth max-depth)
           (values result visited)
           (match packages
             (()
