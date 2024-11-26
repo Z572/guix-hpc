@@ -28,6 +28,7 @@
   #:use-module (inria mpi)
   #:use-module (inria simgrid)
   #:use-module (amd packages rocm-hip)
+  #:use-module (amd packages rocm-libs)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 match))
 
@@ -237,7 +238,7 @@ kernels are executed as efficiently as possible.")
     (inherit starpu)
     (name "starpu-hip")
     (inputs (modify-inputs (package-inputs starpu)
-              (append hipamd)))
+              (append hipblas rocblas hipamd)))
     (synopsis
      "Run-time system for heterogeneous computing (with AMD HIP support)")))
 

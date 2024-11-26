@@ -397,18 +397,38 @@ area (CPUs-GPUs, distributed nodes).")
   (package
     (inherit chameleon)
     (name "chameleon-hip")
+   (version "1.3.a76a80")
+   (home-page "https://gitlab.inria.fr/solverstack/chameleon")
+   (source
+    (origin
+      (method git-fetch)
+      (uri (git-reference
+            (url home-page)
+            (commit "a76a8093aacf0c1abe2b9c07223e231c7ef78e6a")
+            ;; We need the submodule in 'CMakeModules/morse_cmake'.
+            (recursive? #t)))
+      (file-name (string-append name "-" version "-checkout"))
+      (sha256
+       (base32 "0sch561c01zzp06x2r6ncya78rp91y0dxlpbsg3fzmh4yp6ql6jz"))
+      (modules '((guix build utils)))
+      ;; Do not install 'config.log' to avoid retaining a reference to GCC,
+      ;; GFortran, etc.
+      (snippet #~(substitute* "cmake_modules/PrintOpts.cmake"
+                   (("^INSTALL.*config\\.log.*" all)
+                    (string-append "# " all "\n"))))))
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon)
        ((#:configure-flags flags
          '())
         #~(cons* "-DCHAMELEON_USE_HIP=ON"
+                 "-DCHAMELEON_USE_HIP_ROC=ON"
                  ;; Keep using the GNU toolchain, despite the presence of
                  ;; Clang in Flang in $PATH due to 'rocm-toolchain'.
                  "-DCMAKE_C_COMPILER=gcc"
                  "-DCMAKE_Fortran_COMPILER=gfortran"
                  #$flags))))
     (inputs (modify-inputs (package-inputs chameleon)
-              (append hipblas hipamd)
+              (append hipblas rocblas hipamd)
               (prepend starpu-hip)
               (delete "starpu")))))
 
