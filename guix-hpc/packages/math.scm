@@ -12,27 +12,37 @@
   #:use-module ((gnu packages base)
                 #:prefix base:)
   #:use-module (gnu packages bison)
+  #:use-module (gnu packages boost)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages curl)
   #:use-module (gnu packages documentation)
   #:use-module (gnu packages flex)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphics)
+  #:use-module (gnu packages llvm)
+  #:use-module (gnu packages logging)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
+  #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages pretty-print)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages popt)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages swig)
+  #:use-module (gnu packages xml)
   #:use-module (guix build utils)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
-  #:use-module (guix))
+  #:use-module (guix)
+  #:use-module (guix-hpc packages cpp))
 
 (define-public libxc
   (package
@@ -136,7 +146,7 @@ sparse matrices, most of the matrix functions in NTPoly can be computed in linea
                   ipopt
                   nlopt
                   mumps ;FIXME: ./configure fails to use mumps
-                  (list mmg "lib") 
+                  (list mmg "lib")
                   suitesparse-umfpack
                   suitesparse-config
                   suitesparse-amd
@@ -166,3 +176,96 @@ manipulation of data on multiple meshes. It is written in C++ and the FreeFEM
 language is a C++ idiom.")
     (license license:lgpl3+)))
 
+(define feelpp-commit
+  "4253a032757266c8e0ab6418fcb037e6483915e2")
+(define feelpp-version
+  (git-version "0.111.0" "1" feelpp-commit))
+
+(define-public feel++
+  (package
+    (name "feel++")
+    (version feelpp-version)
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (recursive? #t)
+             (url "https://github.com/feelpp/feelpp")
+             (commit feelpp-commit)))
+       (sha256
+        (base32 "1nsxdql1m15rdr6vjrqg1dshcr9acq4y1cvvzrnla6sqkj4bc8zz"))))
+    (build-system (build-system-with-c-toolchain cmake-build-system
+                                                 `(("clang-toolchain" ,clang-toolchain))))
+    (native-inputs (list pkg-config gfortran boost-mpi perl))
+    (inputs (list openmpi
+                  hdf5-parallel-openmpi
+                  petsc-openmpi
+                  cln
+                  gmp
+                  fmi4cpp
+                  libzip
+                  napp
+                  tabulate
+                  curl
+                  fftw
+                  glpk
+                  slepc
+                  fmt-7
+                  glog
+                  eigen
+                  pugixml
+                  gmsh
+                  ;; Python deps
+                  python
+                  python-petsc4py
+                  python-mpi4py
+                  python-sympy
+                  pybind11))
+    (arguments
+     (list
+      #:configure-flags #~(list "-DFEELPP_RESET_ENV_LIBRARY_PATH=OFF"
+                                "-DFEELPP_ENABLE_TESTS=OFF"
+                                "-DFEELPP_ENABLE_QUICKSTART=ON"
+                                "-DFEELPP_ENABLE_TOOLBOXES=OFF"
+                                "-DFEELPP_ENABLE_MOR=OFF"
+                                "-DFEELPP_ENABLE_QUICKSTART=ON"
+                                "-DFEELPP_USE_EXTERNAL_FMT=ON"
+                                "-DFEELPP_USE_EXTERNAL_CLN=ON")))
+    (home-page "https://docs.feelpp.org")
+    (synopsis "Finite Element Embedded Language and Library in C++")
+    (description
+     "Feel++ is an Open-Source C++ library which allows to solve a large range of
+partial differential equations using Galerkin methods, e.g. finite element method, spectral element
+method, discontinuous Galerkin methods or reduced basis methods. Feel++ enables parallel computing
+in a seamless way and allows to solve large scale systems up to tens of thousands of cores.")
+    (license license:lgpl3)))
+
+(define fmi4cpp-commit
+  "2aea2f545f82c24f23d12a8b0fcf49e3918374d8")
+(define fmi4cpp-version
+  (git-version "1.0.0" "1" fmi4cpp-commit))
+
+(define-public fmi4cpp
+  (package
+    (name "fmi4cpp")
+    (version fmi4cpp-version)
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/NTNU-IHB/FMI4cpp.git")
+             (commit fmi4cpp-commit)))
+       (file-name (git-file-name "fmi4cpp" fmi4cpp-version))
+       (sha256
+        (base32 "1pw5xm917ij5mydmwrbszy714pqdig0s25l9zcl4pw3g5dm3lagv"))))
+    (build-system cmake-build-system)
+    (inputs (list libzip pugixml))
+    (arguments
+     (list
+      #:tests? #f))
+    (home-page "https://github.com/NTNU-IHB/FMI4cpp")
+    (synopsis
+     "FMI4cpp is a cross-platform FMI 2.0 implementation written in modern C++.")
+    (description
+     "FMI4cpp is a cross-platform FMI 2.0 implementation written in modern C++.")
+    (license license:expat)))
