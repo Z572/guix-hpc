@@ -84,3 +84,47 @@ threads support)")))
      "C++ abstractions for parallel execution and data management (with HIP
 support)")))
 
+(define-public napp
+  (package
+    (name "napp")
+    (version "0.3.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/vincentchabannes/napp")
+             (commit (string-append "v" version))))
+       (sha256
+        (base32 "0xbgsi3zvx1jcdix28nzi455j05yc6lrcy1cx9gr6375v4n768ps"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:configure-flags #~(list "-DNAPP_ENABLE_TESTS=OFF"
+                                "-DNAPP_ENABLE_EXAMPLES=OFF"
+                                "-DNAPP_ENABLE_DOC=OFF")
+      #:tests? #f))
+    (synopsis "C++ argument parser")
+    (description "C++ argument parser")
+    (home-page "https://github.com/vincentchabannes/napp")
+    (license license:expat)))
+
+(define-public tabulate
+  (package
+    (name "tabulate")
+    (version "1.5")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/p-ranav/tabulate")
+             (commit (string-append "v" version))))
+       (sha256
+        (base32 "0cddjkc8gjsiadwr8myn68f75iaq194kbncrqx57qz366hvyr1q3"))))
+    (build-system cmake-build-system)
+    (arguments
+      (list
+        #:tests? #f))
+    (synopsis "Header only Table Maker for Modern C++")
+    (description "Header only Table Maker for Modern C++")
+    (home-page "https://github.com/p-ranav/tabulate")
+    (license license:expat)))
