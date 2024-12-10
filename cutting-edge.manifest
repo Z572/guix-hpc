@@ -12,93 +12,82 @@
              (guix monads)
              (guix packages)
              (guix profiles)
-             (guix sets)
              (guix store)
-             (guix transformations)
-             (guix graph)
-             ((guix scripts graph) #:select (%bag-node-type))
-             (ice-9 match)
+             ((guix transformations) #:select (package-with-upstream-version))
+             ((guix scripts build) #:select (dependents))
+             (gnu packages)
+             (gnu packages benchmark)
+             (gnu packages fabric-management)
+             (gnu packages linux)
+             (gnu packages maths)
+             (gnu packages mpi)
              (srfi srfi-1))
 
 (define cutting-edge-packages
-  '("openmpi" "hwloc"
-    "ucx" "psm2" "rdma-core" "libfabric" "opensm"
-    "slurm" "intel-mpi-benchmarks"
-    "openblas"
-    "starpu" "chameleon"))
+  (list openmpi-5 hwloc
+        ucx psm2 rdma-core libfabric opensm
+        intel-mpi-benchmarks/openmpi
 
-(define all-packages
-  (mlambda ()
-    "Return the list of all the distro's packages."
-    (fold-packages cons '()
-                   #:select?
-                   (negate package-superseded)))) ;include hidden packages
+        ;; Since there are several versions of 'slurm', pick the latest one.
+        (specification->package "slurm")
+        (specification->package "slurm-minimal")
 
-(define (dependents packages max-depth)
-  "List all the things that would need to be rebuilt if PACKAGES are changed."
-  ;; Using %BAG-NODE-TYPE is more accurate than using %PACKAGE-NODE-TYPE
-  ;; because it includes implicit dependencies.
-  (define (get-dependents packages edges)
-    (let loop ((packages packages)
-               (result '())
-               (depth 0)
-               (visited (setq)))
-      (if (> depth max-depth)
-          (values result visited)
-          (match packages
-            (()
-             (values result visited))
-            ((head . tail)
-             (if (set-contains? visited head)
-                 (loop tail result depth visited)
-                 (let ((next (edges head)))
-                   (call-with-values
-                       (lambda ()
-                         (loop next
-                               (cons head result)
-                               (+ depth 1)
-                               (set-insert head visited)))
-                     (lambda (result visited)
-                       (loop tail result depth visited))))))))))
+        openblas
+        openblas-ilp64
 
-  (with-store store
-    (run-with-store store
-      (mlet %store-monad ((edges (node-back-edges %bag-node-type
-                                                  (package-closure (all-packages)))))
-        (return (get-dependents packages edges))))))
+        (specification->package "starpu")
+        (specification->package "chameleon")))
+
+(define latest-version
+  (mlambdaq (package)
+    (package-with-upstream-version package
+                                   ;; Preserve patches and snippets to get
+                                   ;; exactly the same as what we'd have with
+                                   ;; 'guix refresh -u PACKAGE'.
+                                   #:preserve-patches? #t
+
+                                   ;; XXX: Disable source code authentication:
+                                   ;; this requires a local keyring, populated
+                                   ;; from key servers, but key servers may be
+                                   ;; unreliable or may lack the upstream
+                                   ;; keys.  Leave it up to packagers to
+                                   ;; actually authenticate code and make sure
+                                   ;; it matches what this manifest computed.
+                                   #:authenticate? #f)))
 
 (define individual-upgrades
   ;; Upgrades of individual packages with their dependents built against that
   ;; upgrade.
   (manifest
-   (append-map (match-lambda
-                 ((package . output)
-                  (let* ((name (package-name package))
-                         (latest (options->transformation
-                                  `((with-latest . ,name)))))
-                    (map (lambda (package)
-                           (manifest-entry
-                             (inherit (package->manifest-entry
-                                       (latest package)))
-                             (name (string-append (package-name package)
-                                                  "-latest-" name))))
-                         (dependents (list package) 2)))))
-               (specifications->packages cutting-edge-packages))))
+   (with-store store
+     (append-map (lambda (package)
+                   (let* ((name (package-name package))
+                          (newest (latest-version package))
+                          (update (package-input-rewriting
+                                   `((,package . ,newest)))))
+                     (map (lambda (package)
+                            (manifest-entry
+                              (inherit (package->manifest-entry
+                                        (update package)))
+                              (name (string-append (package-name package)
+                                                   "-with-latest-" name))))
+                          (dependents store (list package) 1))))
+                 cutting-edge-packages))))
 
-(define the-latest
-  ;; Transformation that returns the given package built against the latest
-  ;; release of each of CUTTING-EDGE-PACKAGES.
-  (options->transformation
-   (map (lambda (package)
-          `(with-latest . ,package))
-        cutting-edge-packages)))
+(define joint-upgrades
+  ;; All of CUTTING-EDGE-PACKAGES updated at once, together with their
+  ;; dependents.
+  (manifest
+   (with-store store
+     (let ((update-all (package-input-rewriting
+                        (map (lambda (package)
+                               `(,package . ,(latest-version package)))
+                             cutting-edge-packages))))
+       (map (lambda (package)
+              (manifest-entry
+                (inherit (package->manifest-entry
+                          (update-all package)))
+                (name (string-append (package-name package) "-full-upgrade"))))
+            (dependents store cutting-edge-packages 2))))))
 
-(define global-upgrades
-  ;; Build the latest version of each one of CUTTING-EDGE-PACKAGES together.
-  (packages->manifest
-   (map (match-lambda
-          ((package . output)
-           (cons (the-latest package) output)))
-        (specifications->packages cutting-edge-packages))))
-
-(concatenate-manifests (list individual-upgrades global-upgrades))
+(concatenate-manifests (list individual-upgrades joint-upgrades))
