@@ -55,11 +55,11 @@
     (source
      melissa-source)
     (build-system cmake-build-system)
-    (native-inputs (list gfortran
-                         pkg-config))
+    (native-inputs (list gfortran pkg-config))
     (inputs (list openmpi zeromq))
     (arguments
-     (list #:tests? #f))
+     (list
+      #:tests? #f))
     (home-page melissa-homepage)
     (synopsis "Melissa API for client instrumentation")
     (description
@@ -76,32 +76,29 @@ This package builds the API used when instrumenting the clients.")
     (source
      melissa-source)
     (build-system cmake-build-system)
-    (native-inputs (list gfortran
-                         pkg-config))
-    (inputs (list melissa-api
-                  openmpi
-                  python))
+    (native-inputs (list gfortran pkg-config))
+    (inputs (list melissa-api openmpi python))
     (arguments
-     (list #:tests? #f
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'unpack 'copy-resources
-                 (lambda _
-                   (let ((resources (string-append #$output
-                                                   "/share/heat-pde/resources")))
-                     (copy-recursively "./examples/heat-pde/heat-pde-sa"
-                                       resources)
-                     (with-directory-excursion resources
-                       (for-each (lambda (f)
-                                   (substitute* f
-                                     (("executable_command(.*)heatc")
-                                      (string-append
-                                       "executable_command\": \"" #$output
-                                       "/bin/heatc"))))
-                                 (find-files "." "\\.json$"))))))
-               (add-after 'copy-resources 'change-dir
-                 (lambda _
-                   (chdir "./examples/heat-pde/executables"))))))
+     (list
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'copy-resources
+                     (lambda _
+                       (let ((resources (string-append #$output
+                                         "/share/heat-pde/resources")))
+                         (copy-recursively "./examples/heat-pde/heat-pde-sa"
+                                           resources)
+                         (with-directory-excursion resources
+                           (for-each (lambda (f)
+                                       (substitute* f
+                                         (("executable_command(.*)heatc")
+                                          (string-append
+                                           "executable_command\": \""
+                                           #$output "/bin/heatc"))))
+                                     (find-files "." "\\.json$"))))))
+                   (add-after 'copy-resources 'change-dir
+                     (lambda _
+                       (chdir "./examples/heat-pde/executables"))))))
     (home-page melissa-homepage)
     (synopsis "Instrumented heat-pde use case for Melissa")
     (description
@@ -128,9 +125,10 @@ on a heat diffusion equation characterized by a parallelized solver.")
                              python-iterative-stats
                              python-plotext))
     (arguments
-     (list #:tests? #f
-           #:phases #~(modify-phases %standard-phases
-                        (delete 'sanity-check))))
+     (list
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (delete 'sanity-check))))
     (home-page melissa-homepage)
     (synopsis "Melissa Python server and launcher")
     (description
