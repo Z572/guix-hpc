@@ -22,25 +22,16 @@
   #:use-module (gnu packages python)
   #:use-module (guix licenses))
 
-(define commit
-  "d8de4d5724cbe35e67734a95002acd6fb5d7af71")
-
-(define version
-  "1.0.0")
-
-(define revision
-  "2")
-
 (define melissa-version
-  (git-version version revision commit))
+  "2.0.0")
 
 (define melissa-source
   (origin
     (method git-fetch)
     (uri (git-reference (url "https://gitlab.inria.fr/melissa/melissa.git")
-                        (commit commit)))
+                        (commit (string-append "v" melissa-version))))
     (file-name (git-file-name "melissa" melissa-version))
-    (sha256 (base32 "1ndylxb8c7xb9pajli8z6xmjfv3rdlcnpdwmja21wy1m9k9vj3mm"))))
+    (sha256 (base32 "0qlb6yisdydn5anp23pz1bbw0wgb3vhq2ks11h4hlaa1b7ww1x3j"))))
 
 (define melissa-license
   bsd-3)
@@ -56,7 +47,7 @@
      melissa-source)
     (build-system cmake-build-system)
     (native-inputs (list gfortran pkg-config))
-    (inputs (list openmpi zeromq))
+    (inputs (list openmpi zeromq python))
     (arguments
      (list
       #:tests? #f))
