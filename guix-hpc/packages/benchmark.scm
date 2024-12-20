@@ -12,6 +12,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages cpp)
+  #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages gcc)
@@ -265,3 +266,24 @@ as different classes.")
                           (mkdir-p (string-append #$output "/bin"))))))))
     (synopsis "NAS Parallel Benchmarks (NPB), MPI variant")))
 
+(define-public netlib-hpl
+  (package
+    (name "netlib-hpl")
+    (version "2.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://netlib.org/benchmark/hpl/hpl-" version
+                           ".tar.gz"))
+       (sha256
+        (base32 "0c18c7fzlqxifz1bf3izil0bczv3a7nsv0dn6winy3ik49yw3i9j"))))
+    (build-system gnu-build-system)
+    (inputs (list openblas openmpi))
+    (home-page "https://netlib.org/benchmark/hpl/")
+    (synopsis "High-Performance Linpack Benchmark for Distributed-Memory Computers")
+    (description "HPL is a software package that solves a (random) dense linear system
+in double precision (64 bits) arithmetic on distributed-memory
+computers.  It can thus be regarded as a portable as well as freely
+available implementation of the High Performance Computing Linpack
+Benchmark.")
+    (license (license:non-copyleft "https://netlib.org/benchmark/hpl/copyright.html"))))
