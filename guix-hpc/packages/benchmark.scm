@@ -283,7 +283,8 @@ as different classes.")
     (build-system gnu-build-system)
     (inputs (list openblas openmpi))
     (arguments
-     (list #:make-flags #~(list "arch=x86_64")
+     (list #:configure-flags #~(list "CFLAGS=-DHPL_DETAILED_TIMING -DHPL_CALL_CBLAS")
+           #:make-flags #~(list "arch=x86_64")
            #:phases #~ (modify-phases %standard-phases
                          (add-after 'unpack 'set-hpl-dat-path
                            (lambda _
