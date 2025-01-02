@@ -145,3 +145,18 @@ node supercomputer parallel computations.")
                   ''("-DCOMPOSYX_USE_RSB=ON" "-DCOMPOSYX_USE_RSB_SPBLAS=ON"))))
     (inputs (modify-inputs (package-inputs composyx)
               (prepend librsb)))))
+
+;; composyx with librsb for sparse matrix operations
+(define-public composyx-python
+  (package/inherit composyx
+    (name "composyx-python")
+    (arguments (substitute-keyword-arguments (package-arguments composyx)
+                 ((#:configure-flags flags)
+                  ''("-DCOMPOSYX_PYTHON_DRIVER=ON"
+		     "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
+                     "-DCOMPOSYX_COMPILE_TESTS=OFF"
+		     ))))
+    (inputs (modify-inputs (package-inputs composyx)
+			   (prepend pybind11
+				    python
+				    python-multipledispatch)))))
