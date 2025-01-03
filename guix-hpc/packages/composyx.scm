@@ -46,7 +46,7 @@ node supercomputer parallel computations.")
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "0jch7hrfnp2hap92j3mg1pcbvfgfb0lb0p44v1jj0a1vnj4afqa2"))))
+        (base32 "0glwcn9fw8qzb4a4vxjhxqqnpa7fv8xbw93f40rwaazfgkb4wfcl"))))
     (arguments
      '(#:configure-flags '("-DCOMPOSYX_USE_EIGEN=OFF"
                            "-DCOMPOSYX_USE_FABULOUS=ON"
