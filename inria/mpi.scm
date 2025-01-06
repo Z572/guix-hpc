@@ -25,7 +25,7 @@
 (define-public hello-mpi
   (package
    (name "hello-mpi")
-   (version "1.1.0")
+   (version "1.2.1")
    (home-page "https://gitlab.inria.fr/solverstack/hello-mpi.git")
    (synopsis "Hello world MPI")
    (description
@@ -35,11 +35,11 @@
             (method git-fetch)
             (uri (git-reference
                   (url home-page)
-                  (commit "34b9463fdee9b0b5ac3adb9cb932297511e89af9")))
+                  (commit "35bbf835b0f4bce3ff408cf100956dc5fc3d501b")))
             (file-name (string-append name "-" version "-checkout"))
             (sha256
              (base32
-              "1nblqpsbyrynv43jgrq8lfzg9a721v17saxcy6kwq4lifq1nmml6"))))
+              "1y15rbmx0svk9b22j03xji3lbr6makjy0vh8phijngxaayx124mq"))))
    (arguments
     '(
       ;; #:configure-flags '("-DBUILD_SHARED_LIBS=ON"
@@ -51,7 +51,8 @@
                                            ;; which is not allowed by default by OpenMPI
                                            (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))))
    (build-system cmake-build-system)
-   (propagated-inputs (list openmpi openssh))))
+   (propagated-inputs (list `(,hwloc "lib") pkg-config openmpi))
+   (native-inputs (list pkg-config openssh))))
 
 (define-public openmpi-curta
   ;; Open MPI package matching the version of Open MPI on the Curta
