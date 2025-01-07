@@ -51,7 +51,7 @@
                                            ;; which is not allowed by default by OpenMPI
                                            (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t)))))
    (build-system cmake-build-system)
-   (propagated-inputs (list `(,hwloc "lib") pkg-config openmpi))
+   (propagated-inputs (list `(,hwloc "lib") openmpi))
    (native-inputs (list pkg-config openssh))))
 
 (define-public openmpi-curta
