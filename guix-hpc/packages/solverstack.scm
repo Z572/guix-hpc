@@ -27,6 +27,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pretty-print)
+  #:use-module (amd packages aocl-libs)
   #:use-module (amd packages rocm-hip)
   #:use-module (amd packages rocm-libs)
   #:use-module (inria mpi)
@@ -42,9 +43,9 @@
   #:use-module (guix build-system python)
   #:use-module (gnu packages python-science))
 
-(define-public flame
+(define-public solverstack-flame
   (package
-    (name "flame")
+    (name "solverstack-flame")
     (version "3.11.0")
     (source
      (origin
@@ -58,14 +59,13 @@
     (build-system cmake-build-system)
     (home-page "https://www.netlib.org/lapack/")
     (inputs (list gfortran python-wrapper))
-    (propagated-inputs (list blis libflame))
+    (propagated-inputs (list aocl-blis))
     (arguments
      `(#:configure-flags (list "-DBUILD_SHARED_LIBS=ON"
                                "-DCBLAS=ON"
                                "-DLAPACKE=ON"
                                "-DLAPACKE_WITH_TMG=ON"
-                               "-DUSE_OPTIMIZED_BLAS=ON"
-                               "-DUSE_OPTIMIZED_LAPACK=ON")
+                               "-DUSE_OPTIMIZED_BLAS=ON")
        ;; testings require specific symbols defined in this reference lapack
        ;; package only. USE_OPTIMIZED_LAPACK=ON involves this lapack is not
        ;; compiled and replaced by libflame so that the specific symbols are
@@ -80,6 +80,30 @@
       external optimized blas.")
     (license (license:non-copyleft "file://LICENSE"
                                    "See LICENSE in the distribution."))))
+
+(define-public solverstack-blis-zen4
+  (package
+    (inherit aocl-blis-mt)
+    (name "solverstack-blis-zen4")
+    (arguments
+     `(#:tests? #f
+       #:phases (modify-phases %standard-phases
+                  (replace 'configure
+                    (lambda* (#:key outputs #:allow-other-keys)
+                      (invoke "./configure"
+                              (string-append "--prefix="
+                                             (assoc-ref outputs "out"))
+                              "-d opt" "--enable-cblas" "zen4"))))))
+    (synopsis
+     "Basic Linear Algebra Subprograms (BLAS) Libraries (without multi-threading support)")))
+
+(define-public solverstack-flame-zen4
+  (package
+    (inherit solverstack-flame)
+    (name "solverstack-flame-zen4")
+    (propagated-inputs (modify-inputs (package-propagated-inputs solverstack-flame)
+                                      (delete "aocl-blis")
+                                      (prepend solverstack-blis-zen4)))))
 
 (define-public parsec
   (let ((commit "6022a61dc96c25f11dd2aeabff2a5b3d7bce867d")
