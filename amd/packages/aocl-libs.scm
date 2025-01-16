@@ -78,7 +78,22 @@ AMD has extensively optimized the implementation of BLIS for AMD processors.")
                                              (assoc-ref outputs "out"))
                               "-d opt" "--enable-cblas" "zen3"))))))
     (synopsis
-     "Basic Linear Algebra Subprograms (BLAS) Libraries (without multi-threading support)")))
+     "Basic Linear Algebra Subprograms (BLAS) Libraries (without multi-threading support for zen3 cpus)")))
+
+(define-public aocl-blis-zen4
+  (package/inherit aocl-blis-mt
+    (name "aocl-blis-zen4")
+    (arguments
+     `(#:tests? #f
+       #:phases (modify-phases %standard-phases
+                  (replace 'configure
+                    (lambda* (#:key outputs #:allow-other-keys)
+                      (invoke "./configure"
+                              (string-append "--prefix="
+                                             (assoc-ref outputs "out"))
+                              "-d opt" "--enable-cblas" "zen4"))))))
+    (synopsis
+     "Basic Linear Algebra Subprograms (BLAS) Libraries (without multi-threading support for zen4 cpus)")))
 
 (define-public aocl-utils
   (package
