@@ -17,6 +17,7 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages cran)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages documentation)
@@ -338,37 +339,10 @@ Fortran90 interfaces by generating code for all types, kinds, and
 array ranks supported by a given compiler.")
     (license (license:non-copyleft "file:///LICENSE.txt"))))
 
-(define-public mdspan
-  (package
-    (name "mdspan")
-    (version "0.6.0")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/kokkos/mdspan")
-             (commit (string-append name "-" version))))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "17zmjid1vjvpmvgd1k023ljk8yygqw18xilx78b7pxg7xws3w0bg"))))
-    (build-system cmake-build-system)
-    (arguments
-     (list
-      #:configure-flags #~(list "-DMDSPAN_ENABLE_TESTS=ON"
-                                "-DMDSPAN_USE_SYSTEM_GTEST=ON")))
-    (native-inputs (list googletest))
-    (synopsis "Reference implementation of mdspan targeting C++23")
-    (description
-     "This package aims to provide a production-quality implementation of
-the ISO-C++ proposal P0009, which will add support for non-owning
-multi-dimensional array references to the C++ standard library.")
-    (home-page "https://github.com/kokkos/mdspan")
-    (license license:asl2.0)))
-
 (define-public ginkgo
   (package
     (name "ginkgo")
-    (version "1.7.0")
+    (version "1.8.0")
     (source
      (origin
        (method git-fetch)
@@ -377,12 +351,14 @@ multi-dimensional array references to the C++ standard library.")
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0mjrwvy1lbys8ymdxh00zw4p3qhpk3f5400yj4864m99fs72f01g"))))
+        (base32 "0z7rmwks3xjbw7xdz2jxr89gk79bhwp2wdlgz9l1z0qvcwb3pk3b"))))
     (build-system cmake-build-system)
     (arguments
      (list
       #:configure-flags #~(list "-DGINKGO_BUILD_BENCHMARKS=OFF")))
-    (native-inputs (list googletest))
+    (native-inputs (list googletest
+                         python))
+    (inputs (list nlohmann-json))
     (synopsis "Numerical linear algebra software package")
     (description
      "Ginkgo is a high-performance numerical linear algebra library for
