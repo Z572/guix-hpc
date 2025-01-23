@@ -20,6 +20,50 @@
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1))
 
+(define-public gpcnet
+  (package
+    (name "gpcnet")
+    (version "1.3")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/netbench/GPCNET")
+             ;; Version 1.3 is not tagged in the Git repository but it
+             ;; is mentioned in the source diff corresponding to this
+             ;; commit.
+             (commit "476e0c342e91f59ff54cc5b431ac84c99afff0be")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0bnfr8z24mm4h3xmdqvj2g33nrxdjwjlhwqm76yilramlnikci4w"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:phases
+           #~(modify-phases %standard-phases
+               ;; No configure script.
+               (delete 'configure)
+               ;; No install rule in the Makefile.
+               (replace 'install
+                 (lambda _
+                   (let ((bin (string-append #$output "/bin")))
+                     (install-file "network_test" bin)
+                     (install-file "network_load_test" bin)))))
+           #:make-flags
+           #~(list (string-append "CC=" #$(this-package-input "openmpi") "/bin/mpicc")
+                   ;; There is no configured default target in the
+                   ;; Makefile: in order to build everything, the all
+                   ;; target must be specified.
+                   "all")
+           ;; No tests in package.
+           #:tests? #f))
+    (inputs (list openmpi))
+    (home-page "https://github.com/netbench/GPCNET")
+    (synopsis "Global Performance and Congestion Network Test")
+    (description "GPCNeT is a benchmark suite that includes simulated network
+congestion.  It allows to benchmark network performance in
+closer-to-real-conditions in HPC networks.")
+    (license license:asl2.0)))
+
 (define-public mpigraph
   (let ((version "1")
         (commit "5f6cbd9883f0204cc65ee5205f35518eab704ba7")
@@ -41,7 +85,7 @@
       (inputs (list perl))
       (arguments
        (list
-        #:tests? #f ;No tests in package.
+        #:tests? #f                     ;No tests in package.
         #:modules '((ice-9 match)
                     (guix build utils)
                     (guix build gnu-build-system))
