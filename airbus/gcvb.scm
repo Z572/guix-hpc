@@ -1,7 +1,7 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2017, 2019, 2020, 2021, 2022 Inria
+;;; Copyright © 2019, 2020, 2021, 2022, 2024 Inria
 
 (define-module (airbus gcvb)
   #:use-module (guix)
@@ -43,50 +43,6 @@
       (https://percy.io).")
    (description #f)
    (license license:expat)))
-
-(define-public python-selenium
-  (package
-   (name "python-selenium")
-   (version "3.141.0")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "selenium" version))
-     (sha256
-      (base32
-       "039hf9knvl4s3hp21bzwsp1g5ri9gxsh504dp48lc6nr1av35byy"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    (list python-urllib3))
-   (home-page
-    "https://github.com/SeleniumHQ/selenium/")
-   (synopsis "Python bindings for Selenium")
-   (description #f)
-   (license license:asl2.0)))
-
-(define-public python-fire
-  (package
-   (name "python-fire")
-   (version "0.2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "fire" version))
-     (sha256
-      (base32
-       "1jc4w1md352bdzfwv9klkwk2kisn5k4s58jnrv9179w1d7ygwrb8"))))
-   (build-system python-build-system)
-   (arguments
-    ;; Broken tests or cyclic dependecies with other packages.
-    '(#:tests? #f))
-   (propagated-inputs
-    (list python-six python-termcolor))
-   (home-page
-    "https://github.com/google/python-fire")
-   (synopsis
-    "A library for automatically generating command line interfaces.")
-   (description #f)
-   (license license:asl2.0)))
 
 (define-public python-dash-dangerously-set-inner-html
   (package
@@ -254,27 +210,6 @@
    (description #f)
    (license license:expat)))
 
-(define-public python-flask-compress
-  (package
-   (name "python-flask-compress")
-   (version "1.4.0")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "Flask-Compress" version))
-     (sha256
-      (base32
-       "1cxdbdiyxkspg7vkchfmaqr7c6q79gwvakna3fjcc6nivps971j6"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    (list python-flask))
-   (home-page
-    "https://libwilliam.github.io/flask-compress/")
-   (synopsis
-    "Compress responses in your Flask app with gzip.")
-   (description #f)
-   (license license:expat)))
-
 (define-public python-dash
   (package
    (name "python-dash")
@@ -374,93 +309,84 @@ is to defer loading JS scripts until after the Dash React elements have
 loaded.")
    (license license:expat)))
 
-(define-public python-pyyaml-5
-  (package
-   (inherit python-pyyaml)
-   (name "python-pyyaml-5")
-   (version "5.3")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "PyYAML" version))
-     (sha256
-      (base32
-       "058nd4p8f25wwzy2aiwh18wcrdm6663cqbfdkgjp8y9cp7ampx79"))))))
-
 (define-public gcvb
-  (package
-   (name "gcvb")
-   (version "1.0.0")
-   (source
-    (origin
-     (method git-fetch)
-     (uri
-      (git-reference
-       (url "https://github.com/jm-cc/gcvb")
-       (commit version)))
-     (sha256
-      (base32
-       "1ny3lgfi1qpqyckxsixpr39df0gqlsqaq9w0sjj4q9fvmqvz5bql"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    (list python-pyyaml-5 python-dash-bootstrap-components
-          python-dash-defer-js-import))
-   (home-page "https://github.com/jm-cc/gcvb")
-   (synopsis
-    "Python 3 module aiming at facilitating non-regression, validation and
+  (let ((release "1.0.0")
+        (commit "9266eff392343ee22f6bd440d843ebf2bc8227aa")
+        (revision "25"))
+    (package
+     (name "gcvb")
+     (version (git-version release revision commit))
+     (source
+      (origin
+       (method git-fetch)
+       (uri
+        (git-reference
+         (url "https://github.com/jm-cc/gcvb")
+         (commit commit)))
+       (sha256
+        (base32
+         "10ahn5c71gcml37kr4vn43ciihawgq740fn5ay6rs4zpwnsp1py8"))))
+     (build-system python-build-system)
+     (propagated-inputs
+      (list python-pyyaml-5 python-dash-bootstrap-components
+            python-dash-defer-js-import))
+     (home-page "https://github.com/jm-cc/gcvb")
+     (synopsis
+      "Python 3 module aiming at facilitating non-regression, validation and
 benchmarking of simulation codes")
-   (description
-    "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
+     (description
+      "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
 facilitating non-regression, validation and benchmarking of simulation codes.
 gcvb is not a complete tool of continuous integration (CI). It is rather a
 component of the testing part of a CI workflow. It can compare the different
 metrics of your computation with references that can be a file, depends of the
 'configuration' or are absolute.")
-   (license license:expat)))
+     (license license:expat))))
 
-(define-public gcvb-felsocim
-  (package
-   (name "gcvb-felsocim")
-   (version "0.0.1-git.6b03aec")
-   (source
-    (origin
-     (method git-fetch)
-     (uri
-      (git-reference
-       (url "https://gitlab.inria.fr/mfelsoci/gcvb")
-       (commit "6b03aecd7c5b252bf6aab2f5023a97cd5e6a30a6")))
-     (sha256
-      (base32
-       "05m8m18bld2q6jdcc5mfjdf8czd25ymspnz97b31j3xsdpiz2lib"))))
-   (build-system python-build-system)
-   (arguments
-    ;; There are no tests defined for this package. The test phase is useless
-    ;; here.
-    '(#:tests? #f))
-   (propagated-inputs
-    (list python-pyyaml-5 python-dash-bootstrap-components))
-   (home-page "https://github.com/felsocim/gcvb")
-   (synopsis
-    "Python 3 module aiming at facilitating non-regression, validation and
-benchmarking of simulation codes (felsocim's fork)")
-   (description
-    "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
+(define-public gcvb-mfelsoci
+  (let ((release "1.0.0")
+        (commit "75594c9445a0a18fa8c6b399d412e7c2cd1077b2")
+        (revision "40"))
+    (package
+     (name "gcvb-mfelsoci")
+     (version (git-version release revision commit))
+     (source
+      (origin
+       (method git-fetch)
+       (uri
+        (git-reference
+         (url "https://github.com/felsocim/gcvb")
+         (commit commit)))
+       (sha256
+        (base32
+         "03m43icdbv0wv2c0n2vmg9i1la4wwzbx61v1qk4c6x37y1hw2hf0"))))
+     (build-system python-build-system)
+     (arguments
+      ;; No tests available for this package.
+      '(#:tests? #f))
+     (propagated-inputs
+      (list python-pyyaml-5 python-dash-bootstrap-components))
+     (home-page "https://github.com/felsocim/gcvb")
+     (synopsis
+      "Python 3 module aiming at facilitating non-regression, validation and
+benchmarking of simulation codes (fork of `mfelsoci')")
+     (description
+      "gcvb (generate compute validate benchmark) is a Python 3 module aiming at
 facilitating non-regression, validation and benchmarking of simulation codes.
 gcvb is not a complete tool of continuous integration (CI). It is rather a
 component of the testing part of a CI workflow. It can compare the different
 metrics of your computation with references that can be a file, depends of the
-'configuration' or are absolute. This is the forked version by felsocim of the
-original gcvb by jm-cc.")
-   (license license:expat)))
+'configuration' or are absolute. This is the fork of Marek Felšöci.")
+     (license license:expat))))
 
-(define-public gcvb-minimal-felsocim
+(define-public gcvb-minimal-mfelsoci
   (package
-   (inherit gcvb-felsocim)
-   (name "gcvb-minimal-felsocim")
+   (inherit gcvb-mfelsoci)
+   (name "gcvb-minimal-mfelsoci")
    (propagated-inputs
-    (modify-inputs (package-propagated-inputs gcvb-felsocim)
-      (delete "python-dash-bootstrap-components")))
+    (modify-inputs (package-propagated-inputs gcvb-mfelsoci)
+                   (delete "python-dash-bootstrap-components")))
    (synopsis
     "Python 3 module aiming at facilitating non-regression, validation and
-benchmarking of simulation codes (felsocim's fork). This is a minimal version
+benchmarking of simulation codes (fork of `mfelsoci'). This is a minimal version
 without the dashboard functionality.")))
