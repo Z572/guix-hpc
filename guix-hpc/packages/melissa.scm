@@ -22,25 +22,16 @@
   #:use-module (gnu packages python)
   #:use-module (guix licenses))
 
-(define commit
-  "d8de4d5724cbe35e67734a95002acd6fb5d7af71")
-
-(define version
-  "1.0.0")
-
-(define revision
-  "2")
-
 (define melissa-version
-  (git-version version revision commit))
+  "2.0.0")
 
 (define melissa-source
   (origin
     (method git-fetch)
     (uri (git-reference (url "https://gitlab.inria.fr/melissa/melissa.git")
-                        (commit commit)))
+                        (commit (string-append "v" melissa-version))))
     (file-name (git-file-name "melissa" melissa-version))
-    (sha256 (base32 "1ndylxb8c7xb9pajli8z6xmjfv3rdlcnpdwmja21wy1m9k9vj3mm"))))
+    (sha256 (base32 "0qlb6yisdydn5anp23pz1bbw0wgb3vhq2ks11h4hlaa1b7ww1x3j"))))
 
 (define melissa-license
   bsd-3)
@@ -55,11 +46,11 @@
     (source
      melissa-source)
     (build-system cmake-build-system)
-    (native-inputs (list gfortran
-                         pkg-config))
-    (inputs (list openmpi zeromq))
+    (native-inputs (list gfortran pkg-config))
+    (inputs (list openmpi zeromq python))
     (arguments
-     (list #:tests? #f))
+     (list
+      #:tests? #f))
     (home-page melissa-homepage)
     (synopsis "Melissa API for client instrumentation")
     (description
@@ -76,32 +67,29 @@ This package builds the API used when instrumenting the clients.")
     (source
      melissa-source)
     (build-system cmake-build-system)
-    (native-inputs (list gfortran
-                         pkg-config))
-    (inputs (list melissa-api
-                  openmpi
-                  python))
+    (native-inputs (list gfortran pkg-config))
+    (inputs (list melissa-api openmpi python))
     (arguments
-     (list #:tests? #f
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'unpack 'copy-resources
-                 (lambda _
-                   (let ((resources (string-append #$output
-                                                   "/share/heat-pde/resources")))
-                     (copy-recursively "./examples/heat-pde/heat-pde-sa"
-                                       resources)
-                     (with-directory-excursion resources
-                       (for-each (lambda (f)
-                                   (substitute* f
-                                     (("executable_command(.*)heatc")
-                                      (string-append
-                                       "executable_command\": \"" #$output
-                                       "/bin/heatc"))))
-                                 (find-files "." "\\.json$"))))))
-               (add-after 'copy-resources 'change-dir
-                 (lambda _
-                   (chdir "./examples/heat-pde/executables"))))))
+     (list
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'unpack 'copy-resources
+                     (lambda _
+                       (let ((resources (string-append #$output
+                                         "/share/heat-pde/resources")))
+                         (copy-recursively "./examples/heat-pde/heat-pde-sa"
+                                           resources)
+                         (with-directory-excursion resources
+                           (for-each (lambda (f)
+                                       (substitute* f
+                                         (("executable_command(.*)heatc")
+                                          (string-append
+                                           "executable_command\": \""
+                                           #$output "/bin/heatc"))))
+                                     (find-files "." "\\.json$"))))))
+                   (add-after 'copy-resources 'change-dir
+                     (lambda _
+                       (chdir "./examples/heat-pde/executables"))))))
     (home-page melissa-homepage)
     (synopsis "Instrumented heat-pde use case for Melissa")
     (description
@@ -128,9 +116,10 @@ on a heat diffusion equation characterized by a parallelized solver.")
                              python-iterative-stats
                              python-plotext))
     (arguments
-     (list #:tests? #f
-           #:phases #~(modify-phases %standard-phases
-                        (delete 'sanity-check))))
+     (list
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (delete 'sanity-check))))
     (home-page melissa-homepage)
     (synopsis "Melissa Python server and launcher")
     (description

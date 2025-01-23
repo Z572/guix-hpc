@@ -3,31 +3,91 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2023 Inria
+;;; Copyright © 2023, 2024 Inria
 
 ;; Manifest for continuous integration of Guix-HPC, using the latest release
 ;; of a several key packages before they're even packaged.
 
-(use-modules (guix transformations)
-             (ice-9 match))
+(use-modules (guix memoization)
+             (guix monads)
+             (guix packages)
+             (guix profiles)
+             (guix store)
+             ((guix transformations) #:select (package-with-upstream-version))
+             ((guix scripts build) #:select (dependents))
+             (gnu packages)
+             (gnu packages benchmark)
+             (gnu packages fabric-management)
+             (gnu packages linux)
+             (gnu packages maths)
+             (gnu packages mpi)
+             (srfi srfi-1))
 
 (define cutting-edge-packages
-  '("openmpi" "hwloc"
-    "ucx" "psm2" "rdma-core" "libfabric" "opensm"
-    "slurm" "intel-mpi-benchmarks"
-    "openblas"
-    "starpu" "chameleon"))
+  (list openmpi-5 hwloc
+        ucx psm2 rdma-core libfabric opensm
+        intel-mpi-benchmarks/openmpi
 
-(define the-latest
-  ;; Transformation that returns the given package built against the latest
-  ;; release of each of CUTTING-EDGE-PACKAGES.
-  (options->transformation
-   (map (lambda (package)
-          `(with-latest . ,package))
-        cutting-edge-packages)))
+        ;; Since there are several versions of 'slurm', pick the latest one.
+        (specification->package "slurm")
+        (specification->package "slurm-minimal")
 
-(packages->manifest
- (map (match-lambda
-        ((package . output)
-         (cons (the-latest package) output)))
-      (specifications->packages cutting-edge-packages)))
+        openblas
+        openblas-ilp64
+
+        (specification->package "starpu")
+        (specification->package "chameleon")))
+
+(define latest-version
+  (mlambdaq (package)
+    (package-with-upstream-version package
+                                   ;; Preserve patches and snippets to get
+                                   ;; exactly the same as what we'd have with
+                                   ;; 'guix refresh -u PACKAGE'.
+                                   #:preserve-patches? #t
+
+                                   ;; XXX: Disable source code authentication:
+                                   ;; this requires a local keyring, populated
+                                   ;; from key servers, but key servers may be
+                                   ;; unreliable or may lack the upstream
+                                   ;; keys.  Leave it up to packagers to
+                                   ;; actually authenticate code and make sure
+                                   ;; it matches what this manifest computed.
+                                   #:authenticate? #f)))
+
+(define individual-upgrades
+  ;; Upgrades of individual packages with their dependents built against that
+  ;; upgrade.
+  (manifest
+   (with-store store
+     (append-map (lambda (package)
+                   (let* ((name (package-name package))
+                          (newest (latest-version package))
+                          (update (package-input-rewriting
+                                   `((,package . ,newest)))))
+                     (map (lambda (package)
+                            (manifest-entry
+                              (inherit (package->manifest-entry
+                                        (update package)))
+                              (name (string-append (package-name package)
+                                                   "-with-latest-" name))))
+                          (dependents store (list package) 1))))
+                 cutting-edge-packages))))
+
+(define joint-upgrades
+  ;; All of CUTTING-EDGE-PACKAGES updated at once, together with their
+  ;; dependents.
+  (manifest
+   (with-store store
+     (let ((update-all (package-input-rewriting
+                        (map (lambda (package)
+                               `(,package . ,(latest-version package)))
+                             cutting-edge-packages))))
+       (map (lambda (package)
+              (manifest-entry
+                (inherit (package->manifest-entry
+                          (update-all package)))
+                (name (string-append (package-name package) "-full-upgrade"))))
+            (dependents store cutting-edge-packages 2))))))
+
+(concatenate-manifests (list individual-upgrades joint-upgrades))

@@ -27,7 +27,7 @@
 (define-public composyx
   (package
     (name "composyx")
-    (version "1.1.1")
+    (version "1.2.0")
     (home-page "https://gitlab.inria.fr/composyx/composyx.git")
     (synopsis "Composable numerical solver")
     (description
@@ -46,7 +46,7 @@ node supercomputer parallel computations.")
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "0affqbczk3m693sdd5pghjix690h7zy5x1k2bfbn181iif7d19hc"))))
+        (base32 "0glwcn9fw8qzb4a4vxjhxqqnpa7fv8xbw93f40rwaazfgkb4wfcl"))))
     (arguments
      '(#:configure-flags '("-DCOMPOSYX_USE_EIGEN=OFF"
                            "-DCOMPOSYX_USE_FABULOUS=ON"
@@ -145,3 +145,18 @@ node supercomputer parallel computations.")
                   ''("-DCOMPOSYX_USE_RSB=ON" "-DCOMPOSYX_USE_RSB_SPBLAS=ON"))))
     (inputs (modify-inputs (package-inputs composyx)
               (prepend librsb)))))
+
+;; composyx with librsb for sparse matrix operations
+(define-public composyx-python
+  (package/inherit composyx
+    (name "composyx-python")
+    (arguments (substitute-keyword-arguments (package-arguments composyx)
+                 ((#:configure-flags flags)
+                  ''("-DCOMPOSYX_PYTHON_DRIVER=ON"
+		     "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
+                     "-DCOMPOSYX_COMPILE_TESTS=OFF"
+		     ))))
+    (inputs (modify-inputs (package-inputs composyx)
+			   (prepend pybind11
+				    python
+				    python-multipledispatch)))))

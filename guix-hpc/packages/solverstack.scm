@@ -27,6 +27,9 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pretty-print)
+  #:use-module (amd packages aocl-libs)
+  #:use-module (amd packages rocm-hip)
+  #:use-module (amd packages rocm-libs)
   #:use-module (inria mpi)
   #:use-module (inria storm)
   #:use-module (inria eztrace)
@@ -40,9 +43,9 @@
   #:use-module (guix build-system python)
   #:use-module (gnu packages python-science))
 
-(define-public flame
+(define-public solverstack-flame
   (package
-    (name "flame")
+    (name "solverstack-flame")
     (version "3.11.0")
     (source
      (origin
@@ -56,14 +59,13 @@
     (build-system cmake-build-system)
     (home-page "https://www.netlib.org/lapack/")
     (inputs (list gfortran python-wrapper))
-    (propagated-inputs (list blis libflame))
+    (propagated-inputs (list aocl-blis))
     (arguments
      `(#:configure-flags (list "-DBUILD_SHARED_LIBS=ON"
                                "-DCBLAS=ON"
                                "-DLAPACKE=ON"
                                "-DLAPACKE_WITH_TMG=ON"
-                               "-DUSE_OPTIMIZED_BLAS=ON"
-                               "-DUSE_OPTIMIZED_LAPACK=ON")
+                               "-DUSE_OPTIMIZED_BLAS=ON")
        ;; testings require specific symbols defined in this reference lapack
        ;; package only. USE_OPTIMIZED_LAPACK=ON involves this lapack is not
        ;; compiled and replaced by libflame so that the specific symbols are
@@ -78,6 +80,28 @@
       external optimized blas.")
     (license (license:non-copyleft "file://LICENSE"
                                    "See LICENSE in the distribution."))))
+
+(define-public solverstack-blis-zen4
+  (package/inherit aocl-blis-mt
+    (name "solverstack-blis-zen4")
+    (arguments
+     `(#:tests? #f
+       #:phases (modify-phases %standard-phases
+                  (replace 'configure
+                    (lambda* (#:key outputs #:allow-other-keys)
+                      (invoke "./configure"
+                              (string-append "--prefix="
+                                             (assoc-ref outputs "out"))
+                              "-d opt" "--enable-cblas" "zen4"))))))
+    (synopsis
+     "Basic Linear Algebra Subprograms (BLAS) Libraries (without multi-threading support)")))
+
+(define-public solverstack-flame-zen4
+  (package/inherit solverstack-flame
+    (name "solverstack-flame-zen4")
+    (propagated-inputs (modify-inputs (package-propagated-inputs solverstack-flame)
+                                      (delete "aocl-blis")
+                                      (prepend solverstack-blis-zen4)))))
 
 (define-public parsec
   (let ((commit "6022a61dc96c25f11dd2aeabff2a5b3d7bce867d")
@@ -391,6 +415,46 @@ area (CPUs-GPUs, distributed nodes).")
     (propagated-inputs (modify-inputs (package-propagated-inputs chameleon)
                          (delete "openmpi")))))
 
+(define-public chameleon+hip
+  (package
+    (inherit chameleon)
+    (name "chameleon-hip")
+   (version "1.3.a76a80")
+   (home-page "https://gitlab.inria.fr/solverstack/chameleon")
+   (source
+    (origin
+      (method git-fetch)
+      (uri (git-reference
+            (url home-page)
+            (commit "a76a8093aacf0c1abe2b9c07223e231c7ef78e6a")
+            ;; We need the submodule in 'CMakeModules/morse_cmake'.
+            (recursive? #t)))
+      (file-name (string-append name "-" version "-checkout"))
+      (sha256
+       (base32 "0sch561c01zzp06x2r6ncya78rp91y0dxlpbsg3fzmh4yp6ql6jz"))
+      (modules '((guix build utils)))
+      ;; Do not install 'config.log' to avoid retaining a reference to GCC,
+      ;; GFortran, etc.
+      (snippet #~(substitute* "cmake_modules/PrintOpts.cmake"
+                   (("^INSTALL.*config\\.log.*" all)
+                    (string-append "# " all "\n"))))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments chameleon)
+       ((#:configure-flags flags
+         '())
+        #~(cons* "-DCHAMELEON_USE_HIP=ON"
+                 "-DCHAMELEON_USE_HIP_ROC=ON"
+                 ;; Keep using the GNU toolchain, despite the presence of
+                 ;; Clang in Flang in $PATH due to 'rocm-toolchain'.
+                 "-DCMAKE_C_COMPILER=gcc"
+                 "-DCMAKE_Fortran_COMPILER=gfortran"
+                 #$flags))))
+    (inputs (modify-inputs (package-inputs chameleon)
+              (append hipblas rocblas hipamd)
+              (prepend starpu-hip)
+              (delete "starpu")))))
+
+
 (define-public mini-chameleon
   (package
     (inherit chameleon)
@@ -539,45 +603,48 @@ MPI one, an MPI+openmp one and a runtime-based starpu one.")
         (base32 "0pcwfac2x574f6ggfdmahhx9v2hfswyd3nkf3bmc3cd3173312h3"))))
     (build-system cmake-build-system)
     (arguments
+     (list #:configure-flags
+           #~(list "-DBUILD_SHARED_LIBS=ON" "-DMAPHYS_BUILD_TESTS=ON"
+                   "-DMAPHYS_SDS_MUMPS=ON"
+                   "-DMAPHYS_SDS_PASTIX=ON"
+                   "-DCMAKE_EXE_LINKER_FLAGS=-lstdc++"
+                   "-DMAPHYS_ITE_FABULOUS=ON"
+                   "-DMAPHYS_ORDERING_PADDLE=ON"
+                   "-DMAPHYS_BLASMT=ON")
 
-     '(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DMAPHYS_BUILD_TESTS=ON"
-                           "-DMAPHYS_SDS_MUMPS=ON"
-                           "-DMAPHYS_SDS_PASTIX=ON"
-                           "-DCMAKE_EXE_LINKER_FLAGS=-lstdc++"
-                           "-DMAPHYS_ITE_FABULOUS=ON"
-                           "-DMAPHYS_ORDERING_PADDLE=ON"
-                           "-DMAPHYS_BLASMT=ON")
+           #:phases
+           #~(modify-phases %standard-phases
+               ;; Without this variable, pkg-config removes paths in already in CFLAGS
+               ;; However, gfortran does not check CPATH to find fortran modules
+               ;; and and the module fabulous_mod cannot be found
+               (add-before 'configure 'fix-pkg-config-env
+                 (lambda _
+                   (setenv "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" "1")))
+               (add-before 'configure 'set-fortran-flags
+                 (lambda _
+                   (define supported-flag?
+                     ;; Is '-fallow-argument-mismatch' supported?  It is
+                     ;; supported by GCC 10 but not by GCC 7.5.
+                     (zero? (system* "gfortran"
+                                     "-c"
+                                     "-o"
+                                     "/tmp/t.o"
+                                     "/dev/null"
+                                     "-fallow-argument-mismatch")))
 
-       #:phases (modify-phases %standard-phases
-                  ;; Without this variable, pkg-config removes paths in already in CFLAGS
-                  ;; However, gfortran does not check CPATH to find fortran modules
-                  ;; and and the module fabulous_mod cannot be found
-                  (add-before 'configure 'fix-pkg-config-env
-                    (lambda _
-                      (setenv "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" "1")))
-                  (add-before 'configure 'set-fortran-flags
-                    (lambda _
-                      (define supported-flag?
-                        ;; Is '-fallow-argument-mismatch' supported?  It is
-                        ;; supported by GCC 10 but not by GCC 7.5.
-                        (zero? (system* "gfortran"
-                                        "-c"
-                                        "-o"
-                                        "/tmp/t.o"
-                                        "/dev/null"
-                                        "-fallow-argument-mismatch")))
-
-                      (when supported-flag?
-                        (substitute* "CMakeLists.txt"
-                          ;; Pass '-fallow-argument-mismatch', which is
-                          ;; required when building with GCC 10+.
-                          (("-ffree-line-length-0")
-                           "-ffree-line-length-0 -fallow-argument-mismatch")))))
-                  ;; Allow tests with more MPI processes than available CPU cores,
-                  ;; which is not allowed by default by OpenMPI
-                  (add-before 'check 'prepare-test-environment
-                    (lambda _
-                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1"))))))
+                   (when supported-flag?
+                     (substitute* "CMakeLists.txt"
+                       ;; Pass '-fallow-argument-mismatch', which is
+                       ;; required when building with GCC 10+.
+                       (("-ffree-line-length-0")
+                        "-ffree-line-length-0 -fallow-argument-mismatch")))))
+               ;; Allow tests with more MPI processes than available CPU cores,
+               ;; which is not allowed by default by OpenMPI
+               (add-before 'check 'prepare-test-environment
+                 (lambda _
+                   (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1"))))
+           ;; Tests fail in a non-deterministic way.
+           #:tests? #f))
 
     (inputs (list `(,hwloc "lib")
                   openmpi
