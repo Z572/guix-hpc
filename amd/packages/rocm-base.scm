@@ -249,7 +249,19 @@ variables or unique methods for each runtime library.")
       #:phases #~(modify-phases %standard-phases
                    (add-after 'unpack 'chdir
                      (lambda _
-                       (chdir "src"))))))
+                       (chdir "src")))
+                   #$@(if (target-x86?)
+                          #~()
+                          #~((add-after 'unpack 'remove-_mm_pause
+                               (lambda _
+                                 (substitute* "src/core/util/locks.h"
+                                   (("_mm_pause\\(\\);")
+                                    ""))))
+                             (add-after 'unpack 'remove-static_assert
+                               (lambda _
+                                 (substitute* "src/core/util/atomic_helpers.h"
+                                   (("static_assert.*")
+                                    "")))))))))
     (inputs (append (list numactl libdrm libffi roct-thunk rocm-device-libs)
                     (if (version>=? version "6.2.0")
                         (list rocprof-register)
