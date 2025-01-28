@@ -18,8 +18,11 @@
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages flex)
+  #:use-module (gnu packages ssh)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages llvm)
+  #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
@@ -1647,3 +1650,80 @@ for manual interpretation.")
      "Linear algebra package implementing advanced parallel domain decomposition
 methods.")
     (license license:cecill-c)))
+
+(define-public hmat-oss
+  (let
+      ((commit "6a4e21bb86cda66396f27d3473471c52a2357edc")
+       (revision "32"))
+    (package
+     (name "hmat-oss")
+     (version
+      (git-version "1.7.1" revision commit))
+     (home-page "https://github.com/jeromerobert/hmat-oss")
+     (source
+      (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit commit)))
+       (sha256
+        (base32
+         "1alkzahpw55bqy01yscvl7sl2r4mhyv7i1qs12wmzhapqsw36jvg"))))
+     (build-system cmake-build-system)
+     (arguments
+      '(#:configure-flags '("-DBUILD_EXAMPLES=ON")))
+     (inputs
+      (list jemalloc openblas))
+     (synopsis "A hierarchical matrix C/C++ library including an LU solver.")
+     (description #f)
+     (license license:gpl2))))
+
+(define-public test_FEMBEM
+  (let ((commit "5bfc9b0c5db8f1dc26ca1d100308ca087c7f662e")
+        (revision "65"))
+    (package
+      (name "test_FEMBEM")
+      (version (git-version "0.1" revision commit))
+      (home-page "https://gitlab.inria.fr/solverstack/test_fembem")
+      (source
+       (origin
+        (method git-fetch)
+        (uri
+         (git-reference
+          (url home-page)
+          (commit commit)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32
+          "08iz7r5101kcyaj19j208v2gcmfpdb2zjrdl570l7z9hyw4pnama"))))
+      (build-system cmake-build-system)
+      (arguments
+       ;; The package checkout is not a Git directory anymore even if its
+       ;; original source is. For the 'configure' phase to work, we need to
+       ;; prevent CMake from trying to detect the version number using Git.
+       '(#:configure-flags '("-DTEST_FEMBEM_GIT_VERSION=OFF")
+         #:phases (modify-phases %standard-phases
+                    (add-after 'unpack 'clear-Werror
+                      (lambda _
+                        (substitute* "CMakeLists.txt"
+                          (("-Werror") ""))))
+                    (add-before 'check 'prepare-test-environment
+                      (lambda _
+                        ;; StarPU requires the $HOME folder to be writable
+                        ;; during the test phase. Given that the original home
+                        ;; directory is not writable during package
+                        ;; construction, we set HOME to the current build
+                        ;; directory to satisfy StarPU.
+                        (setenv "HOME" (getcwd)))))))
+
+      (inputs (list openblas starpu chameleon hmat-oss))
+      (propagated-inputs (list openmpi))
+      (native-inputs (list pkg-config openssh))
+      (synopsis
+       "Testing dense and sparse solvers with pseudo FEM or BEM matrices")
+      (description
+       "This is an open-source version of a simple application developed by
+Airbus for testing dense and sparse solvers with pseudo-FEM or pseudo-BEM
+matrices. Here in Guix, test_FEMBEM is currently connected to the
+open-source sequential version of hmat, Chameleon and H-Chameleon.")
+      (license license:expat))))
