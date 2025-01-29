@@ -7,6 +7,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix-hpc packages solverstack)
+  #:use-module (inria storm)
   #:use-module (lrz librsb)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages bison)
@@ -76,7 +77,8 @@ node supercomputer parallel computations.")
                   arpack-ng
                   paddle
                   fabulous
-                  chameleon))
+                  chameleon
+                  starpu))
     (propagated-inputs (list `(,hwloc "lib") openmpi))
     (native-inputs (list gfortran pkg-config openssh))
     (properties '((tunable? . #t)))))
