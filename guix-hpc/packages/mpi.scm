@@ -49,6 +49,7 @@
        (sha256
         (base32 %pm2-hash))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug"
@@ -86,6 +87,7 @@ hashtables, lock-free queues).")
        (sha256
         (base32 %pm2-hash))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug"
@@ -133,6 +135,7 @@ supporting MPI_THREAD_MULTIPLE multi-threading level.")
        (sha256
         (base32 %pm2-hash))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug"
@@ -171,6 +174,7 @@ than libc pthread; add hooks for memory.")
        (sha256
         (base32 %pm2-hash))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug"
@@ -288,6 +292,7 @@ way rather than competitive.")
        (sha256
         (base32 %pm2-hash))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug"
@@ -413,6 +418,7 @@ the MPI_THREAD_MULTIPLE multi-threading level.")
        (sha256
         (base32 "09wnrgn0xm109fvbbz9hvzyhbw9wm3ldshkqc5az9iaf76hqszd0"))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug")
@@ -456,6 +462,7 @@ are not benchmarked yet.")
        (sha256
         (base32 %pm2-hash))))
     (build-system gnu-build-system)
+    (outputs '("debug" "out"))
     (arguments
      '(#:out-of-source? #t
        #:configure-flags '("--enable-optimize" "--disable-debug")
