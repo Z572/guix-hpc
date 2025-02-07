@@ -234,7 +234,7 @@ fully supported to run on the GPU.")
 (define-public python-iterative-stats
   (package
     (name "python-iterative-stats")
-    (version "0.1.0")
+    (version "0.1.1")
     (source
      (origin
        (method git-fetch)
@@ -244,16 +244,8 @@ fully supported to run on the GPU.")
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1hjqi4zrvrcidjryq65nf1046pw04ya3w1xmsapldjbqmxd259n2"))))
+        (base32 "1s0hbm8sysi0gq67iva45dpwb2qfppgsrd090a580a9g4ia791cd"))))
     (build-system pyproject-build-system)
-    (arguments
-     (list #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'unpack 'change-pyyaml-requirement
-                 (lambda _
-                   (substitute* "pyproject.toml"
-                     (("pyyaml = \"6.0\"")
-                      "pyyaml = \">=6.0\"")))))))
     (native-inputs (list python-poetry-core python-pytest python-openturns))
     (propagated-inputs (list python-numpy python-pyyaml))
     (home-page
