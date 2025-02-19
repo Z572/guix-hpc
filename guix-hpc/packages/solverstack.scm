@@ -178,7 +178,7 @@ Multicore Architectures (PLASMA) algorithms to the distributed memory realm.")
 (define-public chameleon
   (package
     (name "chameleon")
-    (version "1.2.0")
+    (version "1.3.0")
     (home-page "https://gitlab.inria.fr/solverstack/chameleon")
     (synopsis "Dense linear algebra solver")
     (description
@@ -195,13 +195,12 @@ area (CPUs-GPUs, distributed nodes).")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "v1.2.0")
+             (commit "v1.3.0")
              ;; We need the submodule in 'CMakeModules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
-       (patches (search-patches "guix-hpc/packages/patches/chameleon-cpp.patch"))
        (sha256
-        (base32 "1gcn7061iz2xxb43rpfh52ynwc2227033alj5aw1d753aqyxq378"))
+        (base32 "07xiq64ss4762v5fpcn9bd8x8l8xrq9b1hasnrxml0ffcx5q4bxi"))
        (modules '((guix build utils)))
        ;; Do not install 'config.log' to avoid retaining a reference to GCC,
        ;; GFortran, etc.
