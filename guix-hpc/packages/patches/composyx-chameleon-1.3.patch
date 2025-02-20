@@ -1,0 +1,42 @@
+diff --git a/include/composyx/part_data/PartDenseMatrix.hpp b/include/composyx/part_data/PartDenseMatrix.hpp
+index dfc6cb89..c46dd843 100644
+--- a/include/composyx/part_data/PartDenseMatrix.hpp
++++ b/include/composyx/part_data/PartDenseMatrix.hpp
+@@ -686,13 +686,13 @@ public:
+     }
+     CHAMELEON_Desc_Create_User(&chamA, (void*)&A, chameleon::getType(alpha), NB,
+                                NB, NB * NB, M, K, 0, 0, M, K, P, Q,
+-                               chameleon_getaddr, NULL, NULL);
++                               chameleon_getaddr, NULL, NULL, NULL);
+     CHAMELEON_Desc_Create_User(&chamB, (void*)&B, chameleon::getType(alpha), NB,
+                                NB, NB * NB, K, N, 0, 0, K, N, P, Q,
+-                               chameleon_getaddr, NULL, NULL);
++                               chameleon_getaddr, NULL, NULL, NULL);
+     CHAMELEON_Desc_Create_User(&chamC, (void*)&C, chameleon::getType(alpha), NB,
+                                NB, NB * NB, M, N, 0, 0, M, N, P, Q,
+-                               chameleon_getaddr, NULL, NULL);
++                               chameleon_getaddr, NULL, NULL, NULL);
+     chameleon::gemm_tile(ChamNoTrans, ChamNoTrans, alpha, chamA, chamB, beta,
+                          chamC);
+     CHAMELEON_Desc_Destroy(&chamC);
+diff --git a/org/composyx/part_data/PartDenseMatrix.org b/org/composyx/part_data/PartDenseMatrix.org
+index 7f4de11e..1c8dbd5d 100644
+--- a/org/composyx/part_data/PartDenseMatrix.org
++++ b/org/composyx/part_data/PartDenseMatrix.org
+@@ -714,13 +714,13 @@ This function assumes all bloc sizes and matrix cuts are compatible.
+     }
+     CHAMELEON_Desc_Create_User(&chamA, (void*)&A, chameleon::getType(alpha),
+ 			       NB, NB, NB*NB, M, K, 0, 0, M, K, P, Q,
+-			       chameleon_getaddr, NULL, NULL);
++			       chameleon_getaddr, NULL, NULL, NULL);
+     CHAMELEON_Desc_Create_User(&chamB, (void*)&B, chameleon::getType(alpha),
+ 			       NB, NB, NB*NB, K, N, 0, 0, K, N, P, Q,
+-			       chameleon_getaddr, NULL, NULL);
++			       chameleon_getaddr, NULL, NULL, NULL);
+     CHAMELEON_Desc_Create_User(&chamC, (void*)&C, chameleon::getType(alpha),
+ 			       NB, NB, NB*NB, M, N, 0, 0, M, N, P, Q,
+-			       chameleon_getaddr, NULL, NULL);
++			       chameleon_getaddr, NULL, NULL, NULL);
+     chameleon::gemm_tile( ChamNoTrans, ChamNoTrans, alpha, chamA, chamB, beta, chamC );
+     CHAMELEON_Desc_Destroy( &chamC );
+     CHAMELEON_Desc_Destroy( &chamB );

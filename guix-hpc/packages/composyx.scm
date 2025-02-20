@@ -46,6 +46,7 @@ node supercomputer parallel computations.")
              ;; We need the submodule in 'cmake_modules/morse_cmake'.
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
+       (patches (search-patches "guix-hpc/packages/patches/composyx-chameleon-1.3.patch"))
        (sha256
         (base32 "0glwcn9fw8qzb4a4vxjhxqqnpa7fv8xbw93f40rwaazfgkb4wfcl"))))
     (arguments
