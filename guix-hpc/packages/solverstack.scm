@@ -358,28 +358,8 @@ area (CPUs-GPUs, distributed nodes).")
                          (delete "openmpi")))))
 
 (define-public chameleon+hip
-  (package
-    (inherit chameleon)
-    (name "chameleon-hip")
-   (version "1.3.a76a80")
-   (home-page "https://gitlab.inria.fr/solverstack/chameleon")
-   (source
-    (origin
-      (method git-fetch)
-      (uri (git-reference
-            (url home-page)
-            (commit "a76a8093aacf0c1abe2b9c07223e231c7ef78e6a")
-            ;; We need the submodule in 'CMakeModules/morse_cmake'.
-            (recursive? #t)))
-      (file-name (string-append name "-" version "-checkout"))
-      (sha256
-       (base32 "0sch561c01zzp06x2r6ncya78rp91y0dxlpbsg3fzmh4yp6ql6jz"))
-      (modules '((guix build utils)))
-      ;; Do not install 'config.log' to avoid retaining a reference to GCC,
-      ;; GFortran, etc.
-      (snippet #~(substitute* "cmake_modules/PrintOpts.cmake"
-                   (("^INSTALL.*config\\.log.*" all)
-                    (string-append "# " all "\n"))))))
+  (package/inherit chameleon
+   (name "chameleon-hip")
     (arguments
      (substitute-keyword-arguments (package-arguments chameleon)
        ((#:configure-flags flags
@@ -396,27 +376,19 @@ area (CPUs-GPUs, distributed nodes).")
               (prepend starpu-hip)
               (delete "starpu")))))
 
+(define-public chameleon+hip+nompi
+  (package/inherit chameleon+hip
+   (name "chameleon-hip-nompi")
+   (arguments
+    (substitute-keyword-arguments (package-arguments chameleon+hip)
+                                  ((#:configure-flags flags)
+                                   #~(append
+                                   (delete "-DCHAMELEON_USE_MPI=ON"
+                                    #$flags)))))))
+
 (define-public chameleon+aocl
   (package/inherit chameleon
     (name "chameleon-aocl")
-    (version "1.3.a76a80")
-    (home-page "https://gitlab.inria.fr/solverstack/chameleon")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url home-page)
-                    (commit "a76a8093aacf0c1abe2b9c07223e231c7ef78e6a")
-                    ;; We need the submodule in 'CMakeModules/morse_cmake'.
-                    (recursive? #t)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256 (base32
-                       "0sch561c01zzp06x2r6ncya78rp91y0dxlpbsg3fzmh4yp6ql6jz"))
-              (modules '((guix build utils)))
-              ;; Do not install 'config.log' to avoid retaining a reference to GCC,
-              ;; GFortran, etc.
-              (snippet #~(substitute* "cmake_modules/PrintOpts.cmake"
-                           (("^INSTALL.*config\\.log.*" all)
-                            (string-append "# " all "\n"))))))
     (arguments (substitute-keyword-arguments (package-arguments chameleon)
                  ((#:configure-flags flags
                    '())
