@@ -32,7 +32,7 @@
   (string-append "release-" %pm2-version))
 (define %pm2-hash
   "1rgijnpak505p5c9fga40jahw1al9y8gjflhag6vsm3w1kr99znl")
- ; guix hash -rx .
+; guix hash -rx .
 
 (define-public puk
   (package
@@ -330,7 +330,8 @@ way rather than competitive.")
                               "install")))
                   (delete 'check))))
     (native-inputs (list pkg-config autoconf automake gfortran))
-    (propagated-inputs (list hwloc `(,hwloc "lib") padicotm))
+    (propagated-inputs (list hwloc
+                             `(,hwloc "lib") padicotm))
     (inputs (list rdma-core psm psm2 slurm))
     (synopsis
      "An Optimizing Communication Library for High-Performance Networks")
