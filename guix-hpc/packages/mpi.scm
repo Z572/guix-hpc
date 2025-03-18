@@ -26,13 +26,13 @@
   "https://pm2.gitlabpages.inria.fr/")
 (define %pm2-git
   "https://gitlab.inria.fr/pm2/pm2.git")
-(define %pm2-commit
-  "release-2024-11-21")
-(define %pm2-hash
-  "09wnrgn0xm109fvbbz9hvzyhbw9wm3ldshkqc5az9iaf76hqszd0")
- ; guix hash -rx .
 (define %pm2-version
-  "2024-11-21")
+  "2025-03-18")
+(define %pm2-commit
+  (string-append "release-" %pm2-version))
+(define %pm2-hash
+  "1rgijnpak505p5c9fga40jahw1al9y8gjflhag6vsm3w1kr99znl")
+ ; guix hash -rx .
 
 (define-public puk
   (package
