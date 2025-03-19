@@ -375,7 +375,10 @@ core runtime is also available.")
                              rocr-runtime
                              rocm-device-libs
                              roct-thunk)
-  (let ((rocm-clang-toolchain (make-clang-toolchain clang-rocm libomp-rocm)))
+  (let ((rocm-clang-toolchain (make-clang-toolchain
+                               clang-rocm
+                               ;; FIXME: libomp-rocm build fail!
+                               clang-rocm)))
     (package
       (inherit rocm-clang-toolchain)
       (name "rocm-toolchain")
