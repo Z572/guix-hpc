@@ -334,6 +334,8 @@
     `(
         ; llvm-project
         (("llvm-project" "6.2.2") . ("amd/packages/patches/llvm-rocm-6.2.0.patch"
+                                     "amd/packages/patches/llvm-rocm-6.2.0-fix-build-on-riscv64.patch"
+                                     "amd/packages/patches/llvm-rocm-6.2.0-fix-build-on-riscv64-2.patch"
                                      ;; upstream patches for llvm 18.1.8
                                      "clang-18.0-libc-search-path.patch"
                                      "clang-17.0-link-dsymutil-latomic.patch"))

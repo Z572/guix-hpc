@@ -1,0 +1,51 @@
+From c940edf9df81bc53ef3f23a5fa2c06e6f1859692 Mon Sep 17 00:00:00 2001
+From: Xinmudotmoe <zhang1813023404@outlook.com>
+Date: Thu, 26 Dec 2024 10:43:22 +0800
+Subject: [PATCH] Fix build on riscv64
+
+
+diff --git a/clang/lib/Driver/ToolChains/HIPUtility.cpp b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+index 82f56277b..4e592af91 100644
+--- a/clang/lib/Driver/ToolChains/HIPUtility.cpp
++++ b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+@@ -292,7 +292,12 @@ void HIP::constructHIPFatbinCommand(Compilation &C, const JobAction &JA,
+ 
+   // ToDo: Remove the dummy host binary entry which is required by
+   // clang-offload-bundler.
++#if defined(__x86_64)
+   std::string BundlerTargetArg = "-targets=host-x86_64-unknown-linux";
++#elif defined(__riscv) && __riscv_xlen == 64
++  std::string BundlerTargetArg = "-targets=host-riscv64-unknown-linux";
++#else
++#endif
+   // AMDGCN:
+   // For code object version 2 and 3, the offload kind in bundle ID is 'hip'
+   // for backward compatibility. For code object version 4 and greater, the
+diff --git a/clang/tools/clang-linker-wrapper/ClangLinkerWrapper.cpp b/clang/tools/clang-linker-wrapper/ClangLinkerWrapper.cpp
+index 4e9b5b8ba..2ad9c13fe 100644
+--- a/clang/tools/clang-linker-wrapper/ClangLinkerWrapper.cpp
++++ b/clang/tools/clang-linker-wrapper/ClangLinkerWrapper.cpp
+@@ -344,7 +344,12 @@ fatbinary(ArrayRef<std::pair<StringRef, StringRef>> InputFiles,
+     CmdArgs.push_back(
+         Args.MakeArgString(Twine("-compression-level=") + Arg->getValue()));
+ 
++#if defined(__x86_64)
+   SmallVector<StringRef> Targets = {"-targets=host-x86_64-unknown-linux"};
++#elif defined(__riscv) && __riscv_xlen == 64
++  SmallVector<StringRef> Targets = {"-targets=host-riscv64-unknown-linux"};
++#else
++#endif
+   for (const auto &[File, Arch] : InputFiles)
+     Targets.push_back(Saver.save("hipv4-amdgcn-amd-amdhsa--" + Arch));
+   CmdArgs.push_back(Saver.save(llvm::join(Targets, ",")));
+@@ -489,6 +494,7 @@ Expected<StringRef> linkDevice(ArrayRef<StringRef> InputFiles,
+   case Triple::aarch64_be:
+   case Triple::ppc64:
+   case Triple::ppc64le:
++  case Triple::riscv64:
+     return generic::clang(InputFiles, Args);
+   default:
+     return createStringError(inconvertibleErrorCode(),
+-- 
+2.47.1
+

@@ -1,0 +1,270 @@
+From 9de8a92c3bcda9d1fa414b9b355cb8ac77ae0812 Mon Sep 17 00:00:00 2001
+From: Joseph Huber <huberjn@outlook.com>
+Date: Fri, 11 Oct 2024 14:53:17 -0500
+Subject: [PATCH 1/4] [HIP] Replace use of `llvm-mc` with `clang`
+
+Summary:
+We currently use `llvm-mc` which is intended for internal testing and
+not expected to be present in every installation. This patch changes
+that to just use clang instead to get the `.o` from the HIP registration
+code.
+
+My preferred solution would be to use the new driver, but I still
+haven't gotten the test suite to pass on this one weird OpenMP case.
+
+Fixes: https://github.com/llvm/llvm-project/issues/112031
+---
+ clang/lib/Driver/ToolChains/HIPUtility.cpp        | 15 ++++++++-------
+ clang/test/Driver/hip-link-save-temps.hip         |  6 +++---
+ clang/test/Driver/hip-partial-link.hip            |  4 ++--
+ clang/test/Driver/hip-save-temps.hip              |  2 +-
+ clang/test/Driver/hip-toolchain-rdc-separate.hip  |  4 ++--
+ .../test/Driver/hip-toolchain-rdc-static-lib.hip  |  2 +-
+ clang/test/Driver/hip-toolchain-rdc.hip           |  2 +-
+ clang/test/Driver/hip-unbundle-preproc.hipi       |  2 +-
+ clang/test/Driver/hipspv-toolchain-rdc.hip        |  3 +--
+ 9 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/clang/lib/Driver/ToolChains/HIPUtility.cpp b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+index b3adfe65402ff..0dc9f7f8a5475 100644
+--- a/clang/lib/Driver/ToolChains/HIPUtility.cpp
++++ b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+@@ -346,14 +346,14 @@ void HIP::constructGenerateObjFileFromHIPFatBinary(
+   // Create Temp Object File Generator,
+   // Offload Bundled file and Bundled Object file.
+   // Keep them if save-temps is enabled.
+-  const char *McinFile;
++  const char *ObjinFile;
+   const char *BundleFile;
+   if (C.getDriver().isSaveTempsEnabled()) {
+-    McinFile = C.getArgs().MakeArgString(Name + ".mcin");
++    ObjinFile = C.getArgs().MakeArgString(Name + ".mcin");
+     BundleFile = C.getArgs().MakeArgString(Name + ".hipfb");
+   } else {
+     auto TmpNameMcin = C.getDriver().GetTemporaryPath(Name, "mcin");
+-    McinFile = C.addTempFile(C.getArgs().MakeArgString(TmpNameMcin));
++    ObjinFile = C.addTempFile(C.getArgs().MakeArgString(TmpNameMcin));
+     auto TmpNameFb = C.getDriver().GetTemporaryPath(Name, "hipfb");
+     BundleFile = C.addTempFile(C.getArgs().MakeArgString(TmpNameFb));
+   }
+@@ -454,7 +454,7 @@ void HIP::constructGenerateObjFileFromHIPFatBinary(
+ 
+   // Open script file and write the contents.
+   std::error_code EC;
+-  llvm::raw_fd_ostream Objf(McinFile, EC, llvm::sys::fs::OF_None);
++  llvm::raw_fd_ostream Objf(ObjinFile, EC, llvm::sys::fs::OF_None);
+ 
+   if (EC) {
+     C.getDriver().Diag(clang::diag::err_unable_to_make_temp) << EC.message();
+@@ -463,10 +463,11 @@ void HIP::constructGenerateObjFileFromHIPFatBinary(
+ 
+   Objf << ObjBuffer;
+ 
+-  ArgStringList McArgs{"-triple", Args.MakeArgString(HostTriple.normalize()),
++  ArgStringList McArgs{"-target", Args.MakeArgString(HostTriple.normalize()),
+                        "-o",      Output.getFilename(),
+-                       McinFile,  "--filetype=obj"};
+-  const char *Mc = Args.MakeArgString(TC.GetProgramPath("llvm-mc"));
++                       "-x",      "assembler",
++                       ObjinFile, "-c"};
++  const char *Mc = Args.MakeArgString(TC.GetProgramPath("clang"));
+   C.addCommand(std::make_unique<Command>(JA, T, ResponseFileSupport::None(), Mc,
+                                          McArgs, Inputs, Output));
+ }
+diff --git a/clang/test/Driver/hip-link-save-temps.hip b/clang/test/Driver/hip-link-save-temps.hip
+index 5656614626b9c..e321970274bb4 100644
+--- a/clang/test/Driver/hip-link-save-temps.hip
++++ b/clang/test/Driver/hip-link-save-temps.hip
+@@ -39,10 +39,10 @@
+ // CHECK-NOT: {{".*/opt"}}
+ // CHECK-NOT: {{".*/llc"}}
+ // CHECK: "{{.*lld.*}}" {{.*}} "-plugin-opt=-amdgpu-internalize-symbols"
+-// CHECK-SAME: "-o" "a.out-hip-amdgcn-amd-amdhsa-gfx900" "obj1-hip-amdgcn-amd-amdhsa-gfx900.o" "obj2-hip-amdgcn-amd-amdhsa-gfx900.o"
++// CHECK-SAME: "-o" "[[HIPFB1:.+]]" "obj1-hip-amdgcn-amd-amdhsa-gfx900.o" "obj2-hip-amdgcn-amd-amdhsa-gfx900.o"
+ // CHECK: "{{.*lld.*}}" {{.*}} "-plugin-opt=-amdgpu-internalize-symbols"
+-// CHECK-SAME: "-o" "a.out-hip-amdgcn-amd-amdhsa-gfx906" "obj1-hip-amdgcn-amd-amdhsa-gfx906.o" "obj2-hip-amdgcn-amd-amdhsa-gfx906.o"
+-// CHECK: {{".*llvm-mc.*"}} "-o" "[[OBJBUNDLE:.*.o]]" "{{.*}}.mcin" "--filetype=obj"
++// CHECK-SAME: "-o" "[[HIPFB2:.+]]" "obj1-hip-amdgcn-amd-amdhsa-gfx906.o" "obj2-hip-amdgcn-amd-amdhsa-gfx906.o"
++// CHECK: "{{.*clang.*}}" "-target" "x86_64-unknown-linux-gnu" "-o" "[[OBJBUNDLE:.+.o]]" "-x" "assembler" "{{.*}}.mcin" "-c"
+ // OUT: "{{.*ld.*}}" {{.*}} "-o" "executable" {{.*}} "[[OBJBUNDLE]]"
+ // NOUT: "{{.*ld.*}}" {{.*}} "-o" "a.out" {{.*}} "[[OBJBUNDLE]]"
+ // SLO: "{{.*llvm-ar.*}}" "rcsD" "libTest.a" {{.*}} "[[OBJBUNDLE]]"
+diff --git a/clang/test/Driver/hip-partial-link.hip b/clang/test/Driver/hip-partial-link.hip
+index c8451ec81ed37..8c244cd371f62 100644
+--- a/clang/test/Driver/hip-partial-link.hip
++++ b/clang/test/Driver/hip-partial-link.hip
+@@ -35,7 +35,7 @@
+ // LD-R: "{{.*}}/clang-offload-bundler" {{.*}}-unbundle
+ // LD-R: "{{.*}}/lld" -flavor gnu -m elf64_amdgpu
+ // LD-R: "{{.*}}/clang-offload-bundler"
+-// LD-R: "{{.*}}/llvm-mc" -triple x86_64-unknown-linux-gnu
++// LD-R: "{{.*}}/clang" -target x86_64-unknown-linux-gnu
+ // LD-R: "{{.*}}/ld.lld" {{.*}} -r
+ 
+ // RUN: llvm-nm  %t.lib.o | FileCheck -check-prefix=OBJ %s
+@@ -65,7 +65,7 @@
+ // STATIC: "{{.*}}/clang-offload-bundler" {{.*}}-unbundle
+ // STATIC: "{{.*}}/lld" -flavor gnu -m elf64_amdgpu
+ // STATIC: "{{.*}}/clang-offload-bundler"
+-// STATIC: "{{.*}}/llvm-mc" -triple x86_64-unknown-linux-gnu
++// STATIC: "{{.*}}/clang" -target x86_64-unknown-linux-gnu
+ // STATIC: "{{.*}}/llvm-ar"
+ 
+ // RUN: %clang -v --target=x86_64-unknown-linux-gnu --no-offload-new-driver \
+diff --git a/clang/test/Driver/hip-save-temps.hip b/clang/test/Driver/hip-save-temps.hip
+index 6dedfdafb11a1..142c3f1611a36 100644
+--- a/clang/test/Driver/hip-save-temps.hip
++++ b/clang/test/Driver/hip-save-temps.hip
+@@ -58,7 +58,7 @@
+ // RDCC: "{{.*clang.*}}" "-cc1as" {{.*}} "-o" "hip-save-temps-host-x86_64-unknown-linux-gnu.o"
+ // RDCC: "{{.*clang-offload-bundler.*}}" {{.*}} "-output=hip-save-temps.o"
+ // RDCL: "{{.*clang-offload-bundler.*}}" {{.*}} "-output=hip-save-temps-hip-amdgcn-amd-amdhsa.hipfb"
+-// RDCL: {{.*}}llvm-mc{{.*}}"-o" "hip-save-temps-hip-amdgcn-amd-amdhsa.o" "hip-save-temps-hip-amdgcn-amd-amdhsa.mcin" "--filetype=obj"
++// RDCL: "{{.*clang.*}}" "-target" "x86_64-unknown-linux-gnu" "-o" "{{.*}}.o" "-x" "assembler" "{{.*}}.mcin" "-c"
+ 
+ // -fno-gpu-rdc host object path
+ // NORDC: "{{.*clang.*}}" "-cc1" {{.*}} "-E" {{.*}} "-o" "hip-save-temps-host-x86_64-unknown-linux-gnu.hipi"
+diff --git a/clang/test/Driver/hip-toolchain-rdc-separate.hip b/clang/test/Driver/hip-toolchain-rdc-separate.hip
+index 92f493912adb4..0ce5ea5174e1b 100644
+--- a/clang/test/Driver/hip-toolchain-rdc-separate.hip
++++ b/clang/test/Driver/hip-toolchain-rdc-separate.hip
+@@ -145,8 +145,8 @@
+ // LINK-BUNDLE-SAME: "-input={{.*}}" "-input=[[IMG_DEV1]]" "-input=[[IMG_DEV2]]" "-output=[[BUNDLE:.*]]"
+ // LINK-NOBUNDLE-NOT: {{".*clang-offload-bundler"}} "-type=o"
+ 
+-// LINK-EMBED: {{".*llvm-mc.*"}} "-o" "[[OBJBUNDLE:.*o]]" "{{.*}}.mcin" "--filetype=obj"
+-// LINK-NOEMBED-NOT: {{".*llvm-mc.*"}} "-o"
++// LINK-EMBED: {{".*clang.*"}} "-o" "[[OBJBUNDLE:.*o]]" "{{.*}}.mcin"
++// LINK-NOEMBED-NOT: {{".*clang.*"}} "-o"
+ 
+ // LINK-EMBED: [[LD:".*ld.*"]] {{.*}} "-o" "a.out" {{.*}} "[[A_OBJ_HOST]]"
+ // LINK-EMBED-SAME: "[[B_OBJ_HOST]]" "[[OBJBUNDLE]]"
+diff --git a/clang/test/Driver/hip-toolchain-rdc-static-lib.hip b/clang/test/Driver/hip-toolchain-rdc-static-lib.hip
+index 780426907e90e..5276faf31bdc2 100644
+--- a/clang/test/Driver/hip-toolchain-rdc-static-lib.hip
++++ b/clang/test/Driver/hip-toolchain-rdc-static-lib.hip
+@@ -86,6 +86,6 @@
+ // CHECK-SAME: "-targets={{.*}},hipv4-amdgcn-amd-amdhsa--gfx803,hipv4-amdgcn-amd-amdhsa--gfx900"
+ // CHECK-SAME: "-input=[[IMG_DEV1]]" "-input=[[IMG_DEV2]]" "-output=[[BUNDLE:.*hipfb]]"
+ 
+-// CHECK: [[MC:".*llvm-mc.*"]] "-o" [[OBJBUNDLE:".*o"]] "{{.*}}.mcin" "--filetype=obj"
++// CHECK: [[MC:".*clang.*"]] "-o" [[OBJBUNDLE:".*o"]] "{{.*}}.mcin"
+ 
+ // CHECK: [[AR:".*llvm-ar.*"]] "rcsD" "{{.*}}.out" [[A_OBJ_HOST]] [[B_OBJ_HOST]] [[OBJBUNDLE]]
+diff --git a/clang/test/Driver/hip-toolchain-rdc.hip b/clang/test/Driver/hip-toolchain-rdc.hip
+index ec79bf06afb92..6d3f46f8a9467 100644
+--- a/clang/test/Driver/hip-toolchain-rdc.hip
++++ b/clang/test/Driver/hip-toolchain-rdc.hip
+@@ -155,7 +155,7 @@
+ // CHECK-SAME: "-targets={{.*}},hipv4-amdgcn-amd-amdhsa--gfx803,hipv4-amdgcn-amd-amdhsa--gfx900"
+ // CHECK-SAME: "-input={{.*}}" "-input=[[IMG_DEV1]]" "-input=[[IMG_DEV2]]" "-output=[[BUNDLE]]"
+ 
+-// CHECK: [[MC:".*llvm-mc.*"]] "-triple" [[HOST]] "-o" [[OBJBUNDLE:".*o"]] "{{.*}}.mcin" "--filetype=obj"
++// CHECK: [[MC:".*clang.*"]] "-target" [[HOST]] "-o" [[OBJBUNDLE:".*o"]] "{{.*}}.mcin"
+ 
+ // output the executable
+ // LNX: [[LD:".*ld.*"]] {{.*}}"-o" "a.out" {{.*}} [[A_OBJ_HOST]] [[B_OBJ_HOST]] [[OBJBUNDLE]]
+diff --git a/clang/test/Driver/hip-unbundle-preproc.hipi b/clang/test/Driver/hip-unbundle-preproc.hipi
+index da5c68ef1c158..a56cafea0e8d4 100644
+--- a/clang/test/Driver/hip-unbundle-preproc.hipi
++++ b/clang/test/Driver/hip-unbundle-preproc.hipi
+@@ -23,5 +23,5 @@
+ // RDC: {{".*clang.*"}} "-cc1" {{.*}}"-target-cpu" "gfx803" {{.*}}"-o" "[[DEV_BC:.*bc]]" {{.*}}"[[DEV_PP]]"
+ // RDC: {{".*lld.*"}} {{.*}}"-o" "[[DEV_ISA:.*]]" "[[DEV_BC]]"
+ // RDC: {{".*clang-offload-bundler.*"}} {{.*}}"-input={{.*}}" "-input=[[DEV_ISA]]" "-output=[[FATBIN:.*]]"
+-// RDC: {{".*llvm-mc.*"}} "-o" "[[FATBIN_O:.*o]]"
++// RDC: {{".*clang.*"}} "-o" "[[FATBIN_O:.*o]]"
+ // RDC: {{".*ld.*"}} {{.*}}"[[HOST_O]]" "[[FATBIN_O]]"
+diff --git a/clang/test/Driver/hipspv-toolchain-rdc.hip b/clang/test/Driver/hipspv-toolchain-rdc.hip
+index 2e7528a9996d8..acdadacc49064 100644
+--- a/clang/test/Driver/hipspv-toolchain-rdc.hip
++++ b/clang/test/Driver/hipspv-toolchain-rdc.hip
+@@ -53,8 +53,7 @@
+ // CHECK-SAME: "-targets={{.*}},hip-spirv64----generic"
+ // CHECK-SAME: "-input=/dev/null" "-input=[[AB_SPIRV]]"
+ // CHECK-SAME: "-output=[[AB_FATBIN:.*hipfb]]"
+-// CHECK: {{".*llvm-mc.*"}} "-o" [[OBJBUNDLE:".*o"]] "{{.*}}.mcin"
+-// CHECK-SAME: "--filetype=obj"
++// CHECK: {{".*clang.*"}} "-o" [[OBJBUNDLE:".*o"]] "{{.*}}.mcin"
+ 
+ // Output the executable
+ // CHECK: {{".*ld.*"}} {{.*}}"-o" "a.out" {{.*}} [[A_OBJ_HOST]] [[B_OBJ_HOST]]
+
+From 5e2e61196b21335f4eb494d633c7a6a18471b1a7 Mon Sep 17 00:00:00 2001
+From: Joseph Huber <huberjn@outlook.com>
+Date: Fri, 11 Oct 2024 22:11:02 -0500
+Subject: [PATCH 2/4] Use clang executable
+
+---
+ clang/lib/Driver/ToolChains/HIPUtility.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/clang/lib/Driver/ToolChains/HIPUtility.cpp b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+index 0dc9f7f8a5475..b0702dcfea351 100644
+--- a/clang/lib/Driver/ToolChains/HIPUtility.cpp
++++ b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+@@ -467,7 +467,7 @@ void HIP::constructGenerateObjFileFromHIPFatBinary(
+                        "-o",      Output.getFilename(),
+                        "-x",      "assembler",
+                        ObjinFile, "-c"};
+-  const char *Mc = Args.MakeArgString(TC.GetProgramPath("clang"));
+-  C.addCommand(std::make_unique<Command>(JA, T, ResponseFileSupport::None(), Mc,
++  const char *Clang = Args.MakeArgString(C.getDriver().ClangExecutable);
++  C.addCommand(std::make_unique<Command>(JA, T, ResponseFileSupport::None(), Clang,
+                                          McArgs, Inputs, Output));
+ }
+
+From 30c76e58a964953de701bcd286c55724be391930 Mon Sep 17 00:00:00 2001
+From: Joseph Huber <huberjn@outlook.com>
+Date: Fri, 11 Oct 2024 22:13:42 -0500
+Subject: [PATCH 3/4] Fix test
+
+---
+ clang/test/Driver/hip-partial-link.hip | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/clang/test/Driver/hip-partial-link.hip b/clang/test/Driver/hip-partial-link.hip
+index 8c244cd371f62..8b27f78f3bdd1 100644
+--- a/clang/test/Driver/hip-partial-link.hip
++++ b/clang/test/Driver/hip-partial-link.hip
+@@ -35,7 +35,7 @@
+ // LD-R: "{{.*}}/clang-offload-bundler" {{.*}}-unbundle
+ // LD-R: "{{.*}}/lld" -flavor gnu -m elf64_amdgpu
+ // LD-R: "{{.*}}/clang-offload-bundler"
+-// LD-R: "{{.*}}/clang" -target x86_64-unknown-linux-gnu
++// LD-R: "{{.*}}/clang{{.*}}" -target x86_64-unknown-linux-gnu
+ // LD-R: "{{.*}}/ld.lld" {{.*}} -r
+ 
+ // RUN: llvm-nm  %t.lib.o | FileCheck -check-prefix=OBJ %s
+@@ -65,7 +65,7 @@
+ // STATIC: "{{.*}}/clang-offload-bundler" {{.*}}-unbundle
+ // STATIC: "{{.*}}/lld" -flavor gnu -m elf64_amdgpu
+ // STATIC: "{{.*}}/clang-offload-bundler"
+-// STATIC: "{{.*}}/clang" -target x86_64-unknown-linux-gnu
++// STATIC: "{{.*}}/clang{{.*}}" -target x86_64-unknown-linux-gnu
+ // STATIC: "{{.*}}/llvm-ar"
+ 
+ // RUN: %clang -v --target=x86_64-unknown-linux-gnu --no-offload-new-driver \
+
+From 98dc3ad39d4ccbd935bd0cd799d9f4faea866f70 Mon Sep 17 00:00:00 2001
+From: Joseph Huber <huberjn@outlook.com>
+Date: Fri, 11 Oct 2024 22:18:37 -0500
+Subject: [PATCH 4/4] format
+
+---
+ clang/lib/Driver/ToolChains/HIPUtility.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/clang/lib/Driver/ToolChains/HIPUtility.cpp b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+index b0702dcfea351..a23858e5f9097 100644
+--- a/clang/lib/Driver/ToolChains/HIPUtility.cpp
++++ b/clang/lib/Driver/ToolChains/HIPUtility.cpp
+@@ -468,6 +468,6 @@ void HIP::constructGenerateObjFileFromHIPFatBinary(
+                        "-x",      "assembler",
+                        ObjinFile, "-c"};
+   const char *Clang = Args.MakeArgString(C.getDriver().ClangExecutable);
+-  C.addCommand(std::make_unique<Command>(JA, T, ResponseFileSupport::None(), Clang,
+-                                         McArgs, Inputs, Output));
++  C.addCommand(std::make_unique<Command>(JA, T, ResponseFileSupport::None(),
++                                         Clang, McArgs, Inputs, Output));
+ }
