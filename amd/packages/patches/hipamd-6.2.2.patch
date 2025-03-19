@@ -1,0 +1,125 @@
+https://github.com/loongarch-moe/rocm-loongarch/blob/dfd9f205e952a14eff8e1e18c8b67efa0db5d5d7/stage2/5.rocm-clr/clr.patch
+
+diff -u a/hipamd/src/hip_graph_internal.cpp b/hipamd/src/hip_graph_internal.cpp
+--- a/hipamd/src/hip_graph_internal.cpp
++++ b/hipamd/src/hip_graph_internal.cpp
+@@ -443,9 +443,21 @@
+                  kernarg_pool_size_graph_ != 0) {
+         address dev_ptr = kernarg_pool_graph_ + kernarg_pool_size_graph_;
+         auto kSentinel = *reinterpret_cast<volatile unsigned char*>(dev_ptr - 1);
++#if defined(__x86_64__)
+         _mm_sfence();
++#elif defined(__loongarch_lp64)
++      asm("dbar 0");
++#elif defined(__riscv)
++      asm("fence rw,rw");
++#endif
+         *(dev_ptr - 1) = kSentinel;
++#if defined(__x86_64__)
+         _mm_mfence();
++#elif defined(__loongarch_lp64)
++      asm("dbar 0");
++#elif defined(__riscv)
++      asm("fence rw,rw");
++#endif
+         kSentinel = *reinterpret_cast<volatile unsigned char*>(dev_ptr - 1);
+       }
+     }
+
+diff --git a/rocclr/device/rocm/rocvirtual.cpp b/rocclr/device/rocm/rocvirtual.cpp
+index 722450a14..772bb552f 100644
+--- a/rocclr/device/rocm/rocvirtual.cpp
++++ b/rocclr/device/rocm/rocvirtual.cpp
+@@ -3282,9 +3282,21 @@ bool VirtualGPU::submitKernelInternal(const amd::NDRangeContainer& sizes,
+           auto kSentinel = *reinterpret_cast<volatile int*>(dev().info().hdpMemFlushCntl);
+         } else if (kernArgImpl == KernelArgImpl::DeviceKernelArgsReadback &&
+                    argSize != 0) {
++#if defined(__x86_64__)
+           _mm_sfence();
++#elif defined(__loongarch_lp64)
++          asm("dbar 0");
++#elif defined(__riscv)
++          asm("fence rw,rw");
++#endif
+           *(argBuffer + argSize - 1) = *(parameters + argSize - 1);
++#if defined(__x86_64__)
+           _mm_mfence();
++#elif defined(__loongarch_lp64)
++          asm("dbar 0");
++#elif defined(__riscv)
++          asm("fence rw,rw");
++#endif
+           auto kSentinel = *reinterpret_cast<volatile unsigned char*>(
+               argBuffer + argSize - 1);
+         }
+diff --git a/rocclr/include/top.hpp b/rocclr/include/top.hpp
+index d6aa00c8d..99b5ae96a 100644
+--- a/rocclr/include/top.hpp
++++ b/rocclr/include/top.hpp
+@@ -25,6 +25,8 @@
+ #define ATI_ARCH_ARM
+ #elif defined(i386) || defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__x86__) || defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(__amd64__) || defined(_M_X64) || defined(_M_AMD64)
+ #define ATI_ARCH_X86
++#elif defined(__riscv)
++#define ATI_ARCH_RISCV
+ #endif
+ 
+ #if defined(ATI_ARCH_ARM)
+diff --git a/rocclr/os/os.hpp b/rocclr/os/os.hpp
+index 8509cc362..be3dd1f54 100644
+--- a/rocclr/os/os.hpp
++++ b/rocclr/os/os.hpp
+@@ -358,6 +358,13 @@ ALWAYSINLINE address Os::currentStackPtr() {
+ #elif defined(ATI_ARCH_ARM)
+       "mov %0,sp"
+       : "=r"(value)
++#elif defined(__loongarch_lp64)
++      "addi.d %0,$sp,0"
++      : "=r"(value)
++
++#elif defined(ATI_ARCH_RISCV)
++      "mv %0,sp"
++      : "=r"(value)
+ #else
+       ""
+ #endif
+diff -u a/hipamd/src/hip_embed_pch.sh b/hipamd/src/hip_embed_pch.sh2
+--- a/hipamd/src/hip_embed_pch.sh
++++ b/hipamd/src/hip_embed_pch.sh
+@@ -149,16 +149,16 @@
+ 
+   cat $tmp/hip_macros.h >> $tmp/pch_wave32.cui &&
+ 
+-  $LLVM_DIR/bin/clang -cc1 -O3 -emit-pch -triple amdgcn-amd-amdhsa -aux-triple x86_64-unknown-linux-gnu -fcuda-is-device -std=c++17 -fgnuc-version=4.2.1 -o $tmp/hip_wave32.pch -x hip-cpp-output - <$tmp/pch_wave32.cui &&
++  $LLVM_DIR/bin/clang -cc1 -O3 -emit-pch -triple amdgcn-amd-amdhsa -aux-triple riscv64-unknown-linux-gnu -fcuda-is-device -std=c++17 -fgnuc-version=4.2.1 -o $tmp/hip_wave32.pch -x hip-cpp-output - <$tmp/pch_wave32.cui &&
+ 
+   # For other devices
+   $LLVM_DIR/bin/clang -O3 --hip-path=$HIP_INC_DIR/.. -std=c++17 -nogpulib -isystem $HIP_INC_DIR -isystem $HIP_BUILD_INC_DIR -isystem $HIP_AMD_INC_DIR --cuda-device-only -x hip $tmp/hip_pch.h -E >$tmp/pch_wave64.cui &&
+ 
+   cat $tmp/hip_macros.h >> $tmp/pch_wave64.cui &&
+ 
+-  $LLVM_DIR/bin/clang -cc1 -O3 -emit-pch -triple amdgcn-amd-amdhsa -aux-triple x86_64-unknown-linux-gnu -fcuda-is-device -std=c++17 -fgnuc-version=4.2.1 -o $tmp/hip_wave64.pch -x hip-cpp-output - <$tmp/pch_wave64.cui &&
++  $LLVM_DIR/bin/clang -cc1 -O3 -emit-pch -triple amdgcn-amd-amdhsa -aux-triple riscv64-unknown-linux-gnu -fcuda-is-device -std=c++17 -fgnuc-version=4.2.1 -o $tmp/hip_wave64.pch -x hip-cpp-output - <$tmp/pch_wave64.cui &&
+ 
+-  $LLVM_DIR/bin/llvm-mc -o hip_pch.o $tmp/hip_pch.mcin --filetype=obj &&
++  $LLVM_DIR/bin/llvm-mc --target-abi=lp64d -o hip_pch.o $tmp/hip_pch.mcin --filetype=obj &&
+ 
+   rm -rf $tmp
+ }
+
+diff -u a/hipamd/src/hiprtc/CMakeLists.txt b/hipamd/src/hiprtc/CMakeLists.txt
+--- a/hipamd/src/hiprtc/CMakeLists.txt
++++ b/hipamd/src/hiprtc/CMakeLists.txt
+@@ -184,7 +184,7 @@ add_custom_command(
+   DEPENDS clang ${HIPRTC_GEN_HEADER})
+ add_custom_command(
+   OUTPUT ${HIPRTC_GEN_OBJ}
+-  COMMAND $<TARGET_FILE:llvm-mc> -o ${HIPRTC_GEN_OBJ} ${HIPRTC_GEN_MCIN} --filetype=obj
++  COMMAND $<TARGET_FILE:llvm-mc> --target-abi=lp64d -o ${HIPRTC_GEN_OBJ} ${HIPRTC_GEN_MCIN} --filetype=obj
+   DEPENDS llvm-mc ${HIPRTC_GEN_PREPROCESSED} ${HIPRTC_GEN_MCIN})
+ 
+ # Create hiprtc-builtins library.
+-- 
+2.47.1
+
+

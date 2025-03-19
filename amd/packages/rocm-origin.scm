@@ -403,6 +403,8 @@
         (("hipcc" "6.0.0") . ("amd/packages/patches/hipcc-5.6.1.patch"))
         (("hipcc" "5.7.1") . ("amd/packages/patches/hipcc-5.6.1.patch"))
         ; hipamd (post rocm-5.5.X)
+
+        (("clr" "6.2.2") . ("amd/packages/patches/hipamd-6.2.2.patch"))
         (("clr" "6.0.2") . ("amd/packages/patches/hipamd-5.6.1.patch"))
         (("clr" "6.0.0") . ("amd/packages/patches/hipamd-5.6.1.patch"))
         (("clr" "5.7.1") . ("amd/packages/patches/hipamd-5.6.1.patch"))
