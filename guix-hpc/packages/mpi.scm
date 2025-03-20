@@ -407,17 +407,17 @@ the MPI_THREAD_MULTIPLE multi-threading level.")
 (define-public mpibenchmark
   (package
     (name "mpibenchmark")
-    (version "0.5")
+    (version "0.6")
     (home-page (string-append %pm2-home-page "mpibenchmark"))
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url %pm2-git)
-             (commit "release-2024-11-21")))
+             (commit "mpibenchmark-0.6")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "09wnrgn0xm109fvbbz9hvzyhbw9wm3ldshkqc5az9iaf76hqszd0"))))
+        (base32 "0pkf4dapwy24lr1cgjqch0xyb3jx2y6nijb4k11i3gvsib7csy0r"))))
     (build-system gnu-build-system)
     (outputs '("debug" "out"))
     (arguments
