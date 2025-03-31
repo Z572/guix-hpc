@@ -26,3 +26,20 @@
 Fortran development to be installed in user profiles.  This includes
 gfortran, as well as libc (headers and binaries, plus debugging symbols
 in the @code{debug} output), and binutils.")))
+
+(define-public gfortran-14
+  (hidden-package
+   ((@@ (gnu packages gcc) custom-gcc) gcc-14
+               "gfortran" '("fortran")
+               (@@ (gnu packages gcc) %generic-search-paths))))
+
+(define-public gfortran-toolchain-14
+  (package
+    (inherit ((@@ (gnu packages commencement) make-gcc-toolchain)
+              gfortran-14))
+    (synopsis "Complete GCC tool chain for Fortran development")
+    (description
+     "This package provides a complete GCC tool chain for
+Fortran development to be installed in user profiles.  This includes
+gfortran, as well as libc (headers and binaries, plus debugging symbols
+in the @code{debug} output), and binutils.")))
