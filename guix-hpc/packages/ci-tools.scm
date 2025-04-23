@@ -36,7 +36,6 @@
                          python-wheel
                          python-pytest
                          python-pytest-cov
-                         python-contextlib2
                          python-mock))
     (propagated-inputs (list python-pytz python-requests))
     (home-page "https://github.com/ngine-io/cs")
