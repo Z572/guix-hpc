@@ -1599,9 +1599,9 @@ for manual interpretation.")
     (native-inputs (list pkg-config openssh))
     (properties '((tunable? . #t)))))
 
-(define-public ddmpy
+(define-public python-ddmpy
   (package
-    (name "ddmpy")
+    (name "python-ddmpy")
     (version "0.1")
     (synopsis "DDMPY: a Domain Decomposition Methods PYthon package")
     (home-page "https://gitlab.inria.fr/compose/ddmpy.git")
@@ -1610,16 +1610,41 @@ for manual interpretation.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "66dc3cc79dfdc5864fc62aa371173c8a576cc0ae")))
+             (commit "91ceb795fac2c839c2b1bfcfc372b0f6344205e4")))
        (sha256
         (base32 "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
     (build-system python-build-system)
-    (propagated-inputs (list openmpi python python-numpy python-scipy
-                             python-mpi4py))
-    (native-inputs (list openssh))
+    (propagated-inputs (list python python-numpy python-scipy python-mpi4py
+                             openmpi))
     (description
      "Linear algebra package implementing advanced parallel domain decomposition
 methods.")
+    (license license:cecill-c)))
+
+(define-public python-genfem
+  (package
+    (name "python-genfem")
+    (version "1.2")
+    (synopsis "A simple FEM matrix generator in python")
+    (home-page "https://gitlab.inria.fr/solverstack/genfem.git")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit "ec8e4ea31121d22df3482e0c11c62f99769fda01")))
+       (sha256
+        (base32 "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
+    (build-system python-build-system)
+    (propagated-inputs (list python
+                             python-ddmpy
+                             python-mpi4py
+                             python-numpy
+                             python-scipy
+                             python-sympy
+                             openmpi))
+    (description
+     "Assembles fem matrices using an efficient vectorization method.")
     (license license:cecill-c)))
 
 (define-public hmat-oss
