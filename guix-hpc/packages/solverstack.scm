@@ -25,7 +25,9 @@
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages perl)
@@ -44,6 +46,7 @@
   ;; To remove when/if python2 packages sympy and mpi4py
   ;; are fixed in official repo
   #:use-module (guix build-system python)
+  #:use-module (guix build-system pyproject)
   #:use-module (gnu packages python-science))
 
 (define-public parsec
@@ -1612,7 +1615,7 @@ for manual interpretation.")
              (url home-page)
              (commit "91ceb795fac2c839c2b1bfcfc372b0f6344205e4")))
        (sha256
-        (base32 "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
+        (base32 "0zmbb7dapdckdrjb7bwdrac2p1jfhqh8h4m8v4h7hcs57adppmdf"))))
     (build-system python-build-system)
     (propagated-inputs (list python python-numpy python-scipy python-mpi4py
                              openmpi))
@@ -1632,10 +1635,11 @@ methods.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "ec8e4ea31121d22df3482e0c11c62f99769fda01")))
+             (commit "1252fa098cb779db60a1982a171059810f820db2")))
        (sha256
-        (base32 "0xbw4zkd5bk0m4mj0snxw19ig0yy5fvj5lphs0hwhq44cdxm77s6"))))
-    (build-system python-build-system)
+        (base32 "1cqsj3sv75cf5jixy86ac2xvv18ph30pd92x2afqdiv1q8003dz2"))))
+    (build-system pyproject-build-system)
+    (native-inputs (list python-hatchling python-pytest))
     (propagated-inputs (list python
                              python-ddmpy
                              python-mpi4py
