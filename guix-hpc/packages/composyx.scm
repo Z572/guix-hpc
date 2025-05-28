@@ -28,7 +28,7 @@
 (define-public composyx
   (package
     (name "composyx")
-    (version "1.2.0")
+    (version "1.3.1")
     (home-page "https://gitlab.inria.fr/composyx/composyx.git")
     (synopsis "Composable numerical solver")
     (description
@@ -43,31 +43,29 @@ node supercomputer parallel computations.")
        (uri (git-reference
              (url home-page)
              (commit (string-append "v" version))
-             ;; We need the submodule in 'cmake_modules/morse_cmake'.
+             ;; We need the submodules
              (recursive? #t)))
        (file-name (string-append name "-" version "-checkout"))
-       (patches (search-patches "guix-hpc/packages/patches/composyx-chameleon-1.3.patch"))
        (sha256
-        (base32 "0glwcn9fw8qzb4a4vxjhxqqnpa7fv8xbw93f40rwaazfgkb4wfcl"))))
+        (base32 "0rmkbas8kpp9q3xqr845inmbnl4bkwy9y1rl3khsisycx54ifpmh"))))
     (arguments
-     '(#:configure-flags '("-DCOMPOSYX_USE_EIGEN=OFF"
-                           "-DCOMPOSYX_USE_FABULOUS=ON"
-                           "-DCOMPOSYX_USE_PADDLE=ON"
-                           "-DCOMPOSYX_USE_CHAMELEON=ON"
-                           "-DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON")
-
-       #:phases (modify-phases %standard-phases
-                  ;; Allow tests with more MPI processes than available CPU cores,
-                  ;; which is not allowed by default by OpenMPI
-                  (add-before 'check 'prepare-test-environment
-                    (lambda _
-                      (setenv "OMPI_MCA_rmaps_base_oversubscribe" "1") #t))
-                  ;; Some of the tests use StarPU, which expects $HOME
-                  ;; to be writable.
-                  (add-before 'check 'set-home
-                    (lambda _
-                      (setenv "HOME"
-                              (getcwd)))))))
+     (list
+      #:configure-flags
+      #~(list "-DCOMPOSYX_USE_EIGEN=OFF" "-DCOMPOSYX_USE_FABULOUS=ON"
+              "-DCOMPOSYX_USE_PADDLE=ON" "-DCOMPOSYX_USE_CHAMELEON=ON"
+              "-DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON")
+      #:phases
+      #~(modify-phases %standard-phases
+          ;; Allow tests with more MPI processes than available CPU cores,
+          ;; which is not allowed by default by OpenMPI
+          (add-before 'check 'prepare-test-environment
+            #$%openmpi-setup)
+          ;; Some of the tests use StarPU, which expects $HOME
+          ;; to be writable.
+          (add-before 'check 'set-home
+            (lambda _
+              (setenv "HOME"
+                      (getcwd)))))))
 
     (build-system cmake-build-system)
     (inputs (list blaspp
@@ -81,7 +79,7 @@ node supercomputer parallel computations.")
                   chameleon
                   starpu))
     (propagated-inputs (list `(,hwloc "lib") openmpi))
-    (native-inputs (list gfortran pkg-config openssh))
+    (native-inputs (list gfortran pkg-config))
     (properties '((tunable? . #t)))))
 
 (define-public composyx-header-only
@@ -109,9 +107,8 @@ node supercomputer parallel computations.")
     (name "composyx-minimal")
     (arguments (substitute-keyword-arguments (package-arguments composyx)
                  ((#:configure-flags flags)
-                  ''("-DCOMPOSYX_USE_PASTIX=OFF"
-		     "-DCOMPOSYX_USE_MUMPS=OFF"
-		     "-DCOMPOSYX_USE_CHAMELEON=OFF"
+                  ''("-DCOMPOSYX_USE_PASTIX=OFF" "-DCOMPOSYX_USE_MUMPS=OFF"
+                     "-DCOMPOSYX_USE_CHAMELEON=OFF"
                      "-DCOMPOSYX_USE_ARPACK=OFF"
                      "-DCOMPOSYX_DRIVERS=OFF"
                      "-DCOMPOSYX_C_DRIVER=OFF"
@@ -119,7 +116,12 @@ node supercomputer parallel computations.")
                      "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
                      "-DCOMPOSYX_COMPILE_TESTS=ON"))))
     (inputs (modify-inputs (package-inputs composyx)
-              (delete "pastix" "mumps" "arpack" "paddle" "fabulous" "chameleon")))))
+              (delete "pastix"
+                      "mumps"
+                      "arpack"
+                      "paddle"
+                      "fabulous"
+                      "chameleon")))))
 
 ;; Minimal + pastix and arpack-ng dependencies
 (define-public composyx-lite
@@ -127,9 +129,8 @@ node supercomputer parallel computations.")
     (name "composyx-lite")
     (arguments (substitute-keyword-arguments (package-arguments composyx)
                  ((#:configure-flags flags)
-                  ''("-DCOMPOSYX_USE_PASTIX=ON"
-		     "-DCOMPOSYX_USE_MUMPS=OFF"
-		     "-DCOMPOSYX_USE_CHAMELEON=OFF"
+                  ''("-DCOMPOSYX_USE_PASTIX=ON" "-DCOMPOSYX_USE_MUMPS=OFF"
+                     "-DCOMPOSYX_USE_CHAMELEON=OFF"
                      "-DCOMPOSYX_USE_ARPACK=ON"
                      "-DCOMPOSYX_DRIVERS=OFF"
                      "-DCOMPOSYX_C_DRIVER=OFF"
@@ -156,10 +157,7 @@ node supercomputer parallel computations.")
     (arguments (substitute-keyword-arguments (package-arguments composyx)
                  ((#:configure-flags flags)
                   ''("-DCOMPOSYX_PYTHON_DRIVER=ON"
-		     "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
-                     "-DCOMPOSYX_COMPILE_TESTS=OFF"
-		     ))))
+                     "-DCOMPOSYX_COMPILE_EXAMPLES=OFF"
+                     "-DCOMPOSYX_COMPILE_TESTS=OFF"))))
     (inputs (modify-inputs (package-inputs composyx)
-			   (prepend pybind11
-				    python
-				    python-multipledispatch)))))
+              (prepend pybind11 python python-multipledispatch)))))
