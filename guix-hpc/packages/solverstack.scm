@@ -828,7 +828,7 @@ is implemented in MPI.")
 (define-public blaspp
   (package
     (name "blaspp")
-    (version "2023.11.05")
+    (version "2025.05.28")
     (home-page "https://github.com/icl-utk-edu/blaspp")
     (synopsis "C++ API for the Basic Linear Algebra Subroutines")
     (description
@@ -844,10 +844,10 @@ such as: namespaces, templates, exceptions, etc.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "3c47832f5162b5215b2164c21c4132544c65563d")))
+             (commit "37b744ed72997d190a9cff651c464a71330aeec0")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1k3d3v5yig42sksydwjz2dhj3jaslyr424kz76jcjfnvv2n94pi9"))))
+        (base32 "0rbr5xg934fzb8pvvdhy09xq7zblsxr1cwkc3d31g7mbnlxi0wa1"))))
     (arguments
      '(#:configure-flags '("-Dbuild_tests=OFF")
        #:tests? #f))
@@ -860,7 +860,7 @@ such as: namespaces, templates, exceptions, etc.")
 (define-public lapackpp
   (package
     (name "lapackpp")
-    (version "2023.11.05")
+    (version "2025.05.28")
     (home-page "https://github.com/icl-utk-edu/lapackpp")
     (synopsis "C++ API for the Linear Algebra PACKage")
     (description
@@ -875,10 +875,10 @@ etc.")
        (method git-fetch)
        (uri (git-reference
              (url home-page)
-             (commit "e3aa0156b873d1e1349d083d7e5b66cfbdf9fb08")))
+             (commit "b7991ec3cf3e404083d9ac09f146a5ac86397cc8")))
        (file-name (string-append name "-" version "-checkout"))
        (sha256
-        (base32 "1nyvsz24xp3116pikml98dmxl8iajm2kqj4g14rfg9rryhk72cx8"))))
+        (base32 "19hrviqb47wnq5im1wpwd0ada69x99gs265jp0b0bl2nrzf0kb9g"))))
     (arguments
      '(#:configure-flags '("-DBUILD_LAPACKPP_TESTS=OFF" "-Dbuild_tests=OFF")
        #:tests? #f))
