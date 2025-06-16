@@ -1,13 +1,14 @@
 ;;; This module extends GNU Guix and is licensed under the same terms, those
 ;;; of the GNU GPL version 3 or (at your option) any later version.
 ;;;
-;;; Copyright © 2020 Inria
+;;; Copyright © 2020, 2025 Inria
 
 (define-module (guix-hpc packages emacs-xyz)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system emacs)
+  #:use-module (gnu packages emacs-build)
   #:use-module (gnu packages emacs-xyz))
 
 (define-public emacs-org-tanglesync-1.1
